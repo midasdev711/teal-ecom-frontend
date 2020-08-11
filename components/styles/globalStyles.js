@@ -7,4 +7,9 @@ export default createGlobalStyle`
     font-weight: normal;
     font-size: 16px;
   }
+  .ant-select-selector {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
 `;
