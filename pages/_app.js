@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import App from 'next/app';
 import Router from 'next/router';
-import GlobalStyles from '../components/styles/globalStyles';
-import { TEPageLoader } from '../components/atoms';
+import GlobalStyles from '../src/components/styles/globalStyles';
+import { TEPageLoader } from '../src/components/atoms';
 import '../styles/antd.less';
 
 function TealApp({ Component, pageProps }) {

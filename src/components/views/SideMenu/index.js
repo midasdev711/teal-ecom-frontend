@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { Layout, Typography, Select } from 'antd';
 import { TELogo, TESelector } from '../../atoms';
-import Routes from '../../../src/utils/Routes';
+import Routes from '../../../utils/Routes';
 import Link from 'next/link';
 
 const SideMenu = () => {
