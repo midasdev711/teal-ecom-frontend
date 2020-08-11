@@ -1,8 +1,28 @@
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
+import App from 'next/app';
+import Router from 'next/router';
 import GlobalStyles from '../components/styles/globalStyles';
+import { TEPageLoader } from '../components/atoms';
 import '../styles/antd.less';
 
-function MyApp({ Component, pageProps }) {
+function TealApp({ Component, pageProps }) {
+  const [isLoading, setIsLoading] = useState();
+
+  useEffect(() => {
+    Router.events.on('routeChangeStart', () => {
+      setIsLoading(true);
+    });
+
+    Router.events.on('routeChangeComplete', () => {
+      setIsLoading(false);
+    });
+
+    Router.events.on('routeChangeError', () => {
+      setIsLoading(false);
+    });
+  }, []);
+
   return (
     <div>
       <Head>
@@ -15,9 +35,15 @@ function MyApp({ Component, pageProps }) {
         />
       </Head>
       <Component {...pageProps} />
+      {isLoading && <TEPageLoader />}
       <GlobalStyles />
     </div>
   );
 }
 
-export default MyApp;
+TealApp.getInitialProps = async (appContext) => {
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps };
+};
+
+export default TealApp;
