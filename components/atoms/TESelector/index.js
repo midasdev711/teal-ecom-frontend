@@ -19,7 +19,11 @@ const DropDownIcon = styled.img`
 `;
 
 const StyledSelect = styled(Select)`
+  align-items: center;
+  display: flex;
   width: 100%;
+  font-weight: bold;
+  font-size: 14px;
   border: none;
   outline: none;
   height: 35px;
