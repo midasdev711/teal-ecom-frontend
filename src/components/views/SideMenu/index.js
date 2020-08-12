@@ -60,6 +60,7 @@ const LinkButton = styled.a`
   width: 100%;
   height: 35px;
   font-size: 14px;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
