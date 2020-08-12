@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { ApolloProvider } from '@apollo/react-hooks';
 import Head from 'next/head';
 import App from 'next/app';
 import Router from 'next/router';
 import GlobalStyles from '../src/components/styles/globalStyles';
 import { TEPageLoader } from '../src/components/atoms';
+import withData from '../src/config/configureClient';
 import '../styles/antd.less';
 
-function TealApp({ Component, pageProps }) {
+function TealApp({ Component, pageProps, apollo }) {
   const [isLoading, setIsLoading] = useState();
 
   useEffect(() => {
@@ -34,7 +36,9 @@ function TealApp({ Component, pageProps }) {
           type='text/css'
         />
       </Head>
-      <Component {...pageProps} />
+      <ApolloProvider client={apollo}>
+        <Component {...pageProps} />
+      </ApolloProvider>
       {isLoading && <TEPageLoader />}
       <GlobalStyles />
     </div>
@@ -46,4 +50,4 @@ TealApp.getInitialProps = async (appContext) => {
   return { ...appProps };
 };
 
-export default TealApp;
+export default withData(TealApp);
