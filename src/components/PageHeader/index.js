@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Layout } from "antd";
-import { TEImportButton } from "../../atoms";
+import { TEImportButton } from "../atoms";
 import { Button } from "antd";
 import Link from "next/link";
 
@@ -9,18 +9,18 @@ const PageHeader = ({ ...props }) => {
   return (
     <PageHeaderContent>
       <TitleActionContent>
-        <PageHeaderTitle>Your Customers</PageHeaderTitle>
+        <PageHeaderTitle>{props.PageName}</PageHeaderTitle>
         <ImportExportContent>
-          <TEImportButton>Import customers</TEImportButton>
-          {props.customerData && (
+          <TEImportButton>{props.ImportButtonName}</TEImportButton>
+          {props.isData && (
             <TEImportButton export={`true`}>Export</TEImportButton>
           )}
         </ImportExportContent>
       </TitleActionContent>
-      {props.customerData && (
+      {props.isData && (
         <Button type="primary" size="large">
-          <Link href="customers/new">
-            <a>Add customer</a>
+          <Link href={props.path}>
+            <a>{props.CreateButtonName}</a>
           </Link>
         </Button>
       )}

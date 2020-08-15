@@ -1,7 +1,8 @@
 import React from "react";
 import { PageLayout } from "../../src/components/views";
 import { TEPageFooter } from "../../src/components/atoms";
-import { PageHeader, ViewCustomers } from "../../src/components/customers";
+import { ViewCustomers } from "../../src/components/customers";
+import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
@@ -32,7 +33,14 @@ const Customers = () => {
           </TEPageFooter>
         </EmptyCustomerContent> */}
         <ViewsCustomerContent>
-          <PageHeader customerData={true} />
+          <PageHeader
+            PageName="Your Customers"
+            ImportButtonName="Import customers"
+            CreateButtonName="Add customer"
+            path="customers/new"
+            isData={true}
+          />
+          {/* <PageHeader customerData={true} /> */}
           <ViewCustomers />
         </ViewsCustomerContent>
       </CustomerContent>

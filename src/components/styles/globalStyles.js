@@ -72,4 +72,12 @@ export default createGlobalStyle`
       }
     }
   }
+  .ant-popover-inner-content {
+    padding: 10px 0  !important;
+  }
+
+  .ant-popover-placement-bottom {
+    left: 1232px !important;
+    top: 320px !important;
+  }
 `;
