@@ -10,6 +10,20 @@ const Routes = [
   {
     title: 'Orders',
     path: '/orders',
+    components: [
+      {
+        title: 'Orders',
+        path:'/orders'
+      },
+      {
+        title: 'Drafts',
+        path:'/orders/drafts'
+      },
+      {
+        title: 'Abandoned checkouts',
+        path:'/orders/checkouts'
+      }
+    ]
   },
   {
     title: 'Customers',
