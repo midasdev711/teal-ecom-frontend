@@ -31,6 +31,11 @@ const StyledSelect = styled(Select)`
   background: white;
   box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
   border-radius: 5px;
+  .ant-select-selector{
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
 `;
 
 export default TESelector;

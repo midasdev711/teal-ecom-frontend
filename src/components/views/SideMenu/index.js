@@ -36,6 +36,11 @@ const StyledSider = styled(Layout.Sider)`
   min-width: 232px !important;
   width: 232px !important;
   padding: 0px 16px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  height: calc(100%);
 `;
 
 const MenuTitle = styled(Typography.Text)`

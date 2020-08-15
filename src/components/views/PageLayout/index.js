@@ -8,15 +8,20 @@ const PageLayout = ({ children }) => {
   return (
     <StyledLayout>
       <SideMenu />
-      <Layout>
+      <StyledPageLayout>
         <Content>{children}</Content>
-      </Layout>
+      </StyledPageLayout>
     </StyledLayout>
   );
 };
 
 const StyledLayout = styled(Layout)`
   min-height: 100vh;
+`;
+
+const StyledPageLayout = styled(Layout)`
+  position: relative;
+  padding-left: 232px;
 `;
 
 export default PageLayout;
