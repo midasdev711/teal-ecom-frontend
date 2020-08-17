@@ -5,15 +5,15 @@ import { Button, Layout } from "antd";
 
 // components
 import { PageLayout } from "../../../../src/components/views";
-import { CreateOrder } from "../../../../src/components/orders";
+import { NewForm } from "../../../../src/components/orders";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 const newActions = () => {
   return (
     <ActionTopLayout>
-      <ActionContent>
+      <ActionContent> 
         <span>Unsaved changes</span>
-        <NewCustomerAction>
+        <NewOrderAction>
           <Button className="cancel" size="large">
             Discard
           </Button>
@@ -22,7 +22,7 @@ const newActions = () => {
               <a title="save">Save</a>
             </Link>
           </Button>
-        </NewCustomerAction>
+        </NewOrderAction>
       </ActionContent>
     </ActionTopLayout>
   );
@@ -41,7 +41,7 @@ const NewCustomer = () => {
             </Link>
             <TittleHeader>Create order</TittleHeader>
           </ContentHeader>
-          <CreateOrder />
+          <NewForm />
         </ContentPage>
       </NewContent>
     </PageLayout>
@@ -59,7 +59,7 @@ const ContentPage = styled.div`
 `;
 
 const ContentHeader = styled.div`
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 `;
 
 const TittleHeader = styled.h3`
@@ -72,6 +72,7 @@ const TittleHeader = styled.h3`
 const LinkBack = styled.a`
   color: #333;
 `;
+
 const ActionTopLayout = styled(Layout)`
   width: 100%;
   height: 55px;
@@ -103,7 +104,7 @@ const ActionContent = styled.div`
   }
 `;
 
-const NewCustomerAction = styled.div`
+const NewOrderAction = styled.div`
   display: flex;
   .cancel {
     margin-right: 15px;
