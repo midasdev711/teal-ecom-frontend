@@ -5,12 +5,13 @@ import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
+import ViewOrders from '../../src/components/orders/ViewOrders';
 
 const Orders = () => {
   return (
     <PageLayout>
       <CustomerContent>
-        <EmptyCustomerContent>
+        {/* <EmptyCustomerContent>
           <PageHeader
             PageName="Orders"
             ImportButtonName="Import Orders"
@@ -31,7 +32,14 @@ const Orders = () => {
               <a> orders</a>
             </Link>
           </TEPageFooter>
-        </EmptyCustomerContent>
+        </EmptyCustomerContent> */}
+        <PageHeader
+            PageName="Your Orders"
+            CreateButtonName="Create order"
+            path="orders/drafts/new"
+            isData={true}
+          />
+        <ViewOrders />
       </CustomerContent>
     </PageLayout>
   );

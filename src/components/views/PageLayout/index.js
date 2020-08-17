@@ -21,7 +21,7 @@ const StyledLayout = styled(Layout)`
 
 const StyledPageLayout = styled(Layout)`
   position: relative;
-  padding-left: 232px;
+  padding-left: 250px;
 `;
 
 export default PageLayout;

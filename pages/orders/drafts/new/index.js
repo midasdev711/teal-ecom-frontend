@@ -34,7 +34,7 @@ const NewCustomer = () => {
         {newActions()}
         <ContentPage>
           <ContentHeader>
-            <Link href="/orders/drafts">
+            <Link href="/orders">
               <LinkBack>
                 <LeftOutlined /> Orders
               </LinkBack>
@@ -88,7 +88,7 @@ const ActionContent = styled.div`
   height: 55px;
   position: ;
   top: 0;
-  left: 232px;
+  left: 250px;
   position: fixed;
   right: 0;
   max-width: 65rem;
