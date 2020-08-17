@@ -15,9 +15,11 @@ const PageHeader = ({ ...props }) => {
       <TitleActionContent>
         <PageHeaderTitle>{props.PageName}</PageHeaderTitle>
         <ImportExportContent>
-          <TEImportButton onClick={() => setOpenImport(true)}>
-            {props.ImportButtonName}
-          </TEImportButton>
+          {props.isImport && (
+            <TEImportButton onClick={() => setOpenImport(true)}>
+              {props.ImportButtonName}
+            </TEImportButton>
+          )}
           {props.isData && (
             <TEImportButton export={`true`} onClick={() => setOpenExport(true)}>
               Export

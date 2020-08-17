@@ -4,10 +4,6 @@ const Routes = [
     path: '/',
   },
   {
-    title: 'Products',
-    path: '/products',
-  },
-  {
     title: 'Orders',
     path: '/orders',
     components: [
@@ -24,6 +20,10 @@ const Routes = [
         path:'/orders/checkouts'
       }
     ]
+  },
+  {
+    title: 'Products',
+    path: '/products',
   },
   {
     title: 'Customers',

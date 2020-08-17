@@ -39,6 +39,7 @@ const Customers = () => {
             CreateButtonName="Add customer"
             path="customers/new"
             isData={true}
+            isImport={true}
           />
           {/* <PageHeader customerData={true} /> */}
           <ViewCustomers />
