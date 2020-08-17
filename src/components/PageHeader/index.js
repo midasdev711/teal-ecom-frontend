@@ -1,19 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Layout } from "antd";
 import { TEImportButton } from "../atoms";
 import { Button } from "antd";
 import Link from "next/link";
+import MDImportCSV from "../atoms/MDImportCSV";
+import MDExport from "../atoms/MDExport";
 
 const PageHeader = ({ ...props }) => {
+  const [isOpenImport, setOpenImport] = useState(false);
+  const [isOpenExport, setOpenExport] = useState(false);
   return (
     <PageHeaderContent>
       <TitleActionContent>
         <PageHeaderTitle>{props.PageName}</PageHeaderTitle>
         <ImportExportContent>
-          <TEImportButton>{props.ImportButtonName}</TEImportButton>
+          <TEImportButton onClick={() => setOpenImport(true)}>
+            {props.ImportButtonName}
+          </TEImportButton>
           {props.isData && (
-            <TEImportButton export={`true`}>Export</TEImportButton>
+            <TEImportButton export={`true`} onClick={() => setOpenExport(true)}>
+              Export
+            </TEImportButton>
           )}
         </ImportExportContent>
       </TitleActionContent>
@@ -24,6 +32,19 @@ const PageHeader = ({ ...props }) => {
           </Link>
         </Button>
       )}
+      <MDImportCSV
+        isOpen={isOpenImport}
+        onCancel={setOpenImport}
+        onImport={setOpenImport}
+        name="customers"
+      />
+
+      <MDExport
+        isOpen={isOpenExport}
+        name="customers"
+        onCancel={setOpenExport}
+        onExport={setOpenExport}
+      />
     </PageHeaderContent>
   );
 };
