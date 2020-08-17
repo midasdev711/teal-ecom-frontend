@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import languagesList from "language-list";
 import countryList from "react-select-country-list";
+import Router from "next/router";
+import Link from "next/link";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -249,9 +251,11 @@ const ViewCustomers = () => {
       render: (value, item) => {
         return (
           <div>
-            <h3>
-              {item.firstName} {item.lastName}
-            </h3>
+            <Link href="/customers/123">
+              <FullName href="">
+                {item.firstName} {item.lastName}
+              </FullName>
+            </Link>
             <p>{item.address}</p>
           </div>
         );
@@ -305,6 +309,10 @@ const ViewCustomers = () => {
 
   const handleMenuClickCheckbox = (e) => {};
 
+  const editCustomers = () => {
+    Router.router.push("/customers/edit");
+  };
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
@@ -313,7 +321,9 @@ const ViewCustomers = () => {
         let node = (
           <div>
             <LabelSelected>{selectedRows.length} selected</LabelSelected>
-            <ButtonEditCustomer>Edit customers</ButtonEditCustomer>
+            <ButtonEditCustomer onClick={() => editCustomers()}>
+              Edit customers
+            </ButtonEditCustomer>
             <Dropdown
               overlay={
                 <Menu onClick={handleMenuClickCheckbox}>
@@ -943,6 +953,12 @@ const ButtonEditCustomer = styled(Button)`
 
 const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
+`;
+
+const FullName = styled.a`
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
 `;
 
 export default ViewCustomers;
