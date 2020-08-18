@@ -5,7 +5,7 @@ import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
-import ViewOrders from "../../src/components/orders/ViewOrders";
+import { ViewOrders } from "../../src/components/orders";
 
 const Orders = () => {
   return (
@@ -42,7 +42,7 @@ const Orders = () => {
         <ViewOrders />
         <TEPageFooter>
           Learn more about
-          <Link href="#"> 
+          <Link href="#">
             <a> orders</a>
           </Link>
         </TEPageFooter>
