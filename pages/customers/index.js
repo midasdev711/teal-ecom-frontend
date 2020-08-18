@@ -41,8 +41,21 @@ const Customers = () => {
             isData={true}
             isImport={true}
           />
-          {/* <PageHeader customerData={true} /> */}
           <ViewCustomers />
+          <StyledSettingFooter>
+            <Message>
+              Customer accounts are disabled.
+              <Link href="#">
+                <a> Edit settings</a>
+              </Link>
+            </Message>
+          </StyledSettingFooter>
+          <TEPageFooter>
+            Learn more about
+            <Link href="#">
+              <a> customers</a>
+            </Link>
+          </TEPageFooter>
         </ViewsCustomerContent>
       </CustomerContent>
     </PageLayout>
@@ -57,6 +70,12 @@ const EmptyCustomerContent = styled.div`
   padding: 20px;
   max-width: 60rem;
   margin: 0 auto;
+`;
+
+const StyledSettingFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
 `;
 
 const ViewsCustomerContent = styled.div`
@@ -79,6 +98,7 @@ const EmptyDataContent = styled(Layout.Content)`
 
 const Message = styled.p`
   color: #637381;
+  font-size: 14px;
 `;
 
 export default Customers;

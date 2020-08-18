@@ -91,7 +91,7 @@ const ViewOrders = () => {
               </div>
             </PopupDetailTB>
           }
-          placement="bottomCenter"
+          placement="bottomCenter" 
         >
           <ButtonCustomer type="text">
             {customer.first_name} {customer.last_name} <DownOutlined />

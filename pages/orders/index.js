@@ -5,7 +5,7 @@ import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
-import ViewOrders from '../../src/components/orders/ViewOrders';
+import ViewOrders from "../../src/components/orders/ViewOrders";
 
 const Orders = () => {
   return (
@@ -34,12 +34,18 @@ const Orders = () => {
           </TEPageFooter>
         </EmptyCustomerContent> */}
         <PageHeader
-            PageName="Your Orders"
-            CreateButtonName="Create order"
-            path="orders/drafts/new"
-            isData={true}
-          />
+          PageName="Your Orders"
+          CreateButtonName="Create order"
+          path="orders/drafts/new"
+          isData={true}
+        />
         <ViewOrders />
+        <TEPageFooter>
+          Learn more about
+          <Link href="#"> 
+            <a> orders</a>
+          </Link>
+        </TEPageFooter>
       </CustomerContent>
     </PageLayout>
   );
@@ -83,6 +89,7 @@ const CreateButton = styled(Button)`
 
 const Message = styled.p`
   color: #637381;
+  font-size: 14px;
 `;
 
 export default Orders;
