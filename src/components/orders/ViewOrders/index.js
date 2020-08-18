@@ -414,7 +414,7 @@ const ViewOrders = () => {
         isOpen={isOpenDeleteSelected}
       />
 
-      <DrawerStyle
+      <Drawer
         title={
           <DrawerTitle>
             More filters
@@ -606,7 +606,7 @@ const ViewOrders = () => {
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
         </CollapseStyle>
-      </DrawerStyle>
+      </Drawer>
     </ViewContent>
   );
 };
@@ -622,23 +622,7 @@ const ViewContent = styled.div`
   border-radius: 3px;
 `;
 
-const ContentHeader = styled(Tabs)`
-  padding: 0 15px;
-  border-bottom: 1px solid #ccc;
-`;
-
 const ContentTab = styled.div``;
-
-const SortTable = styled.div`
-  text-align: right;
-`;
-
-const LabelSort = styled.span`
-  display: inline-block;
-  margin-right: 10px;
-`;
-
-const DrawerStyle = styled(Drawer)``;
 
 const DrawerTitle = styled.h3`
   margin: 0;

@@ -5,18 +5,28 @@ import {
   StarOutlined,
   DownOutlined,
   SortAscendingOutlined,
-  DeleteOutlined
+  DeleteOutlined,
 } from "@ant-design/icons";
 // ui
 import { Row, Col, Input, Button, Dropdown, Radio, Checkbox, Tag } from "antd";
 
 const { Search } = Input;
 
-const Filters = props => {
+const Filters = (props) => {
   const [valueSubscription, setValueSubscription] = useState(0);
+  const [isVisible, setIsVisible] = useState({ name: "", value: false });
+  // const [valueCheckbox, setValueCheckbox] = useState([]);
 
-  const onChangeSubscription = e => {
+  const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
+  };
+
+  const onChangeCheckbox = (fieldName, e) => {
+    setIsVisible({ name: fieldName, value: true });
+  };
+
+  const onVisibleChangeCheckbox = (fieldName, visible) => {
+    setIsVisible({ name: fieldName, value: visible });
   };
 
   return (
@@ -25,7 +35,7 @@ const Filters = props => {
         <Col md={6}>
           <SearchBox
             placeholder="Filter orders"
-            onSearch={value => console.log(value)}
+            onSearch={(value) => console.log(value)}
           />
         </Col>
         <Col md={3}>
@@ -55,8 +65,7 @@ const Filters = props => {
             overlay={
               <DropdownBox>
                 <CheckboxGroupStyle
-                  onChange={onChangeSubscription}
-                  value={valueSubscription}
+                  onChange={(e) => onChangeCheckbox("payment", e)}
                 >
                   <CheckboxStyle value={1}>Authorized</CheckboxStyle>
                   <CheckboxStyle value={2}>Paid</CheckboxStyle>
@@ -71,6 +80,10 @@ const Filters = props => {
               </DropdownBox>
             }
             trigger={["click"]}
+            visible={isVisible.name === "payment" ? isVisible.value : false}
+            onVisibleChange={(visible) =>
+              onVisibleChangeCheckbox("payment", visible)
+            }
           >
             <ButtonBox block type="default">
               Payment status <DownOutlined />
@@ -82,8 +95,7 @@ const Filters = props => {
             overlay={
               <DropdownBox>
                 <CheckboxGroupStyle
-                  onChange={onChangeSubscription}
-                  value={valueSubscription}
+                  onChange={(e) => onChangeCheckbox("fulfillment", e)}
                 >
                   <CheckboxStyle value={1}>Fulfilled</CheckboxStyle>
                   <CheckboxStyle value={2}>Unfulfilled</CheckboxStyle>
@@ -93,6 +105,10 @@ const Filters = props => {
               </DropdownBox>
             }
             trigger={["click"]}
+            visible={isVisible.name === "fulfillment" ? isVisible.value : false}
+            onVisibleChange={(visible) =>
+              onVisibleChangeCheckbox("fulfillment", visible)
+            }
           >
             <ButtonBox block type="default">
               Fulfillment status <DownOutlined />
@@ -257,19 +273,19 @@ const ActionStyle = styled.div`
 `;
 
 const PopupTitleView = styled.p`
-margin: 15px 0;
-`
+  margin: 15px 0;
+`;
 
 const ButtonDeleteView = styled(Button)`
-color: #666;
-`
+  color: #666;
+`;
 
 const InputStyle = styled(Input)`
-border-radius: 0;
-`
+  border-radius: 0;
+`;
 
 const ButtonSaveView = styled(Button)`
-border-radius: 0;
-`
+  border-radius: 0;
+`;
 
 export default Filters;
