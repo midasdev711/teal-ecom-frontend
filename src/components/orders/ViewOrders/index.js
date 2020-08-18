@@ -188,7 +188,7 @@ const ViewOrders = () => {
   const handleMenuClickCheckbox = e => {};
 
   const onCreateShippingLabels = () => {
-    Router.router.push("/orders/create-shipping");
+    Router.router.push("/orders/shipping-labels");
   };
 
   const rowSelection = {
