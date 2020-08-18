@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Link from "next/link";
 // icon
 import {
   SearchOutlined,
@@ -16,10 +17,14 @@ import {
   Col,
   Button,
   Popover,
+  Checkbox,
+  Alert,
+  Modal,
   Card,
+  Divider,
 } from "antd";
 import Tags from "../../Tags";
-
+import { Formik } from "formik";
 const { Search } = Input;
 
 const customer = [
@@ -129,7 +134,7 @@ const newForm = () => {
   };
 
   const handleOk = (e) => {
-    openCustumItem(false);
+    setopenCustumItem(false);
   };
 
   const handleCancel = (e) => {
@@ -306,6 +311,164 @@ const newForm = () => {
           </Col>
         </Row>
       </SubForm>
+
+      {/*  add customer item modal */}
+      <Modal
+        style={{ width: "136%" }}
+        visible={openCustumItem}
+        width="40%"
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Wraper className="customer-item-content">
+          <CardViews
+            bordered={false}
+            style={{ width: "100%" }}
+            title="Add custom item"
+          >
+            <Formik
+              initialValues={{
+                item_name: "",
+                price: "",
+                qty: "",
+                item_shipping: false,
+                item_taxable: false,
+              }}
+              validate={(values) => {
+                const errors = {};
+                if (!values.item_name) {
+                  errors.item_name = "Required";
+                }
+                if (!values.price) {
+                  errors.price = "!Required";
+                }
+                if (!values.qty) {
+                  errors.qty = "!Required";
+                }
+                return errors;
+              }}
+              onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                  alert(JSON.stringify(values, null, 2));
+                  setSubmitting(false);
+                }, 400);
+              }}
+            >
+              {({
+                values,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+                errors,
+                touched,
+                /* and other goodies */
+              }) => (
+                <form id="myForm" onSubmit={handleSubmit}>
+                  <Row gutter={24}>
+                    <Col className="gutter-row" span={12}>
+                      <div>
+                        <span>
+                          <label>Line item name </label>
+                        </span>
+                        <Input
+                          name="item_name"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.item_name}
+                          size="large"
+                        />
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={6}>
+                      <div>
+                        <span>
+                          <label>Price per item </label>
+                        </span>
+                        <Input
+                          name="price"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.price}
+                          prefix="$"
+                          size="large"
+                        />
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={6}>
+                      <div>
+                        <span>
+                          <label>Quantity </label>
+                        </span>
+                        <Input
+                          name="qty"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.qty}
+                          type="number"
+                          size="large"
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row gutter={16} style={{ marginTop: "1rem" }}>
+                    <Col className="gutter-row" span={16}>
+                      <Checkbox
+                        name="item_taxable"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        checked={values.item_taxable}
+                      >
+                        Item is taxable
+                      </Checkbox>
+                    </Col>
+                  </Row>
+                  <Row gutter={16} style={{ marginTop: "1rem" }}>
+                    <Col className="gutter-row" span={16}>
+                      <Checkbox
+                        name="item_shipping"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        checked={values.item_shipping}
+                      >
+                        Item requires shipping
+                      </Checkbox>
+                    </Col>
+                  </Row>
+                  {values.item_shipping ? (
+                    <StyledAlert
+                      message={
+                        <>
+                          <Link href="#">
+                            <a>Create a product</a>
+                          </Link>{" "}
+                          with weight specified to calculate shipping rates
+                          accurately
+                        </>
+                      }
+                      type="warning"
+                    />
+                  ) : null}
+                  <Divider />
+                  <ItemAction>
+                    <Button size="large">Cancel</Button>
+                    <Button
+                      form="myForm"
+                      key="submit"
+                      size="large"
+                      htmlType="submit"
+                      type="primary"
+                      disabled={isSubmitting}
+                    >
+                      Save line item
+                    </Button>
+                  </ItemAction>
+                </form>
+              )}
+            </Formik>
+          </CardViews>
+        </Wraper>
+      </Modal>
     </Form>
   );
 };
@@ -432,6 +595,7 @@ const ContentLabel = styled.span`
 const ContentTitle = styled.h4`
   color: rgb(0, 122, 206);
   font-size: 14px;
+  cursor: pointer;
   text-align: ${(props) => (props.align ? props.align : "right")};
   font-weight: 400;
   margin-bottom: 5px;
@@ -473,6 +637,33 @@ const SearchCustomerInput = styled(Input)`
 const Tagcontent = styled.div`
   display: flex;
   justify-content: space-between;
+`;
+
+const ItemAction = styled.div`
+  display: flex;
+  align-item: center;
+  justify-content: flex-end;
+  button {
+    margin-left: 10px;
+  }
+`;
+
+const Wraper = styled.div``;
+
+const StyledAlert = styled(Alert)`
+  padding: 20px 25px !important;
+  margin-top: 20px;
+`;
+
+const CardViews = styled(Card)`
+  color: black;
+  .ant-card-head-title {
+    display: block;
+    color: black;
+    font-size: 24px;
+  }
+  .ant-card-body {
+  }
 `;
 
 export default newForm;
