@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
 // components
-import Filters from "../Filters";
+import DraftFilters from "../DraftFilters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
 // icons
 import { CloseOutlined, DownOutlined } from "@ant-design/icons";
@@ -22,19 +22,67 @@ import {
   Dropdown,
   Menu,
   message,
-  Input
+  Input,
 } from "antd";
 // fake data
-import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
-const customerData = fakeData;
+const customerData = [
+  {
+    id: 1,
+    key: 1,
+    order_id: "D1",
+    created_date: "04:12 am",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 66.89,
+  },
+  {
+    id: 2,
+    key: 2,
+    order_id: "D2",
+    created_date: "Yesterday at 09:07 pm",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 79.79,
+  },
+  {
+    id: 3,
+    key: 3,
+    order_id: "D3",
+    created_date: "Yesterday at 09:07 pm",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 66.99,
+  },
+];
 
-const dataNew = customerData.filter(el => {
+const dataNew = customerData.filter((el) => {
   return el.isNew === true;
 });
 
@@ -54,24 +102,24 @@ const ViewOrders = () => {
 
   const columns = [
     {
-      title: "Order",
+      title: "Draft order",
       dataIndex: "order_id",
-      render: order_id => {
+      render: (order_id) => {
         return (
           <Link href="/order/123">
             <FullName href="">#{order_id}</FullName>
           </Link>
         );
-      }
+      },
     },
     {
       title: "Date",
-      dataIndex: "created_date"
+      dataIndex: "created_date",
     },
     {
       title: "Customer",
       dataIndex: "customer",
-      render: customer => (
+      render: (customer) => (
         <Dropdown
           trigger={["click"]}
           overlay={
@@ -91,101 +139,34 @@ const ViewOrders = () => {
               </div>
             </PopupDetailTB>
           }
-          placement="bottomCenter" 
+          placement="bottomCenter"
         >
           <ButtonCustomer type="text">
             {customer.first_name} {customer.last_name} <DownOutlined />
           </ButtonCustomer>
         </Dropdown>
       ),
-      align: "left"
+      align: "left",
     },
     {
-      title: "Total",
-      dataIndex: "total",
-      render: val => `$${val}`
-    },
-    {
-      title: "Payment",
-      dataIndex: "status_payment",
-      render: val => {
-        if (val === "paid") {
+      title: "Status",
+      dataIndex: "status",
+      render: (val) => {
+        if (val === "open") {
           return <TagDark>{val}</TagDark>;
         } else {
           return <TagOrang>{val}</TagOrang>;
         }
-      }
+      },
     },
     {
-      title: "Fulfillment",
-      dataIndex: "fulfillment",
-      render: val => {
-        if (val === "Unfulfilled") {
-          return <TagYellow>{val}</TagYellow>;
-        } else {
-          return <TagGreen>{val}</TagGreen>;
-        }
-      }
+      title: "Total",
+      dataIndex: "total",
+      render: (val) => `$${val}`,
     },
-    {
-      title: "Items",
-      dataIndex: "items",
-      render: items => {
-        let data = [];
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          data.push(
-            <Dropdown
-              key={i}
-              trigger={["click"]}
-              overlay={
-                <PopupDetailTB>
-                  <Tag>{item.status}</Tag>
-                  <div>
-                    <img src={item.image} alt="" />
-                    <Link href={`/products/123`}>
-                      <a href="">{item.name}</a>
-                    </Link>
-                    <p>{item.style}</p>
-                    <p>SKU {item.sku}</p>
-                  </div>
-                </PopupDetailTB>
-              }
-              placement="bottomRight"
-            >
-              <ButtonCustomer type="text">
-                {items && items.length > 1
-                  ? `${items.length} items`
-                  : `${items.length} item`}{" "}
-                <DownOutlined />
-              </ButtonCustomer>
-            </Dropdown>
-          );
-
-          return data;
-        }
-      }
-    },
-    {
-      title: "Delivery method	",
-      dataIndex: "delivery"
-    },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      width: "10%",
-      render: tags => {
-        let data = [];
-        for (let i = 0; i < tags.length; i++) {
-          const tag = tags[i];
-          data.push(<Tag key={i}>{tag}</Tag>);
-        }
-        return data;
-      }
-    }
   ];
 
-  const handleMenuClickCheckbox = e => {};
+  const handleMenuClickCheckbox = (e) => {};
 
   const onCreateShippingLabels = () => {
     Router.router.push("/orders/shipping-labels");
@@ -195,50 +176,50 @@ const ViewOrders = () => {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
     },
-    getCheckboxProps: record => ({
+    getCheckboxProps: (record) => ({
       disabled: record.name === "Disabled User",
-      name: record.name
-    })
+      name: record.name,
+    }),
   };
 
-  const callback = key => {
+  const callback = (key) => {
     setTabIndex(Number(key));
     if (key === "2") {
-      setTagsFilter(["Open orders", "Unfulfilled, Partially fulfilled"]);
+      setTagsFilter(["Status is Open, Status is Invoice sent"]);
     } else if (key === "3") {
-      setTagsFilter(["Open orders", "Payment unpaid"]);
+      setTagsFilter(["Status is Open"]);
     } else if (key === "4") {
-      setTagsFilter(["Open orders"]);
+      setTagsFilter(["Status is Invoice sent"]);
     } else if (key === "5") {
-      setTagsFilter(["Archived"]);
+      setTagsFilter(["Status is Completed"]);
     } else {
       setTagsFilter([]);
     }
   };
 
-  const onChangeSubscription = e => {
+  const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
 
-  const onShowMdAddTags = value => {
+  const onShowMdAddTags = (value) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = value => {};
+  const onSaveAddTags = (value) => {};
 
-  const onFinishAddTags = value => {};
+  const onFinishAddTags = (value) => {};
 
   // delete tags
-  const onShowMdDeleteTags = value => {
+  const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = value => {};
+  const onSaveDeleteTags = (value) => {};
 
-  const onFinishDeleteTags = value => {};
+  const onFinishDeleteTags = (value) => {};
 
   // delete customers selected
-  const onShowMdDeleteSelected = value => {
+  const onShowMdDeleteSelected = (value) => {
     console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
@@ -252,13 +233,13 @@ const ViewOrders = () => {
     <ViewContent>
       <Tabs defaultActiveKey={tabIndex} onChange={callback}>
         <TabPane tab="All" key="1" />
-        <TabPane tab="Unfulfilled" key="2" />
-        <TabPane tab="Unpaid" key="3" />
-        <TabPane tab="Open" key="4" />
-        <TabPane tab="Closed" key="5" />
+        <TabPane tab="Open and invoice sent" key="2" />
+        <TabPane tab="Open" key="3" />
+        <TabPane tab="Invoice sent" key="4" />
+        <TabPane tab="Completed" key="5" />
       </Tabs>
 
-      <Filters onOpen={setOpenMoreFilters} />
+      <DraftFilters onOpen={setOpenMoreFilters} />
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>
@@ -313,7 +294,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={customerData}
@@ -324,7 +305,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
@@ -335,7 +316,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -346,7 +327,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -357,7 +338,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -436,21 +417,21 @@ const ViewOrders = () => {
       >
         <CollapseStyle
           defaultActiveKey={valuesCollapse}
-          onChange={values => setShowCollapse(values)}
+          onChange={(values) => setShowCollapse(values)}
           expandIconPosition="right"
         >
           <PanelStyle
             header={
               <div>
-                <PanelTitle>Delivery method</PanelTitle>
+                <PanelTitle>Status</PanelTitle>
               </div>
             }
             key="1"
           >
             <CheckboxGroupStyle>
-              <CheckboxStyle value={1}>Local delivery</CheckboxStyle>
-              <CheckboxStyle value={2}>Local pickup</CheckboxStyle>
-              <CheckboxStyle value={3}>Ship to customer</CheckboxStyle>
+              <CheckboxStyle value={1}>Open</CheckboxStyle>
+              <CheckboxStyle value={2}>Invoice sent</CheckboxStyle>
+              <CheckboxStyle value={3}>Completed</CheckboxStyle>
             </CheckboxGroupStyle>
 
             <ButtonLink type="text">Clear</ButtonLink>
@@ -458,18 +439,19 @@ const ViewOrders = () => {
           <PanelStyle
             header={
               <div>
-                <PanelTitle>Status</PanelTitle>
+                <PanelTitle>Update at</PanelTitle>
               </div>
             }
             key="2"
           >
-            <RadioGroupStyle
-              onChange={onChangeSubscription}
-              value={valueSubscription}
-            >
-              <RadioStyle value={1}>Open</RadioStyle>
-              <RadioStyle value={2}>Archived</RadioStyle>
-              <RadioStyle value={3}>Canceled</RadioStyle>
+            <RadioGroupStyle>
+              <RadioStyle value={1}>Today</RadioStyle>
+              <RadioStyle value={2}>In the last week</RadioStyle>
+              <RadioStyle value={3}>In the last month</RadioStyle>
+              <RadioStyle value={4}>In the last 3 months</RadioStyle>
+              <RadioStyle value={5}>In the last year</RadioStyle>
+              <RadioStyle value={6}>On or before</RadioStyle>
+              <RadioStyle value={7}>On or after</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
@@ -477,40 +459,35 @@ const ViewOrders = () => {
           <PanelStyle
             header={
               <div>
-                <PanelTitle>Payment status</PanelTitle>
+                <PanelTitle>Create at</PanelTitle>
               </div>
             }
             key="3"
           >
-            <CheckboxGroupStyle>
-              <CheckboxStyle value={1}>Authorized</CheckboxStyle>
-              <CheckboxStyle value={2}>Paid</CheckboxStyle>
-              <CheckboxStyle value={3}>Partially refunded</CheckboxStyle>
-              <CheckboxStyle value={4}>Partially paid</CheckboxStyle>
-              <CheckboxStyle value={5}>Pending</CheckboxStyle>
-              <CheckboxStyle value={6}>Refunded</CheckboxStyle>
-              <CheckboxStyle value={7}>Unpaid</CheckboxStyle>
-              <CheckboxStyle value={8}>Paid</CheckboxStyle>
-            </CheckboxGroupStyle>
-            <ButtonLink type="text">Voided</ButtonLink>
+            <RadioGroupStyle>
+              <RadioStyle value={1}>Today</RadioStyle>
+              <RadioStyle value={2}>In the last week</RadioStyle>
+              <RadioStyle value={3}>In the last month</RadioStyle>
+              <RadioStyle value={4}>In the last 3 months</RadioStyle>
+              <RadioStyle value={5}>In the last year</RadioStyle>
+              <RadioStyle value={6}>On or before</RadioStyle>
+              <RadioStyle value={7}>On or after</RadioStyle>
+            </RadioGroupStyle>
+            <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
-
           <PanelStyle
             header={
               <div>
-                <PanelTitle>Fulfillment status</PanelTitle>
+                <PanelTitle>Customer</PanelTitle>
               </div>
             }
             key="4"
           >
-            <CheckboxGroupStyle>
-              <CheckboxStyle value={1}>Fulfilled</CheckboxStyle>
-              <CheckboxStyle value={2}>Unfulfilled</CheckboxStyle>
-              <CheckboxStyle value={3}>Partially fulfilled</CheckboxStyle>
-            </CheckboxGroupStyle>
-            <ButtonLink type="text">Voided</ButtonLink>
+            <SelectStyle mode="tags" onChange={setTags}>
+              {tags}
+            </SelectStyle>
+            <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
-
           <PanelStyle
             header={
               <div>
@@ -522,87 +499,6 @@ const ViewOrders = () => {
             <SelectStyle mode="tags" onChange={setTags}>
               {tags}
             </SelectStyle>
-            <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
-
-          <PanelStyle
-            header={
-              <div>
-                <PanelTitle>Sales channel</PanelTitle>
-              </div>
-            }
-            key="6"
-          >
-            <CheckboxGroupStyle>
-              <CheckboxStyle value={1}>Online Store</CheckboxStyle>
-            </CheckboxGroupStyle>
-            <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
-
-          <PanelStyle
-            header={
-              <div>
-                <PanelTitle>Chargeback and inquiry status</PanelTitle>
-              </div>
-            }
-            key="7"
-          >
-            <RadioGroupStyle>
-              <RadioStyle value={1}>Open</RadioStyle>
-              <RadioStyle value={2}>Submitted</RadioStyle>
-              <RadioStyle value={3}>Won</RadioStyle>
-              <RadioStyle value={4}>Lost</RadioStyle>
-              <RadioStyle value={5}>Any</RadioStyle>
-            </RadioGroupStyle>
-            <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
-
-          <PanelStyle
-            header={
-              <div>
-                <PanelTitle>Risk level</PanelTitle>
-              </div>
-            }
-            key="8"
-          >
-            <CheckboxGroupStyle>
-              <CheckboxStyle value={1}>High</CheckboxStyle>
-              <CheckboxStyle value={2}>Medium</CheckboxStyle>
-              <CheckboxStyle value={3}>Low</CheckboxStyle>
-            </CheckboxGroupStyle>
-            <ButtonLink type="text">Voided</ButtonLink>
-          </PanelStyle>
-
-          <PanelStyle
-            header={
-              <div>
-                <PanelTitle>Date</PanelTitle>
-              </div>
-            }
-            key="9"
-          >
-            <RadioGroupStyle
-              onChange={onChangeSubscription}
-              value={valueSubscription}
-            >
-              <RadioStyle value={1}>Last 7 days</RadioStyle>
-              <RadioStyle value={2}>Last 30 days</RadioStyle>
-              <RadioStyle value={3}>Last 90 days</RadioStyle>
-              <RadioStyle value={4}>Last 12 months</RadioStyle>
-              <RadioStyle value={5}>Custom</RadioStyle>
-            </RadioGroupStyle>
-            <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
-
-          <PanelStyle
-            header={
-              <div>
-                <PanelTitle>Credit card (Last four digits)</PanelTitle>
-              </div>
-            }
-            key="10"
-          >
-            <InputStyle placeholder="xxxx" />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
         </CollapseStyle>
@@ -695,13 +591,6 @@ const CheckboxStyle = styled(Checkbox)`
   width: 100%;
   margin: 0 0 7px !important;
 `;
-const InputNumberStyle = styled(InputNumber)`
-  padding: 3px;
-  height: auto;
-  width: calc(100% - 24px);
-  margin-bottom: 10px;
-  margin-left: 24px;
-`;
 
 const TagsList = styled.div`
   padding: 0 15px 15px;
@@ -732,13 +621,6 @@ const FullName = styled.a`
   font-weight: bold;
 `;
 
-const ButtonBox = styled(Button)`
-  padding: 6px 12px;
-  height: auto;
-  border-radius: 0;
-  border-left: 0;
-`;
-
 const TextPhone = styled.p``;
 
 const TagDark = styled(Tag)`
@@ -746,22 +628,6 @@ const TagDark = styled(Tag)`
   padding: 1px 10px;
   border: none;
   background: rgb(223, 227, 232);
-  color: #000;
-`;
-
-const TagGreen = styled(Tag)`
-  border-radius: 15px;
-  padding: 1px 10px;
-  border: none;
-  background: rgb(65, 191, 105);
-  color: #000;
-`;
-
-const TagYellow = styled(Tag)`
-  border-radius: 15px;
-  padding: 1px 10px;
-  border: none;
-  background: rgb(255, 234, 138);
   color: #000;
 `;
 

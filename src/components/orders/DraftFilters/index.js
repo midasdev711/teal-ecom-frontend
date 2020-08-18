@@ -14,25 +14,16 @@ const { Search } = Input;
 
 const Filters = (props) => {
   const [valueSubscription, setValueSubscription] = useState(0);
-  const [isVisible, setIsVisible] = useState({ name: "", value: false });
   // const [valueCheckbox, setValueCheckbox] = useState([]);
 
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
 
-  const onChangeCheckbox = (fieldName, e) => {
-    setIsVisible({ name: fieldName, value: true });
-  };
-
-  const onVisibleChangeCheckbox = (fieldName, visible) => {
-    setIsVisible({ name: fieldName, value: visible });
-  };
-
   return (
     <ContentFilters>
       <Row gutter={0}>
-        <Col md={6}>
+        <Col md={14}>
           <SearchBox
             placeholder="Filter orders"
             onSearch={(value) => console.log(value)}
@@ -57,61 +48,6 @@ const Filters = (props) => {
           >
             <ButtonBox block type="default">
               Status <DownOutlined />
-            </ButtonBox>
-          </Dropdown>
-        </Col>
-        <Col md={4}>
-          <Dropdown
-            overlay={
-              <DropdownBox>
-                <CheckboxGroupStyle
-                  onChange={(e) => onChangeCheckbox("payment", e)}
-                >
-                  <CheckboxStyle value={1}>Authorized</CheckboxStyle>
-                  <CheckboxStyle value={2}>Paid</CheckboxStyle>
-                  <CheckboxStyle value={3}>Partially refunded</CheckboxStyle>
-                  <CheckboxStyle value={4}>Partially paid</CheckboxStyle>
-                  <CheckboxStyle value={5}>Pending</CheckboxStyle>
-                  <CheckboxStyle value={6}>Refunded</CheckboxStyle>
-                  <CheckboxStyle value={7}>Unpaid</CheckboxStyle>
-                  <CheckboxStyle value={8}>Voided</CheckboxStyle>
-                </CheckboxGroupStyle>
-                <ButtonLink type="text">Clear</ButtonLink>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-            visible={isVisible.name === "payment" ? isVisible.value : false}
-            onVisibleChange={(visible) =>
-              onVisibleChangeCheckbox("payment", visible)
-            }
-          >
-            <ButtonBox block type="default">
-              Payment status <DownOutlined />
-            </ButtonBox>
-          </Dropdown>
-        </Col>
-        <Col md={4}>
-          <Dropdown
-            overlay={
-              <DropdownBox>
-                <CheckboxGroupStyle
-                  onChange={(e) => onChangeCheckbox("fulfillment", e)}
-                >
-                  <CheckboxStyle value={1}>Fulfilled</CheckboxStyle>
-                  <CheckboxStyle value={2}>Unfulfilled</CheckboxStyle>
-                  <CheckboxStyle value={3}>Partially fulfilled</CheckboxStyle>
-                </CheckboxGroupStyle>
-                <ButtonLink type="text">Clear</ButtonLink>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-            visible={isVisible.name === "fulfillment" ? isVisible.value : false}
-            onVisibleChange={(visible) =>
-              onVisibleChangeCheckbox("fulfillment", visible)
-            }
-          >
-            <ButtonBox block type="default">
-              Fulfillment status <DownOutlined />
             </ButtonBox>
           </Dropdown>
         </Col>
@@ -233,18 +169,6 @@ const RadioStyle = styled(Radio)`
   height: 30px;
   line-height: 30px;
   width: 100%;
-`;
-
-const CheckboxGroupStyle = styled(Checkbox.Group)`
-  width: 100%;
-`;
-
-const CheckboxStyle = styled(Checkbox)`
-  display: block;
-  height: 30px;
-  line-height: 30px;
-  width: 100%;
-  margin-left: 0 !important;
 `;
 
 const SearchBox = styled(Search)`
