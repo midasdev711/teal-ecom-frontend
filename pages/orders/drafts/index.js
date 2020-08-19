@@ -36,7 +36,7 @@ const Drafts = () => {
         <PageHeader
           PageName="Your Drafts"
           CreateButtonName="Create order"
-          path="orders/drafts/new"
+          path="drafts/new"
           isData={true}
         />
         <ViewDrafts />

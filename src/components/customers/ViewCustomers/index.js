@@ -897,8 +897,9 @@ const PanelStyle = styled(Panel)`
 
 const PanelTitle = styled.h3`
   margin: 0px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000;
+  font-size: 16px;
   opacity: 0.8;
 `;
 

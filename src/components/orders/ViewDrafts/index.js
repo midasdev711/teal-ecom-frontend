@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
+import moment from "moment";
 // components
 import DraftFilters from "../DraftFilters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -18,11 +19,11 @@ import {
   Collapse,
   Radio,
   Checkbox,
-  InputNumber,
   Dropdown,
   Menu,
   message,
   Input,
+  DatePicker,
 } from "antd";
 // fake data
 import MDMessages from "../../atoms/MDMessages";
@@ -30,7 +31,7 @@ import MDFulfill from "../../atoms/MDFulfill";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
-
+const dateFormat = "YYYY-MM-DD";
 const customerData = [
   {
     id: 1,
@@ -163,6 +164,7 @@ const ViewOrders = () => {
       title: "Total",
       dataIndex: "total",
       render: (val) => `$${val}`,
+      align: "right",
     },
   ];
 
@@ -453,6 +455,7 @@ const ViewOrders = () => {
               <RadioStyle value={6}>On or before</RadioStyle>
               <RadioStyle value={7}>On or after</RadioStyle>
             </RadioGroupStyle>
+            <DatePicker placeholder={dateFormat} disabled />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
 
@@ -473,6 +476,7 @@ const ViewOrders = () => {
               <RadioStyle value={6}>On or before</RadioStyle>
               <RadioStyle value={7}>On or after</RadioStyle>
             </RadioGroupStyle>
+            <DatePicker placeholder={dateFormat} disabled />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
           <PanelStyle
@@ -552,12 +556,17 @@ const CollapseStyle = styled(Collapse)`
 const PanelStyle = styled(Panel)`
   background: none;
   border: none;
+  .ant-picker {
+    margin-top: 10px;
+    width: 100%;
+  }
 `;
 
 const PanelTitle = styled.h3`
   margin: 0px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000;
+  font-size: 16px;
   opacity: 0.8;
 `;
 
@@ -599,7 +608,7 @@ const TagsList = styled.div`
 const LabelSelected = styled.span`
   margin-right: 15px;
   color: #0095f8;
-  font-weight: bold;
+  font-weight: 600;
 `;
 
 const ButtonEditCustomer = styled(Button)`
@@ -617,8 +626,7 @@ const ButtonMoreActions = styled(Button)`
 `;
 
 const FullName = styled.a`
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
 `;
 
 const TextPhone = styled.p``;
