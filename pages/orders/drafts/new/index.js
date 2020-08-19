@@ -103,14 +103,11 @@ const NewOrderAction = styled.div`
   .cancel {
     margin-right: 15px;
     & span {
-      font-size: 1rem;
+      font-size: 14px;
       margin-top: -5px;
       color: #000;
       font-weight: 100;
     }
-  }
-  & button {
-    font-weight: 600;
   }
 `;
 export default NewCustomer;

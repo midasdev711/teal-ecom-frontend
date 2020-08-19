@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
-import countryList from "react-select-country-list";
+import { CountryDropdown } from "react-country-region-selector";
 import styled from "styled-components";
 // icon
 import { FormOutlined } from "@ant-design/icons";
@@ -15,6 +15,7 @@ const NewForm = () => {
   const [exemptions, setExemptions] = useState([]);
   const [phone, setPhone] = useState("");
   const [address_phone, setAddressPhone] = useState("");
+  const [country, setCountry] = useState("United States");
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -24,14 +25,11 @@ const NewForm = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const countriesData = countryList().getData();
-
   const handleChangeExemptions = (values) => {
     setExemptions(values);
   };
 
-  const handleChangeValue = (val) => {
-  };
+  const handleChangeValue = (val) => {};
 
   const handleChangeTags = (value) => {
     console.log(`selected ${value}`);
@@ -179,19 +177,13 @@ const NewForm = () => {
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_country">
-                    <Select
-                      placeholder="Country/Region"
+                    <CountryDropdown
+                      defaultOptionLabel="Country/Region"
+                      value={country}
+                      onChange={(val) => setCountry(val)}
+                      blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
                       className="country-region"
-                      name="address_country"
-                    >
-                      {countriesData &&
-                        countriesData.length > 0 &&
-                        countriesData.map((item, i) => (
-                          <Option key={i} value={item.value}>
-                            {item.label}
-                          </Option>
-                        ))}
-                    </Select>
+                    />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
@@ -297,12 +289,11 @@ const SubForm = styled.div`
     width: 100% !important;
     padding: 18px 50px;
   }
-  .country-region .ant-select-selector {
-    min-height: 40px !important;
-    .ant-select-selection-placeholder,
-    .ant-select-selection-item {
-      line-height: 3;
-    }
+  .country-region {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
   }
 `;
 

@@ -30,6 +30,9 @@ import {
 import Tags from "../../Tags";
 import { Formik } from "formik";
 import MDSelectProducts from "../MDSelectProducts";
+import {
+  AddDiscount,
+} from "../Modal";
 const { Search } = Input;
 
 const customer = [
@@ -117,6 +120,10 @@ const newForm = () => {
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
   const [listOrders, setListOrders] = useState([]);
   const [subTotal, setSubTotal] = useState(0.0);
+  const [tags, setTags] = useState([]);
+  const [openEmailPopup, setOpenEmailPopup] = useState(false);
+  const [openShippingPopup, setOpenShippingPopup] = useState(false);
+  const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -152,6 +159,30 @@ const newForm = () => {
   const handleColsecontact = (e) => {
     setSelectedCustomer(null);
   };
+
+  const handleEmailEditModal = () => {
+    setOpenEmailPopup(!openEmailPopup);
+  }
+
+  const handleCloseEmailPopup = () => {
+    setOpenEmailPopup(false);
+  }
+
+  const handleShippingEditModal = () => {
+    setOpenShippingPopup(!openShippingPopup);
+  }
+
+  const handleCloseShippingPopup = () => {
+    setOpenShippingPopup(false);
+  }
+
+  const handleOpenViewTagsPopup = () => {
+    setOpenViewTagsPopup(!openViewTagsPopup);
+  }
+
+  const handleCloseViewTagsPopup = () => {
+    setOpenViewTagsPopup(false);
+  }
 
   const onChangeTotal = (e, index) => {
     let data = [];
@@ -303,7 +334,15 @@ const newForm = () => {
                       </Form.Item>
                     </Col>
                     <Col className="title" md={6}>
-                      <ContentTitle>Add discount</ContentTitle>
+                      <Popover
+                        content={AddDiscount}
+                        placement="bottomLeft"
+                        trigger="click"
+                        // visible={true}
+                        // onVisibleChange={handleVisibleChange}
+                      >
+                        <ContentTitle>Add discount</ContentTitle>
+                      </Popover>
                       <ContentTitle>SubTotal</ContentTitle>
                       <ContentTitle>Add shipment</ContentTitle>
                       <ContentTitle>Taxes</ContentTitle>
