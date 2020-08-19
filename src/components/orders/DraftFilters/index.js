@@ -8,7 +8,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 // ui
-import { Row, Col, Input, Button, Dropdown, Radio, Checkbox, Tag } from "antd";
+import { Row, Col, Input, Button, Dropdown, Radio, Tag } from "antd";
 
 const { Search } = Input;
 
@@ -25,7 +25,7 @@ const Filters = (props) => {
       <Row gutter={0}>
         <Col md={14}>
           <SearchBox
-            placeholder="Filter orders"
+            placeholder="Filter draft orders"
             onSearch={(value) => console.log(value)}
           />
         </Col>

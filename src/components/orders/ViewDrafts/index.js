@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Router from "next/router";
 import Link from "next/link";
-import moment from "moment";
 // components
 import DraftFilters from "../DraftFilters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -22,12 +20,10 @@ import {
   Dropdown,
   Menu,
   message,
-  Input,
   DatePicker,
 } from "antd";
 // fake data
 import MDMessages from "../../atoms/MDMessages";
-import MDFulfill from "../../atoms/MDFulfill";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -91,15 +87,12 @@ const ViewOrders = () => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
-  const [valueSubscription, setValueSubscription] = useState(0);
   const [tags, setTags] = useState([]);
   const [tagsFilter, setTagsFilter] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
-  const [isShowCapture, setShowCapture] = useState(false);
-  const [isShowFulfill, setShowFulfil] = useState(false);
 
   const columns = [
     {
@@ -170,10 +163,6 @@ const ViewOrders = () => {
 
   const handleMenuClickCheckbox = (e) => {};
 
-  const onCreateShippingLabels = () => {
-    Router.router.push("/orders/shipping-labels");
-  };
-
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
@@ -197,10 +186,6 @@ const ViewOrders = () => {
     } else {
       setTagsFilter([]);
     }
-  };
-
-  const onChangeSubscription = (e) => {
-    setValueSubscription(e.target.value);
   };
 
   const onShowMdAddTags = (value) => {
@@ -256,15 +241,6 @@ const ViewOrders = () => {
       {checkedList.length > 0 && (
         <ActionsTable>
           <LabelSelected>{checkedList.length} selected</LabelSelected>
-          <ButtonEditCustomer onClick={() => onCreateShippingLabels()}>
-            Create shipping labels
-          </ButtonEditCustomer>
-          <ButtonCenterCustomer onClick={() => setShowFulfil(true)}>
-            Fulfill orders
-          </ButtonCenterCustomer>
-          <ButtonCenterCustomer onClick={() => setShowCapture(true)}>
-            Capture payments
-          </ButtonCenterCustomer>
           <Dropdown
             overlay={
               <Menu onClick={handleMenuClickCheckbox}>
@@ -272,7 +248,7 @@ const ViewOrders = () => {
                   key="1"
                   onClick={() => setShowMDDeleteSelected(true)}
                 >
-                  Delete selected customers
+                  Delete draft orders
                 </Menu.Item>
                 <Menu.Item key="2" onClick={() => onShowMdAddTags(true)}>
                   Add tags
@@ -285,7 +261,7 @@ const ViewOrders = () => {
             trigger={["click"]}
           >
             <ButtonMoreActions>
-              More actions <DownOutlined />
+              Actions <DownOutlined />
             </ButtonMoreActions>
           </Dropdown>
         </ActionsTable>
@@ -348,28 +324,6 @@ const ViewOrders = () => {
           />
         )}
       </ContentTab>
-
-      <MDFulfill
-        isOpen={isShowFulfill}
-        title={`Fulfill ${checkedList.length} order${
-          checkedList.length > 1 ? "s" : ""
-        }`}
-        content="This will mark these orders as fulfilled."
-        cancelText="Cancel"
-        okText="Fulfil"
-        onOk={() => setShowFulfil(false)}
-        onCancel={() => setShowFulfil(false)}
-      />
-
-      <MDMessages
-        isOpen={isShowCapture}
-        title="Capture all order payments"
-        content="This will capture payments for all selected orders."
-        cancelText="Cancel"
-        okText="Capture order payments"
-        onOk={() => setShowCapture(false)}
-        onCancel={() => setShowCapture(false)}
-      />
 
       <MDAddTags
         name="customers"
@@ -611,15 +565,6 @@ const LabelSelected = styled.span`
   font-weight: 600;
 `;
 
-const ButtonEditCustomer = styled(Button)`
-  border-radius: 4px 0 0 4px;
-  border-right: 0;
-`;
-
-const ButtonCenterCustomer = styled(Button)`
-  border-radius: 0;
-  border-right: 0;
-`;
 
 const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
@@ -658,10 +603,6 @@ const PopupDetailTB = styled.div`
   -webkit-box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
   -moz-box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
   box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
-`;
-
-const InputStyle = styled(Input)`
-  width: 100%;
 `;
 
 const ActionsTable = styled.div`
