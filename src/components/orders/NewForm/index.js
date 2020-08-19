@@ -22,6 +22,10 @@ import {
   Modal,
   Card,
   Divider,
+  InputNumber,
+  List,
+  Tooltip,
+  Dropdown,
 } from "antd";
 import Tags from "../../Tags";
 import { Formik } from "formik";
@@ -111,6 +115,8 @@ const newForm = () => {
   const [searchCustomner, setSearchcustomer] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
+  const [listOrders, setListOrders] = useState([]);
+  const [subTotal, setSubTotal] = useState(0.0);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -146,6 +152,62 @@ const newForm = () => {
   const handleColsecontact = (e) => {
     setSelectedCustomer(null);
   };
+
+  const onChangeTotal = (e, index) => {
+    let data = [];
+    let subTotal = 0;
+    for (let i = 0; i < listOrders.length; i++) {
+      const item = listOrders[i];
+
+      if (i === index) {
+        item.total = e;
+        data.push(item);
+      } else {
+        data.push(item);
+      }
+
+      let _price = item.price * item.total;
+      subTotal += _price;
+    }
+
+    setListOrders(data);
+    setSubTotal(subTotal);
+  };
+
+  const onAddProductsSearch = (num) => {
+    let data = [];
+    let subTotal = 0;
+    for (let i = 0; i < num; i++) {
+      data.push({
+        id: i + 1,
+        image:
+          "https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_1_300x300_cc63d031-a9b3-4a95-8fb4-e12f8cf7e49d_small.jpg?v=1596714418",
+        name: "Indestructible Shoes " + i,
+        style: "Black / US 9 - 9.5 | EU 43 • 112",
+        sku: 101,
+        price: 59.99,
+        total: 1,
+      });
+      subTotal += 59.99;
+    }
+    setListOrders(data);
+    setShowSelectProduct(false);
+    setSubTotal(subTotal);
+  };
+
+  const onRemoveOrderItem = async (index) => {
+    let subTotal = 0;
+    let data = await listOrders.filter((item, i) => {
+      if (index !== i) {
+        let _price = item.price * item.total;
+        subTotal += _price;
+        return item;
+      }
+    });
+    await setListOrders(data);
+    await setSubTotal(subTotal);
+  };
+
   return (
     <Form
       name="basic"
@@ -171,13 +233,68 @@ const newForm = () => {
                     placeholder="Search products"
                     enterButton="Browse products"
                     enterButton={
-                      <Button onClick={() => setShowSelectProduct(true)}>Browse products</Button>
+                      <Button onClick={() => setShowSelectProduct(true)}>
+                        Browse products
+                      </Button>
                     }
                     size="large"
-                    onChange={e => setShowSelectProduct(true)}
+                    onChange={(e) => setShowSelectProduct(true)}
                     onClick={() => setShowSelectProduct(true)}
                     prefix={<SearchOutlined />}
                   />
+
+                  {listOrders && listOrders.length > 0 && (
+                    <List
+                      dataSource={listOrders}
+                      renderItem={(item, i) => (
+                        <List.Item>
+                          <ProductDetail>
+                            <ProductView>
+                              <ImageView src={item.image} alt="" />
+                              <div>
+                                <Link href="/products/123">
+                                  <a href="#">{item.name}</a>
+                                </Link>
+                                <TextStyle>{item.style}</TextStyle>
+                                <TextStyle>SKU: {item.sku}</TextStyle>
+                              </div>
+                            </ProductView>
+                            <InputTotal>
+                              <LabelPriceStyle title="Add item discount">
+                                <Dropdown
+                                  trigger={["click"]}
+                                  overlay={
+                                    <Card>
+                                      <div>
+                                        <LabelStyle>
+                                          Discount this item by
+                                        </LabelStyle>
+                                      </div>
+                                    </Card>
+                                  }
+                                >
+                                  <a href="#">${item.price}</a>
+                                </Dropdown>
+                              </LabelPriceStyle>
+                              <InputNumberStyle
+                                onChange={(e) => onChangeTotal(e, i)}
+                                value={item.total}
+                                min={0}
+                                max={10}
+                              />
+                              <LabelStyle>
+                                ${item.total * item.price}
+                              </LabelStyle>
+                            </InputTotal>
+
+                            <ButtonRemove onClick={() => onRemoveOrderItem(i)}>
+                              <CloseOutlined />
+                            </ButtonRemove>
+                          </ProductDetail>
+                        </List.Item>
+                      )}
+                    />
+                  )}
 
                   <Row className="price-content" gutter={24}>
                     <Col md={12}>
@@ -194,10 +311,10 @@ const newForm = () => {
                     </Col>
                     <Col className="price" md={6}>
                       <p>-</p>
-                      <p>$0.00</p>
+                      <p>${subTotal}</p>
                       <p>-</p>
                       <p>$0.00</p>
-                      <Total>$0.00</Total>
+                      <Total>${subTotal}</Total>
                     </Col>
                   </Row>
                 </ContentBox>
@@ -322,8 +439,8 @@ const newForm = () => {
       <MDSelectProducts
         isOpen={isOpenSelectProduct}
         onCancel={() => setShowSelectProduct(false)}
-        onAdd={() => setShowSelectProduct(false)}
-      />        
+        onAdd={onAddProductsSearch}
+      />
 
       {/*  add customer item modal */}
       <Modal
@@ -485,6 +602,49 @@ const newForm = () => {
     </Form>
   );
 };
+
+const ButtonRemove = styled.a`
+  color: #ccc;
+  margin-left: 30px;
+`;
+
+const InputNumberStyle = styled(InputNumber)`
+  margin: 0 10px;
+`;
+
+const TextStyle = styled.p`
+  margin: 0;
+  font-size: 14px;
+`;
+
+const ProductDetail = styled.div`
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+`;
+
+const ProductView = styled.div`
+  display: inline-flex;
+  align-items: center;
+  width: calc(100% - 135px);
+`;
+
+const ImageView = styled.img`
+  width: 60px;
+  margin-right: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+`;
+
+const InputTotal = styled.div`
+  height: 100%;
+  align-items: center;
+  display: inline-flex;
+`;
+
+const LabelPriceStyle = styled(Tooltip)``;
+const LabelStyle = styled.span``;
 
 const SubForm = styled.div`
   padding: 15px 0;

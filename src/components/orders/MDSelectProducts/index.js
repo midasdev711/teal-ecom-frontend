@@ -133,8 +133,10 @@ const MDSelectProducts = (props) => {
               </AlignLeft>
             </Col>
             <Col md={12}>
-              <Button>Cancel</Button>
-              <Button type="primary">Add order</Button>
+              <Button onClick={onCancel}>Cancel</Button>
+              <Button type="primary" onClick={() => onAdd(checkedList.length)}>
+                Add order
+              </Button>
             </Col>
           </Row>
         </FooterStyle>

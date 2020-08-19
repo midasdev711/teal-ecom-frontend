@@ -29,8 +29,9 @@ import { draftsData } from "../fakeData";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const dateFormat = "YYYY-MM-DD";
+const customerData = draftsData;
 
-const dataNew = draftsData.filter((el) => {
+const dataNew = customerData.filter((el) => {
   return el.isNew === true;
 });
 
