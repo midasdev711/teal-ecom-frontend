@@ -13,7 +13,7 @@ const MDExport = (props) => {
     <ModalStyle
       visible={isOpen}
       title={`Export ${name}`}
-      okText={`Export ${name}`}
+      okText={`Export ${name}`} 
       cancelText="Cancel"
       onCancel={() => onCancel(false)}
       onOk={() => onExport(false)}

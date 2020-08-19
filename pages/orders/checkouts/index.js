@@ -62,7 +62,7 @@ const Checkouts = () => {
 
         <MDExport
           isOpen={isOpenExport}
-          name="customers"
+          name="abandoned checkouts"
           onCancel={setOpenExport}
           onExport={setOpenExport}
         />

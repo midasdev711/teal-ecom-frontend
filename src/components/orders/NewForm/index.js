@@ -25,6 +25,7 @@ import {
 } from "antd";
 import Tags from "../../Tags";
 import { Formik } from "formik";
+import MDSelectProducts from "../MDSelectProducts";
 const { Search } = Input;
 
 const customer = [
@@ -109,6 +110,7 @@ const newForm = () => {
   const [openCustumItem, setopenCustumItem] = useState(false);
   const [searchCustomner, setSearchcustomer] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -168,7 +170,12 @@ const newForm = () => {
                   <StyledSearch
                     placeholder="Search products"
                     enterButton="Browse products"
+                    enterButton={
+                      <Button onClick={() => setShowSelectProduct(true)}>Browse products</Button>
+                    }
                     size="large"
+                    onChange={e => setShowSelectProduct(true)}
+                    onClick={() => setShowSelectProduct(true)}
                     prefix={<SearchOutlined />}
                   />
 
@@ -311,6 +318,12 @@ const newForm = () => {
           </Col>
         </Row>
       </SubForm>
+
+      <MDSelectProducts
+        isOpen={isOpenSelectProduct}
+        onCancel={() => setShowSelectProduct(false)}
+        onAdd={() => setShowSelectProduct(false)}
+      />        
 
       {/*  add customer item modal */}
       <Modal

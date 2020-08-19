@@ -1,4 +1,4 @@
-export const fakeData = [
+const fakeData = [
   {
     id: 1,
     key: 1,
@@ -59,6 +59,141 @@ export const fakeData = [
   }
 ];
 
+const productsTree = [
+  {
+    id: 1,
+    image:
+      "https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_1_300x300_cc63d031-a9b3-4a95-8fb4-e12f8cf7e49d_small.jpg?v=1596714418",
+    name: "Indestructible Shoes",
+    isChecked: false,
+    list: [
+      {
+        id: 1,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 2,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 3,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 4,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 5,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 6,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 7,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      },
+      {
+        id: 8,
+        color: "Black",
+        size: "US 4.5 - 5 | EU 36",
+        stock: 109,
+        price: 59.99,
+        isChecked: false
+      }
+    ]
+  }
+];
+
+const draftsData = [
+  {
+    id: 1,
+    key: 1,
+    order_id: "D1",
+    created_date: "04:12 am",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 66.89,
+  },
+  {
+    id: 2,
+    key: 2,
+    order_id: "D2",
+    created_date: "Yesterday at 09:07 pm",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 79.79,
+  },
+  {
+    id: 3,
+    key: 3,
+    order_id: "D3",
+    created_date: "Yesterday at 09:07 pm",
+    customer: {
+      first_name: "Jordan",
+      last_name: "Handeson",
+      address: "Centralia, WA, United States",
+      order: 1,
+      phone: "+13603887146",
+      id: 1,
+    },
+    status: "open",
+    total: 66.99,
+  },
+];
+
+export {
+  fakeData,
+  draftsData,
+  productsTree
+};
+
 export default {
-  fakeData
+  fakeData,
+  draftsData,
+  productsTree
 };

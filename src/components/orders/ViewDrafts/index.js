@@ -23,63 +23,14 @@ import {
   DatePicker,
 } from "antd";
 // fake data
-import MDMessages from "../../atoms/MDMessages";
+import { draftsData } from "../fakeData";
+
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const dateFormat = "YYYY-MM-DD";
-const customerData = [
-  {
-    id: 1,
-    key: 1,
-    order_id: "D1",
-    created_date: "04:12 am",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 66.89,
-  },
-  {
-    id: 2,
-    key: 2,
-    order_id: "D2",
-    created_date: "Yesterday at 09:07 pm",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 79.79,
-  },
-  {
-    id: 3,
-    key: 3,
-    order_id: "D3",
-    created_date: "Yesterday at 09:07 pm",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 66.99,
-  },
-];
 
-const dataNew = customerData.filter((el) => {
+const dataNew = draftsData.filter((el) => {
   return el.isNew === true;
 });
 
