@@ -31,14 +31,14 @@ import {
 } from "antd";
 import { Formik } from "formik";
 import MDSelectProducts from "../MDSelectProducts";
-// import {
-//   AddDiscount,
-//   Taxes,
-//   AddShipment,
-//   ViewTags,
-//   EditEmail,
-//   ShippingAddress,
-// } from "../Modal";
+import {
+  AddDiscount,
+  Taxes,
+  AddShipment,
+  ViewTags,
+  EditEmail,
+  ShippingAddress,
+} from "../Modal";
 import { customer } from "../fakeData";
 
 const { Search } = Input;
@@ -347,10 +347,7 @@ const newForm = () => {
                       </Form.Item>
                     </Col>
                     <Col className="title" md={6}>
-                      <ContentTitle>Add discount</ContentTitle>
-                      <ContentTitle>Add shipment</ContentTitle>
-                      <ContentTitle>Taxes</ContentTitle>
-                      {/* <Popover
+                      <Popover
                         content={AddDiscount}
                         placement="bottomRight"
                         trigger="click"
@@ -378,7 +375,7 @@ const newForm = () => {
                         // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Taxes</ContentTitle>
-                      </Popover> */}
+                      </Popover>
                       <Total>Total</Total>
                     </Col>
                     <Col className="price" md={6}>
@@ -713,7 +710,7 @@ const newForm = () => {
           </CardViews>
         </Wraper>
       </Modal>
-      {/* <ShippingAddress
+      <ShippingAddress
         open={openShippingPopup.status}
         close={handleCloseShippingPopup}
         values={selectedCustomer && selectedCustomer.email}
@@ -729,7 +726,7 @@ const newForm = () => {
         close={handleCloseViewTagsPopup}
         closeTag={handleClose}
         values={tags}
-      /> */}
+      />
     </Form>
   );
 };

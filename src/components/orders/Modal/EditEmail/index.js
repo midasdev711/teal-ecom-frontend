@@ -14,7 +14,7 @@ const layout = {
 
 const EditEmail = ({ open, close, values }) => {
   const [openCustumItem, setopenCustumItem] = useState(open);
-  // const [form] = Form.useForm();
+  const [form] = Form.useForm();
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -26,9 +26,9 @@ const EditEmail = ({ open, close, values }) => {
 
   useEffect(() => {
     setopenCustumItem(open);
-    // form.setFieldsValue({
-    //   email: values,
-    // });
+    form.setFieldsValue({
+      email: values,
+    });
   }, [open, values]);
 
   return (
@@ -58,7 +58,7 @@ const EditEmail = ({ open, close, values }) => {
             {...layout}
             name="basic"
             onFinish={onFinish}
-            // form={form}
+            form={form}
             onFinishFailed={onFinishFailed}
           >
             <Label
