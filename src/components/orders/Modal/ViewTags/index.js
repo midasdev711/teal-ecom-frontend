@@ -7,7 +7,6 @@ const ViewTags = ({ open, close, closeTag, values }) => {
   const [openCustumItem, setopenCustumItem] = useState(open);
 
   useEffect(() => {
-    console.log(values.length);
     setopenCustumItem(open);
   }, [open, values]);
 

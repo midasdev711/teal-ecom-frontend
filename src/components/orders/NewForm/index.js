@@ -37,7 +37,7 @@ import {
   AddShipment,
   ViewTags,
   EditEmail,
-  ShippingAddress,
+  // ShippingAddress,
 } from "../Modal";
 import { customer } from "../fakeData";
 
@@ -710,12 +710,12 @@ const newForm = () => {
           </CardViews>
         </Wraper>
       </Modal>
-      <ShippingAddress
+      {/* <ShippingAddress
         open={openShippingPopup.status}
         close={handleCloseShippingPopup}
         values={selectedCustomer && selectedCustomer.email}
         name={openShippingPopup.name}
-      />
+      /> */}
       <EditEmail
         open={openEmailPopup}
         close={handleCloseEmailPopup}
