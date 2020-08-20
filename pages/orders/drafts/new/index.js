@@ -96,12 +96,6 @@ const ActionContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  & span:first-child {
-    font-weight: 600;
-    line-height: 2.4rem;
-    color: #637381;
-    font-size: 1.1rem;
-  }
 `;
 
 const NewOrderAction = styled.div`
@@ -109,14 +103,11 @@ const NewOrderAction = styled.div`
   .cancel {
     margin-right: 15px;
     & span {
-      font-size: 1rem;
+      font-size: 14px;
       margin-top: -5px;
       color: #000;
       font-weight: 100;
     }
-  }
-  & button {
-    font-weight: 600;
   }
 `;
 export default NewCustomer;

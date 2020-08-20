@@ -20,8 +20,8 @@ const Drafts = () => {
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}>
               <Message>Currently you do not have any draft to manage.</Message>
               <CreateButton size="large">
-                <Link href="drafts/drafts/new">
-                  <a>Create draft</a>
+                <Link href="drafts/new">
+                  <a>Create order</a>
                 </Link>
               </CreateButton>
             </Empty>
@@ -36,14 +36,14 @@ const Drafts = () => {
         <PageHeader
           PageName="Your Drafts"
           CreateButtonName="Create order"
-          path="orders/drafts/new"
+          path="drafts/new"
           isData={true}
         />
         <ViewDrafts />
         <TEPageFooter>
           Learn more about
           <Link href="#"> 
-            <a> creating draft orders</a>
+            <a> creating draft orders.</a>
           </Link>
         </TEPageFooter>
       </CustomerContent>

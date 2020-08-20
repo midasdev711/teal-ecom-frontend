@@ -43,7 +43,7 @@ const Orders = () => {
         <TEPageFooter>
           Learn more about
           <Link href="#">
-            <a> orders</a>
+            <a> orders.</a>
           </Link>
         </TEPageFooter>
       </CustomerContent>

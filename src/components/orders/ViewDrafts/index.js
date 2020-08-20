@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Router from "next/router";
 import Link from "next/link";
 // components
 import DraftFilters from "../DraftFilters";
@@ -18,69 +17,19 @@ import {
   Collapse,
   Radio,
   Checkbox,
-  InputNumber,
   Dropdown,
   Menu,
   message,
-  Input,
+  DatePicker,
 } from "antd";
 // fake data
-import MDMessages from "../../atoms/MDMessages";
-import MDFulfill from "../../atoms/MDFulfill";
+import { draftsData } from "../fakeData";
+
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
-
-const customerData = [
-  {
-    id: 1,
-    key: 1,
-    order_id: "D1",
-    created_date: "04:12 am",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 66.89,
-  },
-  {
-    id: 2,
-    key: 2,
-    order_id: "D2",
-    created_date: "Yesterday at 09:07 pm",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 79.79,
-  },
-  {
-    id: 3,
-    key: 3,
-    order_id: "D3",
-    created_date: "Yesterday at 09:07 pm",
-    customer: {
-      first_name: "Jordan",
-      last_name: "Handeson",
-      address: "Centralia, WA, United States",
-      order: 1,
-      phone: "+13603887146",
-      id: 1,
-    },
-    status: "open",
-    total: 66.99,
-  },
-];
+const dateFormat = "YYYY-MM-DD";
+const customerData = draftsData;
 
 const dataNew = customerData.filter((el) => {
   return el.isNew === true;
@@ -90,15 +39,12 @@ const ViewOrders = () => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
-  const [valueSubscription, setValueSubscription] = useState(0);
   const [tags, setTags] = useState([]);
   const [tagsFilter, setTagsFilter] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
-  const [isShowCapture, setShowCapture] = useState(false);
-  const [isShowFulfill, setShowFulfil] = useState(false);
 
   const columns = [
     {
@@ -163,14 +109,11 @@ const ViewOrders = () => {
       title: "Total",
       dataIndex: "total",
       render: (val) => `$${val}`,
+      align: "right",
     },
   ];
 
   const handleMenuClickCheckbox = (e) => {};
-
-  const onCreateShippingLabels = () => {
-    Router.router.push("/orders/shipping-labels");
-  };
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -195,10 +138,6 @@ const ViewOrders = () => {
     } else {
       setTagsFilter([]);
     }
-  };
-
-  const onChangeSubscription = (e) => {
-    setValueSubscription(e.target.value);
   };
 
   const onShowMdAddTags = (value) => {
@@ -254,15 +193,6 @@ const ViewOrders = () => {
       {checkedList.length > 0 && (
         <ActionsTable>
           <LabelSelected>{checkedList.length} selected</LabelSelected>
-          <ButtonEditCustomer onClick={() => onCreateShippingLabels()}>
-            Create shipping labels
-          </ButtonEditCustomer>
-          <ButtonCenterCustomer onClick={() => setShowFulfil(true)}>
-            Fulfill orders
-          </ButtonCenterCustomer>
-          <ButtonCenterCustomer onClick={() => setShowCapture(true)}>
-            Capture payments
-          </ButtonCenterCustomer>
           <Dropdown
             overlay={
               <Menu onClick={handleMenuClickCheckbox}>
@@ -270,7 +200,7 @@ const ViewOrders = () => {
                   key="1"
                   onClick={() => setShowMDDeleteSelected(true)}
                 >
-                  Delete selected customers
+                  Delete draft orders
                 </Menu.Item>
                 <Menu.Item key="2" onClick={() => onShowMdAddTags(true)}>
                   Add tags
@@ -283,7 +213,7 @@ const ViewOrders = () => {
             trigger={["click"]}
           >
             <ButtonMoreActions>
-              More actions <DownOutlined />
+              Actions <DownOutlined />
             </ButtonMoreActions>
           </Dropdown>
         </ActionsTable>
@@ -346,28 +276,6 @@ const ViewOrders = () => {
           />
         )}
       </ContentTab>
-
-      <MDFulfill
-        isOpen={isShowFulfill}
-        title={`Fulfill ${checkedList.length} order${
-          checkedList.length > 1 ? "s" : ""
-        }`}
-        content="This will mark these orders as fulfilled."
-        cancelText="Cancel"
-        okText="Fulfil"
-        onOk={() => setShowFulfil(false)}
-        onCancel={() => setShowFulfil(false)}
-      />
-
-      <MDMessages
-        isOpen={isShowCapture}
-        title="Capture all order payments"
-        content="This will capture payments for all selected orders."
-        cancelText="Cancel"
-        okText="Capture order payments"
-        onOk={() => setShowCapture(false)}
-        onCancel={() => setShowCapture(false)}
-      />
 
       <MDAddTags
         name="customers"
@@ -453,6 +361,7 @@ const ViewOrders = () => {
               <RadioStyle value={6}>On or before</RadioStyle>
               <RadioStyle value={7}>On or after</RadioStyle>
             </RadioGroupStyle>
+            <DatePicker placeholder={dateFormat} disabled />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
 
@@ -473,6 +382,7 @@ const ViewOrders = () => {
               <RadioStyle value={6}>On or before</RadioStyle>
               <RadioStyle value={7}>On or after</RadioStyle>
             </RadioGroupStyle>
+            <DatePicker placeholder={dateFormat} disabled />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
           <PanelStyle
@@ -552,12 +462,17 @@ const CollapseStyle = styled(Collapse)`
 const PanelStyle = styled(Panel)`
   background: none;
   border: none;
+  .ant-picker {
+    margin-top: 10px;
+    width: 100%;
+  }
 `;
 
 const PanelTitle = styled.h3`
   margin: 0px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000;
+  font-size: 16px;
   opacity: 0.8;
 `;
 
@@ -599,26 +514,16 @@ const TagsList = styled.div`
 const LabelSelected = styled.span`
   margin-right: 15px;
   color: #0095f8;
-  font-weight: bold;
+  font-weight: 600;
 `;
 
-const ButtonEditCustomer = styled(Button)`
-  border-radius: 4px 0 0 4px;
-  border-right: 0;
-`;
-
-const ButtonCenterCustomer = styled(Button)`
-  border-radius: 0;
-  border-right: 0;
-`;
 
 const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
 `;
 
 const FullName = styled.a`
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
 `;
 
 const TextPhone = styled.p``;
@@ -650,10 +555,6 @@ const PopupDetailTB = styled.div`
   -webkit-box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
   -moz-box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
   box-shadow: 0px 0px 3px 0px rgba(163, 161, 163, 1);
-`;
-
-const InputStyle = styled(Input)`
-  width: 100%;
 `;
 
 const ActionsTable = styled.div`

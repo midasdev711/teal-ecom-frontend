@@ -22,7 +22,7 @@ import {
   Dropdown,
   Menu,
   message,
-  Input
+  Input,
 } from "antd";
 // fake data
 import { fakeData } from "../fakeData";
@@ -34,7 +34,7 @@ const { Panel } = Collapse;
 
 const customerData = fakeData;
 
-const dataNew = customerData.filter(el => {
+const dataNew = customerData.filter((el) => {
   return el.isNew === true;
 });
 
@@ -56,22 +56,22 @@ const ViewOrders = () => {
     {
       title: "Order",
       dataIndex: "order_id",
-      render: order_id => {
+      render: (order_id) => {
         return (
           <Link href="/order/123">
             <FullName href="">#{order_id}</FullName>
           </Link>
         );
-      }
+      },
     },
     {
       title: "Date",
-      dataIndex: "created_date"
+      dataIndex: "created_date",
     },
     {
       title: "Customer",
       dataIndex: "customer",
-      render: customer => (
+      render: (customer) => (
         <Dropdown
           trigger={["click"]}
           overlay={
@@ -91,46 +91,46 @@ const ViewOrders = () => {
               </div>
             </PopupDetailTB>
           }
-          placement="bottomCenter" 
+          placement="bottomCenter"
         >
           <ButtonCustomer type="text">
             {customer.first_name} {customer.last_name} <DownOutlined />
           </ButtonCustomer>
         </Dropdown>
       ),
-      align: "left"
+      align: "left",
     },
     {
       title: "Total",
       dataIndex: "total",
-      render: val => `$${val}`
+      render: (val) => `$${val}`,
     },
     {
       title: "Payment",
       dataIndex: "status_payment",
-      render: val => {
+      render: (val) => {
         if (val === "paid") {
           return <TagDark>{val}</TagDark>;
         } else {
           return <TagOrang>{val}</TagOrang>;
         }
-      }
+      },
     },
     {
       title: "Fulfillment",
       dataIndex: "fulfillment",
-      render: val => {
+      render: (val) => {
         if (val === "Unfulfilled") {
           return <TagYellow>{val}</TagYellow>;
         } else {
           return <TagGreen>{val}</TagGreen>;
         }
-      }
+      },
     },
     {
       title: "Items",
       dataIndex: "items",
-      render: items => {
+      render: (items) => {
         let data = [];
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
@@ -164,28 +164,28 @@ const ViewOrders = () => {
 
           return data;
         }
-      }
+      },
     },
     {
       title: "Delivery method	",
-      dataIndex: "delivery"
+      dataIndex: "delivery",
     },
     {
       title: "Tags",
       dataIndex: "tags",
       width: "10%",
-      render: tags => {
+      render: (tags) => {
         let data = [];
         for (let i = 0; i < tags.length; i++) {
           const tag = tags[i];
           data.push(<Tag key={i}>{tag}</Tag>);
         }
         return data;
-      }
-    }
+      },
+    },
   ];
 
-  const handleMenuClickCheckbox = e => {};
+  const handleMenuClickCheckbox = (e) => {};
 
   const onCreateShippingLabels = () => {
     Router.router.push("/orders/shipping-labels");
@@ -195,13 +195,13 @@ const ViewOrders = () => {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
     },
-    getCheckboxProps: record => ({
+    getCheckboxProps: (record) => ({
       disabled: record.name === "Disabled User",
-      name: record.name
-    })
+      name: record.name,
+    }),
   };
 
-  const callback = key => {
+  const callback = (key) => {
     setTabIndex(Number(key));
     if (key === "2") {
       setTagsFilter(["Open orders", "Unfulfilled, Partially fulfilled"]);
@@ -216,29 +216,29 @@ const ViewOrders = () => {
     }
   };
 
-  const onChangeSubscription = e => {
+  const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
 
-  const onShowMdAddTags = value => {
+  const onShowMdAddTags = (value) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = value => {};
+  const onSaveAddTags = (value) => {};
 
-  const onFinishAddTags = value => {};
+  const onFinishAddTags = (value) => {};
 
   // delete tags
-  const onShowMdDeleteTags = value => {
+  const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = value => {};
+  const onSaveDeleteTags = (value) => {};
 
-  const onFinishDeleteTags = value => {};
+  const onFinishDeleteTags = (value) => {};
 
   // delete customers selected
-  const onShowMdDeleteSelected = value => {
+  const onShowMdDeleteSelected = (value) => {
     console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
@@ -313,7 +313,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={customerData}
@@ -324,7 +324,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
@@ -335,7 +335,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -346,7 +346,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -357,7 +357,7 @@ const ViewOrders = () => {
           <Table
             rowSelection={{
               type: "checkbox",
-              ...rowSelection
+              ...rowSelection,
             }}
             columns={columns}
             dataSource={[]}
@@ -436,7 +436,7 @@ const ViewOrders = () => {
       >
         <CollapseStyle
           defaultActiveKey={valuesCollapse}
-          onChange={values => setShowCollapse(values)}
+          onChange={(values) => setShowCollapse(values)}
           expandIconPosition="right"
         >
           <PanelStyle
@@ -660,8 +660,9 @@ const PanelStyle = styled(Panel)`
 
 const PanelTitle = styled.h3`
   margin: 0px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000;
+  font-size: 16px;
   opacity: 0.8;
 `;
 
@@ -728,8 +729,8 @@ const ButtonMoreActions = styled(Button)`
 `;
 
 const FullName = styled.a`
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
 `;
 
 const ButtonBox = styled(Button)`
