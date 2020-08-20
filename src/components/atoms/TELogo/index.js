@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { Typography } from 'antd';
 
 const { Text } = Typography;
-const TELogo = () => {
+const TELogo = ({name}) => {
   return (
     <Link href='/'>
       <a>
         <LogoWrapper>
           <LogoImage src='/favicon.svg' />
-          <LogoTitle>Ecommerce</LogoTitle>
+          <LogoTitle>{name}</LogoTitle>
           <ExploreIcon src='/images/icon_detail.svg' />
         </LogoWrapper>
       </a>
