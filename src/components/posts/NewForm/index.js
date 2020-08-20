@@ -19,21 +19,13 @@ const NewForm = () => {
   };
 
   return (
-    <Form
-      name="basic"
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      className="form-new"
-      layout="vertical"
-    >
-      <SubForm>
-        <Row gutter={24}>
-          <ContentBox>
-            <WysiwygEditor />
-          </ContentBox>
-        </Row>
-      </SubForm>
-    </Form>
+    <SubForm>
+      <Row gutter={24}>
+        <ContentBox>
+          <WysiwygEditor />
+        </ContentBox>
+      </Row>
+    </SubForm>
   );
 };
 

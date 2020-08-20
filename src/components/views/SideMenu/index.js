@@ -5,16 +5,9 @@ import { Layout, Typography, Select } from "antd";
 import { TELogo, TESelector } from "../../atoms";
 import { Routes, StoriesRoutes } from "../../../utils/Routes";
 import Link from "next/link";
-import Router from 'next/router';
 
 const SideMenu = () => {
   const [channelName, setChannelName] = useState("Ecommerce");
-
-  const handleChange = (value) => {
-    setChannelName(value);
-    localStorage.setItem("channelName", value);
-    Router.push('/');
-  };
 
   useEffect(() => {
     setChannelName(localStorage.getItem("channelName") || "Ecommerce");
@@ -53,9 +46,8 @@ const SideMenu = () => {
     <StyledSider theme="light">
       <TELogo name={channelName} />
       <MenuTitle>CHANNELS</MenuTitle>
-      <TESelector value={channelName} onChange={handleChange}>
-        <Select.Option value="Ecommerce">Ecommerce</Select.Option>
-        <Select.Option value="Stories">Stories</Select.Option>
+      <TESelector value="teal">
+        <Select.Option value="teal">Teal</Select.Option>
       </TESelector>
       <MainMenu>{MenuList}</MainMenu>
     </StyledSider>

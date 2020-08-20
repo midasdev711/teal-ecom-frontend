@@ -57,8 +57,8 @@ const StoriesRoutes = [
     path: '/authors',
   },
   {
-    title: 'Inlights',
-    path: '/inlights',
+    title: 'Insights',
+    path: '/insights',
   },
 ];
 

@@ -6319,6 +6319,16 @@ regjsparser@^0.6.4:
   dependencies:
     jsesc "~0.5.0"
 
+remirror@^0.13.1:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/remirror/-/remirror-0.13.1.tgz#153dc7f2fa8da3c0ab92bb5b62c69dff14d6f2dc"
+  integrity sha512-ga3tIJsEIXvXr9vK1W5vMECQKdzPZ/uleESL80WZCgZ/9OWXHW+TbV1T2WW2SHvRTwyF2McYCerh8nzDjU1JSQ==
+  dependencies:
+    "@babel/runtime" "^7"
+    "@remirror/core" "^0.11.0"
+    "@remirror/core-extensions" "^0.13.1"
+    "@remirror/react" "^0.13.1"
+
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
