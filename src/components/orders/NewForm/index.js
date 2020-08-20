@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { TweenOneGroup } from "rc-tween-one";
 import Link from "next/link";
 // icon
 import {
@@ -25,60 +26,22 @@ import {
   InputNumber,
   List,
   Tooltip,
+  Tag,
   Dropdown,
 } from "antd";
-import Tags from "../../Tags";
 import { Formik } from "formik";
 import MDSelectProducts from "../MDSelectProducts";
 import {
   AddDiscount,
+  Taxes,
+  AddShipment,
+  ViewTags,
+  EditEmail,
+  ShippingAddress,
 } from "../Modal";
-const { Search } = Input;
+import { customer } from "../fakeData";
 
-const customer = [
-  {
-    profile_url:
-      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    name: "BOB",
-    email: "bob@gmail.com",
-    address: {
-      address_one: "4012 Town ship",
-      address_two: "",
-      city: "Da Nang",
-      state: "hoakhanh",
-      country: "VietNam",
-      zipcode: "395010",
-    },
-  },
-  {
-    profile_url:
-      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    name: "Charly",
-    email: "charly@gmail.com",
-    address: {
-      address_one: "Royal coffe",
-      address_two: "",
-      city: "Boise",
-      state: "Idaho",
-      country: "USA",
-      zipcode: "83703",
-    },
-  },
-  {
-    profile_url:
-      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    name: "Vir",
-    email: "vir@gmail.com",
-    address: {
-      address_one: "",
-      address_two: "",
-      city: "meridian",
-      state: "Idaho",
-      country: "USA",
-      zipcode: "83705",
-    },
-  },
-];
+const { Search } = Input;
 
 const content = (data, change) => {
   const [customerdata, setCustomerData] = useState([]);
@@ -120,9 +83,14 @@ const newForm = () => {
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
   const [listOrders, setListOrders] = useState([]);
   const [subTotal, setSubTotal] = useState(0.0);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(["test"]);
+  const [inputValue, setInputValue] = useState("");
+  const [inputVisible, setInputVisible] = useState(false);
   const [openEmailPopup, setOpenEmailPopup] = useState(false);
-  const [openShippingPopup, setOpenShippingPopup] = useState(false);
+  const [openShippingPopup, setOpenShippingPopup] = useState({
+    status: false,
+    name: "",
+  });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
 
   const onFinish = (values) => {
@@ -148,10 +116,61 @@ const newForm = () => {
     setopenCustumItem(!openCustumItem);
   };
 
-  const handleOk = (e) => {
-    setopenCustumItem(false);
+  // Tags group actions
+  const handleClose = (removedTag) => {
+    const removeTags = tags.filter((tag) => tag !== removedTag);
+    setTags(removeTags);
   };
 
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputConfirm = () => {
+    let tag = tags;
+    if (inputValue && tag.indexOf(inputValue) === -1) {
+      tag = [...tag, inputValue];
+    }
+    setTags(tag);
+    setInputVisible(false);
+    setInputValue("");
+  };
+
+  const saveInputRef = (input) => {
+    input = input;
+  };
+
+  const forMap = (tag) => {
+    const tagElem = (
+      <TagContent
+        closable
+        onClose={(e) => {
+          e.preventDefault();
+          handleClose(tag);
+        }}
+      >
+        {tag}
+      </TagContent>
+    );
+    return (
+      <span key={tag} style={{ display: "inline-block" }}>
+        {tagElem}
+      </span>
+    );
+  };
+
+  const tagChild = tags.map(forMap);
+
+  // Tags modal
+  const handleOpenViewTagsPopup = () => {
+    setOpenViewTagsPopup(!openViewTagsPopup);
+  };
+
+  const handleCloseViewTagsPopup = () => {
+    setOpenViewTagsPopup(false);
+  };
+
+  // Customer modal
   const handleCancel = (e) => {
     setopenCustumItem(false);
   };
@@ -160,29 +179,23 @@ const newForm = () => {
     setSelectedCustomer(null);
   };
 
+  // Edit email
   const handleEmailEditModal = () => {
     setOpenEmailPopup(!openEmailPopup);
-  }
+  };
 
   const handleCloseEmailPopup = () => {
     setOpenEmailPopup(false);
-  }
+  };
 
-  const handleShippingEditModal = () => {
-    setOpenShippingPopup(!openShippingPopup);
-  }
+  // Edit address
+  const handleShippingEditModal = (value) => {
+    setOpenShippingPopup({ status: !openShippingPopup.status, name: value });
+  };
 
   const handleCloseShippingPopup = () => {
-    setOpenShippingPopup(false);
-  }
-
-  const handleOpenViewTagsPopup = () => {
-    setOpenViewTagsPopup(!openViewTagsPopup);
-  }
-
-  const handleCloseViewTagsPopup = () => {
-    setOpenViewTagsPopup(false);
-  }
+    setOpenShippingPopup({ status: false, name: openShippingPopup.name });
+  };
 
   const onChangeTotal = (e, index) => {
     let data = [];
@@ -336,16 +349,33 @@ const newForm = () => {
                     <Col className="title" md={6}>
                       <Popover
                         content={AddDiscount}
-                        placement="bottomLeft"
+                        placement="bottomRight"
                         trigger="click"
+                        className="new-order"
                         // visible={true}
                         // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Add discount</ContentTitle>
                       </Popover>
-                      <ContentTitle>SubTotal</ContentTitle>
-                      <ContentTitle>Add shipment</ContentTitle>
-                      <ContentTitle>Taxes</ContentTitle>
+                      <p>SubTotal</p>
+                      <Popover
+                        content={AddShipment}
+                        placement="bottom"
+                        trigger="click"
+                        // visible={true}
+                        // onVisibleChange={handleVisibleChange}
+                      >
+                        <ContentTitle>Add shipment</ContentTitle>
+                      </Popover>
+                      <Popover
+                        content={Taxes}
+                        placement="bottomRight"
+                        trigger="click"
+                        // visible={true}
+                        // onVisibleChange={handleVisibleChange}
+                      >
+                        <ContentTitle>Taxes</ContentTitle>
+                      </Popover>
                       <Total>Total</Total>
                     </Col>
                     <Col className="price" md={6}>
@@ -429,13 +459,19 @@ const newForm = () => {
                   </ContentTitle>
                   <AlignItem>
                     <ContentTitle>{selectedCustomer.email}</ContentTitle>
-                    <ContentTitle>Edit</ContentTitle>
+                    <ContentTitle onClick={handleEmailEditModal}>
+                      Edit
+                    </ContentTitle>
                   </AlignItem>
                 </ContentBox>
                 <ContentBox>
                   <AlignItem>
-                    <TitleBox>Shipping Address </TitleBox>
-                    <ContentTitle>Edit</ContentTitle>
+                    <TitleBoxAddress>SHIPPING ADDRESS</TitleBoxAddress>
+                    <ContentTitle
+                      onClick={() => handleShippingEditModal("shipping")}
+                    >
+                      Edit
+                    </ContentTitle>
                   </AlignItem>
                   <p>
                     {selectedCustomer.address.address_one}
@@ -449,8 +485,12 @@ const newForm = () => {
                 </ContentBox>
                 <ContentBox>
                   <AlignItem>
-                    <TitleBox>Edit Address </TitleBox>
-                    <ContentTitle>Edit</ContentTitle>
+                    <TitleBoxAddress>BILLING ADDRESS</TitleBoxAddress>
+                    <ContentTitle
+                      onClick={() => handleShippingEditModal("billing")}
+                    >
+                      Edit
+                    </ContentTitle>
                   </AlignItem>
                   <p>
                     {selectedCustomer.address.address_one}
@@ -467,9 +507,42 @@ const newForm = () => {
             <ContentBox marginTop="20px">
               <Tagcontent>
                 <TitleBox>Tags</TitleBox>
-                <ContentTitle className="TextAlign">View all tags</ContentTitle>
+                <ContentTitle
+                  className="TextAlign"
+                  onClick={handleOpenViewTagsPopup}
+                >
+                  View all tags
+                </ContentTitle>
               </Tagcontent>
-              <Tags />
+              <TagBlock>
+                <div>
+                  <Input
+                    ref={saveInputRef}
+                    type="text"
+                    size="large"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onBlur={handleInputConfirm}
+                    onPressEnter={handleInputConfirm}
+                  />
+                  <TweenOneGroup
+                    enter={{
+                      scale: 0.8,
+                      opacity: 0,
+                      type: "from",
+                      duration: 100,
+                      with: 10,
+                      onComplete: (e) => {
+                        e.target.style = "";
+                      },
+                    }}
+                    leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                    appear={false}
+                  >
+                    {tagChild}
+                  </TweenOneGroup>
+                </div>
+              </TagBlock>
             </ContentBox>
           </Col>
         </Row>
@@ -483,9 +556,8 @@ const newForm = () => {
 
       {/*  add customer item modal */}
       <Modal
-        style={{ width: "136%" }}
         visible={openCustumItem}
-        width="40%"
+        width="35%"
         onCancel={handleCancel}
         footer={null}
       >
@@ -638,6 +710,23 @@ const newForm = () => {
           </CardViews>
         </Wraper>
       </Modal>
+      <ShippingAddress
+        open={openShippingPopup.status}
+        close={handleCloseShippingPopup}
+        values={selectedCustomer && selectedCustomer.email}
+        name={openShippingPopup.name}
+      />
+      <EditEmail
+        open={openEmailPopup}
+        close={handleCloseEmailPopup}
+        values={selectedCustomer && selectedCustomer.email}
+      />
+      <ViewTags
+        open={openViewTagsPopup}
+        close={handleCloseViewTagsPopup}
+        closeTag={handleClose}
+        values={tags}
+      />
     </Form>
   );
 };
@@ -645,6 +734,13 @@ const newForm = () => {
 const ButtonRemove = styled.a`
   color: #ccc;
   margin-left: 30px;
+`;
+
+const TitleBoxAddress = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 0;
+  line-height: 3;
 `;
 
 const InputNumberStyle = styled(InputNumber)`
@@ -705,11 +801,28 @@ const ContentBox = styled.div`
   .price-content {
     padding-top: 30px;
     .title {
+      text-align: right;
+      line-height: 2;
     }
     .price p {
       margin-bottom: 12px;
       line-height: 2;
       text-align: right;
+    }
+  }
+`;
+
+const TagContent = styled(Tag)`
+  padding: 5px 10px;
+  marginbottom: 10px;
+`;
+
+const TagBlock = styled.div`
+  margin-top: 10px;
+  & div:first-child {
+    margin-bottom: 16px;
+    & input {
+      margin: 10px 0px;
     }
   }
 `;

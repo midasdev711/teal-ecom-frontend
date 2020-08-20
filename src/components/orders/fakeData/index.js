@@ -186,14 +186,61 @@ const draftsData = [
   },
 ];
 
+const customer = [
+  {
+    profile_url:
+      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    name: "BOB",
+    email: "bob@gmail.com",
+    address: {
+      address_one: "4012 Town ship",
+      address_two: "",
+      city: "Da Nang",
+      state: "hoakhanh",
+      country: "VietNam",
+      zipcode: "395010",
+    },
+  },
+  {
+    profile_url:
+      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    name: "Charly",
+    email: "charly@gmail.com",
+    address: {
+      address_one: "Royal coffe",
+      address_two: "",
+      city: "Boise",
+      state: "Idaho",
+      country: "USA",
+      zipcode: "83703",
+    },
+  },
+  {
+    profile_url:
+      "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    name: "Vir",
+    email: "vir@gmail.com",
+    address: {
+      address_one: "",
+      address_two: "",
+      city: "meridian",
+      state: "Idaho",
+      country: "USA",
+      zipcode: "83705",
+    },
+  },
+];
+
 export {
   fakeData,
   draftsData,
-  productsTree
+  productsTree,
+  customer,
 };
 
 export default {
   fakeData,
   draftsData,
-  productsTree
+  productsTree,
+  customer,
 };

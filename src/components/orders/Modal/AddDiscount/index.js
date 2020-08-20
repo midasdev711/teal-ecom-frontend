@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Input, Button } from "antd";
 
 const AddDiscount = () => {
   return (
@@ -7,9 +8,9 @@ const AddDiscount = () => {
       <DiscountBy>
         <p className="name-discount-blog">Discount this order by</p>
         <PopoverButton className="popover-button">
-          <button className="popover-button-1">$</button>
-          <button className="popover-button-2">%</button>
-          <input className="inpuy-div" type="text" placeholder="$ 0.00" />
+          <Button className="popover-button-1">$</Button>
+          <Button className="popover-button-2">%</Button>
+          <Input className="inpuy-div" type="text" placeholder="$ 0.00" />
         </PopoverButton>
         <div className="Reason">
           <p className="name-reason">Reason</p>
@@ -21,11 +22,11 @@ const AddDiscount = () => {
         </div>
         <div className="border-set"></div>
         <ButtonDiscount>
-          <div className="close-buton">
-            <button>Close</button>
+          <div className="close-button">
+            <Button>Close</Button>
           </div>
-          <div className="apply-buton">
-            <button>apply</button>
+          <div className="apply-button">
+            <Button type="primary">apply</Button>
           </div>
         </ButtonDiscount>
       </DiscountBy>
@@ -58,23 +59,18 @@ const ButtonDiscount = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  & .close-buton {
+  & .close-button {
     & button {
       border: 1px solid #c4cdd5;
       font-size: 14px;
       color: #212b36;
-      padding: 9px 15px;
       background: #fff;
       border-radius: 3px;
     }
   }
-  & .apply-buton {
+  & .apply-button {
     & button {
-      border: 1px solid #bac0e6;
       font-size: 14px;
-      color: #fff;
-      padding: 9px 15px;
-      background: #bac0e6;
       border-radius: 3px;
     }
   }
