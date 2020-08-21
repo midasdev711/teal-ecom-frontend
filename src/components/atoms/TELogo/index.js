@@ -1,9 +1,9 @@
-import React,  { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import TESelector from "../TESelector";
 import { Typography, Select } from "antd";
-import Router from 'next/router';
+import Router from "next/router";
 
 const { Text } = Typography;
 const TELogo = () => {
@@ -20,19 +20,15 @@ const TELogo = () => {
   });
 
   return (
-    <Link href="/">
-      <a>
-        <LogoWrapper>
-          <LogoImage className="logo" src="/favicon.svg" />
-          <LogoTitle>
-            <TESelector value={channelName} onChange={handleChange}>
-              <Select.Option value="Ecommerce">Ecommerce</Select.Option>
-              <Select.Option value="Stories">Stories</Select.Option>
-            </TESelector>
-          </LogoTitle>
-        </LogoWrapper>
-      </a>
-    </Link>
+    <LogoWrapper>
+      <LogoImage className="logo" src="/favicon.svg" />
+      <LogoTitle>
+        <TESelector value={channelName} onChange={handleChange}>
+          <Select.Option value="Ecommerce">Ecommerce</Select.Option>
+          <Select.Option value="Stories">Stories</Select.Option>
+        </TESelector>
+      </LogoTitle>
+    </LogoWrapper>
   );
 };
 
