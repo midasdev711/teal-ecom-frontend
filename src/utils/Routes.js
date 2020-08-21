@@ -39,4 +39,35 @@ const Routes = [
   },
 ];
 
-export default Routes;
+const StoriesRoutes = [
+  {
+    title: 'Home',
+    path: '/',
+  },
+  {
+    title: 'Posts',
+    path: '/posts',
+  },
+  {
+    title: 'Categories',
+    path: '/categories',
+  },
+  {
+    title: 'Authors',
+    path: '/authors',
+  },
+  {
+    title: 'Insights',
+    path: '/insights',
+  },
+];
+
+export {
+  Routes,
+  StoriesRoutes,
+};
+
+export default {
+  Routes,
+  StoriesRoutes,
+};

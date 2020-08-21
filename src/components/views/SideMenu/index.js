@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Layout, Typography, Select } from "antd";
 import { TELogo, TESelector } from "../../atoms";
-import Routes from "../../../utils/Routes";
+import { Routes, StoriesRoutes } from "../../../utils/Routes";
 import Link from "next/link";
 
 const SideMenu = () => {
-  const handleChange = () => {};
-  const { pathname } = useRouter();
+  const [channelName, setChannelName] = useState("Ecommerce");
 
-  const MenuList = Routes.map((route, index) => {
+  useEffect(() => {
+    setChannelName(localStorage.getItem("channelName") || "Ecommerce");
+  });
+
+  const { pathname } = useRouter();
+  const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
+
+  const MenuList = RoutesName.map((route, index) => {
     return (
       <div key={index}>
         <Link href={route.path}>
@@ -38,9 +44,9 @@ const SideMenu = () => {
 
   return (
     <StyledSider theme="light">
-      <TELogo />
+      <TELogo name={channelName} />
       <MenuTitle>CHANNELS</MenuTitle>
-      <TESelector defaultValue="Teal" onChange={handleChange}>
+      <TESelector value="teal">
         <Select.Option value="teal">Teal</Select.Option>
       </TESelector>
       <MainMenu>{MenuList}</MainMenu>

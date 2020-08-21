@@ -10,6 +10,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
     "@apollo/react-hooks": "^4.0.0",
+    "@remirror/editor-wysiwyg": "^0.13.1",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
@@ -37,6 +38,7 @@
     "react-dom": "^16.13.1",
     "react-phone-input-2": "^2.13.7",
     "react-spinners": "^0.9.0",
+    "remirror": "^0.13.1",
     "styled-components": "^5.1.1"
   }
 }
