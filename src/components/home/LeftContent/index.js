@@ -53,7 +53,24 @@ const LeftContent = () => {
                 </Tooltip>
               </AlignItem>
               <StyledTotal>8,846</StyledTotal>
-              <Line data={data} />
+              <Line
+                options={{
+                  legend: {
+                    display: false,
+                  },
+                  title: {
+                    display: false,
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: false,
+                      },
+                    ],
+                  },
+                }}
+                data={data}
+              />
               <Divider />
               <StyledText>
                 <span className="visits">Daily Visits</span> 1,234
@@ -69,7 +86,24 @@ const LeftContent = () => {
                 </Tooltip>
               </AlignItem>
               <StyledTotal>6,999</StyledTotal>
-              <Bar data={sessionsData} />
+              <Bar
+                data={sessionsData}
+                options={{
+                  legend: {
+                    display: false,
+                  },
+                  title: {
+                    display: false,
+                  },
+                  scales: {
+                    yAxes: [
+                      {
+                        display: false,
+                      },
+                    ],
+                  },
+                }}
+              />
               <Divider />
               <StyledText>
                 <span className="visits">Conversion Rate</span> 60%
@@ -130,7 +164,7 @@ const StyledText = styled.p`
 
 const StyledItemTitle = styled.div`
   cursor: pointer;
-  svg{
+  svg {
     font-size: 20px;
     margin-bottom: -3px;
   }
