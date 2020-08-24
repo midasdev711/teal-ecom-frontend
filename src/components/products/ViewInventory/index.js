@@ -54,10 +54,10 @@ const ViewInventory = () => {
           <ProductContent>
             <ProductImage src={product.img}></ProductImage>
             <div className="inventory-link">
-              <Link href="#">
+              <Link href="/products/inventory/[inventoryId]" as='/products/inventory/123456789'>
                 <a> {product && product.name}</a>
               </Link>
-              <Link href="#">
+              <Link href="/products/inventory/[inventoryId]" as='/products/inventory/123456789'>
                 <a> {product && product.type}</a>
               </Link>
             </div>
