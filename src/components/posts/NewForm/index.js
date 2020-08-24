@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import WysiwygEditor from "./WysiwygEditor";
+import WysiwygEditor from "../../WysiwygEditor";
 
 // ui
 import { Row } from "antd";

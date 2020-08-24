@@ -1,3 +1,4 @@
 import ViewProducts from "./ViewProducts";
+import NewForm from "./NewForm";
 
-export { ViewProducts };
+export { ViewProducts, NewForm };
