@@ -35,15 +35,15 @@ const Routes = [
       },
       {
         title: "Transfers",
-        path: "/transfers",
+        path: "/products/transfers",
       },
       {
         title: "Collections",
-        path: "/collections",
+        path: "/products/collections",
       },
       {
         title: "Gift cards",
-        path: "/gift-cards",
+        path: "/products/gift-cards",
       },
     ],
   },
