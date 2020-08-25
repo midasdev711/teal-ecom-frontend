@@ -41,7 +41,7 @@ const Collections = () => {
           </Link>
           <StyledContainer>
             <TittleHeader>Collections</TittleHeader>
-            <Link href="/collections/new">
+            <Link href="/products/collections/new">
               <a>
                 <CreateButton type="primary" size="large">
                   Create collection
