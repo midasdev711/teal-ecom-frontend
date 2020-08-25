@@ -50,6 +50,7 @@ const newForm = () => {
   const [inputVisible, setInputVisible] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
   const [openManageMD, setOpenManageMD] = useState(false);
+  const [openEditSite, setOpenEditSite] = useState(false);
   const [country, setCountry] = useState("United States");
 
   const onFinish = (values) => {
@@ -321,13 +322,34 @@ const newForm = () => {
             <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
                 <TitleBox>Search engine listing preview</TitleBox>
-                <ContentTitle>Edit website SEO</ContentTitle>
+                {!openEditSite && (
+                  <ContentTitle onClick={() => setOpenEditSite(!openEditSite)}>
+                    Edit website SEO
+                  </ContentTitle>
+                )}
               </AlignItem>
               <TextStyle>
                 Add a title and description to see how this product might appear
                 in a search engine listing
               </TextStyle>
             </ContentBox>
+            {openEditSite && (
+              <>
+                <Divider />
+                <ContentBox>
+                  <TitleStyle>Page title</TitleStyle>
+                  <InputStyle />
+                  <TextStyle>0 of 70 characters used</TextStyle>
+                  <TitleStyle className="margin-top">Description</TitleStyle>
+                  <TextAreaStyle rows={5} />
+                  <TextStyle>0 of 320 characters used</TextStyle>
+                  <TitleStyle className="margin-top">URL and handle</TitleStyle>
+                  <InputStyle
+                    prefix="https://sale.mysolidshoes.com/products/"
+                  />
+                </ContentBox>
+              </>
+            )}
           </Col>
           <Col md={8}>
             <ContentBox notPadding>
@@ -602,6 +624,11 @@ const InputNumberStyle = styled(InputNumber)`
 `;
 
 const InputStyle = styled(Input)`
+  width: 100%;
+  padding: 8px 12px;
+`;
+
+const TextAreaStyle = styled(Input.TextArea)`
   width: 100%;
   padding: 8px 12px;
 `;
