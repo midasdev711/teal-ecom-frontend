@@ -4,12 +4,15 @@ import Link from "next/link";
 import { TweenOneGroup } from "rc-tween-one";
 import { TimeData } from "../fakeData";
 import { ManageSalesMD } from "../Modals";
+import { CountryDropdown } from "react-country-region-selector";
+
 // icon
 import {
   PlusOutlined,
   CalendarOutlined,
   EditOutlined,
   CloseOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 
 // ui
@@ -33,10 +36,12 @@ import {
   Select,
   DatePicker,
   Dropdown,
+  Upload,
 } from "antd";
 
 const { Search } = Input;
 const { Option } = Select;
+const { Dragger } = Upload;
 
 const newForm = () => {
   const [visiable, setVisible] = useState(false);
@@ -45,6 +50,7 @@ const newForm = () => {
   const [inputVisible, setInputVisible] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
   const [openManageMD, setOpenManageMD] = useState(false);
+  const [country, setCountry] = useState("United States");
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -60,6 +66,19 @@ const newForm = () => {
 
   const deleteDate = () => {
     setIsDatePicker(!isDatePicker);
+  };
+
+  const onChangeFileCSV = (info) => {
+    console.log(info);
+    const { status } = info.file;
+    if (status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (status === "done") {
+      console.log(`${info.file.name} file uploaded successfully.`);
+    } else if (status === "error") {
+      console.error(`${info.file.name} file upload failed.`);
+    }
   };
 
   // Tags group actions
@@ -116,7 +135,7 @@ const newForm = () => {
       layout="vertical"
     >
       <SubForm>
-        <Row gutter={24}>
+        <Row gutter={24} className="margin-bottom">
           <Col md={16}>
             <ContentBox>
               <Form.Item label="Title" name="title">
@@ -126,6 +145,188 @@ const newForm = () => {
               <DescriptionContent>
                 <WysiwygEditor />
               </DescriptionContent>
+            </ContentBox>
+            <ContentBox marginTop="20px">
+              <AlignItem>
+                <TitleBox>Media</TitleBox>
+              </AlignItem>
+              <StyleDragger
+                accept=".jpg, .gif, .png"
+                name="file"
+                multiple={false}
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                onChange={(info) => onChangeFileCSV(info)}
+              >
+                <p className="ant-upload-drag-icon">
+                  <FileTextOutlined />
+                </p>
+                <Button>Add File</Button>
+                <p className="ant-upload-hint">or drop files to upload</p>
+              </StyleDragger>
+            </ContentBox>
+            <CardStyle>
+              <TitleCardStyle>Pricing</TitleCardStyle>
+              <Row gutter={24}>
+                <Col md={12}>
+                  <Form.Item label="Price">
+                    <InputNumberStyle
+                      placeholder="0.00"
+                      formatter={(value) =>
+                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+                <Col md={12}>
+                  <Form.Item label="Compare at price">
+                    <InputNumberStyle
+                      placeholder="0.00"
+                      formatter={(value) =>
+                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }
+                    />
+                  </Form.Item>
+                </Col>
+                <Col md={12}>
+                  <Form.Item label="Cost per item">
+                    <InputNumberStyle
+                      placeholder="0.00"
+                      formatter={(value) =>
+                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }
+                    />
+                    <span>Customers won’t see this</span>
+                  </Form.Item>
+                </Col>
+                <Col md={6}>
+                  <StoreContent>
+                    <TextStyle>Margin</TextStyle>
+                    <span>-</span>
+                  </StoreContent>
+                </Col>
+                <Col md={6}>
+                  <StoreContent>
+                    <TextStyle>Profit</TextStyle>
+                    <span>-</span>
+                  </StoreContent>
+                </Col>
+                <Col md={24}>
+                  <Checkbox>Charge tax on this product</Checkbox>
+                </Col>
+              </Row>
+            </CardStyle>
+
+            <CardStyle>
+              <TitleCardStyle>Inventory</TitleCardStyle>
+
+              <Row gutter={24}>
+                <Col md={12}>
+                  <Form.Item label="SKU (Stock Keeping Unit)">
+                    <InputStyle />
+                  </Form.Item>
+                </Col>
+                <Col md={12}>
+                  <Form.Item label="Barcode (ISBN, UPC, GTIN, etc.)">
+                    <InputStyle />
+                  </Form.Item>
+                </Col>
+                <Col md={24}>
+                  <Checkbox.Group>
+                    <CheckboxStyle>Track quantity</CheckboxStyle>
+                    <CheckboxStyle>
+                      Continue selling when out of stock
+                    </CheckboxStyle>
+                  </Checkbox.Group>
+                </Col>
+              </Row>
+
+              <LineBorder />
+
+              <TitleSmall>QUANTITY</TitleSmall>
+
+              <Row gutter={24}>
+                <Col md={12}>
+                  <Form.Item label="Available">
+                    <InputNumberStyle value="0" />
+                  </Form.Item>
+                </Col>
+                <Col md={12}></Col>
+              </Row>
+            </CardStyle>
+
+            <CardStyle>
+              <TitleCardStyle>Shipping</TitleCardStyle>
+              <CheckboxStyle>This is a physical product</CheckboxStyle>
+
+              <LineBorder />
+
+              <TitleSmall>WEIGHT</TitleSmall>
+              <TextStyle>
+                Used to calculate shipping rates at checkout and label prices
+                during fulfillment.
+              </TextStyle>
+              <Row gutter={0}>
+                <Col md={8}>
+                  <Form.Item label="Weight">
+                    <InputNumberStyle />
+                  </Form.Item>
+                </Col>
+                <Col md={3}>
+                  <Form.Item label=" " name="" initialValue="kg">
+                    <Select>
+                      <Option value="lb">lb</Option>
+                      <Option value="oz">oz</Option>
+                      <Option value="kg">kg</Option>
+                      <Option value="g">g</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <LineBorder />
+
+              <TitleSmall>CUSTOMS INFORMATION</TitleSmall>
+              <p>
+                Used by border officers to calculate duties when shipping
+                internationally. Shown on customs forms you print during
+                fulfillment.
+              </p>
+
+              <Form.Item label="Country of origin">
+                <CountryDropdownStyle
+                  defaultOptionLabel="Select a country."
+                  value={country}
+                  onChange={(val) => setCountry(val)}
+                  blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
+                  className="dropDown"
+                />
+                <span>In most cases, where the product is manufactured.</span>
+              </Form.Item>
+
+              <Form.Item label="HS (Harmonized System) code">
+                <SearchStyle
+                  placeholder="Search by product keyword or HS code"
+                  onSearch={(value) => console.log(value)}
+                />
+                <span>Used by border officers to classify this product.</span>
+              </Form.Item>
+            </CardStyle>
+            <ContentBox marginTop="20px">
+              <TitleBox>Variants</TitleBox>
+              <Checkbox className="margin-top">
+                This product has multiple options, like different sizes or
+                colors
+              </Checkbox>
+            </ContentBox>
+            <ContentBox marginTop="20px">
+              <AlignItem className="margin-bottom">
+                <TitleBox>Search engine listing preview</TitleBox>
+                <ContentTitle>Edit website SEO</ContentTitle>
+              </AlignItem>
+              <TextStyle>
+                Add a title and description to see how this product might appear
+                in a search engine listing
+              </TextStyle>
             </ContentBox>
           </Col>
           <Col md={8}>
@@ -155,7 +356,7 @@ const newForm = () => {
                   </Tooltip>
                 </AlignItem>
                 {isDatePicker && (
-                  <StoreContent>
+                  <>
                     <TextStyle>Publish product on</TextStyle>
                     <SelectContent>
                       <DatePicker
@@ -184,7 +385,7 @@ const newForm = () => {
                         />
                       </Tooltip>
                     </SelectContent>
-                  </StoreContent>
+                  </>
                 )}
               </ItemContentBox>
             </ContentBox>
@@ -252,6 +453,12 @@ const newForm = () => {
             </ContentBox>
           </Col>
         </Row>
+        <ActionBottom>
+          <Divider className="divider-bottom" />
+          <Button size="large" type="primary">
+            Save
+          </Button>
+        </ActionBottom>
       </SubForm>
     </Form>
   );
@@ -287,6 +494,12 @@ const ContentBox = styled.div`
   box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
   border-radius: 3px;
   outline: 0.1rem solid transparent;
+  .margin-top {
+    margin-top: 20px !important;
+  }
+  .margin-bottom {
+    margin-bottom: 20px !important;
+  }
 `;
 
 const AlignItem = styled.div`
@@ -352,7 +565,9 @@ const SearchBox = styled(Search)`
   padding: 6px 12px 6px 35px !important;
 `;
 
-const StoreContent = styled.div``;
+const StoreContent = styled.div`
+  line-height: 6;
+`;
 const SelectContent = styled.div`
   position: relative;
   .delete-date-icon {
@@ -361,6 +576,74 @@ const SelectContent = styled.div`
     top: 5px;
     right: -8px;
     cursor: pointer;
+  }
+`;
+
+const StyleDragger = styled(Dragger)`
+  height: 250px !important;
+`;
+
+const CardStyle = styled(Card)`
+  margin-top: 20px;
+  .ant-select-selector {
+    height: 38px !important;
+  }
+`;
+
+const TitleCardStyle = styled.h3`
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+`;
+
+const InputNumberStyle = styled(InputNumber)`
+  width: 100%;
+  padding: 3px 5px;
+`;
+
+const InputStyle = styled(Input)`
+  width: 100%;
+  padding: 8px 12px;
+`;
+
+const CheckboxStyle = styled(Checkbox)`
+  margin-left: 0 !important;
+  width: 100%;
+  margin-bottom: 10px;
+`;
+
+const LineBorder = styled.div`
+  width: 100%;
+  height: 1px;
+  border-top: 1px solid #ddd;
+  margin: 15px 0;
+`;
+
+const TitleSmall = styled.h4`
+  color: #212b36;
+  font-weight: 600;
+  font-size: 12px;
+`;
+
+const CountryDropdownStyle = styled(CountryDropdown)`
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: no-repeat;
+`;
+
+const SearchStyle = styled(Search)`
+  width: 100%;
+`;
+
+const ActionBottom = styled.div`
+  margin-top: 20px;
+  .divider-bottom {
+    margin-bottom: 20px !important;
+  }
+  button {
+    float: right;
   }
 `;
 

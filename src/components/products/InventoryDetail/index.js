@@ -317,7 +317,7 @@ const InventoryDetail = () => {
                   defaultOptionLabel="Select a country."
                   value={country}
                   onChange={(val) => setCountry(val)}
-                  blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
+                  blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]} 
                   className="dropDown"
                 />
                 <span>In most cases, where the product is manufactured.</span>
@@ -338,14 +338,14 @@ const InventoryDetail = () => {
           <LineBorder />
 
           <Col md={12}>
-            <Button type="primary" danger>
+            <Button size="large" type="primary" danger>
               Delete variant
             </Button>
           </Col>
 
           <Col md={12}>
             <AlignRight>
-              <Button type="primary">Save</Button>
+              <Button size="large" type="primary">Save</Button>
             </AlignRight>
           </Col>
         </Row>
