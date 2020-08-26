@@ -143,7 +143,7 @@ const ViewOrders = () => {
                   <Tag>{item.status}</Tag>
                   <div>
                     <img src={item.image} alt="" />
-                    <Link href={`/products/123`}>
+                    <Link href={`/products/[productId]`} as="/products/123456789">
                       <a href="">{item.name}</a>
                     </Link>
                     <p>{item.style}</p>

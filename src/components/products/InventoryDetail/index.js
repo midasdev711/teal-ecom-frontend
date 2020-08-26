@@ -103,7 +103,7 @@ const InventoryDetail = () => {
                 <TextFlexCenter>
                   <TitleStyle>Indestructible Shoes</TitleStyle>
                   <TextStyle>39 variants</TextStyle>
-                  <Link href="/products/123">
+                  <Link href={`/products/[productId]`} as="/products/123456789">
                     <a href="#">Back to product</a>
                   </Link>
                 </TextFlexCenter>

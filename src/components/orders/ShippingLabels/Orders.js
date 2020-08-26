@@ -90,7 +90,7 @@ const Orders = () => {
                 alt=""
               />
               <div>
-                <Link href="/products/123">
+                <Link href={`/products/[productId]`} as="/products/123456789">
                   <a href="#">Indestructible Shoes</a>
                 </Link>
                 <TextStyle>Black / US 9 - 9.5 | EU 43 • 112</TextStyle>

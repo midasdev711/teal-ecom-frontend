@@ -296,7 +296,7 @@ const newForm = () => {
                             <ProductView>
                               <ImageView src={item.image} alt="" />
                               <div>
-                                <Link href="/products/123">
+                                <Link href={`/products/[productId]`} as="/products/123456789">
                                   <a href="#">{item.name}</a>
                                 </Link>
                                 <TextStyle>{item.style}</TextStyle>

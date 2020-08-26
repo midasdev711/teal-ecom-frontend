@@ -22,7 +22,7 @@ const InventoryDetail = () => {
           <ActionsTop>
             <Row gutter={24}>
               <Col md={12}>
-                <Link href="/products/123456">
+                <Link href={`/products/[productId]`} as="/products/123456789">
                   <LinkBack>
                     <LeftOutlined /> Back to product
                   </LinkBack>
