@@ -13,6 +13,7 @@ import {
   EditOutlined,
   CloseOutlined,
   FileTextOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 
 // ui
@@ -23,8 +24,6 @@ import {
   Row,
   Col,
   Button,
-  Checkbox,
-  Card,
   Divider,
   InputNumber,
   Tooltip,
@@ -137,7 +136,7 @@ const newForm = () => {
           <Col md={16}>
             <ContentBox>
               <Form.Item label="Title" name="title">
-                <TextInput placeholder="Short sleeve t-shirt" />
+                <TextInput placeholder="mysolidshoes gift card" />
               </Form.Item>
               <TitleStyle>Description</TitleStyle>
               <DescriptionContent>
@@ -175,160 +174,41 @@ const newForm = () => {
                 <p className="ant-upload-hint">or drop files to upload</p>
               </StyleDragger>
             </ContentBox>
-            <CardStyle>
-              <TitleCardStyle>Pricing</TitleCardStyle>
-              <Row gutter={24}>
-                <Col md={12}>
-                  <Form.Item label="Price">
-                    <InputNumberStyle
-                      placeholder="0.00"
-                      formatter={(value) =>
-                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col md={12}>
-                  <Form.Item label="Compare at price">
-                    <InputNumberStyle
-                      placeholder="0.00"
-                      formatter={(value) =>
-                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-                <Col md={12}>
-                  <Form.Item label="Cost per item">
-                    <InputNumberStyle
-                      placeholder="0.00"
-                      formatter={(value) =>
-                        `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                      }
-                    />
-                    <span>Customers won’t see this</span>
-                  </Form.Item>
-                </Col>
-                <Col md={6}>
-                  <StoreContent>
-                    <TextStyle>Margin</TextStyle>
-                    <span>-</span>
-                  </StoreContent>
-                </Col>
-                <Col md={6}>
-                  <StoreContent>
-                    <TextStyle>Profit</TextStyle>
-                    <span>-</span>
-                  </StoreContent>
-                </Col>
-                <Col md={24}>
-                  <Checkbox>Charge tax on this product</Checkbox>
-                </Col>
-              </Row>
-            </CardStyle>
 
-            <CardStyle>
-              <TitleCardStyle>Inventory</TitleCardStyle>
-
-              <Row gutter={24}>
-                <Col md={12}>
-                  <Form.Item label="SKU (Stock Keeping Unit)">
-                    <InputStyle />
-                  </Form.Item>
-                </Col>
-                <Col md={12}>
-                  <Form.Item label="Barcode (ISBN, UPC, GTIN, etc.)">
-                    <InputStyle />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
-                  <Checkbox.Group>
-                    <CheckboxStyle>Track quantity</CheckboxStyle>
-                    <CheckboxStyle>
-                      Continue selling when out of stock
-                    </CheckboxStyle>
-                  </Checkbox.Group>
-                </Col>
-              </Row>
-
-              <LineBorder />
-
-              <TitleSmall>QUANTITY</TitleSmall>
-
-              <Row gutter={24}>
-                <Col md={12}>
-                  <Form.Item label="Available">
-                    <InputNumberStyle value="0" />
-                  </Form.Item>
-                </Col>
-                <Col md={12}></Col>
-              </Row>
-            </CardStyle>
-
-            <CardStyle>
-              <TitleCardStyle>Shipping</TitleCardStyle>
-              <CheckboxStyle>This is a physical product</CheckboxStyle>
-
-              <LineBorder />
-
-              <TitleSmall>WEIGHT</TitleSmall>
-              <TextStyle>
-                Used to calculate shipping rates at checkout and label prices
-                during fulfillment.
-              </TextStyle>
-              <Row gutter={0}>
-                <Col md={8}>
-                  <Form.Item label="Weight">
-                    <InputNumberStyle />
-                  </Form.Item>
-                </Col>
-                <Col md={3}>
-                  <Form.Item label=" " name="" initialValue="kg">
-                    <Select>
-                      <Option value="lb">lb</Option>
-                      <Option value="oz">oz</Option>
-                      <Option value="kg">kg</Option>
-                      <Option value="g">g</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <LineBorder />
-
-              <TitleSmall>CUSTOMS INFORMATION</TitleSmall>
-              <p>
-                Used by border officers to calculate duties when shipping
-                internationally. Shown on customs forms you print during
-                fulfillment.
-              </p>
-
-              <Form.Item label="Country of origin">
-                <CountryDropdownStyle
-                  defaultOptionLabel="Select a country."
-                  value={country}
-                  onChange={(val) => setCountry(val)}
-                  blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
-                  className="dropDown"
-                />
-                <span>In most cases, where the product is manufactured.</span>
-              </Form.Item>
-
-              <Form.Item label="HS (Harmonized System) code">
-                <SearchStyle
-                  placeholder="Search by product keyword or HS code"
-                  onSearch={(value) => console.log(value)}
-                />
-                <span>Used by border officers to classify this product.</span>
-              </Form.Item>
-            </CardStyle>
             <ContentBox marginTop="20px">
-              <TitleBox>Variants</TitleBox>
-              <Checkbox className="margin-top">
-                This product has multiple options, like different sizes or
-                colors
-              </Checkbox>
+              <TitleBox>Denominations</TitleBox>
+              <div className="condition-wrap">
+                <InputNumberStyle
+                  placeholder="0.00"
+                  formatter={(value) =>
+                    `$ ${value || '10.00'}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                />
+                <Button icon={<DeleteOutlined />} size="large" />
+              </div>
+              <div className="condition-wrap">
+                <InputNumberStyle
+                  placeholder="0.00"
+                  formatter={(value) =>
+                    `$ ${value || '20.00'}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                />
+                <Button icon={<DeleteOutlined />} size="large" />
+              </div>
+              <div className="condition-wrap">
+                <InputNumberStyle
+                  placeholder="0.00"
+                  formatter={(value) =>
+                    `$ ${value || '30.00'}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                />
+                <Button icon={<DeleteOutlined />} size="large" />
+              </div>
+              <AddConditionBtn size="large">
+                Add denomination
+              </AddConditionBtn>
             </ContentBox>
+
             <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
                 <TitleBox>Search engine listing preview</TitleBox>
@@ -425,14 +305,14 @@ const newForm = () => {
                 <GroupContent>
                   <TitleStyle>Product type</TitleStyle>
                   <Input
-                    placeholder="e.g. Shirts"
+                    placeholder="e.g. Gift card"
                     addonAfter={<EditOutlined />}
                   />
                 </GroupContent>
                 <GroupContent>
                   <TitleStyle>Vendor</TitleStyle>
                   <Input
-                    placeholder="e.g. Nike"
+                    placeholder="e.g. mysolidshoes"
                     addonAfter={<EditOutlined />}
                   />
                 </GroupContent>
@@ -441,7 +321,7 @@ const newForm = () => {
               <ItemContentBox>
                 <TitleStyle className="title-box">COLLECTIONS</TitleStyle>
                 <SearchBox
-                  placeholder="Filter products"
+                  placeholder="Search for collections"
                   onSearch={(value) => console.log(value)}
                 />
                 <TextStyle>
@@ -456,7 +336,7 @@ const newForm = () => {
                   ref={saveInputRef}
                   type="text"
                   size="large"
-                  placeholder="Vintage, cotton, summer"
+                  placeholder="Gift cards, discount, code"
                   value={inputValue}
                   onChange={handleInputChange}
                   onBlur={handleInputConfirm}
@@ -503,11 +383,6 @@ const SubForm = styled.div`
     font-size: 20px;
     cursor: pointer;
   }
-  .title-box {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
   .tag-content {
     margin-top: 10px;
   }
@@ -530,6 +405,16 @@ const ContentBox = styled.div`
   .margin-bottom {
     margin-bottom: 20px !important;
   }
+  .condition-wrap {
+    display: flex;
+    margin-top: 15px;
+  }
+`;
+
+const InputNumberStyle = styled(InputNumber)`
+  width: 100%;
+  padding: 3px 5px;
+  margin-right: 15px;
 `;
 
 const AlignItem = styled.div`
@@ -595,9 +480,7 @@ const SearchBox = styled(Search)`
   padding: 6px 12px 6px 35px !important;
 `;
 
-const StoreContent = styled.div`
-  line-height: 6;
-`;
+
 const SelectContent = styled.div`
   position: relative;
   .delete-date-icon {
@@ -613,24 +496,6 @@ const StyleDragger = styled(Dragger)`
   height: 250px !important;
 `;
 
-const CardStyle = styled(Card)`
-  margin-top: 20px;
-  .ant-select-selector {
-    height: 38px !important;
-  }
-`;
-
-const TitleCardStyle = styled.h3`
-  font-weight: 600;
-  font-size: 16px;
-  color: #000;
-`;
-
-const InputNumberStyle = styled(InputNumber)`
-  width: 100%;
-  padding: 3px 5px;
-`;
-
 const InputStyle = styled(Input)`
   width: 100%;
   padding: 8px 12px;
@@ -641,37 +506,6 @@ const TextAreaStyle = styled(Input.TextArea)`
   padding: 8px 12px;
 `;
 
-const CheckboxStyle = styled(Checkbox)`
-  margin-left: 0 !important;
-  width: 100%;
-  margin-bottom: 10px;
-`;
-
-const LineBorder = styled.div`
-  width: 100%;
-  height: 1px;
-  border-top: 1px solid #ddd;
-  margin: 15px 0;
-`;
-
-const TitleSmall = styled.h4`
-  color: #212b36;
-  font-weight: 600;
-  font-size: 12px;
-`;
-
-const CountryDropdownStyle = styled(CountryDropdown)`
-  width: 100%;
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: no-repeat;
-`;
-
-const SearchStyle = styled(Search)`
-  width: 100%;
-`;
-
 const ActionBottom = styled.div`
   margin-top: 20px;
   .divider-bottom {
@@ -680,6 +514,10 @@ const ActionBottom = styled.div`
   button {
     float: right;
   }
+`;
+
+const AddConditionBtn = styled(Button)`
+  margin-top: 15px;
 `;
 
 export default newForm;

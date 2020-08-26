@@ -1,7 +1,6 @@
 import React from "react";
 import { PageLayout } from "../../../src/components/views";
 import { TEPageFooter } from "../../../src/components/atoms";
-import PageHeader from "../../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button, Row, Col } from "antd";
 import Link from "next/link";
@@ -35,7 +34,7 @@ const Gifts = () => {
                     </Message>
 
                     <Button type="primary" size="large">
-                      <Link href="gifts/new">
+                      <Link href="gift-cards/product/new">
                         <a>Sell gift cards</a>
                       </Link>
                     </Button>
@@ -49,7 +48,7 @@ const Gifts = () => {
                       Issue a gift card code directly to a customer.
                     </Message>
                     <Button type="primary" size="large">
-                      <Link href="gifts/new">
+                      <Link href="gift-cards/new">
                         <a>Send gift cards</a>
                       </Link>
                     </Button>
