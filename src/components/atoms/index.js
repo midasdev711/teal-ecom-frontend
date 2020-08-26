@@ -9,6 +9,7 @@ import MDDeleteSelected from "./MDDeleteSelected";
 import MDDeleteTags from "./MDDeleteTags";
 import MDExport from "./MDExport";
 import MDImportCSV from "./MDImportCSV";
+import RemirorEditor from "./RemirorEditor";
 
 export {
   TELogo,
@@ -22,4 +23,5 @@ export {
   MDDeleteTags,
   MDExport,
   MDImportCSV,
+  RemirorEditor,
 };

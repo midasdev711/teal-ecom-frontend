@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import WysiwygEditor from "../../WysiwygEditor";
+import { RemirorEditor } from "../../atoms";
 
 // ui
 import { Row } from "antd";
@@ -19,7 +19,7 @@ const NewForm = () => {
   return (
     <Row gutter={24}>
       <ContentBox>
-        <WysiwygEditor />
+        <RemirorEditor />
       </ContentBox>
     </Row>
   );

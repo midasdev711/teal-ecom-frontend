@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 
 // ui
-import WysiwygEditor from "../../WysiwygEditor";
+import { RemirorEditor } from "../../atoms";
 import {
   Form,
   Input,
@@ -144,7 +144,7 @@ const newForm = () => {
               </Form.Item>
               <TitleStyle>Description</TitleStyle>
               <DescriptionContent>
-                <WysiwygEditor />
+                <RemirorEditor />
               </DescriptionContent>
             </ContentBox>
             <ContentBox marginTop="20px">

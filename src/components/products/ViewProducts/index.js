@@ -77,7 +77,9 @@ const ViewCustomers = () => {
         return (
           <div>
             <ProductImage src={product.img}></ProductImage>
-            <span> {product && product.name}</span>
+            <Link href={`/products/[productId]`} as="/products/123456789">
+              <a> {product && product.name}</a>
+            </Link>
           </div>
         );
       },
