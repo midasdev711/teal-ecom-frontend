@@ -1,15 +1,17 @@
 import React, { useRef } from "react";
-import { Col, Row, Layout, Select, Divider } from "antd";
-import {
-  RightOutlined,
-  FileMarkdownOutlined,
-  PayCircleOutlined,
-} from "@ant-design/icons";
+import { Col, Row, Layout, Dropdown, Menu } from "antd";
+import { CaretDownOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import Link from "next/link";
 
-const { Option } = Select;
 const img = `https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_grande_f861cbf4-1bf9-4357-a453-ffc48bdbd2ba_350x350.jpg?v=1596714398`;
+
+const menu = (
+  <Menu>
+    <Menu.Item>What's new today</Menu.Item>
+    <Menu.Item>What's new yesterday</Menu.Item>
+  </Menu>
+);
 
 const LeftContent = () => {
   const handleChange = (value) => {
@@ -19,11 +21,14 @@ const LeftContent = () => {
   return (
     <LayoutLeftContent>
       <MainContent>
-        <StyledSelect defaultValue="all" onChange={handleChange}>
-          <Option value="all">
-            What's new <strong>Today</strong>
-          </Option>
-        </StyledSelect>
+        <StyledDropdown defaultValue="all" onChange={handleChange}>
+          <TitleDropdown>
+            What's new <strong>today</strong>
+          </TitleDropdown>
+          <Dropdown overlay={menu} placement="bottomCenter" arrow>
+            <CaretDownOutlined />
+          </Dropdown>
+        </StyledDropdown>
         <LayoutContent height="100px">
           <Row gutter={24}>
             <Col className="item-left" md={8}>
@@ -111,12 +116,23 @@ const MainContent = styled.div`
   }
 `;
 
-const StyledSelect = styled(Select)`
+const StyledDropdown = styled.div`
+  display: flex;
+  align-items: center;
+  svg{
+    margin-left: 10px;
+  }
+`;
+
+const TitleDropdown = styled.p`
   font-size: 24px;
   color: #404950;
   font-family: Proxima Nova;
   font-style: normal;
   font-weight: normal;
+  color: #404950;
+  line-height: 27px;
+  margin: 0;
 `;
 
 const StyledText = styled.p`
@@ -153,6 +169,7 @@ const StyledTitle = styled.h4`
   font-size: 12px;
   padding-top: 10px;
   font-weight: 500;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 `;
 
