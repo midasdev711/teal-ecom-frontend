@@ -1,29 +1,33 @@
 import React from "react";
 import { PageLayout } from "../src/components/views";
 import { LeftContent, RightContent } from "../src/components/home";
-import { Col, Row } from "antd";
+import { Col, Row, Select } from "antd";
 import styled from "styled-components";
 
 const Home = () => {
   return (
     <PageLayout>
       <HomeContent>
-        <Row className="home-page" gutter={24}>
-          <Col md={17}>
+        <HomeContainer>
+          <div className="wrap-content">
             <LeftContent />
-          </Col>
-          <Col md={7}>
             <RightContent />
-          </Col>
-        </Row>
+          </div>
+        </HomeContainer>
       </HomeContent>
     </PageLayout>
   );
 };
 
 const HomeContent = styled.div`
-  .home-page {
-    height: calc(100%);
+  padding-top: 50px;
+`;
+
+const HomeContainer = styled.div`
+  .wrap-content {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
   }
 `;
 

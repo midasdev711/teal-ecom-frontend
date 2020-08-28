@@ -1,131 +1,65 @@
 import React, { useRef } from "react";
-import { Col, Row, Layout, Tooltip, Divider } from "antd";
+import { Col, Row, Layout, Select, Divider } from "antd";
 import {
-  ExclamationCircleOutlined,
   RightOutlined,
   FileMarkdownOutlined,
   PayCircleOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
-import { Line, Bar } from "react-chartjs-2";
+import Link from "next/link";
+
+const { Option } = Select;
+const img = `https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_grande_f861cbf4-1bf9-4357-a453-ffc48bdbd2ba_350x350.jpg?v=1596714398`;
 
 const LeftContent = () => {
-  const data = {
-    labels: ["", "", "", "", "", "", ""],
-    datasets: [
-      {
-        label: "Sales",
-        backgroundColor: "rgba(151,95,228, 1)",
-        borderColor: "#975fe4",
-        borderWidth: 1,
-        hoverBackgroundColor: "#1890ff",
-        hoverBorderColor: "#1890ff",
-        data: [20, 0, 10, 20, 10, 15, 30],
-      },
-    ],
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
   };
 
-  const sessionsData = {
-    labels: ["", "", "", "", "", "", ""],
-    datasets: [
-      {
-        label: "Sessions",
-        backgroundColor: "#1890ff",
-        borderColor: "#1890ff",
-        borderWidth: 1,
-        hoverBackgroundColor: "#1890ff",
-        hoverBorderColor: "#1890ff",
-        data: [20, 0, 10, 20, 10, 15, 30],
-      },
-    ],
-  };
   return (
     <LayoutLeftContent>
       <MainContent>
-        <StyledText>Here’s what’s happening with your store today.</StyledText>
-        <Row className="section-content" gutter={24}>
-          <Col md={12}>
-            <LayoutContent>
-              <AlignItem>
-                <StyledTitle>Total Sales</StyledTitle>
-                <Tooltip title="Introduce">
-                  <ExclamationCircleOutlined />
-                </Tooltip>
-              </AlignItem>
-              <StyledTotal>8,846</StyledTotal>
-              <Line
-                options={{
-                  legend: {
-                    display: false,
-                  },
-                  title: {
-                    display: false,
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        display: false,
-                      },
-                    ],
-                  },
-                }}
-                data={data}
-              />
-              <Divider />
-              <StyledText>
-                <span className="visits">Daily Visits</span> 1,234
-              </StyledText>
-            </LayoutContent>
-          </Col>
-          <Col md={12}>
-            <LayoutContent>
-              <AlignItem>
-                <StyledTitle>Total Sessions</StyledTitle>
-                <Tooltip title="Introduce">
-                  <ExclamationCircleOutlined />
-                </Tooltip>
-              </AlignItem>
-              <StyledTotal>6,999</StyledTotal>
-              <Bar
-                data={sessionsData}
-                options={{
-                  legend: {
-                    display: false,
-                  },
-                  title: {
-                    display: false,
-                  },
-                  scales: {
-                    yAxes: [
-                      {
-                        display: false,
-                      },
-                    ],
-                  },
-                }}
-              />
-              <Divider />
-              <StyledText>
-                <span className="visits">Conversion Rate</span> 60%
-              </StyledText>
-            </LayoutContent>
-          </Col>
-        </Row>
+        <StyledSelect defaultValue="all" onChange={handleChange}>
+          <Option value="all">
+            What's new <strong>Today</strong>
+          </Option>
+        </StyledSelect>
+        <LayoutContent>
+          <Row gutter={24}>
+            <Col className="item-left" md={8}>
+              <ItemContent>
+                <StyledNum>$10.5K</StyledNum>
+                <StyledTitle>TOTAL SALES</StyledTitle>
+              </ItemContent>
+            </Col>
+            <Col className="item-center" md={8}>
+              <ItemContent>
+                <StyledNum>835</StyledNum>
+                <StyledTitle>ORDERS</StyledTitle>
+              </ItemContent>
+            </Col>
+            <Col className="item-right" md={8}>
+              <ItemContent>
+                <StyledNum>1,922</StyledNum>
+                <StyledTitle>SESSIONS</StyledTitle>
+              </ItemContent>
+            </Col>
+          </Row>
+        </LayoutContent>
         <LayoutContent className="align-top">
+          <StyledTitle>TOP PRODUCTS</StyledTitle>
           <AlignItem>
-            <StyledItemTitle>
-              <FileMarkdownOutlined />
-              <strong> 16 orders</strong> to fulfill
-            </StyledItemTitle>
-            <RightOutlined />
-          </AlignItem>
-          <Divider />
-          <AlignItem>
-            <StyledItemTitle>
-              <PayCircleOutlined />
-              <strong> 1 payment</strong> to capture
-            </StyledItemTitle>
-            <RightOutlined />
+            <div className="product-content">
+              <ProductImage src={img}></ProductImage>
+              <div>
+                <Link href="#">
+                  <a>Teal Essentials hand...</a>
+                </Link>
+                <br />
+                <StyledText>3 Pack</StyledText>
+              </div>
+            </div>
+            <StyledText>$432,00</StyledText>
           </AlignItem>
         </LayoutContent>
       </MainContent>
@@ -134,16 +68,31 @@ const LeftContent = () => {
 };
 
 const LayoutLeftContent = styled(Layout)`
-  ${"" /* padding: 20px; */}
+  width: 600px;
+  margin-right: 50px;
   .align-top {
-    margin-top: 40px;
+    margin-top: 30px;
+  }
+  .item-left {
+    opacity: 0.5;
+  }
+  .item-center {
+    opacity: 0.5;
+    text-align: center;
+  }
+  .item-right {
+    text-align: right;
   }
 `;
 
+const ProductImage = styled.img`
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+  border: 1px solid #bbc3c9;
+`;
+
 const MainContent = styled.div`
-  width: 44rem;
-  margin: 0 auto;
-  padding: 25px 0;
   & .section-content {
     margin-top: 20px;
   }
@@ -152,31 +101,26 @@ const MainContent = styled.div`
   }
 `;
 
+const StyledSelect = styled(Select)`
+  font-size: 17px;
+`;
+
 const StyledText = styled.p`
   font-size: 14px;
   font-weight: 400;
   margin: 0;
-  .visits {
-    color: #975fe4;
-    margin-right: 10px;
-  }
 `;
 
-const StyledItemTitle = styled.div`
-  cursor: pointer;
-  svg {
-    font-size: 20px;
-    margin-bottom: -3px;
-  }
-`;
+const ItemContent = styled.div``;
 
-const StyledTotal = styled.span`
+const StyledNum = styled.h1`
   margin-top: 4px;
   font-size: 30px;
   margin-bottom: 0;
   overflow: hidden;
   color: rgba(0, 0, 0, 0.85);
   font-size: 27px;
+  font-weight: 600;
   line-height: 38px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -185,12 +129,14 @@ const StyledTotal = styled.span`
 
 const StyledTitle = styled.h4`
   font-size: 12px;
+  padding-top: 10px;
   font-weight: 500;
   text-transform: uppercase;
 `;
 
 const LayoutContent = styled(Layout.Content)`
   padding: 20px;
+  margin-top: 30px;
   border: none;
   outline: none;
   width: 100%;
@@ -202,6 +148,11 @@ const LayoutContent = styled(Layout.Content)`
 const AlignItem = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  .product-content {
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 export default LeftContent;
