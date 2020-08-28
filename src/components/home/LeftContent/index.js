@@ -24,7 +24,7 @@ const LeftContent = () => {
             What's new <strong>Today</strong>
           </Option>
         </StyledSelect>
-        <LayoutContent>
+        <LayoutContent height="100px">
           <Row gutter={24}>
             <Col className="item-left" md={8}>
               <ItemContent>
@@ -46,8 +46,8 @@ const LeftContent = () => {
             </Col>
           </Row>
         </LayoutContent>
-        <LayoutContent className="align-top">
-          <StyledTitle>TOP PRODUCTS</StyledTitle>
+        <LayoutContent height="122px" className="align-top">
+          <ProductTitle>Top products</ProductTitle>
           <AlignItem>
             <div className="product-content">
               <ProductImage src={img}></ProductImage>
@@ -74,10 +74,8 @@ const LayoutLeftContent = styled(Layout)`
     margin-top: 30px;
   }
   .item-left {
-    opacity: 0.5;
   }
   .item-center {
-    opacity: 0.5;
     text-align: center;
   }
   .item-right {
@@ -92,6 +90,18 @@ const ProductImage = styled.img`
   border: 1px solid #bbc3c9;
 `;
 
+const ProductTitle = styled.p`
+  font-family: Proxima Nova;
+  margin-bottom: 20px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #788995;
+`;
+
 const MainContent = styled.div`
   & .section-content {
     margin-top: 20px;
@@ -102,29 +112,41 @@ const MainContent = styled.div`
 `;
 
 const StyledSelect = styled(Select)`
-  font-size: 17px;
+  font-size: 24px;
+  color: #404950;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
 `;
 
 const StyledText = styled.p`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
   font-size: 14px;
-  font-weight: 400;
-  margin: 0;
+  line-height: 16px;
+  color: #404950;
 `;
 
-const ItemContent = styled.div``;
+const ItemContent = styled.div`
+  &:hover {
+    h1,
+    h4 {
+      color: #404950;
+      cursor: pointer;
+    }
+  }
+`;
 
 const StyledNum = styled.h1`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 32px;
+  color: rgba(64, 73, 80, 0.5);
   margin-top: 4px;
-  font-size: 30px;
   margin-bottom: 0;
-  overflow: hidden;
-  color: rgba(0, 0, 0, 0.85);
-  font-size: 27px;
-  font-weight: 600;
-  line-height: 38px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  word-break: break-all;
 `;
 
 const StyledTitle = styled.h4`
@@ -135,9 +157,10 @@ const StyledTitle = styled.h4`
 `;
 
 const LayoutContent = styled(Layout.Content)`
-  padding: 20px;
+  padding: 15px 20px;
   margin-top: 30px;
   border: none;
+  height: ${(props) => (props.height ? props.height : "auto")};
   outline: none;
   width: 100%;
   background: white;

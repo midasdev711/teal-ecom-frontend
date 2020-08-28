@@ -10,10 +10,7 @@ const RightContent = () => {
 
   return (
     <LayoutRightContent>
-      <LayoutContent>
-        <br />
-        <br />
-      </LayoutContent>
+      <LayoutContent height="100px"></LayoutContent>
       <LayoutContent className="align-top">
         <StyledText>
           <strong>16 orders</strong> to fullfill
@@ -25,20 +22,24 @@ const RightContent = () => {
 
 const LayoutRightContent = styled.div`
   width: 300px;
-  padding-top: 60px;
+  padding-top: 62px;
   .align-top {
     margin-top: 30px;
   }
 `;
 
 const StyledText = styled.p`
-  font-size: 14px;
-  font-weight: 400;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 16px;
+  color: #404950;
   margin: 0;
 `;
 
 const LayoutContent = styled(Layout.Content)`
-  padding: 20px;
+  padding: 15px 20px;
+  height: ${(props) => (props.height ? props.height : "auto")};
   border: none;
   outline: none;
   width: 100%;
