@@ -8,8 +8,8 @@ const img = `https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-S
 
 const menu = (
   <Menu>
-    <Menu.Item>What's new today</Menu.Item>
-    <Menu.Item>What's new yesterday</Menu.Item>
+    <Menu.Item>today</Menu.Item>
+    <Menu.Item>yesterday</Menu.Item>
   </Menu>
 );
 
@@ -180,8 +180,6 @@ const LayoutContent = styled(Layout.Content)`
   height: ${(props) => (props.height ? props.height : "auto")};
   outline: none;
   width: 100%;
-  background: white;
-  box-shadow: 0px 2px 2px rgba(186, 195, 201, 0.25);
   border-radius: 5px;
 `;
 

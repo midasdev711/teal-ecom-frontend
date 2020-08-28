@@ -1,12 +1,9 @@
 import React from "react";
-import { Col, Row, Layout, Select } from "antd";
+import { Col, Row, Layout, } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
 
 const RightContent = () => {
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
 
   return (
     <LayoutRightContent>
@@ -22,7 +19,7 @@ const RightContent = () => {
 
 const LayoutRightContent = styled.div`
   width: 300px;
-  padding-top: 62px;
+  padding-top: 56px;
   .align-top {
     margin-top: 30px;
   }
@@ -44,7 +41,6 @@ const LayoutContent = styled(Layout.Content)`
   outline: none;
   width: 100%;
   background: white;
-  box-shadow: 0px 2px 2px rgba(186, 195, 201, 0.25);
   border-radius: 5px;
 `;
 
