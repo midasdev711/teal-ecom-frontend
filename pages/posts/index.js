@@ -8,25 +8,35 @@ import Link from "next/link";
 import { ViewPosts } from "../../src/components/posts";
 // apollo
 import { useLazyQuery } from "@apollo/client";
+import { apolloClient } from "../../src/graphql";
 import { GET_ARTICLES_QUERY } from "../../src/graphql/articles.query";
 
 const Posts = () => {
-  const [
-    getPostsData,
-    { loading: loadingArticles, error: errorArticles, data: dataArticles },
-  ] = useLazyQuery(GET_ARTICLES_QUERY);
+  const [dataArticles, setDataArticles] = useState([]);
 
   useEffect(() => {
-    getPostsData({
-      variables: {
-        filters: {
-          // userID: 854,
-          limit: 10,
-          page: 1,
-        },
-      },
-    });
+    getDataArticles();
   }, []);
+
+  const getDataArticles = () => {
+    apolloClient
+      .query({
+        query: GET_ARTICLES_QUERY,
+        variables: {
+          filters: {
+            // userID: 854,
+            limit: 50,
+            page: 2,
+          },
+        },
+      })
+      .then((res) => {
+        setDataArticles(res.data.articles);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <PageLayout>
@@ -59,7 +69,7 @@ const Posts = () => {
           path="posts/new"
           isData={true}
         />
-        <ViewPosts />
+        <ViewPosts data={dataArticles} />
         <TEPageFooter>
           Learn more about
           <Link href="#">

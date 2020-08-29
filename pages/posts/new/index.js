@@ -28,13 +28,6 @@ const NewCustomer = () => {
     { loading: createLoading, error: createError, data: upsertArticle },
   ] = useMutation(CREATE_ARTICLE_MUTATION);
 
-  if (loading) {
-    console.log("data: ", articles);
-  }
-  if (error) {
-    console.log("error: ", error);
-  }
-
   useEffect(() => {
     getPostsData({
       variables: {

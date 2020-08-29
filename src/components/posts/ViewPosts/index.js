@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
+import moment from "moment";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -38,7 +39,7 @@ const dataNew = customerData.filter((el) => {
   return el.isNew === true;
 });
 
-const ViewPosts = () => {
+const ViewPosts = (props) => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -52,136 +53,31 @@ const ViewPosts = () => {
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
 
+  const { data } = props;
+
   const columns = [
     {
-      title: "Post",
-      dataIndex: "order_id",
-      render: (order_id) => {
-        return (
-          <Link href="/posts/123">
-            <FullName href="">#{order_id}</FullName>
-          </Link>
-        );
-      },
-    },
-    {
-      title: "Date",
-      dataIndex: "created_date",
-    },
-    {
-      title: "Customer",
-      dataIndex: "customer",
-      render: (customer) => (
-        <Dropdown
-          trigger={["click"]}
-          overlay={
-            <PopupDetailTB>
-              <h3>
-                {customer.first_name} {customer.last_name}
-              </h3>
-              <p>{customer.address}</p>
-              <p>
-                {customer.order} order{customer.order > 1 ? "s" : ""}
-              </p>
-              <TextPhone>{customer.phone}</TextPhone>
-              <div>
-                <Button block type="default" href="/customers/123">
-                  View customer
-                </Button>
-              </div>
-            </PopupDetailTB>
-          }
-          placement="bottomCenter"
-        >
-          <ButtonCustomer type="text">
-            {customer.first_name} {customer.last_name} <DownOutlined />
-          </ButtonCustomer>
-        </Dropdown>
+      title: "Title",
+      dataIndex: "title",
+      width: "30%",
+      render: (title, item) => (
+        <Link key={item.ID} href={`/posts/${item.ID}`}>
+          <FullName href="">{title}</FullName>
+        </Link>
       ),
-      align: "left",
     },
     {
-      title: "Total",
-      dataIndex: "total",
-      render: (val) => `$${val}`,
+      title: "Description",
+      dataIndex: "description",
+      width: "50%",
     },
     {
-      title: "Payment",
-      dataIndex: "status_payment",
-      render: (val) => {
-        if (val === "paid") {
-          return <TagDark>{val}</TagDark>;
-        } else {
-          return <TagOrang>{val}</TagOrang>;
-        }
-      },
-    },
-    {
-      title: "Fulfillment",
-      dataIndex: "fulfillment",
-      render: (val) => {
-        if (val === "Unfulfilled") {
-          return <TagYellow>{val}</TagYellow>;
-        } else {
-          return <TagGreen>{val}</TagGreen>;
-        }
-      },
-    },
-    {
-      title: "Items",
-      dataIndex: "items",
-      render: (items) => {
-        let data = [];
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          data.push(
-            <Dropdown
-              key={i}
-              trigger={["click"]}
-              overlay={
-                <PopupDetailTB>
-                  <Tag>{item.status}</Tag>
-                  <div>
-                    <img src={item.image} alt="" />
-                    <Link href={`/products/[productId]`} as="/products/123456789">
-                      <a href="">{item.name}</a>
-                    </Link>
-                    <p>{item.style}</p>
-                    <p>SKU {item.sku}</p>
-                  </div>
-                </PopupDetailTB>
-              }
-              placement="bottomRight"
-            >
-              <ButtonCustomer type="text">
-                {items && items.length > 1
-                  ? `${items.length} items`
-                  : `${items.length} item`}{" "}
-                <DownOutlined />
-              </ButtonCustomer>
-            </Dropdown>
-          );
-
-          return data;
-        }
-      },
-    },
-    {
-      title: "Delivery method	",
-      dataIndex: "delivery",
-    },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      width: "10%",
-      render: (tags) => {
-        let data = [];
-        for (let i = 0; i < tags.length; i++) {
-          const tag = tags[i];
-          data.push(<Tag key={i}>{tag}</Tag>);
-        }
-        return data;
-      },
+      title: "View Count",
+      dataIndex: "viewCount",
+      render: (viewCount) => (
+        <span>{viewCount}</span>
+      ),
+      align: "center"
     },
   ];
 
@@ -205,7 +101,7 @@ const ViewPosts = () => {
     setTabIndex(Number(key));
     if (key === "2") {
       setTagsFilter(["Posts"]);
-    }  else if (key === "3") {
+    } else if (key === "3") {
       setTagsFilter(["Drafts"]);
     } else if (key === "4") {
       setTagsFilter(["Archived"]);
@@ -313,8 +209,9 @@ const ViewPosts = () => {
               ...rowSelection,
             }}
             columns={columns}
-            dataSource={customerData}
-            pagination={customerData.length > 10}
+            dataSource={data}
+            pagination={data.length > 10}
+            rowKey="ID"
           />
         )}
         {tabIndex === 2 && (
@@ -324,8 +221,9 @@ const ViewPosts = () => {
               ...rowSelection,
             }}
             columns={columns}
-            dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
-            pagination={customerData.length > 10}
+            dataSource={data}
+            rowKey="ID"
+            pagination={data.length > 10}
           />
         )}
         {tabIndex === 3 && (
