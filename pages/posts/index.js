@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PageLayout } from "../../src/components/views";
 import { TEPageFooter } from "../../src/components/atoms";
 import PageHeader from "../../src/components/PageHeader";
@@ -6,8 +6,28 @@ import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
 import { ViewPosts } from "../../src/components/posts";
+// apollo
+import { useLazyQuery } from "@apollo/client";
+import { GET_ARTICLES_QUERY } from "../../src/graphql/articles.query";
 
 const Posts = () => {
+  const [
+    getPostsData,
+    { loading: loadingArticles, error: errorArticles, data: dataArticles },
+  ] = useLazyQuery(GET_ARTICLES_QUERY);
+
+  useEffect(() => {
+    getPostsData({
+      variables: {
+        filters: {
+          // userID: 854,
+          limit: 10,
+          page: 1,
+        },
+      },
+    });
+  }, []);
+
   return (
     <PageLayout>
       <CustomerContent>

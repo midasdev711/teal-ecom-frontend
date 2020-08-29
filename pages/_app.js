@@ -8,6 +8,8 @@ import { TEPageLoader } from '../src/components/atoms';
 import withData from '../src/config/configureClient';
 import '../styles/antd.less';
 
+import { apolloClient } from '../src/graphql';
+
 function TealApp({ Component, pageProps, apollo }) {
   const [isLoading, setIsLoading] = useState();
 
@@ -36,7 +38,7 @@ function TealApp({ Component, pageProps, apollo }) {
           type='text/css'
         />
       </Head>
-      <ApolloProvider client={apollo}>
+      <ApolloProvider client={apolloClient}>
         <Component {...pageProps} />
       </ApolloProvider>
       {isLoading && <TEPageLoader />}
