@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Layout, Empty, Button } from "antd";
 import { PageLayout } from "../../src/components/views";
 import { TEPageFooter } from "../../src/components/atoms";
 import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
-import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
 import { ViewPosts } from "../../src/components/posts";
 // apollo
-import { useLazyQuery } from "@apollo/client";
 import { apolloClient } from "../../src/graphql";
 import { GET_ARTICLES_QUERY } from "../../src/graphql/articles.query";
 
@@ -18,20 +17,20 @@ const Posts = () => {
     getDataArticles();
   }, []);
 
-  const getDataArticles = () => {
-    apolloClient
+  const getDataArticles = async () => {
+    await apolloClient
       .query({
         query: GET_ARTICLES_QUERY,
         variables: {
           filters: {
-            // userID: 854,
-            limit: 50,
-            page: 2,
+            limit: 100,
+            page: 1,
+            authorId: 855,
           },
         },
       })
-      .then((res) => {
-        setDataArticles(res.data.articles);
+      .then(async (res) => {
+        await setDataArticles(res.data.articles);
       })
       .catch((err) => {
         console.log(err);

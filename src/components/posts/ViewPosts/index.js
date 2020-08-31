@@ -59,7 +59,7 @@ const ViewPosts = (props) => {
     {
       title: "Title",
       dataIndex: "title",
-      width: "30%",
+      width: "25%",
       render: (title, item) => (
         <Link key={item.ID} href={`/posts/${item.ID}`}>
           <FullName href="">{title}</FullName>
@@ -69,7 +69,8 @@ const ViewPosts = (props) => {
     {
       title: "Description",
       dataIndex: "description",
-      width: "50%",
+      width: "40%",
+			render: text => <DesStyle dangerouslySetInnerHTML={{ __html: text }} />,
     },
     {
       title: "View Count",
@@ -79,6 +80,13 @@ const ViewPosts = (props) => {
       ),
       align: "center"
     },
+    {
+			title: 'Created Date',
+      dataIndex: 'createdDate',
+      width: "18%",
+			key: 'createdDate',
+			render: createdDate => `${moment(createdDate, 'X').format('lll')}`,
+		},
   ];
 
   const handleMenuClickCheckbox = (e) => {};
@@ -515,6 +523,14 @@ const ViewContent = styled.div`
     0 1px 3px 0 rgba(63, 63, 68, 0.15)
   );
   border-radius: 3px;
+`;
+
+const DesStyle = styled.div`
+	overflow: hidden;
+	width: 100%;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
 `;
 
 const ContentTab = styled.div``;

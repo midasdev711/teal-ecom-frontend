@@ -1,6 +1,6 @@
-import gpl from 'graphql-tag';
+import gql from "graphql-tag";
 
-export const GET_ARTICLES_QUERY = gpl`
+export const GET_ARTICLES_QUERY = gql`
   query articles($filters: ArticleFilters) {
     articles(filters: $filters) {
       title
@@ -35,7 +35,7 @@ export const GET_ARTICLES_QUERY = gpl`
   }
 `;
 
-export const CREATE_ARTICLE_MUTATION = gpl`
+export const CREATE_ARTICLE_MUTATION = gql`
 mutation createArticle(
   $title: String
   $subTitle: String
@@ -94,6 +94,6 @@ mutation createArticle(
 `;
 
 export default {
-	GET_ARTICLES_QUERY,
-	CREATE_ARTICLE_MUTATION,
+  GET_ARTICLES_QUERY,
+  CREATE_ARTICLE_MUTATION,
 };

@@ -4,10 +4,9 @@ import styled from "styled-components";
 import { Button, Layout } from "antd";
 import Router from "next/router";
 // apollo
-import { useMutation, useLazyQuery } from "@apollo/client";
+import { apolloClient } from "../../../src/graphql";
 import {
   CREATE_ARTICLE_MUTATION,
-  GET_ARTICLES_QUERY,
 } from "../../../src/graphql/articles.query";
 // components
 import { PageLayout } from "../../../src/components/views";
@@ -15,73 +14,42 @@ import NewForm from "../../../src/components/posts/NewForm";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 // ui
-import { message } from "antd";
+import { message, Form } from "antd";
 
 const NewCustomer = () => {
   const [editorHtml, setContentEditorHtml] = useState("");
-  const [loadingPage, setLoadingPage] = useState(false);
-  const [getPostsData, { loading, error, data: articles }] = useLazyQuery(
-    GET_ARTICLES_QUERY
-  );
-  const [
-    createPostGQL,
-    { loading: createLoading, error: createError, data: upsertArticle },
-  ] = useMutation(CREATE_ARTICLE_MUTATION);
 
-  useEffect(() => {
-    getPostsData({
-      variables: {
-        filters: {
-          userID: 854,
-          limit: 50,
-          page: 1,
+  const onFinish = async (values) => {
+    const { title, subTitle } = values;
+    let _variables = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      authorID: 855,
+      featureImage: "",
+      categories: [
+        {
+          ID: 21,
+          name: "Media",
         },
-      },
-    });
+      ],
+    };
 
-    console.log(createLoading, createError);
-  }, [loadingPage]);
-
-  const createPost = async () => {
-    console.log("editorHtml: ", editorHtml);
-
-    let text = JSON.stringify(editorHtml);
-
-    createPostGQL({
-      variables: {
-        title: "What is Lorem Ipsum?",
-        subTitle: "What is Lorem Ipsum?",
-        description: text,
-        authorID: 854,
-        featureImage: "",
-        categories: [
-          {
-            ID: 21,
-            name: "Media",
-          },
-        ],
-      },
-    });
-
-    setContentEditorHtml("");
-
-    if (createError) {
-      message.error("Created new post failed!");
-    } else {
-      message.success("Created new post successfully!");
-      getPostsData({
-        variables: {
-          filters: {
-            userID: 854,
-            limit: 50,
-            page: 1,
-          },
-        },
+    apolloClient
+      .mutate({
+        mutation: CREATE_ARTICLE_MUTATION,
+        variables: _variables,
+      })
+      .then((res) => {
+        if (res.data) {
+          message.success("Created new post successfully!");
+          Router.router.push("/posts");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Created new post failed!");
       });
-      setTimeout(() => {
-        Router.router.push("/posts");
-      }, 1000);
-    }
   };
 
   const newActions = () => {
@@ -93,10 +61,8 @@ const NewCustomer = () => {
             <Button className="cancel" size="large">
               Cancel
             </Button>
-            <Button size="large" type="primary">
-              <a title="save" onClick={createPost}>
-                Save
-              </a>
+            <Button size="large" type="primary" htmlType="submit">
+              Save
             </Button>
           </NewCustomerAction>
         </ActionContent>
@@ -106,20 +72,22 @@ const NewCustomer = () => {
 
   return (
     <PageLayout>
-      <NewContent>
-        {newActions()}
-        <ContentPage>
-          <ContentHeader>
-            <Link href="/posts">
-              <LinkBack>
-                <LeftOutlined /> Create post
-              </LinkBack>
-            </Link>
-            <TittleHeader>Posts</TittleHeader>
-          </ContentHeader>
-          <NewForm onChangeEditor={setContentEditorHtml} />
-        </ContentPage>
-      </NewContent>
+      <Form onFinish={onFinish} layout="vertical">
+        <NewContent>
+          {newActions()}
+          <ContentPage>
+            <ContentHeader>
+              <Link href="/posts">
+                <LinkBack>
+                  <LeftOutlined /> Create post
+                </LinkBack>
+              </Link>
+              <TittleHeader>Posts</TittleHeader>
+            </ContentHeader>
+            <NewForm onChangeEditor={setContentEditorHtml} />
+          </ContentPage>
+        </NewContent>
+      </Form>
     </PageLayout>
   );
 };
