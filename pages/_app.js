@@ -10,46 +10,56 @@ import '../styles/antd.less';
 
 import { apolloClient } from '../src/graphql';
 
+// redux
+import { Provider } from 'react-redux';
+import thunk from "redux-thunk";
+import { applyMiddleware, createStore } from "redux";
+import rootReducer from "../src/redux/reducers";
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
 function TealApp({ Component, pageProps, apollo }) {
-  const [isLoading, setIsLoading] = useState();
+	const [isLoading, setIsLoading] = useState();
 
-  useEffect(() => {
-    Router.events.on('routeChangeStart', () => {
-      setIsLoading(true);
-    });
+	useEffect(() => {
+		Router.events.on('routeChangeStart' , () => {
+			setIsLoading(true);
+		});
 
-    Router.events.on('routeChangeComplete', () => {
-      setIsLoading(false);
-    });
+		Router.events.on('routeChangeComplete', () => {
+			setIsLoading(false);
+		});
 
-    Router.events.on('routeChangeError', () => {
-      setIsLoading(false);
-    });
-  }, []);
+		Router.events.on('routeChangeError', () => {
+			setIsLoading(false);
+		});
+	}, []);
 
-  return (
-    <div>
-      <Head>
-        <title>Teal Ecommerce</title>
-        <link rel='icon' href='/favicon.svg' />
-        <link
-          href='https://fonts.googleapis.com/css?family=Proxima+Nova:300,300i,400,400i,700,700i,900,900i'
-          rel='stylesheet'
-          type='text/css'
-        />
-      </Head>
-      <ApolloProvider client={apolloClient}>
-        <Component {...pageProps} />
-      </ApolloProvider>
-      {isLoading && <TEPageLoader />}
-      <GlobalStyles />
-    </div>
-  );
+	return (
+		<div>
+			<Head>
+				<title>Teal Ecommerce</title>
+				<link rel="icon" href="/favicon.svg" />
+				<link
+					href="https://fonts.googleapis.com/css?family=Proxima+Nova:300,300i,400,400i,700,700i,900,900i"
+					rel="stylesheet"
+					type="text/css"
+				/>
+			</Head>
+			<ApolloProvider client={apolloClient}>
+				<Provider store={store}>
+					<Component {...pageProps} />
+				</Provider>
+			</ApolloProvider>
+			{isLoading && <TEPageLoader />}
+			<GlobalStyles />
+		</div>
+	);
 }
 
-TealApp.getInitialProps = async (appContext) => {
-  const appProps = await App.getInitialProps(appContext);
-  return { ...appProps };
+TealApp.getInitialProps = async appContext => {
+	const appProps = await App.getInitialProps(appContext);
+	return { ...appProps };
 };
 
 export default withData(TealApp);

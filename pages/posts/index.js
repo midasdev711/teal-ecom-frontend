@@ -18,6 +18,7 @@ const Posts = () => {
   }, []);
 
   const getDataArticles = async () => {
+    const userID = Number(localStorage.getItem('userID'));
     await apolloClient
       .query({
         query: GET_ARTICLES_QUERY,
@@ -25,7 +26,7 @@ const Posts = () => {
           filters: {
             limit: 100,
             page: 1,
-            authorId: 855,
+            authorId: userID,
           },
         },
       })

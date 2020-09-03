@@ -18,6 +18,7 @@ import { message, Form } from "antd";
 
 const NewCustomer = () => {
   const [editorHtml, setContentEditorHtml] = useState("");
+  const authorID = Number(localStorage.getItem('userID'));
 
   const onFinish = async (values) => {
     const { title, subTitle } = values;
@@ -25,7 +26,7 @@ const NewCustomer = () => {
       title: title,
       subTitle: subTitle,
       description: editorHtml,
-      authorID: 855,
+      authorID: authorID,
       featureImage: "",
       categories: [
         {
@@ -43,7 +44,7 @@ const NewCustomer = () => {
       .then((res) => {
         if (res.data) {
           message.success("Created new post successfully!");
-          Router.router.push("/posts");
+          window.location.href = '/posts';
         }
       })
       .catch((err) => {

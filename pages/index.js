@@ -1,21 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { PageLayout } from "../src/components/views";
 import { LeftContent, RightContent } from "../src/components/home";
-import { Col, Row, Select } from "antd";
+import { getUserWithID } from "../src/redux/actions/users";
+import { connect } from "react-redux";
 import styled from "styled-components";
 
-const Home = () => {
+const Home = (props) => {
+  const [isAuth, setIsAuth] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    let userID = localStorage.getItem("userID");
+    setIsAuth(userID ? true : false);
+    if (userID) {
+      props.getUserWithID(userID);
+    } else {
+      router.push("/login");
+    }
+  });
+
+  useEffect(() => {
+    if (!props.isGetDetail) {
+      router.push("/login");
+    }
+  }, [props.isGetDetail]);
+
   return (
-    <PageLayout>
-      <HomeContent>
-        <HomeContainer>
-          <div className="wrap-content">
-            <LeftContent />
-            <RightContent />
-          </div>
-        </HomeContainer>
-      </HomeContent>
-    </PageLayout>
+    isAuth && (
+      <PageLayout>
+        <HomeContent>
+          <HomeContainer>
+            <div className="wrap-content">
+              <LeftContent />
+              <RightContent />
+            </div>
+          </HomeContainer>
+        </HomeContent>
+      </PageLayout>
+    )
   );
 };
 
@@ -31,4 +54,16 @@ const HomeContainer = styled.div`
   }
 `;
 
-export default Home;
+const mapStateToProps = (store) => {
+  return {
+    // users
+    userData: store.usersReducer.userData,
+    isGetDetail: store.usersReducer.isGetDetail,
+  };
+};
+
+const mapDispatchToProps = {
+  getUserWithID,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
