@@ -43,7 +43,6 @@ const ViewPosts = (props) => {
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
   const [valueSubscription, setValueSubscription] = useState(0);
-
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticles(userID, 100, 1);
@@ -77,6 +76,8 @@ const ViewPosts = (props) => {
     setValueSubscription(e.target.value);
   };
 
+  const userData = JSON.parse(localStorage.getItem("userData"));
+
   const tableMenu = (
     <Menu onClick={(e) => handleChange(e)}>
       <Menu.Item key="Live Stories">Live Stories</Menu.Item>
@@ -86,7 +87,6 @@ const ViewPosts = (props) => {
     </Menu>
   );
 
-  const { data } = props;
   const columns = [
     {
       title: "Title",
@@ -95,7 +95,7 @@ const ViewPosts = (props) => {
       showSorterTooltip: false,
       width: "25%",
       render: (title, item) => (
-        <Link key={item.ID} href={`/posts/${item.slug}`}>
+        <Link href={`/[portal_id]/stories/[slug]`} as={`/${userData && userData.uniqueID}/stories/${item.slug}`}>
           <FullName href="">{title}</FullName>
         </Link>
       ),
@@ -139,7 +139,7 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                <Link href={`/posts/${slug}`}>
+                <Link href={`/[portal_id]/stories/[slug]`} as={`/${userData && userData.uniqueID}/stories/${slug}`}>
                   <a href="#">Edit</a>
                 </Link>
               </Menu.Item>

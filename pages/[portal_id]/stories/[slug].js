@@ -8,13 +8,10 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
-} from "../../src/redux/actions/articles";
-// apollo
-import { apolloClient } from "../../src/graphql";
-import { CREATE_ARTICLE_MUTATION } from "../../src/graphql/articles.query";
+} from "../../../src/redux/actions/articles";
 // components
-import { PageLayout } from "../../src/components/views";
-import NewForm from "../../src/components/posts/NewForm";
+import { PageLayout } from "../../../src/components/views";
+import NewForm from "../../../src/components/posts/NewForm";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 // ui
