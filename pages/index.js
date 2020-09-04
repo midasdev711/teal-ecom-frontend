@@ -9,7 +9,7 @@ import styled from "styled-components";
 const Home = (props) => {
   const [isAuth, setIsAuth] = useState(false);
   const router = useRouter();
-
+ 
   useEffect(() => {
     let userID = localStorage.getItem("userID");
     setIsAuth(userID ? true : false);
