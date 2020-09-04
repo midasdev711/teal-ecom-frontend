@@ -45,6 +45,7 @@ export const LOGIN_USER_QUERY = gql`
 			isVerified
 			isFollowing
 			email
+			uniqueID
 			password
 		}
 	}

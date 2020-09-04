@@ -16,7 +16,7 @@ const newActions = () => {
         <NewOrderAction>
           <Button className="cancel" size="large">
             Discard
-          </Button>
+          </Button> 
           <Button className="save" size="large" type="primary">
             <Link href="/products/collections">
               <a title="save">Save</a>

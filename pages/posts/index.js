@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Layout, Empty, Button } from "antd";
 import { PageLayout } from "../../src/components/views";
 import { TEPageFooter } from "../../src/components/atoms";
-import PageHeader from "../../src/components/PageHeader";
 import styled from "styled-components";
 import Link from "next/link";
 import { ViewPosts } from "../../src/components/posts";
@@ -18,7 +17,7 @@ const Posts = () => {
   }, []);
 
   const getDataArticles = async () => {
-    const userID = Number(localStorage.getItem('userID'));
+    const userID = Number(localStorage.getItem("userID"));
     await apolloClient
       .query({
         query: GET_ARTICLES_QUERY,
@@ -41,48 +40,29 @@ const Posts = () => {
   return (
     <PageLayout>
       <CustomerContent>
-        {/* <EmptyCustomerContent>
-          <PageHeader
-            PageName="Orders"
-            ImportButtonName="Import Orders"
-          />
-          <EmptyDataContent>
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}>
-              <Message>Currently you do not have any order to manage.</Message>
-              <CreateButton size="large">
-                <Link href="orders/drafts/new">
-                  <a>Create order</a>
-                </Link>
-              </CreateButton>
-            </Empty>
-          </EmptyDataContent>
-          <TEPageFooter>
-            Learn more about
-            <Link href="#">
-              <a> orders</a>
-            </Link>
-          </TEPageFooter>
-        </EmptyCustomerContent> */}
-        <PageHeader
-          PageName="Your Posts"
-          CreateButtonName="Create post"
-          path="posts/new"
-          isData={true}
-        />
-        <ViewPosts data={dataArticles} />
-        <TEPageFooter>
-          Learn more about
-          <Link href="#">
-            <a> posts.</a>
-          </Link>
-        </TEPageFooter>
+        {dataArticles && dataArticles.length > 0 ? (
+          <ViewPosts data={dataArticles} />
+        ) : (
+          <EmptyCustomerContent>
+            <EmptyDataContent>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}>
+                <Message>Currently you do not have any post to manage.</Message>
+                <CreateButton size="large">
+                  <Link href="/posts/new">
+                    <a>Create post</a>
+                  </Link>
+                </CreateButton>
+              </Empty>
+            </EmptyDataContent>
+          </EmptyCustomerContent>
+        )}
       </CustomerContent>
     </PageLayout>
   );
 };
 
 const CustomerContent = styled.div`
-  padding: 20px;
+  padding: 50px;
 `;
 
 const EmptyCustomerContent = styled.div`

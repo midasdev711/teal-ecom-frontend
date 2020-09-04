@@ -10,9 +10,23 @@ const NewForm = (props) => {
 
   const { onChangeEditor } = props;
 
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
   const onChange = (content) => {
     onChangeEditor(content.getHTML());
     setContentEditor(content.getHTML());
+  };
+
+  const onChangeImage = (e) => {
+    if (e.target.files.length > 0) {
+      let url = getBase64(e.target.files[0], (imageUrl) => {
+        props.setImage(imageUrl);
+      });
+    }
   };
 
   return (
@@ -32,6 +46,12 @@ const NewForm = (props) => {
         <Input />
       </Form.Item>
       <Form.Item
+        label="Image"
+        name="featureImage"
+      >
+        <Input type="file" accept="images/*" onChange={onChangeImage} />
+      </Form.Item>
+      <Form.Item
         label="Description"
         rules={[
           {
@@ -41,7 +61,10 @@ const NewForm = (props) => {
           },
         ]}
       ></Form.Item>
-      <RemirorEditor onChangeEditor={onChange} />
+      <RemirorEditor
+        onChangeEditor={onChange}
+        description={props.description}
+      />
     </ContentBox>
   );
 };

@@ -36,64 +36,141 @@ export const GET_ARTICLES_QUERY = gql`
 `;
 
 export const CREATE_ARTICLE_MUTATION = gql`
-mutation createArticle(
-  $title: String
-  $subTitle: String
-  $description: String
-  $authorID: Int
-  $featureImage: String
-  $categories: [ArticleCategoryInput]
-) {
-  upsertArticle(
-    article: {
-      title: $title
-      subTitle: $subTitle
-      description: $description
-      authorID: $authorID
-      featureImage: $featureImage
-      categories: $categories
-    }
+  mutation createArticle(
+    $title: String
+    $subTitle: String
+    $description: String
+    $authorID: Int
+    $featureImage: String
+    $categories: [ArticleCategoryInput]
   ) {
-    title
-    subTitle
-    titleSlug
-    description
-    slug
-    sequence
-    urls
-    createdDate
-    author {
-      name
-      avatar
+    upsertArticle(
+      article: {
+        title: $title
+        subTitle: $subTitle
+        description: $description
+        authorID: $authorID
+        featureImage: $featureImage
+        categories: $categories
+      }
+    ) {
+      title
+      subTitle
+      titleSlug
+      description
+      slug
+      sequence
+      urls
+      createdDate
+      author {
+        name
+        avatar
+        ID
+        userName
+      }
+      isPublish
+      ampSlug
+      featureImage
+      thumbnail
+      readMinutes
+      viewCount
+      tags
+      status
+      totalClapCount
+      totalArticleCount
+      acceptDonation
+      isBookmark
+      isFollowed
+      isClicked
+      isContentAllowed
+      articleScope
       ID
-      userName
-    }
-    isPublish
-    ampSlug
-    featureImage
-    thumbnail
-    readMinutes
-    viewCount
-    tags
-    status
-    totalClapCount
-    totalArticleCount
-    acceptDonation
-    isBookmark
-    isFollowed
-    isClicked
-    isContentAllowed
-    articleScope
-    ID
-    categories {
-      ID
-      name
+      categories {
+        ID
+        name
+      }
     }
   }
-}
+`;
+
+export const UPDATE_ARTICLE_MUTATION = gql`
+  mutation updateArticle(
+    $articleId: Int
+    $title: String
+    $subTitle: String
+    $description: String
+    $featureImage: String
+  ) {
+    upsertArticle(
+      article: {
+        articleId: $articleId
+        title: $title
+        subTitle: $subTitle
+        description: $description
+        featureImage: $featureImage
+      }
+    ) {
+      title
+      subTitle
+      titleSlug
+      description
+      featureImage
+      viewCount
+    }
+  }
+`;
+
+export const DELETE_ARTICLE_MUTATION = gql`
+  mutation updateArticle($status: Int, $articleId: Int) {
+    upsertArticle(article: { status: $status, articleId: $articleId }) {
+      title
+      subTitle
+      titleSlug
+      description
+      status
+    }
+  }
+`;
+
+export const GET_DETAIL_ARTICLE_QUERY = gql`
+  query articles($filters: ArticleFilters) {
+    articles(filters: $filters) {
+      title
+      subTitle
+      titleSlug
+      description
+      slug
+      sequence
+      urls
+      createdDate
+      author {
+        name
+      }
+      isPublish
+      ampSlug
+      featureImage
+      thumbnail
+      readMinutes
+      viewCount
+      tags
+      status
+      totalClapCount
+      totalArticleCount
+      acceptDonation
+      isBookmark
+      isFollowed
+      isClicked
+      isContentAllowed
+      articleScope
+      ID
+    }
+  }
 `;
 
 export default {
   GET_ARTICLES_QUERY,
+  GET_DETAIL_ARTICLE_QUERY,
   CREATE_ARTICLE_MUTATION,
+  DELETE_ARTICLE_MUTATION,
+  UPDATE_ARTICLE_MUTATION,
 };
