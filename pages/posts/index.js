@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Empty, Button } from "antd";
 import { PageLayout } from "../../src/components/views";
-import { TEPageFooter } from "../../src/components/atoms";
 import styled from "styled-components";
 import Link from "next/link";
 import { ViewPosts } from "../../src/components/posts";

@@ -193,10 +193,14 @@ const TimeData = [
   },
 ];
 
+const KEY_SESSION_USER = 'session_auth_portal';
+
 export {
   TimeData,
+  KEY_SESSION_USER,
 };
 
 export default {
   TimeData,
+  KEY_SESSION_USER,
 };

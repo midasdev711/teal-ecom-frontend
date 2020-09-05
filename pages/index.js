@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { PageLayout } from "../src/components/views";
 import { LeftContent, RightContent } from "../src/components/home";
 import { getUserWithID } from "../src/redux/actions/users";
@@ -7,38 +6,25 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 
 const Home = (props) => {
-  const [isAuth, setIsAuth] = useState(false);
-  const router = useRouter();
- 
+
   useEffect(() => {
     let userID = localStorage.getItem("userID");
-    setIsAuth(userID ? true : false);
     if (userID) {
       props.getUserWithID(userID);
-    } else {
-      router.push("/login");
     }
   });
 
-  useEffect(() => {
-    if (!props.isGetDetail) {
-      router.push("/login");
-    }
-  }, [props.isGetDetail]);
-
   return (
-    isAuth && (
-      <PageLayout>
-        <HomeContent>
-          <HomeContainer>
-            <div className="wrap-content">
-              <LeftContent />
-              <RightContent />
-            </div>
-          </HomeContainer>
-        </HomeContent>
-      </PageLayout>
-    )
+    <PageLayout>
+      <HomeContent>
+        <HomeContainer>
+          <div className="wrap-content">
+            <LeftContent />
+            <RightContent />
+          </div>
+        </HomeContainer>
+      </HomeContent>
+    </PageLayout>
   );
 };
 

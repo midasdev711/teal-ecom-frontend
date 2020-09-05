@@ -30,19 +30,13 @@ import {
 import { TEIcon } from "../../atoms";
 const { Panel } = Collapse;
 
-const actionMenu = (
-  <Menu>
-    <Menu.Item>Edit</Menu.Item>
-    <Menu.Item>Stats</Menu.Item>
-  </Menu>
-);
-
 const ViewPosts = (props) => {
   const [tabValue, setTabValue] = useState("Live Stories");
   const [checkedList, setCheckedList] = useState([]);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
   const [valueSubscription, setValueSubscription] = useState(0);
+
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticles(userID, 100, 1);
@@ -95,7 +89,10 @@ const ViewPosts = (props) => {
       showSorterTooltip: false,
       width: "25%",
       render: (title, item) => (
-        <Link href={`/[portal_id]/stories/[slug]`} as={`/${userData && userData.uniqueID}/stories/${item.slug}`}>
+        <Link
+          href={`/[portal_id]/stories/[slug]`}
+          as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
+        >
           <FullName href="">{title}</FullName>
         </Link>
       ),
@@ -124,11 +121,15 @@ const ViewPosts = (props) => {
     {
       title: "CTR",
       dataIndex: "CTR",
+      sorter: (a, b) => a.CTR > b.CTR,
+      showSorterTooltip: false,
       render: (CTR) => <span>{CTR || "5,67%"}</span>,
     },
     {
       title: "Revenue",
       dataIndex: "revenue",
+      sorter: (a, b) => a.revenue > b.revenue,
+      showSorterTooltip: false,
       render: (revenue) => <span>{revenue || "$7.6K"}</span>,
     },
     {
@@ -139,7 +140,10 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                <Link href={`/[portal_id]/stories/[slug]`} as={`/${userData && userData.uniqueID}/stories/${slug}`}>
+                <Link
+                  href={`/[portal_id]/stories/[slug]`}
+                  as={`/${userData && userData.uniqueID}/stories/${slug}`}
+                >
                   <a href="#">Edit</a>
                 </Link>
               </Menu.Item>
