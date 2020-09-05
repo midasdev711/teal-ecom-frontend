@@ -87,13 +87,15 @@ const ViewPosts = (props) => {
       dataIndex: "title",
       sorter: (a, b) => a.title > b.title,
       showSorterTooltip: false,
-      width: "25%",
+      width: "30%",
       render: (title, item) => (
         <Link
           href={`/[portal_id]/stories/[slug]`}
           as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
         >
-          <FullName href="">{title}</FullName>
+          <FullName >
+            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+          </FullName>
         </Link>
       ),
     },

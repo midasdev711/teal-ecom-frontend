@@ -35,6 +35,11 @@ function TealApp({ Component, pageProps, apollo }) {
     Router.events.on("routeChangeError", () => {
       setIsLoading(false);
     });
+
+    let userID = Number(localStorage.getItem("userID"));
+    if (!userID) {
+      Router.router.push("/login");
+    }
   }, []);
 
   return (
@@ -74,9 +79,6 @@ TealApp.getInitialProps = async (appContext) => {
     accessToken = authUser && authUser.token;
   } catch (e) {
     console.log(e);
-  }
-  if (authUser) {
-    Router.router.push("/login");
   }
 
   return { ...appProps, authUser, accessToken };
