@@ -5,6 +5,8 @@ import {
   DELETE_ARTICLE_MUTATION,
   GET_DETAIL_ARTICLE_QUERY,
   UPDATE_ARTICLE_MUTATION,
+  GET_LIST_ARTICLES_DELETED_QUERY,
+  DELETE_ARTICLES_MULTI_MUTATION,
 } from "../../graphql/articles.query";
 
 import {
@@ -18,6 +20,10 @@ import {
   ERROR_GET_DETAIL_ARTICLE,
   ACTION_UPDATED_ARTICLE,
   ERROR_UPDATED_ARTICLE,
+  ACTION_DELETED_ACTICLES_MULTI,
+  ERROR_DELETED_ARTICLES_MULTI,
+  ACTION_GET_LIST_ARTTICLES_DELETED,
+  ERROR_GET_LIST_ARTICLES_DELETED,
 } from "./actionTypes";
 
 export function updateArticle(data) {
@@ -58,7 +64,6 @@ export function getDetailArticle(slug) {
         },
       })
       .then((res) => {
-        console.log(res);
         dispatch({
           type: ACTION_GET_DETAIL_ARTICLE,
           data: res.data.articles[0],
@@ -68,6 +73,62 @@ export function getDetailArticle(slug) {
         console.log(err);
         dispatch({
           type: ERROR_GET_DETAIL_ARTICLE,
+          msgErr: err.message,
+        });
+      });
+  };
+}
+
+export function getListArticlesDeleted(userId, authorId, limit, page) {
+  return (dispatch) => {
+    return apolloClient
+      .query({
+        query: GET_LIST_ARTICLES_DELETED_QUERY,
+        variables: {
+          filters: {
+            userId,
+            deletedArticlesAuthorId: authorId,
+            limit,
+            page,
+          },
+        },
+        fetchPolicy: 'network-only'
+      })
+      .then((res) => {
+        dispatch({
+          type: ACTION_GET_LIST_ARTTICLES_DELETED,
+          data: res.data.articles,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch({
+          type: ERROR_GET_LIST_ARTICLES_DELETED,
+          msgErr: err.message,
+        });
+      });
+  };
+}
+
+export function deleteMultiArticles(ids) {
+  return (dispatch) => {
+    return apolloClient
+      .mutate({
+        mutation: DELETE_ARTICLES_MULTI_MUTATION,
+        variables: {
+          deleteArticleIds: ids,
+        },
+      })
+      .then((res) => {
+        dispatch({
+          type: ACTION_DELETED_ACTICLES_MULTI,
+          data: res.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch({
+          type: ERROR_DELETED_ARTICLES_MULTI,
           msgErr: err.message,
         });
       });
@@ -85,7 +146,6 @@ export function deleteArticleWithID(articleId) {
         },
       })
       .then((res) => {
-        console.log(res);
         dispatch({
           type: ACTION_DELETED_ARTICLE_SUCCESS,
           data: res.data,
@@ -113,6 +173,7 @@ export function getListArticles(authorId, limit, page) {
             authorId: authorId,
           },
         },
+        fetchPolicy: 'network-only'
       })
       .then((res) => {
         if (res.data) {
@@ -163,4 +224,6 @@ export default {
   deleteArticleWithID,
   getDetailArticle,
   updateArticle,
+  getListArticlesDeleted,
+  deleteMultiArticles,
 };

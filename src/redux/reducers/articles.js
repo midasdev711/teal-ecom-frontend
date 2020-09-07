@@ -10,6 +10,10 @@ import {
   ERROR_DELETED_ARTICLE,
   ACTION_UPDATED_ARTICLE,
   ERROR_UPDATED_ARTICLE,
+  ACTION_DELETED_ACTICLES_MULTI,
+  ERROR_DELETED_ARTICLES_MULTI,
+  ACTION_GET_LIST_ARTTICLES_DELETED,
+  ERROR_GET_LIST_ARTICLES_DELETED,
 } from "../actions/actionTypes";
 
 const initData = {
@@ -19,6 +23,8 @@ const initData = {
   msgErr: null,
   isDeleted: false,
   isUpdated: false,
+  isDeletedMulti: false,
+  articlesDeleted: [],
 };
 
 export const articlesReducer = (state = initData, action) => {
@@ -83,6 +89,32 @@ export const articlesReducer = (state = initData, action) => {
       return {
         ...state,
         isUpdated: false,
+        msgErr: action.msgErr,
+      };
+    case ACTION_GET_LIST_ARTTICLES_DELETED:
+      return {
+        ...state,
+        articlesDeleted: action.data,
+        isDeletedMulti: false,
+        msgErr: null,
+      };
+    case ERROR_GET_LIST_ARTICLES_DELETED:
+      return {
+        ...state,
+        articlesDeleted: [],
+        isDeletedMulti: false,
+        msgErr: action.msgErr,
+      };
+    case ACTION_DELETED_ACTICLES_MULTI:
+      return {
+        ...state,
+        isDeletedMulti: true,
+        msgErr: null,
+      };
+    case ERROR_DELETED_ARTICLES_MULTI:
+      return {
+        ...state,
+        isDeletedMulti: false,
         msgErr: action.msgErr,
       };
     default:

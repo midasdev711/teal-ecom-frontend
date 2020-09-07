@@ -3,10 +3,13 @@ import styled from "styled-components";
 import Link from "next/link";
 import moment from "moment";
 import { connect } from "react-redux";
+import { useRouter } from "next/router";
 // actions
 import {
   deleteArticleWithID,
   getListArticles,
+  deleteMultiArticles,
+  getListArticlesDeleted,
 } from "../../../redux/actions/articles";
 // icons
 import {
@@ -40,7 +43,10 @@ const ViewPosts = (props) => {
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticles(userID, 100, 1);
+    props.getListArticlesDeleted(userID, userID, 100, 1);
   });
+
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
     if (props.isDeleted) {
@@ -49,15 +55,27 @@ const ViewPosts = (props) => {
         description: "Deleted article!",
       });
 
-      window.location.reload();
+      setTabValue("Deleted");
+      setCheckedList([]);
     }
   }, [props.isDeleted]);
+
+  useEffect(() => {
+    if (props.isDeletedMulti) {
+      notification.success({
+        message: "Successfully!",
+        description: "Deleted articles!",
+      });
+      setCheckedList([]);
+      setTabValue("Deleted");
+    }
+  }, [props.isDeletedMulti]);
 
   useEffect(() => {
     if (props.msgErr) {
       notification.error({
         message: "Error",
-        description: "Delete article failed!",
+        description: props.msgErr,
       });
     }
   }, [props.msgErr]);
@@ -69,8 +87,6 @@ const ViewPosts = (props) => {
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
-
-  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const tableMenu = (
     <Menu onClick={(e) => handleChange(e)}>
@@ -93,7 +109,7 @@ const ViewPosts = (props) => {
           href={`/[portal_id]/stories/[slug]`}
           as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
         >
-          <FullName >
+          <FullName>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
           </FullName>
         </Link>
@@ -104,7 +120,8 @@ const ViewPosts = (props) => {
       dataIndex: "createdDate",
       sorter: (a, b) => a.createdDate > b.createdDate,
       showSorterTooltip: false,
-      render: (createdDate) => `${moment(createdDate, "X").format("ll")}`,
+      render: (createdDate) =>
+        `${moment(new Date(new Number(createdDate))).format("LL")}`,
     },
     {
       title: "Views",
@@ -164,19 +181,21 @@ const ViewPosts = (props) => {
   ];
 
   const onDeletePosts = async () => {
-    if (checkedList.length === 1) {
-      await props.deleteArticleWithID(Number(checkedList[0].ID));
+    let ids = [];
+    for (let i = 0; i < checkedList.length; i++) {
+      const el = checkedList[i];
+      ids.push(Number(el.ID));
     }
+    await props.deleteMultiArticles(ids);
+    const userID = Number(localStorage.getItem("userID"));
+    await props.getListArticles(userID, 100, 1);
+    await props.getListArticlesDeleted(userID, userID, 100, 1);
   };
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
     },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      name: record.name,
-    }),
   };
 
   return (
@@ -202,18 +221,22 @@ const ViewPosts = (props) => {
             {checkedList.length > 0 && (
               <>
                 <TEIcon path="/images/posts/download.svg" />
-                <Popconfirm
-                  className="popupDelete"
-                  placement="bottomLeft"
-                  title="Are you sure delete this post？"
-                  okText="Yes"
-                  cancelText="No"
-                  onConfirm={() => onDeletePosts()}
-                >
-                  <BTNDelete>
-                    <TEIcon path="/images/posts/delete.svg" />
-                  </BTNDelete>
-                </Popconfirm>
+                {tabValue === "Deleted" ? (
+                  <TEIcon path="/images/posts/delete.svg" />
+                ) : (
+                  <Popconfirm
+                    className="popupDelete"
+                    placement="bottomLeft"
+                    title="Are you sure delete this post？"
+                    okText="Yes"
+                    cancelText="No"
+                    onConfirm={() => onDeletePosts()}
+                  >
+                    <BTNDelete>
+                      <TEIcon path="/images/posts/delete.svg" />
+                    </BTNDelete>
+                  </Popconfirm>
+                )}
               </>
             )}
           </div>
@@ -233,12 +256,17 @@ const ViewPosts = (props) => {
           ...rowSelection,
         }}
         columns={columns}
-        dataSource={tabValue === "Live Stories" ? props.articlesData : []}
+        dataSource={
+          tabValue === "Live Stories"
+            ? props.articlesData
+            : tabValue === "Deleted"
+            ? props.articlesDeleted
+            : []
+        }
         pagination={props.articlesData.length > 10}
         rowKey="ID"
         className="table-content"
       />
-      {/* )} */}
 
       <Drawer
         title={
@@ -487,12 +515,16 @@ const mapStateToProps = (store) => {
     articlesData: store.articlesReducer.articlesData,
     isDeleted: store.articlesReducer.isDeleted,
     msgErr: store.articlesReducer.msgErr,
+    articlesDeleted: store.articlesReducer.articlesDeleted,
+    isDeletedMulti: store.articlesReducer.isDeletedMulti,
   };
 };
 
 const mapDispatchToProps = {
   deleteArticleWithID,
   getListArticles,
+  deleteMultiArticles,
+  getListArticlesDeleted,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewPosts);

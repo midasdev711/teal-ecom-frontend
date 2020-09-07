@@ -132,6 +132,25 @@ export const DELETE_ARTICLE_MUTATION = gql`
   }
 `;
 
+export const DELETE_ARTICLES_MULTI_MUTATION = gql`
+  mutation deleteArticles($deleteArticleIds: [ID]) {
+    upsertArticle(article: { deleteArticleIds: $deleteArticleIds }) {
+      status
+    }
+  }
+`;
+
+export const GET_LIST_ARTICLES_DELETED_QUERY = gql`
+  query getDeletedArticles($filters: ArticleFilters) {
+    articles(filters: $filters) {
+      title
+      ID
+      createdDate
+      viewCount
+    }
+  }
+`;
+
 export const GET_DETAIL_ARTICLE_QUERY = gql`
   query articles($filters: ArticleFilters) {
     articles(filters: $filters) {
@@ -173,4 +192,6 @@ export default {
   CREATE_ARTICLE_MUTATION,
   DELETE_ARTICLE_MUTATION,
   UPDATE_ARTICLE_MUTATION,
+  DELETE_ARTICLES_MULTI_MUTATION,
+  GET_LIST_ARTICLES_DELETED_QUERY,
 };
