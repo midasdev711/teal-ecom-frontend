@@ -2,10 +2,16 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
-import Router from "next/router";
+import { useRouter } from "next/router";
+import { connect } from "react-redux";
 // apollo
 import { apolloClient } from "../../../src/graphql";
 import { CREATE_ARTICLE_MUTATION } from "../../../src/graphql/articles.query";
+// actions
+import {
+  createDraftArticle,
+  getListArticlesDraft,
+} from "../../../src/redux/actions/articles";
 // components
 import { PageLayout } from "../../../src/components/views";
 import NewForm from "../../../src/components/posts/NewForm";
@@ -14,9 +20,39 @@ import { LeftOutlined } from "@ant-design/icons";
 // ui
 import { message, Form } from "antd";
 
-const NewPost = () => {
+const NewPost = (props) => {
+  const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    // returned function will be called on component unmount
+    return () => {
+      const { title, subTitle, imageData } = form.getFieldsValue();
+      if (title || subTitle || imageData || editorHtml !== "") {
+        createDraft();
+      }
+    };
+  }, []);
+
+  const createDraft = async () => {
+    const authorID = Number(localStorage.getItem("userID"));
+
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    const _obj = {
+      title: title || "",
+      subTitle: subTitle || "",
+      description: editorHtml,
+      authorID: authorID,
+      featureImage: imageData ? imageData : "",
+      isDraft: true,
+    };
+
+    await props.createDraftArticle(_obj);
+    await props.getListArticlesDraft(authorID, true, 100, 1);
+  };
 
   const onFinish = async (values) => {
     const authorID = Number(localStorage.getItem("userID"));
@@ -28,8 +64,6 @@ const NewPost = () => {
       description: editorHtml,
       authorID: authorID,
       featureImage: imageData ? imageData : "",
-      // featureImage: '',
-      slug: "",
       categories: [
         {
           ID: 21,
@@ -46,7 +80,8 @@ const NewPost = () => {
       .then((res) => {
         if (res.data) {
           message.success("Created new post successfully!");
-          window.location.href = "/posts";
+          form.resetFields();
+          router.push("/posts");
         }
       })
       .catch((err) => {
@@ -61,9 +96,13 @@ const NewPost = () => {
         <ActionContent>
           <span>Unsaved changes</span>
           <NewPostAction>
-            <Button className="cancel" size="large">
-              Cancel
-            </Button>
+            <Link href="/posts">
+              <LinkBack>
+                <Button className="cancel" size="large">
+                  Cancel
+                </Button>
+              </LinkBack>
+            </Link>
             <Button size="large" type="primary" htmlType="submit">
               Save
             </Button>
@@ -75,7 +114,7 @@ const NewPost = () => {
 
   return (
     <PageLayout>
-      <Form onFinish={onFinish} layout="vertical">
+      <Form onFinish={onFinish} form={form} layout="vertical">
         <NewContent>
           {newActions()}
           <ContentPage>
@@ -155,4 +194,15 @@ const NewPostAction = styled.div`
   }
 `;
 
-export default NewPost;
+const mapStateToProps = (store) => {
+  return {
+    isCreatedDraft: store.articlesReducer.isCreatedDraft,
+  };
+};
+
+const mapDispatchToProps = {
+  createDraftArticle,
+  getListArticlesDraft,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewPost);

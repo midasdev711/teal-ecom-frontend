@@ -7,6 +7,8 @@ import {
   UPDATE_ARTICLE_MUTATION,
   GET_LIST_ARTICLES_DELETED_QUERY,
   DELETE_ARTICLES_MULTI_MUTATION,
+  GET_DRAFT_ARTICLES_QUERY,
+  CREATE_DRAFT_ARTICLE_MUTATION,
 } from "../../graphql/articles.query";
 
 import {
@@ -24,7 +26,64 @@ import {
   ERROR_DELETED_ARTICLES_MULTI,
   ACTION_GET_LIST_ARTTICLES_DELETED,
   ERROR_GET_LIST_ARTICLES_DELETED,
+  ACTION_CREATE_DRAFT_ARTICLE,
+  ERROR_CREATE_DRAFT_ARTICLE,
+  ACTION_GET_LIST_DRAFT_ARTICLES,
+  ERROR_GET_LST_DRAFT_ARTICLES,
 } from "./actionTypes";
+
+export function getListArticlesDraft(userId, getDraft, limit, page) {
+  return (dispatch) => {
+    return apolloClient
+      .query({
+        query: GET_DRAFT_ARTICLES_QUERY,
+        variables: {
+          filters: {
+            userId,
+            getDraft,
+            limit,
+            page,
+          },
+        },
+        fetchPolicy: "network-only",
+      })
+      .then((res) => {
+        console.log("111111", res.data.articles);
+        dispatch({
+          type: ACTION_GET_LIST_DRAFT_ARTICLES,
+          data: res.data.articles,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: ERROR_GET_LST_DRAFT_ARTICLES,
+          msgErr: err.message,
+        });
+      });
+  };
+}
+
+export function createDraftArticle(variables) {
+  return (dispatch) => {
+    return apolloClient
+      .mutate({
+        mutation: CREATE_DRAFT_ARTICLE_MUTATION,
+        variables,
+      })
+      .then((res) => {
+        dispatch({
+          type: ACTION_CREATE_DRAFT_ARTICLE,
+          data: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: ERROR_CREATE_DRAFT_ARTICLE,
+          msgErr: err.message,
+        });
+      });
+  };
+}
 
 export function updateArticle(data) {
   return (dispatch) => {
@@ -34,7 +93,6 @@ export function updateArticle(data) {
         variables: data,
       })
       .then((res) => {
-        console.log(res);
         dispatch({
           type: ACTION_UPDATED_ARTICLE,
           data: res.data,
@@ -92,7 +150,7 @@ export function getListArticlesDeleted(userId, authorId, limit, page) {
             page,
           },
         },
-        fetchPolicy: 'network-only'
+        fetchPolicy: "network-only",
       })
       .then((res) => {
         dispatch({
@@ -173,7 +231,7 @@ export function getListArticles(authorId, limit, page) {
             authorId: authorId,
           },
         },
-        fetchPolicy: 'network-only'
+        fetchPolicy: "network-only",
       })
       .then((res) => {
         if (res.data) {
@@ -226,4 +284,6 @@ export default {
   updateArticle,
   getListArticlesDeleted,
   deleteMultiArticles,
+  getListArticlesDraft,
+  createDraftArticle,
 };

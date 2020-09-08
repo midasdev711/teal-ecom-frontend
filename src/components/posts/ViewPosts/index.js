@@ -3,13 +3,13 @@ import styled from "styled-components";
 import Link from "next/link";
 import moment from "moment";
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
 // actions
 import {
   deleteArticleWithID,
   getListArticles,
   deleteMultiArticles,
   getListArticlesDeleted,
+  getListArticlesDraft,
 } from "../../../redux/actions/articles";
 // icons
 import {
@@ -40,13 +40,7 @@ const ViewPosts = (props) => {
   const [valuesCollapse, setShowCollapse] = useState([]);
   const [valueSubscription, setValueSubscription] = useState(0);
 
-  useEffect(() => {
-    const userID = Number(localStorage.getItem("userID"));
-    props.getListArticles(userID, 100, 1);
-    props.getListArticlesDeleted(userID, userID, 100, 1);
-  });
-
-  const userData = JSON.parse(localStorage.getItem("userData"));
+  const { userData } = props;
 
   useEffect(() => {
     if (props.isDeleted) {
@@ -80,8 +74,14 @@ const ViewPosts = (props) => {
     }
   }, [props.msgErr]);
 
-  const handleChange = ({ key }) => {
+  const handleChangeTable = ({ key }) => {
+    const userID = Number(localStorage.getItem("userID"));
     setTabValue(key);
+    if (key === "Drafts") {
+      props.getListArticlesDraft(userID, true, 100, 1);
+    } else if (key === "Deleted") {
+      props.getListArticlesDeleted(userID, userID, 100, 1);
+    }
   };
 
   const onChangeSubscription = (e) => {
@@ -89,7 +89,7 @@ const ViewPosts = (props) => {
   };
 
   const tableMenu = (
-    <Menu onClick={(e) => handleChange(e)}>
+    <Menu onClick={(e) => handleChangeTable(e)}>
       <Menu.Item key="Live Stories">Live Stories</Menu.Item>
       <Menu.Item key="Drafts">Drafts</Menu.Item>
       <Menu.Item key="Archived">Archived</Menu.Item>
@@ -221,13 +221,13 @@ const ViewPosts = (props) => {
             {checkedList.length > 0 && (
               <>
                 <TEIcon path="/images/posts/download.svg" />
-                {tabValue === "Deleted" ? (
+                {tabValue === "Deleted" || tabValue === "Drafts"  ? (
                   <TEIcon path="/images/posts/delete.svg" />
                 ) : (
                   <Popconfirm
                     className="popupDelete"
                     placement="bottomLeft"
-                    title="Are you sure delete this post？"
+                    title="Are you sure delete this post"
                     okText="Yes"
                     cancelText="No"
                     onConfirm={() => onDeletePosts()}
@@ -261,6 +261,8 @@ const ViewPosts = (props) => {
             ? props.articlesData
             : tabValue === "Deleted"
             ? props.articlesDeleted
+            : tabValue === "Drafts"
+            ? props.articlesDraft
             : []
         }
         pagination={props.articlesData.length > 10}
@@ -517,6 +519,8 @@ const mapStateToProps = (store) => {
     msgErr: store.articlesReducer.msgErr,
     articlesDeleted: store.articlesReducer.articlesDeleted,
     isDeletedMulti: store.articlesReducer.isDeletedMulti,
+    articlesDraft: store.articlesReducer.articlesDraft,
+    isCreatedDraft: store.articlesReducer.isCreatedDraft,
   };
 };
 
@@ -525,6 +529,7 @@ const mapDispatchToProps = {
   getListArticles,
   deleteMultiArticles,
   getListArticlesDeleted,
+  getListArticlesDraft,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewPosts);

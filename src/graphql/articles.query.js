@@ -186,6 +186,42 @@ export const GET_DETAIL_ARTICLE_QUERY = gql`
   }
 `;
 
+export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
+  mutation createDraftArticle(
+    $title: String
+    $subTitle: String
+    $description: String
+    $authorID: Int
+    $isDraft: Boolean
+  ) {
+    upsertArticle(
+      article: {
+        title: $title
+        subTitle: $subTitle
+        description: $description
+        authorID: $authorID
+        isDraft: $isDraft
+      }
+    ) {
+      title
+      subTitle
+    }
+  }
+`;
+
+export const GET_DRAFT_ARTICLES_QUERY = gql`
+  query getDraftArticle($filters: ArticleFilters) {
+    articles(filters: $filters) {
+      title
+      ID
+      isDraft
+      createdDate
+      viewCount
+      description
+    }
+  }
+`;
+
 export default {
   GET_ARTICLES_QUERY,
   GET_DETAIL_ARTICLE_QUERY,
@@ -194,4 +230,6 @@ export default {
   UPDATE_ARTICLE_MUTATION,
   DELETE_ARTICLES_MULTI_MUTATION,
   GET_LIST_ARTICLES_DELETED_QUERY,
+  CREATE_DRAFT_ARTICLE_MUTATION,
+  GET_DRAFT_ARTICLES_QUERY,
 };

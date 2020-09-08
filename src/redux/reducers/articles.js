@@ -14,6 +14,10 @@ import {
   ERROR_DELETED_ARTICLES_MULTI,
   ACTION_GET_LIST_ARTTICLES_DELETED,
   ERROR_GET_LIST_ARTICLES_DELETED,
+  ACTION_CREATE_DRAFT_ARTICLE,
+  ERROR_CREATE_DRAFT_ARTICLE,
+  ACTION_GET_LIST_DRAFT_ARTICLES,
+  ERROR_GET_LST_DRAFT_ARTICLES,
 } from "../actions/actionTypes";
 
 const initData = {
@@ -25,6 +29,8 @@ const initData = {
   isUpdated: false,
   isDeletedMulti: false,
   articlesDeleted: [],
+  articlesDraft: [],
+  isCreatedDraft: false,
 };
 
 export const articlesReducer = (state = initData, action) => {
@@ -115,6 +121,31 @@ export const articlesReducer = (state = initData, action) => {
       return {
         ...state,
         isDeletedMulti: false,
+        msgErr: action.msgErr,
+      };
+    case ACTION_GET_LIST_DRAFT_ARTICLES:
+      return {
+        ...state,
+        articlesDraft: action.data,
+        isCreatedDraft: false,
+        msgErr: null,
+      };
+    case ERROR_GET_LST_DRAFT_ARTICLES:
+      return {
+        ...state,
+        articlesDraft: [],
+        msgErr: action.msgErr,
+      };
+    case ACTION_CREATE_DRAFT_ARTICLE:
+      return {
+        ...state,
+        isCreatedDraft: true,
+        msgErr: null,
+      };
+    case ERROR_CREATE_DRAFT_ARTICLE:
+      return {
+        ...state,
+        isCreatedDraft: false,
         msgErr: action.msgErr,
       };
     default:

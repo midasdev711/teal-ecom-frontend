@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PageLayout } from "../../src/components/views";
 import styled from "styled-components";
 import { ViewPosts } from "../../src/components/posts";
-// apollo
-import { apolloClient } from "../../src/graphql";
-import { GET_ARTICLES_QUERY } from "../../src/graphql/articles.query";
+import { connect } from "react-redux";
 
-const Posts = () => {
-  const [isDataArticles, setIsDataArticles] = useState(false);
+// actions
+import { getListArticles } from "../../src/redux/actions/articles";
+
+const usePrevious = (value) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+
+const Posts = (props) => {
+  const [userData, setUserData] = useState({});
+
+  const { articlesData } = props;
+  const prevProps = usePrevious({ articlesData });
 
   useEffect(() => {
     getDataArticles();
-  }, []);
+  }, [props]);
 
   const getDataArticles = async () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    setUserData(userData);
     const userID = Number(localStorage.getItem("userID"));
-    await apolloClient
-      .query({
-        query: GET_ARTICLES_QUERY,
-        variables: {
-          filters: {
-            limit: 100,
-            page: 1,
-            authorId: userID,
-          },
-        },
-      })
-      .then(async (res) => {
-        await setIsDataArticles(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    await props.getListArticles(userID, 100, 1);
   };
 
   return (
     <PageLayout>
-      <CustomerContent>{isDataArticles && <ViewPosts />}</CustomerContent>
+      <CustomerContent>
+        <ViewPosts userData={userData} />
+      </CustomerContent>
     </PageLayout>
   );
 };
@@ -45,4 +45,15 @@ const CustomerContent = styled.div`
   padding: 50px;
 `;
 
-export default Posts;
+const mapStateToProps = (store) => {
+  return {
+    articlesData: store.articlesReducer.articlesData,
+    msgErr: store.articlesReducer.msgErr,
+  };
+};
+
+const mapDispatchToProps = {
+  getListArticles,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);
