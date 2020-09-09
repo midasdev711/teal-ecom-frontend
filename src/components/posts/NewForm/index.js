@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { RemirorEditor } from "../../atoms";
 
@@ -6,9 +6,7 @@ import { RemirorEditor } from "../../atoms";
 import { Form, Input } from "antd";
 
 const NewForm = (props) => {
-  const [contentEditor, setContentEditor] = useState(null);
-
-  const { onChangeEditor } = props;
+  const { onChangeEditor, isStory } = props;
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -18,7 +16,6 @@ const NewForm = (props) => {
 
   const onChange = (content) => {
     onChangeEditor(content.getHTML());
-    setContentEditor(content.getHTML());
   };
 
   const onChangeImage = (e) => {
@@ -32,46 +29,44 @@ const NewForm = (props) => {
   return (
     <ContentBox>
       <Form.Item
-        label="Title"
         name="title"
-        rules={[{ required: true, message: "Please input title!" }]}
+        rules={[{ required: true, message: "Title is required!" }]}
       >
-        <Input />
+        <Input bordered={false} size="large" placeholder="Title" />
       </Form.Item>
       <Form.Item
-        label="Sub Title"
         name="subTitle"
-        rules={[{ required: true, message: "Please input sub-title!" }]}
+        rules={[{ required: true, message: "Subtitle is required!" }]}
       >
-        <Input />
+        <Input bordered={false} placeholder="Add a brief subtitle" />
       </Form.Item>
-      <Form.Item label="Image" name="featureImage">
-        <Input type="file" accept="images/*" onChange={onChangeImage} />
-      </Form.Item>
-      <Form.Item
-        label="Description"
-        rules={[
-          {
-            required:
-              contentEditor === null || contentEditor === "" ? true : false,
-            message: "Please input description!",
-          },
-        ]}
-      ></Form.Item>
+
+      {/* <Form.Item name="featureImage">
+        <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
+      </Form.Item> */}
+
       <RemirorEditor
         onChangeEditor={onChange}
         description={props.description}
       />
+      {isStory && <p style={{ color: "#f5222d" }}>Story is required!</p>}
     </ContentBox>
   );
 };
 
 const ContentBox = styled.div`
-  padding: 24px;
+  padding: 24px 0;
   width: 100%;
   background: #f6f8f9;
   border-radius: 3px;
   outline: 0.1rem solid transparent;
+  .ant-input-lg {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 26px;
+  }
 `;
 
 const TitleBox = styled.h3`

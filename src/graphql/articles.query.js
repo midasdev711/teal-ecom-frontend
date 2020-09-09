@@ -147,6 +147,7 @@ export const GET_LIST_ARTICLES_DELETED_QUERY = gql`
       ID
       createdDate
       viewCount
+      slug
     }
   }
 `;
@@ -218,6 +219,7 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
       createdDate
       viewCount
       description
+      slug
     }
   }
 `;

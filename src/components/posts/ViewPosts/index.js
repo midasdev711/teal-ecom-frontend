@@ -104,16 +104,21 @@ const ViewPosts = (props) => {
       sorter: (a, b) => a.title > b.title,
       showSorterTooltip: false,
       width: "30%",
-      render: (title, item) => (
-        <Link
-          href={`/[portal_id]/stories/[slug]`}
-          as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
-        >
+      render: (title, item) =>
+        tabValue === "Live Stories" ? (
+          <Link
+            href={`/[portal_id]/stories/[slug]`}
+            as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
+          >
+            <FullName>
+              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+            </FullName>
+          </Link>
+        ) : (
           <FullName>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
           </FullName>
-        </Link>
-      ),
+        ),
     },
     {
       title: "Date",
@@ -159,12 +164,16 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                <Link
-                  href={`/[portal_id]/stories/[slug]`}
-                  as={`/${userData && userData.uniqueID}/stories/${slug}`}
-                >
-                  <a href="#">Edit</a>
-                </Link>
+                {tabValue === "Live Stories" ? (
+                  <Link
+                    href={`/[portal_id]/stories/[slug]`}
+                    as={`/${userData && userData.uniqueID}/stories/${slug}`}
+                  >
+                    <a>Edit</a>
+                  </Link>
+                ) : (
+                  <span>Edit</span>
+                )}
               </Menu.Item>
               <Menu.Item>Stats</Menu.Item>
             </Menu>

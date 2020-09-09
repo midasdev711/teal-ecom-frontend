@@ -48,7 +48,6 @@ export function getListArticlesDraft(userId, getDraft, limit, page) {
         fetchPolicy: "network-only",
       })
       .then((res) => {
-        console.log("111111", res.data.articles);
         dispatch({
           type: ACTION_GET_LIST_DRAFT_ARTICLES,
           data: res.data.articles,
