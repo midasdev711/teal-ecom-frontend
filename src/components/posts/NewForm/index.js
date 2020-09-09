@@ -45,10 +45,7 @@ const NewForm = (props) => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        label="Image"
-        name="featureImage"
-      >
+      <Form.Item label="Image" name="featureImage">
         <Input type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item>
       <Form.Item

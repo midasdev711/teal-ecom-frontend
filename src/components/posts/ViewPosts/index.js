@@ -221,13 +221,13 @@ const ViewPosts = (props) => {
             {checkedList.length > 0 && (
               <>
                 <TEIcon path="/images/posts/download.svg" />
-                {tabValue === "Deleted" || tabValue === "Drafts"  ? (
+                {tabValue === "Deleted" || tabValue === "Drafts" ? (
                   <TEIcon path="/images/posts/delete.svg" />
                 ) : (
                   <Popconfirm
                     className="popupDelete"
                     placement="bottomLeft"
-                    title="Are you sure delete this post"
+                    title="Are you sure delete this post？"
                     okText="Yes"
                     cancelText="No"
                     onConfirm={() => onDeletePosts()}
