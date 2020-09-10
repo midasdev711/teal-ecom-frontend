@@ -105,9 +105,12 @@ const ViewPosts = (props) => {
       showSorterTooltip: false,
       width: "30%",
       render: (title, item) =>
-        tabValue === "Live Stories" ? (
+        tabValue !== "Deleted" ? (
           <Link
-            href={`/[portal_id]/stories/[slug]`}
+            href={{
+              pathname: `/[portal_id]/stories/[slug]`,
+              query: { getDraftPost: tabValue === "Drafts" ? "Draft" : "" },
+            }}
             as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
           >
             <FullName>
@@ -115,9 +118,9 @@ const ViewPosts = (props) => {
             </FullName>
           </Link>
         ) : (
-          <FullName>
+          <span>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-          </FullName>
+          </span>
         ),
     },
     {
@@ -164,9 +167,14 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                {tabValue === "Live Stories" ? (
+                {tabValue !== "Deleted" ? (
                   <Link
-                    href={`/[portal_id]/stories/[slug]`}
+                    href={{
+                      pathname: `/[portal_id]/stories/[slug]`,
+                      query: {
+                        getDraftPost: tabValue === "Drafts" ? "Draft" : "",
+                      },
+                    }}
                     as={`/${userData && userData.uniqueID}/stories/${slug}`}
                   >
                     <a>Edit</a>

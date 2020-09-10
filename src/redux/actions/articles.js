@@ -107,7 +107,7 @@ export function updateArticle(data) {
   };
 }
 
-export function getDetailArticle(slug) {
+export function getDetailArticle(slug, getDraft) {
   return (dispatch) => {
     return apolloClient
       .query({
@@ -115,6 +115,7 @@ export function getDetailArticle(slug) {
         variables: {
           filters: {
             slug,
+            getDraft,
             limit: 5,
             page: 1,
           },

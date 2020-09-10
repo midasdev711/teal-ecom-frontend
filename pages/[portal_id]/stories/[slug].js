@@ -22,9 +22,12 @@ const EditPost = (props) => {
 
   useEffect(() => {
     const {
-      query: { slug },
+      query: { slug, getDraftPost },
     } = Router.router;
-    props.getDetailArticle(slug);
+
+    const getDraft = getDraftPost === "Draft" ? true : false;
+
+    props.getDetailArticle(slug, getDraft);
   });
 
   useEffect(() => {
