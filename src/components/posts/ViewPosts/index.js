@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import moment from "moment";
 import { connect } from "react-redux";
+import Router from "next/router";
 // actions
 import {
   deleteArticleWithID,
@@ -74,6 +75,15 @@ const ViewPosts = (props) => {
     }
   }, [props.msgErr]);
 
+  const getArticleDetail = (item) => {
+    const url =
+      tabValue === "Drafts"
+        ? `/${userData && userData.uniqueID}/stories/${item.slug}/draft`
+        : `/${userData && userData.uniqueID}/stories/${item.slug}`;
+
+    url && Router.router.push(url);
+  };
+
   const handleChangeTable = ({ key }) => {
     const userID = Number(localStorage.getItem("userID"));
     setTabValue(key);
@@ -106,17 +116,9 @@ const ViewPosts = (props) => {
       width: "30%",
       render: (title, item) =>
         tabValue !== "Deleted" ? (
-          <Link
-            href={{
-              pathname: `/[portal_id]/stories/[slug]`,
-              query: { getDraftPost: tabValue === "Drafts" ? "Draft" : "" },
-            }}
-            as={`/${userData && userData.uniqueID}/stories/${item.slug}`}
-          >
-            <FullName>
-              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-            </FullName>
-          </Link>
+          <FullName onClick={() => getArticleDetail(item)}>
+            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+          </FullName>
         ) : (
           <span>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
@@ -161,24 +163,16 @@ const ViewPosts = (props) => {
     },
     {
       title: "",
-      dataIndex: "slug",
-      render: (slug) => (
+      dataIndex: "title",
+      render: (title, item) => (
         <Dropdown
           overlay={
             <Menu>
               <Menu.Item>
                 {tabValue !== "Deleted" ? (
-                  <Link
-                    href={{
-                      pathname: `/[portal_id]/stories/[slug]`,
-                      query: {
-                        getDraftPost: tabValue === "Drafts" ? "Draft" : "",
-                      },
-                    }}
-                    as={`/${userData && userData.uniqueID}/stories/${slug}`}
-                  >
-                    <a>Edit</a>
-                  </Link>
+                  <span onClick={() => getArticleDetail(item)}>
+                    Edit
+                  </span>
                 ) : (
                   <span>Edit</span>
                 )}

@@ -26,7 +26,7 @@ const initData = {
   articleDetail: null,
   msgErr: null,
   isDeleted: false,
-  isUpdated: false,
+  updateArticleDetail: null,
   isDeletedMulti: false,
   articlesDeleted: [],
   articlesDraft: [],
@@ -86,15 +86,15 @@ export const articlesReducer = (state = initData, action) => {
         msgErr: action.msgErr,
       };
     case ACTION_UPDATED_ARTICLE:
+      console.log(action.data);
       return {
         ...state,
-        isUpdated: true,
+        updateArticleDetail: action.data,
         msgErr: null,
       };
     case ERROR_UPDATED_ARTICLE:
       return {
         ...state,
-        isUpdated: false,
         msgErr: action.msgErr,
       };
     case ACTION_GET_LIST_ARTTICLES_DELETED:

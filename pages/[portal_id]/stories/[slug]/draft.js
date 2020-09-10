@@ -8,9 +8,9 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
-} from "../../../src/redux/actions/articles";
+} from "../../../../src/redux/actions/articles";
 // components
-import NewForm from "../../../src/components/posts/NewForm";
+import NewForm from "../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
 
@@ -27,21 +27,40 @@ const EditPost = (props) => {
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
+  const [submit, setSubmit] = useState(false);
+
+  const getDetailArticle = async () => {
+    const {
+      query: { slug },
+    } = Router.router;
+
+    await props.getDetailArticle(slug, true);
+  };
 
   const { updateArticleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
 
+  const onValuesChangePost = () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    if (title || subTitle || imageData || editorHtml !== "") {
+      updateDraft();
+    }
+  };
+
+  const updateDraft = async () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    const _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      articleId: Number(props.articleDetail.ID),
+      featureImage: imageData ? imageData : "",
+    };
+    await props.updateArticle(_obj);
+  };
+
   useEffect(() => {
-    const {
-      query: { slug, getDraftPost },
-    } = Router.router;
-
-    const getDraft = getDraftPost === "Draft" ? true : false;
-
-    props.getDetailArticle(slug, getDraft);
-  });
-
-  useEffect(() => {
+    getDetailArticle();
     if (props.articleDetail) {
       const { title, subTitle } = props.articleDetail;
       form.setFieldsValue({
@@ -52,10 +71,14 @@ const EditPost = (props) => {
   }, [props.articleDetail]);
 
   useEffect(() => {
-    if (prevProps && prevProps.updateArticleDetail !== updateArticleDetail) {
+    if (
+      prevProps &&
+      prevProps.updateArticleDetail !== updateArticleDetail &&
+      submit
+    ) {
       notification.success({
         message: "Successfully!",
-        description: "Updated article successfully!",
+        description: "Publish article successfully!",
       });
       Router.router.push("/posts");
     }
@@ -65,14 +88,16 @@ const EditPost = (props) => {
     if (props.msgErr) {
       notification.error({
         message: "Error",
-        description: "Update article failed!",
+        description: "Publish article failed!",
       });
     }
   }, [props.msgErr]);
 
   const onFinish = async (values) => {
+    setSubmit(true);
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
+      setSubmit(false);
       return;
     }
 
@@ -83,6 +108,7 @@ const EditPost = (props) => {
       description: editorHtml,
       articleId: Number(props.articleDetail.ID),
       featureImage: imageData ? imageData : "",
+      isDraft: false,
     };
 
     await props.updateArticle(_variables);
@@ -112,7 +138,7 @@ const EditPost = (props) => {
             <StyledText>Saved</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
-            Save and publish
+            Publish
           </Button>
         </ActionContent>
       </ActionTopLayout>
@@ -121,7 +147,12 @@ const EditPost = (props) => {
 
   return (
     <NewPageLayout>
-      <Form onFinish={onFinish} form={form} layout="vertical">
+      <Form
+        onBlur={(e) => onValuesChangePost(e)}
+        onFinish={onFinish}
+        form={form}
+        layout="vertical"
+      >
         <NewContent>
           {newActions()}
           <ContentPage>

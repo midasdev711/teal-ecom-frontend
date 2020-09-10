@@ -100,6 +100,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
     $subTitle: String
     $description: String
     $featureImage: String
+    $isDraft: Boolean
   ) {
     upsertArticle(
       article: {
@@ -108,6 +109,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         subTitle: $subTitle
         description: $description
         featureImage: $featureImage
+        isDraft: $isDraft
       }
     ) {
       title
@@ -115,6 +117,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
       titleSlug
       description
       featureImage
+      isDraft
       viewCount
     }
   }
