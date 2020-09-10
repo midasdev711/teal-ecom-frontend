@@ -109,6 +109,7 @@ const EditPost = (props) => {
       articleId: Number(props.articleDetail.ID),
       featureImage: imageData ? imageData : "",
       isDraft: false,
+      isPublish: true,
     };
 
     await props.updateArticle(_variables);
