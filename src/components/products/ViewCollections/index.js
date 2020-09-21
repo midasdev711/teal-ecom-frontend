@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // components
-import CollectionFilters from "../CollectionFilters ";
+import CollectionFilters from "../CollectionFilters";
 // icons
 import { DownOutlined } from "@ant-design/icons";
 // ui
