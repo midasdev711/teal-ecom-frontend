@@ -9,6 +9,7 @@ import {
   ERROR_GET_DETAIL_ARTICLE,
   ACTION_DELETED_ARTICLE_SUCCESS,
   ERROR_DELETED_ARTICLE,
+  UPDATE_ARTICLE,
   ACTION_UPDATED_ARTICLE,
   ERROR_UPDATED_ARTICLE,
   ACTION_DELETED_ACTICLES_MULTI,
@@ -28,6 +29,7 @@ const initData = {
   msgErr: null,
   isDeleted: false,
   updateArticleDetail: null,
+  postSaveState: '',
   isDeletedMulti: false,
   articlesDeleted: [],
   articlesDraft: [],
@@ -67,6 +69,7 @@ export const articlesReducer = (state = initData, action) => {
         isDeleted: false,
         articleDetail: action.data,
         msgErr: null,
+        postSaveState: 'saved',
         isDeleted: false,
       };
     case CLEAR_ARTICLE_DETAIL:
@@ -91,16 +94,24 @@ export const articlesReducer = (state = initData, action) => {
         isDeleted: false,
         msgErr: action.msgErr,
       };
+
+    case UPDATE_ARTICLE: 
+    return {
+      ...state,
+      postSaveState: 'saving...'
+    }
     case ACTION_UPDATED_ARTICLE:
       console.log(action.data);
       return {
         ...state,
-        updateArticleDetail: action.data,
+        updateArticleDetail: action.data.upsertArticle,
+        postSaveState: 'saved',
         msgErr: null,
       };
     case ERROR_UPDATED_ARTICLE:
       return {
         ...state,
+        postSaveState: 'Failed to save',
         msgErr: action.msgErr,
       };
     case ACTION_GET_LIST_ARTTICLES_DELETED:

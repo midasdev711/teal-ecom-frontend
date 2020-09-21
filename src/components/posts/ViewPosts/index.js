@@ -4,7 +4,7 @@ import Link from "next/link";
 import moment from "moment";
 import { format } from "url";
 import { connect } from "react-redux";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 // actions
 import {
   deleteArticleWithID,
@@ -43,6 +43,7 @@ const ViewPosts = (props) => {
   const [valueSubscription, setValueSubscription] = useState(0);
 
   const { userData } = props;
+  const router = useRouter();
 
   useEffect(() => {
     if (props.isDeleted) {
@@ -89,13 +90,16 @@ const ViewPosts = (props) => {
   };
 
   const handleChangeTable = ({ key }) => {
-    const userID = Number(localStorage.getItem("userID"));
-    setTabValue(key);
-    if (key === "Drafts") {
-      props.getListArticlesDraft(userID, true, 100, 1);
-    } else if (key === "Deleted") {
-      props.getListArticlesDeleted(userID, userID, 100, 1);
-    }
+    // const userID = Number(localStorage.getItem("userID"));
+    // setTabValue(key);
+    // if (key === "Drafts") {
+    //   props.getListArticlesDraft(userID, true, 100, 1);
+    // } else if (key === "Deleted") {
+    //   props.getListArticlesDeleted(userID, userID, 100, 1);
+    // }
+    // Router.router.replace(key, undefined, {shallow: true});
+    // Router.router.push(key);
+     router.push(key, undefined, { shallow: true });
   };
 
   const onChangeSubscription = (e) => {

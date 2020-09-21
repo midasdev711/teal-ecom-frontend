@@ -28,6 +28,7 @@ const EditPost = (props) => {
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
+  const [saveValues, setSaveValues] = useState("saved");
 
   const { updateArticleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
@@ -68,7 +69,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Updated article successfully!",
       });
-      Router.router.push("/posts");
+      Router.router.push("/posts/live");
     }
   }, [props.updateArticleDetail]);
 
@@ -98,10 +99,22 @@ const EditPost = (props) => {
 
     await props.updateArticle(_variables);
   };
-
+  const handleSaveData =()=>{
+    setSaveValues("saved")
+  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+     // console.log('This will run after 1 second!')
+      handleSaveData()
+     // setSaveValues("saved")
+    },5000);
+    return () => clearTimeout(timer);
+  }, [saveValues]);
+  
   const onChangeEditor = (value) => {
     setContentEditorHtml(value);
     setIsStory(false);
+    setSaveValues("saving...")
   };
   
   const newActions = () => {
@@ -114,13 +127,13 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts">
+            <Link href="/posts/live">
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>
             </Link>
             <StyledText>Draft</StyledText>
-            <StyledText>Saved</StyledText>
+    <StyledText>{saveValues}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
             Save and publish

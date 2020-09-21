@@ -25,6 +25,8 @@ const NewPost = (props) => {
   const [imageData, setImage] = useState(null);
   const [isStory, setIsStory] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
+  const [saveValues, setSaveValues] = useState("saved");
+
 
   const router = useRouter();
   const { articleDetail } = props;
@@ -59,6 +61,7 @@ const NewPost = (props) => {
   const onChangeEditor = (value) => {
     setContentEditorHtml(value);
     setIsStory(false);
+    setSaveValues("saving...")
   }
 
   const onChangeTitle = async (ev) => {
@@ -69,6 +72,18 @@ const NewPost = (props) => {
     }
   }
 
+  const handleSaveData =()=>{
+    setSaveValues("saved")
+  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+     console.log('1 second!')
+      handleSaveData()
+     // setSaveValues("saved")
+    },5000);
+    return () => clearTimeout(timer);
+  }, [saveValues]);
+  
   const createDraft = async () => {
     const authorID = Number(localStorage.getItem("userID"));
 
@@ -139,7 +154,7 @@ const NewPost = (props) => {
               <LogoImage className="logo" src="/images/back-icon.svg" />
             </LinkBack>
             <StyledText>Draft</StyledText>
-            <StyledText>Saved</StyledText>
+    <StyledText>{saveValues}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
             Publish

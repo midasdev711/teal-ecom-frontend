@@ -38,52 +38,52 @@ const EditPost = (props) => {
     await props.getDetailArticle(slug, true);
   };
 
-  const { updateArticleDetail } = props;
+  const { updateArticleDetail, articleDetail, saveState } = props;
   const prevProps = usePrevious({ updateArticleDetail });
 
-  const onValuesChangePost = () => {
+  const onValuesChangePost = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
-    if (title || subTitle || imageData || editorHtml !== "") {
-      updateDraft();
+    if (title || subTitle) {
+      await updateDraft();
     }
   };
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
+    console.log('editorHtml', editorHtml)
     const _obj = {
       title: title,
       subTitle: subTitle,
       description: editorHtml,
-      articleId: Number(props.articleDetail.ID),
+      articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
     };
+    console.log('update article')
     await props.updateArticle(_obj);
   };
 
-  useEffect(() => {
-    return () => {
-      props.clearArticleDetails();
+  const handleSaveData = async () => {
+    console.log('articleDetail from interval', articleDetail);
+    if (articleDetail) {
+      await onValuesChangePost();
     }
-  }, []);
+  };
 
   useEffect(() => {
-    
-    if (!props.articleDetail) {
-      getDetailArticle();
-    }
-
-    if (props.articleDetail) {
-      const { title, subTitle, description } = props.articleDetail;
+    getDetailArticle();
+    if (articleDetail) {
+      const { title, subTitle, description } = articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
-      // console.log('updated description', props.articleDetail);
+
       if (description && description.trim().length) {
+        console.log('set description', description);
         setContentEditorHtml(description);
       }
     }
-  }, [props.articleDetail]);
+  }, [articleDetail]);
 
   useEffect(() => {
     if (
@@ -95,7 +95,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Publish article successfully!",
       });
-      Router.router.push("/posts");
+      // Router.router.push("/posts/draft");
     }
   }, [props.updateArticleDetail]);
 
@@ -107,6 +107,14 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
+
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      console.log('called on every 5 seconds!')
+      await handleSaveData();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -121,7 +129,7 @@ const EditPost = (props) => {
       title: title,
       subTitle: subTitle,
       description: editorHtml,
-      articleId: Number(props.articleDetail.ID),
+      articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
       isDraft: false,
       isPublish: true,
@@ -131,6 +139,7 @@ const EditPost = (props) => {
   };
 
   const onChangeEditor = (value) => {
+    console.log('change description', value)
     setContentEditorHtml(value);
     setIsStory(false);
   };
@@ -145,13 +154,13 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts">
+            <Link href="/posts/drafts">
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>
             </Link>
             <StyledText>Draft</StyledText>
-            <StyledText>Saved</StyledText>
+            <StyledText>{saveState}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
             Publish
@@ -164,20 +173,20 @@ const EditPost = (props) => {
   return (
     <NewPageLayout>
       <Form
-        onBlur={(e) => onValuesChangePost(e)}
         onFinish={onFinish}
         form={form}
         layout="vertical"
       >
         <NewContent>
           {newActions()}
+          
           <ContentPage>
             <NewForm
               onChangeEditor={onChangeEditor}
               setImage={setImage}
               isStory={isStory}
               description={
-                props.articleDetail ? props.articleDetail.description : ""
+                articleDetail ? articleDetail.description : ""
               }
             />
           </ContentPage>
@@ -250,6 +259,7 @@ const mapStateToProps = (store) => {
   return {
     articleDetail: store.articlesReducer.articleDetail,
     updateArticleDetail: store.articlesReducer.updateArticleDetail,
+    saveState: store.articlesReducer.postSaveState,
     msgErr: store.articlesReducer.msgErr,
   };
 };

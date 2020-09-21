@@ -21,6 +21,7 @@ import {
   ACTION_GET_DETAIL_ARTICLE,
   CLEAR_ARTICLE_DETAIL,
   ERROR_GET_DETAIL_ARTICLE,
+  UPDATE_ARTICLE,
   ACTION_UPDATED_ARTICLE,
   ERROR_UPDATED_ARTICLE,
   ACTION_DELETED_ACTICLES_MULTI,
@@ -30,7 +31,7 @@ import {
   ACTION_CREATE_DRAFT_ARTICLE,
   ERROR_CREATE_DRAFT_ARTICLE,
   ACTION_GET_LIST_DRAFT_ARTICLES,
-  ERROR_GET_LST_DRAFT_ARTICLES,
+  ERROR_GET_LST_DRAFT_ARTICLES
 } from "./actionTypes";
 
 export function getListArticlesDraft(userId, getDraft, limit, page) {
@@ -87,6 +88,9 @@ export function createDraftArticle(variables) {
 
 export function updateArticle(data) {
   return (dispatch) => {
+    dispatch({
+      type: UPDATE_ARTICLE
+    });
     return apolloClient
       .mutate({
         mutation: UPDATE_ARTICLE_MUTATION,
