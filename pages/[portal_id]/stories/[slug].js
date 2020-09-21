@@ -28,16 +28,17 @@ const EditPost = (props) => {
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
-  const [saveValues, setSaveValues] = useState("saved");
+  const [handlePageRefresh, setHandlePageRefresh] = useState(false)
+  const [timer, setTimer] = useState(null)
 
-  const { updateArticleDetail } = props;
+  const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
 
-  useEffect(() => {
-    return () => {
-      props.clearArticleDetails();
-    }
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     props.clearArticleDetails();
+  //   }
+  // }, []);
 
   useEffect(() => {
     const {
@@ -47,24 +48,41 @@ const EditPost = (props) => {
     const getDraft = getDraftPost === "Draft" ? true : false;
 
     props.getDetailArticle(slug, getDraft);
-  });
+    return () => {
+      props.clearArticleDetails();
+    }
+  }, []);
 
   useEffect(() => {
-    if (props.articleDetail) {
-      const { title, subTitle, description } = props.articleDetail;
+    if (articleDetail) {
+      const { title, subTitle, description } = articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
-
       if (description && description.trim().length) {
         setContentEditorHtml(description);
       }
+
+      if (!timer) {
+        const timerInstance = setInterval(async () => {
+          console.log('called on every 5 seconds!', articleDetail)
+          await handleSaveOnInterval();
+        }, 5000);
+        setTimer(timerInstance);
+      }
     }
-  }, [props.articleDetail]);
+
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    }
+
+  }, [articleDetail]);
 
   useEffect(() => {
-    if (prevProps && prevProps.updateArticleDetail !== updateArticleDetail) {
+    if (prevProps && prevProps.updateArticleDetail !== updateArticleDetail && handlePageRefresh) {
       notification.success({
         message: "Successfully!",
         description: "Updated article successfully!",
@@ -82,9 +100,25 @@ const EditPost = (props) => {
     }
   }, [props.msgErr]);
 
+  // useEffect(() => {
+  //   if (!timer) {
+  //     const timerInstance = setInterval(async () => {
+  //       console.log('called on every 5 seconds!', articleDetail)
+  //       await handleSaveOnInterval();
+  //     }, 5000);
+  //     setTimer(timerInstance);
+  //   }
+  //   return () => {
+  //     if (timer) {
+  //       clearInterval(timer);
+  //     }
+  //   };
+  // }, [articleDetail, editorHtml]);
+
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
+      setHandlePageRefresh(false);
       return;
     }
 
@@ -93,30 +127,47 @@ const EditPost = (props) => {
       title: title,
       subTitle: subTitle,
       description: editorHtml,
-      articleId: Number(props.articleDetail.ID),
+      articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
     };
+    setHandlePageRefresh(true);
 
     await props.updateArticle(_variables);
   };
-  const handleSaveData =()=>{
-    setSaveValues("saved")
-  }
-  useEffect(() => {
-    const timer = setTimeout(() => {
-     // console.log('This will run after 1 second!')
-      handleSaveData()
-     // setSaveValues("saved")
-    },5000);
-    return () => clearTimeout(timer);
-  }, [saveValues]);
-  
+
+  const handleSaveOnInterval = async () => {
+    console.log('articleDetail from interval', articleDetail);
+    if (articleDetail) {
+      await onValuesChangePost();
+    }
+  };
+
+  const onValuesChangePost = async () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    if (title || subTitle) {
+      await updateDraft();
+    }
+  };
+
+  const updateDraft = async () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    console.log('editorHtml', editorHtml)
+    const _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      articleId: Number(articleDetail.ID),
+      featureImage: imageData ? imageData : "",
+    };
+    console.log('update article', _obj)
+    await props.updateArticle(_obj);
+  };
+
   const onChangeEditor = (value) => {
     setContentEditorHtml(value);
     setIsStory(false);
-    setSaveValues("saving...")
   };
-  
+
   const newActions = () => {
     return (
       <ActionTopLayout>
@@ -133,7 +184,7 @@ const EditPost = (props) => {
               </LinkBack>
             </Link>
             <StyledText>Draft</StyledText>
-    <StyledText>{saveValues}</StyledText>
+            <StyledText>{saveState}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
             Save and publish
@@ -154,7 +205,7 @@ const EditPost = (props) => {
               setImage={setImage}
               isStory={isStory}
               description={
-                props.articleDetail ? props.articleDetail.description : ""
+                articleDetail ? articleDetail.description : ""
               }
             />
           </ContentPage>
@@ -227,6 +278,7 @@ const mapStateToProps = (store) => {
   return {
     articleDetail: store.articlesReducer.articleDetail,
     updateArticleDetail: store.articlesReducer.updateArticleDetail,
+    saveState: store.articlesReducer.postSaveState,
     msgErr: store.articlesReducer.msgErr,
   };
 };
