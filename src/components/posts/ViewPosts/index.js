@@ -91,21 +91,21 @@ const ViewPosts = (props) => {
 
   const handleChangeTable = ({ key }) => {
     // const userID = Number(localStorage.getItem("userID"));
-    // setTabValue(key);
-    // if (key === "Drafts") {
+         // setTabValue(key);
+        // if (key === "Drafts") {
     //   props.getListArticlesDraft(userID, true, 100, 1);
     // } else if (key === "Deleted") {
     //   props.getListArticlesDeleted(userID, userID, 100, 1);
     // }
     // Router.router.replace(key, undefined, {shallow: true});
     // Router.router.push(key);
-     router.push(key, undefined, { shallow: true });
+     router.push("/posts/"+key.toLowerCase(), undefined, { shallow: true });
   };
 
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
-
+ 
   const tableMenu = (
     <Menu onClick={(e) => handleChangeTable(e)}>
       <Menu.Item key="Live Stories">Live Stories</Menu.Item>

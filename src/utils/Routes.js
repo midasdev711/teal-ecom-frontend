@@ -68,7 +68,7 @@ const StoriesRoutes = [
   },
   {
     title: "Posts",
-    path: "/posts",
+    path: "/posts/live",
   },
   {
     title: "Categories",

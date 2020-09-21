@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BoldExtension } from "@remirror/extension-bold";
-import { ItalicExtension } from "remirror/extension/italic";
-import { ReactSsrExtension } from "remirror/extension/react-ssr";
-import { fromHtml } from 'remirror/core';
-import { RemirrorProvider, useManager, useRemirror } from "remirror/react";
+// import { BoldExtension } from "@remirror/extension-bold";
+// import { ItalicExtension } from "remirror/extension/italic";
+// import { ReactSsrExtension } from "remirror/extension/react-ssr";
+// import { fromHtml } from 'remirror/core';
+//import { RemirrorProvider, useManager, useRemirror } from "remirror/react";
 
 const EXTENSIONS = () => [
   new ReactSsrExtension(),
