@@ -19,6 +19,7 @@ import {
   ACTION_DELETED_ARTICLE_SUCCESS,
   ERROR_DELETED_ARTICLE,
   ACTION_GET_DETAIL_ARTICLE,
+  CLEAR_ARTICLE_DETAIL,
   ERROR_GET_DETAIL_ARTICLE,
   ACTION_UPDATED_ARTICLE,
   ERROR_UPDATED_ARTICLE,
@@ -105,6 +106,14 @@ export function updateArticle(data) {
         });
       });
   };
+}
+
+export function clearArticleDetails() {
+  return (dispatch) => {
+    dispatch({
+      type: CLEAR_ARTICLE_DETAIL
+    });
+  }
 }
 
 export function getDetailArticle(slug, getDraft) {

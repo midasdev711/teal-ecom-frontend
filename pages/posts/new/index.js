@@ -3,6 +3,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
 import { useRouter } from "next/router";
+import { format } from "url";
 import { connect } from "react-redux";
 // apollo
 import { apolloClient } from "../../../src/graphql";
@@ -11,6 +12,7 @@ import { CREATE_ARTICLE_MUTATION } from "../../../src/graphql/articles.query";
 import {
   createDraftArticle,
   getListArticlesDraft,
+  clearArticleDetails,
 } from "../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../src/components/posts/NewForm";
@@ -22,22 +24,49 @@ const NewPost = (props) => {
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState(null);
   const [isStory, setIsStory] = useState(false);
+  const [creatingDraft, setCreatingDraft] = useState(false);
 
   const router = useRouter();
+  const { articleDetail } = props;
 
   useEffect(() => {
     // returned function will be called on component unmount
     return () => {
-      const { title, subTitle, imageData } = form.getFieldsValue();
-      if (title || subTitle || imageData || editorHtml !== "") {
-        createDraft();
-      }
+      // const { title, subTitle, imageData } = form.getFieldsValue();
+      // if (title || subTitle || imageData || editorHtml !== "") {
+      //   createDraft();
+      // }
+      props.clearArticleDetails();
     };
   }, []);
+
+  useEffect(() => {
+    if (creatingDraft) {
+      createDraft();
+    }
+  }, [creatingDraft])
+
+  useEffect(() => {
+    if (articleDetail) {
+      console.log('articleDetail', articleDetail)
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
+      console.log('url', url);
+      router.replace('/[portal_id]/stories/[slug]/draft', format({ pathname: url }), { shallow: true });
+    }
+  }, [articleDetail])
 
   const onChangeEditor = (value) => {
     setContentEditorHtml(value);
     setIsStory(false);
+  }
+
+  const onChangeTitle = async (ev) => {
+    if (ev.target.value && ev.target.value.trim().length > 3 && !creatingDraft) {
+      console.log('createDraft');
+      setCreatingDraft(true);
+      // await createDraft();
+    }
   }
 
   const createDraft = async () => {
@@ -54,7 +83,7 @@ const NewPost = (props) => {
     };
 
     await props.createDraftArticle(_obj);
-    await props.getListArticlesDraft(authorID, true, 100, 1);
+    // await props.getListArticlesDraft(authorID, true, 100, 1);
   };
 
   const onFinish = async (values) => {
@@ -89,7 +118,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/posts");
+          router.push("/posts/live");
         }
       })
       .catch((err) => {
@@ -103,16 +132,12 @@ const NewPost = (props) => {
       <ActionTopLayout>
         <ActionContent>
           <NewPostAction>
-            <Link href="/">
-              <LinkBack>
-                <LogoImage className="logo" src="/favicon.svg" />
-              </LinkBack>
-            </Link>
-            <Link href="/posts">
-              <LinkBack>
-                <LogoImage className="logo" src="/images/back-icon.svg" />
-              </LinkBack>
-            </Link>
+            <LinkBack href="/posts/live">
+              <LogoImage className="logo" src="/favicon.svg" />
+            </LinkBack>
+            <LinkBack href="/posts/live">
+              <LogoImage className="logo" src="/images/back-icon.svg" />
+            </LinkBack>
             <StyledText>Draft</StyledText>
             <StyledText>Saved</StyledText>
           </NewPostAction>
@@ -131,6 +156,7 @@ const NewPost = (props) => {
           {newActions()}
           <ContentPage>
             <NewForm
+              onTitleChange={onChangeTitle}
               onChangeEditor={onChangeEditor}
               setImage={setImage}
               isStory={isStory}
@@ -203,12 +229,13 @@ const NewPostAction = styled.div`
 
 const mapStateToProps = (store) => {
   return {
-    isCreatedDraft: store.articlesReducer.isCreatedDraft,
+    articleDetail: store.articlesReducer.articleDetail,
   };
 };
 
 const mapDispatchToProps = {
   createDraftArticle,
+  clearArticleDetails,
   getListArticlesDraft,
 };
 

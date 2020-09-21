@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import moment from "moment";
+import { format } from "url";
 import { connect } from "react-redux";
 import Router from "next/router";
 // actions
@@ -80,8 +81,11 @@ const ViewPosts = (props) => {
       tabValue === "Drafts"
         ? `/${userData && userData.uniqueID}/stories/${item.slug}/draft`
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
+    
+    const route = tabValue === 'Drafts' ? '/[portal_id]/stories/[slug]/draft': '/[portal_id]/stories/[slug]';
 
-    url && Router.router.push(url);
+    // url && Router.router.push(url);
+    url && Router.router.push(route, format({ pathname: url }), { shallow: true });
   };
 
   const handleChangeTable = ({ key }) => {
@@ -120,10 +124,10 @@ const ViewPosts = (props) => {
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
           </FullName>
         ) : (
-          <span>
-            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-          </span>
-        ),
+            <span>
+              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+            </span>
+          ),
     },
     {
       title: "Date",
@@ -174,8 +178,8 @@ const ViewPosts = (props) => {
                     Edit
                   </span>
                 ) : (
-                  <span>Edit</span>
-                )}
+                    <span>Edit</span>
+                  )}
               </Menu.Item>
               <Menu.Item>Stats</Menu.Item>
             </Menu>
@@ -235,19 +239,19 @@ const ViewPosts = (props) => {
                 {tabValue === "Deleted" || tabValue === "Drafts" ? (
                   <TEIcon path="/images/posts/delete.svg" />
                 ) : (
-                  <Popconfirm
-                    className="popupDelete"
-                    placement="bottomLeft"
-                    title="Are you sure delete this post？"
-                    okText="Yes"
-                    cancelText="No"
-                    onConfirm={() => onDeletePosts()}
-                  >
-                    <BTNDelete>
-                      <TEIcon path="/images/posts/delete.svg" />
-                    </BTNDelete>
-                  </Popconfirm>
-                )}
+                    <Popconfirm
+                      className="popupDelete"
+                      placement="bottomLeft"
+                      title="Are you sure delete this post？"
+                      okText="Yes"
+                      cancelText="No"
+                      onConfirm={() => onDeletePosts()}
+                    >
+                      <BTNDelete>
+                        <TEIcon path="/images/posts/delete.svg" />
+                      </BTNDelete>
+                    </Popconfirm>
+                  )}
               </>
             )}
           </div>
@@ -271,10 +275,10 @@ const ViewPosts = (props) => {
           tabValue === "Live Stories"
             ? props.articlesData
             : tabValue === "Deleted"
-            ? props.articlesDeleted
-            : tabValue === "Drafts"
-            ? props.articlesDraft
-            : []
+              ? props.articlesDeleted
+              : tabValue === "Drafts"
+                ? props.articlesDraft
+                : []
         }
         pagination={props.articlesData.length > 10}
         rowKey="ID"

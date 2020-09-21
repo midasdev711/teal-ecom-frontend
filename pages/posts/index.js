@@ -17,7 +17,6 @@ const usePrevious = (value) => {
 
 const Posts = (props) => {
   const [userData, setUserData] = useState({});
-
   const { articlesData } = props;
   const prevProps = usePrevious({ articlesData });
 

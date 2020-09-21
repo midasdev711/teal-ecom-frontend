@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { RemirorEditor } from "../../atoms";
+import RemirorEditorNew from "../../atoms/RemirorEditorNew";
 
 // ui
 import { Form, Input } from "antd";
 
 const NewForm = (props) => {
-  const { onChangeEditor, isStory } = props;
+  const { onChangeEditor, isStory, onTitleChange } = props;
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -32,7 +32,7 @@ const NewForm = (props) => {
         name="title"
         rules={[{ required: true, message: "Title is required!" }]}
       >
-        <Input bordered={false} size="large" placeholder="Title" />
+        <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
       </Form.Item>
       <Form.Item
         name="subTitle"
@@ -45,11 +45,11 @@ const NewForm = (props) => {
         <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item> */}
 
-      <RemirorEditor
+      <RemirorEditorNew
         onChangeEditor={onChange}
         description={props.description}
       />
-      {isStory && <p style={{ color: "#f5222d" }}>Story is required!</p>}
+      {/* {isStory && <p style={{ color: "#f5222d" }}>Story is required!</p>} */}
     </ContentBox>
   );
 };

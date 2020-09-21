@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
+  clearArticleDetails
 } from "../../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../../src/components/posts/NewForm";
@@ -60,13 +61,27 @@ const EditPost = (props) => {
   };
 
   useEffect(() => {
-    getDetailArticle();
+    return () => {
+      props.clearArticleDetails();
+    }
+  }, []);
+
+  useEffect(() => {
+    
+    if (!props.articleDetail) {
+      getDetailArticle();
+    }
+
     if (props.articleDetail) {
-      const { title, subTitle } = props.articleDetail;
+      const { title, subTitle, description } = props.articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
+      // console.log('updated description', props.articleDetail);
+      if (description && description.trim().length) {
+        setContentEditorHtml(description);
+      }
     }
   }, [props.articleDetail]);
 
@@ -242,6 +257,7 @@ const mapStateToProps = (store) => {
 const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
+  clearArticleDetails
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

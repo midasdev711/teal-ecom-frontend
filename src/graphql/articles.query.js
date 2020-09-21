@@ -212,6 +212,33 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
     ) {
       title
       subTitle
+      titleSlug
+      description
+      slug
+      sequence
+      urls
+      createdDate
+      author {
+        name
+      }
+      isPublish
+      ampSlug
+      featureImage
+      thumbnail
+      readMinutes
+      viewCount
+      tags
+      status
+      totalClapCount
+      totalArticleCount
+      acceptDonation
+      isBookmark
+      isDraft
+      isFollowed
+      isClicked
+      isContentAllowed
+      articleScope
+      ID
     }
   }
 `;

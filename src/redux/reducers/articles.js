@@ -5,6 +5,7 @@ import {
   ACTION_GET_LIST_ARTICLES,
   ERROR_GET_LIST_ARTICLES,
   ACTION_GET_DETAIL_ARTICLE,
+  CLEAR_ARTICLE_DETAIL,
   ERROR_GET_DETAIL_ARTICLE,
   ACTION_DELETED_ARTICLE_SUCCESS,
   ERROR_DELETED_ARTICLE,
@@ -67,6 +68,11 @@ export const articlesReducer = (state = initData, action) => {
         articleDetail: action.data,
         msgErr: null,
         isDeleted: false,
+      };
+    case CLEAR_ARTICLE_DETAIL:
+      return {
+        ...state,
+        articleDetail: null
       };
     case ERROR_GET_DETAIL_ARTICLE:
       return {
@@ -139,6 +145,7 @@ export const articlesReducer = (state = initData, action) => {
     case ACTION_CREATE_DRAFT_ARTICLE:
       return {
         ...state,
+        articleDetail: action.data.upsertArticle,
         isCreatedDraft: true,
         msgErr: null,
       };

@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
+  clearArticleDetails,
 } from "../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../src/components/posts/NewForm";
@@ -32,6 +33,12 @@ const EditPost = (props) => {
   const prevProps = usePrevious({ updateArticleDetail });
 
   useEffect(() => {
+    return () => {
+      props.clearArticleDetails();
+    }
+  }, []);
+
+  useEffect(() => {
     const {
       query: { slug, getDraftPost },
     } = Router.router;
@@ -43,11 +50,15 @@ const EditPost = (props) => {
 
   useEffect(() => {
     if (props.articleDetail) {
-      const { title, subTitle } = props.articleDetail;
+      const { title, subTitle, description } = props.articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
+
+      if (description && description.trim().length) {
+        setContentEditorHtml(description);
+      }
     }
   }, [props.articleDetail]);
 
@@ -92,7 +103,7 @@ const EditPost = (props) => {
     setContentEditorHtml(value);
     setIsStory(false);
   };
-
+  
   const newActions = () => {
     return (
       <ActionTopLayout>
@@ -210,6 +221,7 @@ const mapStateToProps = (store) => {
 const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
+  clearArticleDetails,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);
