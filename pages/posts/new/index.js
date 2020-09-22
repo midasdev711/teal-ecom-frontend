@@ -61,7 +61,6 @@ const NewPost = (props) => {
   const onChangeEditor = (value) => {
     setContentEditorHtml(value);
     setIsStory(false);
-    setSaveValues("saving...")
   }
 
   const onChangeTitle = async (ev) => {
@@ -72,19 +71,8 @@ const NewPost = (props) => {
     }
   }
 
-  const handleSaveData =()=>{
-    setSaveValues("saved")
-  }
-  useEffect(() => {
-    const timer = setTimeout(() => {
-     console.log('1 second!')
-      handleSaveData()
-     // setSaveValues("saved")
-    },5000);
-    return () => clearTimeout(timer);
-  }, [saveValues]);
-  
   const createDraft = async () => {
+    setSaveValues("saving...");
     const authorID = Number(localStorage.getItem("userID"));
 
     const { title, subTitle, imageData } = form.getFieldsValue();
@@ -133,7 +121,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/posts/live");
+          router.push("/posts/[post_status]", format({ pathname: "/posts/live" }), { shallow: true });
         }
       })
       .catch((err) => {
@@ -147,14 +135,18 @@ const NewPost = (props) => {
       <ActionTopLayout>
         <ActionContent>
           <NewPostAction>
-            <LinkBack href="/posts/live">
-              <LogoImage className="logo" src="/favicon.svg" />
-            </LinkBack>
-            <LinkBack href="/posts/live">
-              <LogoImage className="logo" src="/images/back-icon.svg" />
-            </LinkBack>
+            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
+              <LinkBack>
+                <LogoImage className="logo" src="/favicon.svg" />
+              </LinkBack>
+            </Link>
+            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
+              <LinkBack>
+                <LogoImage className="logo" src="/images/back-icon.svg" />
+              </LinkBack>
+            </Link>
             <StyledText>Draft</StyledText>
-    <StyledText>{saveValues}</StyledText>
+            <StyledText>{saveValues}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit">
             Publish

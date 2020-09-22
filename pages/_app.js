@@ -15,10 +15,13 @@ import { apolloClient } from "../src/graphql";
 // redux
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension"
 import { applyMiddleware, createStore } from "redux";
 import rootReducer from "../src/redux/reducers";
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+// const store = createStore(rootReducer, applyMiddleware(thunk));
+const middlewares = [thunk];
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares)));
 
 function TealApp({ Component, pageProps, apollo }) {
   const [isLoading, setIsLoading] = useState();

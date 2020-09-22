@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import moment from "moment";
 import { format } from "url";
 import { connect } from "react-redux";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 // actions
 import {
   deleteArticleWithID,
@@ -12,6 +12,7 @@ import {
   deleteMultiArticles,
   getListArticlesDeleted,
   getListArticlesDraft,
+  clearArticleDetails,
 } from "../../../redux/actions/articles";
 // icons
 import {
@@ -35,8 +36,41 @@ import {
 import { TEIcon } from "../../atoms";
 const { Panel } = Collapse;
 
+const postStatusList = [
+  {
+    name: 'Live Stories',
+    value: 'live'
+  },
+  {
+    name: 'Drafts',
+    value: 'drafts'
+  },
+  {
+    name: 'Archived',
+    value: 'archived'
+  },
+  {
+    name: 'Deleted',
+    value: 'deleted'
+  }
+];
+
+const postStatusNames = {
+  live: 'Live Stories',
+  drafts: 'Drafts',
+  archived: 'Archived',
+  deleted: 'Deleted',
+};
+
+const postStatusTypes = {
+  live: 'live',
+  drafts: 'drafts',
+  archived: 'archived',
+  deleted: 'deleted',
+};
+
 const ViewPosts = (props) => {
-  const [tabValue, setTabValue] = useState("Live Stories");
+  const [tabValue, setTabValue] = useState(postStatusTypes.live);
   const [checkedList, setCheckedList] = useState([]);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -46,13 +80,23 @@ const ViewPosts = (props) => {
   const router = useRouter();
 
   useEffect(() => {
+    return () => {
+      props.clearArticleDetails();
+    }
+  }, [])
+
+  useEffect(() => {
+    setTabValue(props.currentTab);
+  }, [props.currentTab])
+
+  useEffect(() => {
     if (props.isDeleted) {
       notification.success({
         message: "Successfully!",
         description: "Deleted article!",
       });
 
-      setTabValue("Deleted");
+      setTabValue(postStatusTypes.deleted);
       setCheckedList([]);
     }
   }, [props.isDeleted]);
@@ -64,7 +108,7 @@ const ViewPosts = (props) => {
         description: "Deleted articles!",
       });
       setCheckedList([]);
-      setTabValue("Deleted");
+      setTabValue(postStatusTypes.deleted);
     }
   }, [props.isDeletedMulti]);
 
@@ -79,39 +123,42 @@ const ViewPosts = (props) => {
 
   const getArticleDetail = (item) => {
     const url =
-      tabValue === "Drafts"
+      tabValue === postStatusTypes.drafts
         ? `/${userData && userData.uniqueID}/stories/${item.slug}/draft`
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
-    
-    const route = tabValue === 'Drafts' ? '/[portal_id]/stories/[slug]/draft': '/[portal_id]/stories/[slug]';
 
-    // url && Router.router.push(url);
-    url && Router.router.push(route, format({ pathname: url }), { shallow: true });
+    const route = tabValue === postStatusTypes.drafts ? '/[portal_id]/stories/[slug]/draft' : '/[portal_id]/stories/[slug]';
+    url && router.push(route, format({ pathname: url }), { shallow: true });
   };
 
   const handleChangeTable = ({ key }) => {
     // const userID = Number(localStorage.getItem("userID"));
-         // setTabValue(key);
-        // if (key === "Drafts") {
+    // setTabValue(key);
+    // if (key === "Drafts") {
     //   props.getListArticlesDraft(userID, true, 100, 1);
     // } else if (key === "Deleted") {
     //   props.getListArticlesDeleted(userID, userID, 100, 1);
     // }
-    // Router.router.replace(key, undefined, {shallow: true});
-    // Router.router.push(key);
-     router.push("/posts/"+key.toLowerCase(), undefined, { shallow: true });
+    router.push("/posts/[post_status]", { pathname: "/posts/" + key }, { shallow: true });
   };
 
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
- 
+
   const tableMenu = (
     <Menu onClick={(e) => handleChangeTable(e)}>
-      <Menu.Item key="Live Stories">Live Stories</Menu.Item>
+      {
+        postStatusList.map(status => (
+          <Fragment key={status.value}>
+            <Menu.Item key={status.value}>{status.name}</Menu.Item>
+          </Fragment>
+        ))
+      }
+      {/* <Menu.Item key="Live Stories">Live Stories</Menu.Item>
       <Menu.Item key="Drafts">Drafts</Menu.Item>
       <Menu.Item key="Archived">Archived</Menu.Item>
-      <Menu.Item key="Deleted">Deleted</Menu.Item>
+      <Menu.Item key="Deleted">Deleted</Menu.Item> */}
     </Menu>
   );
 
@@ -123,7 +170,7 @@ const ViewPosts = (props) => {
       showSorterTooltip: false,
       width: "30%",
       render: (title, item) =>
-        tabValue !== "Deleted" ? (
+        tabValue !== postStatusTypes.deleted ? (
           <FullName onClick={() => getArticleDetail(item)}>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
           </FullName>
@@ -177,7 +224,7 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                {tabValue !== "Deleted" ? (
+                {tabValue !== postStatusTypes.deleted ? (
                   <span onClick={() => getArticleDetail(item)}>
                     Edit
                   </span>
@@ -221,7 +268,7 @@ const ViewPosts = (props) => {
     <ViewContent>
       <ContentHeader>
         <StyledDropdown defaultValue="all">
-          <TitleDropdown>{tabValue}</TitleDropdown>
+          <TitleDropdown>{postStatusNames[tabValue]}</TitleDropdown>
           <Dropdown overlay={tableMenu} placement="bottomCenter" arrow>
             <CaretDownOutlined />
           </Dropdown>
@@ -240,7 +287,7 @@ const ViewPosts = (props) => {
             {checkedList.length > 0 && (
               <>
                 <TEIcon path="/images/posts/download.svg" />
-                {tabValue === "Deleted" || tabValue === "Drafts" ? (
+                {tabValue === postStatusTypes.deleted || tabValue === postStatusTypes.drafts ? (
                   <TEIcon path="/images/posts/delete.svg" />
                 ) : (
                     <Popconfirm
@@ -276,11 +323,11 @@ const ViewPosts = (props) => {
         }}
         columns={columns}
         dataSource={
-          tabValue === "Live Stories"
+          tabValue === postStatusTypes.live
             ? props.articlesData
-            : tabValue === "Deleted"
+            : tabValue === postStatusTypes.deleted
               ? props.articlesDeleted
-              : tabValue === "Drafts"
+              : tabValue === postStatusTypes.drafts
                 ? props.articlesDraft
                 : []
         }
@@ -547,6 +594,7 @@ const mapDispatchToProps = {
   deleteArticleWithID,
   getListArticles,
   deleteMultiArticles,
+  clearArticleDetails,
   getListArticlesDeleted,
   getListArticlesDraft,
 };

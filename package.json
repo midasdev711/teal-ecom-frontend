@@ -43,6 +43,7 @@
     "react-redux": "^7.2.1",
     "react-spinners": "^0.9.0",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "remirror": "^1.0.0-next.39",
     "styled-components": "^5.1.1",

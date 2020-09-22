@@ -68,7 +68,8 @@ const StoriesRoutes = [
   },
   {
     title: "Posts",
-    path: "/posts/live",
+    path: "/posts/[post_status]",
+    as: "/posts/live",
   },
   {
     title: "Categories",

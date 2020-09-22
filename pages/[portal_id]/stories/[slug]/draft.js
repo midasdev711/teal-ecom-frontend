@@ -50,7 +50,7 @@ const EditPost = (props) => {
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
-    console.log('editorHtml', editorHtml)
+    // console.log('editorHtml', editorHtml)
     const _obj = {
       title: title,
       subTitle: subTitle,
@@ -58,19 +58,22 @@ const EditPost = (props) => {
       articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
     };
-    console.log('update article')
+    // console.log('update article')
     await props.updateArticle(_obj);
   };
 
   const handleSaveData = async () => {
-    console.log('articleDetail from interval', articleDetail);
+    // console.log('articleDetail from interval', articleDetail);
     if (articleDetail) {
       await onValuesChangePost();
     }
   };
 
   useEffect(() => {
-    getDetailArticle();
+    console.log('post data', articleDetail);
+    if (!articleDetail) {
+      getDetailArticle();
+    }
     if (articleDetail) {
       const { title, subTitle, description } = articleDetail;
       form.setFieldsValue({
@@ -95,7 +98,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Publish article successfully!",
       });
-      // Router.router.push("/posts/draft");
+      Router.router.push("/posts/[post_status]", { pathname: "/posts/drafts" }, { shallow: true });
     }
   }, [props.updateArticleDetail]);
 
@@ -109,12 +112,22 @@ const EditPost = (props) => {
   }, [props.msgErr]);
 
   useEffect(() => {
-    const timer = setInterval(async () => {
-      console.log('called on every 5 seconds!')
-      await handleSaveData();
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    let timer = null;
+    if (!timer) {
+      console.log('set timer');
+      timer = setInterval(async () => {
+        // console.log('called on every 5 seconds!', articleDetail)
+        await handleSaveData();
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) {
+        console.log('clear interval');
+        clearInterval(timer);
+      }
+    }
+  }, [articleDetail, editorHtml, form])
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -154,7 +167,7 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts/drafts">
+            <Link href="/posts/[post_status]" as="/posts/drafts" shallow={true}>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>
@@ -162,7 +175,7 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit">
+          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
             Publish
           </Button>
         </ActionContent>
@@ -173,13 +186,12 @@ const EditPost = (props) => {
   return (
     <NewPageLayout>
       <Form
-        onFinish={onFinish}
         form={form}
         layout="vertical"
       >
         <NewContent>
           {newActions()}
-          
+
           <ContentPage>
             <NewForm
               onChangeEditor={onChangeEditor}

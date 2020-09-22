@@ -3,7 +3,8 @@ import { PageLayout } from "../../src/components/views";
 import styled from "styled-components";
 import { ViewPosts } from "../../src/components/posts";
 import { connect } from "react-redux";
-import Router from "next/router";
+import { useRouter } from "next/router";
+// import Router from "next/router";
 
 // actions
 import {
@@ -12,21 +13,22 @@ import {
     getListArticlesDraft,
 } from "../../src/redux/actions/articles";
 
-const usePrevious = (value) => {
-    const ref = useRef();
-    useEffect(() => {
-        ref.current = value;
-    });
-    return ref.current;
-};
+// const usePrevious = (value) => {
+//     const ref = useRef();
+//     useEffect(() => {
+//         ref.current = value;
+//     });
+//     return ref.current;
+// };
 
 const Posts = (props) => {
     const [userData, setUserData] = useState({});
     const [selectedStatus, setSelectedStatus] = useState('live');
 
-    const { articlesData } = props;
-    const prevProps = usePrevious({ articlesData });
-   
+    // const { articlesData } = props;
+    // const prevProps = usePrevious({ articlesData });
+    const router = useRouter();
+
 
     useEffect(() => {
         getDataArticles();
@@ -35,14 +37,14 @@ const Posts = (props) => {
     useEffect(() => {
         const {
             query: { post_status },
-        } = Router.router;
+        } = router;
         setSelectedStatus(post_status)
-      });
+    }, [router.query]);
 
-      useEffect(() => {
+    useEffect(() => {
         console.log("selectedStatus", selectedStatus);
         getDataArticles();
-      }, [selectedStatus])
+    }, [selectedStatus])
 
     const getDataArticles = async () => {
         const userData = JSON.parse(localStorage.getItem("userData"));
@@ -72,7 +74,7 @@ const CustomerContent = styled.div`
 
 const mapStateToProps = (store) => {
     return {
-        articlesData: store.articlesReducer.articlesData,
+        // articlesData: store.articlesReducer.articlesData,
         msgErr: store.articlesReducer.msgErr,
     };
 };

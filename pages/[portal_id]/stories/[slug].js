@@ -29,7 +29,6 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
-  const [timer, setTimer] = useState(null)
 
   const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
@@ -54,6 +53,24 @@ const EditPost = (props) => {
   }, []);
 
   useEffect(() => {
+    let timer = null;
+    if (!timer) {
+      console.log('set timer');
+      timer = setInterval(async () => {
+        // console.log('called on every 5 seconds!', articleDetail)
+        await handleSaveOnInterval();
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) {
+        console.log('clear interval');
+        clearInterval(timer);
+      }
+    }
+  }, [articleDetail, editorHtml, form])
+
+  useEffect(() => {
     if (articleDetail) {
       const { title, subTitle, description } = articleDetail;
       form.setFieldsValue({
@@ -62,20 +79,6 @@ const EditPost = (props) => {
       });
       if (description && description.trim().length) {
         setContentEditorHtml(description);
-      }
-
-      if (!timer) {
-        const timerInstance = setInterval(async () => {
-          console.log('called on every 5 seconds!', articleDetail)
-          await handleSaveOnInterval();
-        }, 5000);
-        setTimer(timerInstance);
-      }
-    }
-
-    return () => {
-      if (timer) {
-        clearInterval(timer);
       }
     }
 
@@ -87,7 +90,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Updated article successfully!",
       });
-      Router.router.push("/posts/live");
+      Router.router.push("/posts/[post_status]", { pathname: "/posts/live" }, { shallow: true });
     }
   }, [props.updateArticleDetail]);
 
@@ -99,21 +102,6 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
-
-  // useEffect(() => {
-  //   if (!timer) {
-  //     const timerInstance = setInterval(async () => {
-  //       console.log('called on every 5 seconds!', articleDetail)
-  //       await handleSaveOnInterval();
-  //     }, 5000);
-  //     setTimer(timerInstance);
-  //   }
-  //   return () => {
-  //     if (timer) {
-  //       clearInterval(timer);
-  //     }
-  //   };
-  // }, [articleDetail, editorHtml]);
 
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
@@ -136,7 +124,6 @@ const EditPost = (props) => {
   };
 
   const handleSaveOnInterval = async () => {
-    console.log('articleDetail from interval', articleDetail);
     if (articleDetail) {
       await onValuesChangePost();
     }
@@ -159,7 +146,6 @@ const EditPost = (props) => {
       articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
     };
-    console.log('update article', _obj)
     await props.updateArticle(_obj);
   };
 
@@ -178,7 +164,7 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts/live">
+            <Link href="/posts/[post_status]" as="/posts/live" shallow={true}>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>
@@ -186,7 +172,7 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit">
+          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
             Save and publish
           </Button>
         </ActionContent>
@@ -196,7 +182,7 @@ const EditPost = (props) => {
 
   return (
     <NewPageLayout>
-      <Form onFinish={onFinish} form={form} layout="vertical">
+      <Form form={form} layout="vertical">
         <NewContent>
           {newActions()}
           <ContentPage>

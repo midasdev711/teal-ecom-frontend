@@ -19,7 +19,7 @@ const SideMenu = () => {
   const MenuList = RoutesName.map((route, index) => {
     return (
       <div key={index}>
-        <Link href={route.path}>
+        <Link href={route.path} as={route.as}>
           <LinkButton active={!route.components && pathname === route.path}>
             {route.title}
           </LinkButton>

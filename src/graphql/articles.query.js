@@ -118,9 +118,31 @@ export const UPDATE_ARTICLE_MUTATION = gql`
       subTitle
       titleSlug
       description
+      slug
+      sequence
+      urls
+      createdDate
+      author {
+        name
+      }
+      isPublish
+      ampSlug
       featureImage
-      isDraft
+      thumbnail
+      readMinutes
       viewCount
+      tags
+      status
+      totalClapCount
+      totalArticleCount
+      acceptDonation
+      isBookmark
+      isDraft
+      isFollowed
+      isClicked
+      isContentAllowed
+      articleScope
+      ID
     }
   }
 `;
@@ -247,12 +269,34 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
   query getDraftArticle($filters: ArticleFilters) {
     articles(filters: $filters) {
       title
-      ID
-      isDraft
-      createdDate
-      viewCount
+      subTitle
+      titleSlug
       description
       slug
+      sequence
+      urls
+      createdDate
+      author {
+        name
+      }
+      isPublish
+      ampSlug
+      featureImage
+      thumbnail
+      readMinutes
+      viewCount
+      tags
+      status
+      totalClapCount
+      totalArticleCount
+      acceptDonation
+      isBookmark
+      isDraft
+      isFollowed
+      isClicked
+      isContentAllowed
+      articleScope
+      ID
     }
   }
 `;

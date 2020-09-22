@@ -67,7 +67,9 @@ export const articlesReducer = (state = initData, action) => {
       return {
         ...state,
         isDeleted: false,
-        articleDetail: action.data,
+        articleDetail: {
+          ...action.data
+        },
         msgErr: null,
         postSaveState: 'saved',
         isDeleted: false,
@@ -101,7 +103,7 @@ export const articlesReducer = (state = initData, action) => {
       postSaveState: 'saving...'
     }
     case ACTION_UPDATED_ARTICLE:
-      console.log(action.data);
+      // console.log(action.data);
       return {
         ...state,
         updateArticleDetail: action.data.upsertArticle,
