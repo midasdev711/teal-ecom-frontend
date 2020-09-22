@@ -30,15 +30,14 @@ const EditPost = (props) => {
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
 
-  const { updateArticleDetail, saveState, articleDetail } = props;
+  const { updateArticleDetail, saveState, articleDetail, data } = props;
   const prevProps = usePrevious({ updateArticleDetail });
-
+  //const data = useSelector(state => state.articlesReducer.updateArticleDetail)
   // useEffect(() => {
   //   return () => {
   //     props.clearArticleDetails();
   //   }
   // }, []);
-
   useEffect(() => {
     const {
       query: { slug, getDraftPost },
@@ -51,8 +50,7 @@ const EditPost = (props) => {
       props.clearArticleDetails();
     }
   }, []);
-
-  useEffect(() => {
+    useEffect(() => {
     let timer = null;
     if (!timer) {
       console.log('set timer');
@@ -72,7 +70,8 @@ const EditPost = (props) => {
 
   useEffect(() => {
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { description } = articleDetail;
+      let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
         subTitle,
@@ -109,7 +108,6 @@ const EditPost = (props) => {
       setHandlePageRefresh(false);
       return;
     }
-
     const { title, subTitle } = values;
     let _variables = {
       title: title,
@@ -179,7 +177,39 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
+  const handleData = () => {
+    let description
+    if (data !== undefined) {
+      if (data?.ID === articleDetail?.ID) {
+        description = data?.description
+      } else {
+        description = articleDetail?.description
+      }
+    } else {
+      description = articleDetail?.description
+    }
+    return description
+  }
+  // console.log('data', data)
+  // console.log('articleDetail', articleDetail)
+  const handleTitle = () => {
+    let title, subTitle
+    if (data !== undefined) {
+      if (data?.ID === articleDetail?.ID) {
+        title = data?.title
+        subTitle = data?.subTitle
 
+      } else {
+        title = articleDetail?.title
+        subTitle = articleDetail?.subTitle
+      }
+    } else {
+      title = articleDetail?.title
+      subTitle = articleDetail?.subTitle
+    }
+    let datass = { title: title, subTitle: subTitle }
+    return datass
+  }
   return (
     <NewPageLayout>
       <Form form={form} layout="vertical">
@@ -191,7 +221,7 @@ const EditPost = (props) => {
               setImage={setImage}
               isStory={isStory}
               description={
-                articleDetail ? articleDetail.description : ""
+                handleData()
               }
             />
           </ContentPage>
@@ -266,6 +296,7 @@ const mapStateToProps = (store) => {
     updateArticleDetail: store.articlesReducer.updateArticleDetail,
     saveState: store.articlesReducer.postSaveState,
     msgErr: store.articlesReducer.msgErr,
+    data: store.articlesReducer.updateArticleDetail,
   };
 };
 

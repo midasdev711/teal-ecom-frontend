@@ -38,7 +38,7 @@ const EditPost = (props) => {
     await props.getDetailArticle(slug, true);
   };
 
-  const { updateArticleDetail, articleDetail, saveState } = props;
+  const { updateArticleDetail, articleDetail, saveState, data } = props;
   const prevProps = usePrevious({ updateArticleDetail });
 
   const onValuesChangePost = async () => {
@@ -70,12 +70,13 @@ const EditPost = (props) => {
   };
 
   useEffect(() => {
-    console.log('post data', articleDetail);
+
     if (!articleDetail) {
       getDetailArticle();
     }
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { description } = articleDetail;
+      let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
         subTitle,
@@ -182,6 +183,38 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
+  const handleData = () => {
+    let description
+    if (data !== undefined) {
+      if (data?.ID === articleDetail?.ID) {
+        description = data?.description
+
+      } else {
+        description = articleDetail?.description
+      }
+    } else {
+      description = articleDetail?.description
+    }
+    return description
+  }
+  const handleTitle = () => {
+    let title, subTitle
+    if (data !== undefined) {
+      if (data?.ID === articleDetail?.ID) {
+        title = data?.title
+        subTitle = data?.subTitle
+
+      } else {
+        title = articleDetail?.title
+        subTitle = articleDetail?.subTitle
+      }
+    } else {
+      title = articleDetail?.title
+      subTitle = articleDetail?.subTitle
+    }
+    let datass = { title: title, subTitle: subTitle }
+    return datass
+  }
 
   return (
     <NewPageLayout>
@@ -198,7 +231,7 @@ const EditPost = (props) => {
               setImage={setImage}
               isStory={isStory}
               description={
-                articleDetail ? articleDetail.description : ""
+                handleData()
               }
             />
           </ContentPage>
@@ -273,6 +306,7 @@ const mapStateToProps = (store) => {
     updateArticleDetail: store.articlesReducer.updateArticleDetail,
     saveState: store.articlesReducer.postSaveState,
     msgErr: store.articlesReducer.msgErr,
+    data: store.articlesReducer.updateArticleDetail,
   };
 };
 
