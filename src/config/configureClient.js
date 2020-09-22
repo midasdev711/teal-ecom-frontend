@@ -68,15 +68,17 @@ export const destroyToken = async () => {
 
 const link = process.browser
   ? split(({ query }) => {
-      const { kind, operation } = getMainDefinition(query);
-      return kind === 'OperationDefinition' && operation === 'subscription';
-    }, httpLink)
+    const { kind, operation } = getMainDefinition(query);
+    return kind === 'OperationDefinition' && operation === 'subscription';
+  }, httpLink)
   : httpLink;
 
 export default withApollo(
-  ({ initialState }) =>
-    new ApolloClient({
+  ({ initialState }) => {
+    console.log('initialState', initialState);
+    return new ApolloClient({
       link: concat(authMiddleware, link),
       cache: new InMemoryCache().restore(initialState || {}),
     })
+  }
 );

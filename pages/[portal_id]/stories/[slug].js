@@ -30,7 +30,7 @@ const EditPost = (props) => {
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
 
-  const { updateArticleDetail, saveState, articleDetail, data } = props;
+  const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
   //const data = useSelector(state => state.articlesReducer.updateArticleDetail)
   // useEffect(() => {
@@ -179,9 +179,9 @@ const EditPost = (props) => {
   };
   const handleData = () => {
     let description
-    if (data !== undefined) {
-      if (data?.ID === articleDetail?.ID) {
-        description = data?.description
+    if (updateArticleDetail !== undefined) {
+      if (updateArticleDetail?.ID === articleDetail?.ID) {
+        description = updateArticleDetail?.description
       } else {
         description = articleDetail?.description
       }
@@ -194,10 +194,10 @@ const EditPost = (props) => {
   // console.log('articleDetail', articleDetail)
   const handleTitle = () => {
     let title, subTitle
-    if (data !== undefined) {
-      if (data?.ID === articleDetail?.ID) {
-        title = data?.title
-        subTitle = data?.subTitle
+    if (updateArticleDetail !== undefined) {
+      if (updateArticleDetail?.ID === articleDetail?.ID) {
+        title = updateArticleDetail?.title
+        subTitle = updateArticleDetail?.subTitle
 
       } else {
         title = articleDetail?.title
@@ -295,8 +295,7 @@ const mapStateToProps = (store) => {
     articleDetail: store.articlesReducer.articleDetail,
     updateArticleDetail: store.articlesReducer.updateArticleDetail,
     saveState: store.articlesReducer.postSaveState,
-    msgErr: store.articlesReducer.msgErr,
-    data: store.articlesReducer.updateArticleDetail,
+    msgErr: store.articlesReducer.msgErr
   };
 };
 
