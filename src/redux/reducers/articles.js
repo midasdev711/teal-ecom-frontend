@@ -22,6 +22,7 @@ import {
   ERROR_GET_LST_DRAFT_ARTICLES,
 } from "../actions/actionTypes";
 
+
 const initData = {
   articlesData: [],
   isCreated: false,
