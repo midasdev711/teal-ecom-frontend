@@ -116,7 +116,7 @@ const EditPost = (props) => {
   useEffect(() => {
     let timer = null;
     if (!timer) {
-      console.log('set timer');
+      // console.log('set timer');
       timer = setInterval(async () => {
         // console.log('called on every 5 seconds!', articleDetail)
         await handleSaveData();
@@ -125,7 +125,7 @@ const EditPost = (props) => {
 
     return () => {
       if (timer) {
-        console.log('clear interval');
+        // console.log('clear interval');
         clearInterval(timer);
       }
     }
@@ -201,7 +201,7 @@ const EditPost = (props) => {
               setImage={setImage}
               isStory={isStory}
               description={
-                editorHtml
+                articleDetail && articleDetail.description || ""
               }
             />
           </ContentPage>
