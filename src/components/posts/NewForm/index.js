@@ -44,13 +44,12 @@ const NewForm = (props) => {
       {/* <Form.Item name="featureImage">
         <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item> */}
-
       <RemirorEditorNew
         onChangeEditor={onChange}
         description={props.description}
       />
       {/* {isStory && <p style={{ color: "#f5222d" }}>Story is required!</p>} */}
-    </ContentBox>
+    </ContentBox >
   );
 };
 

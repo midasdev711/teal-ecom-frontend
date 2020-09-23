@@ -133,6 +133,7 @@ export function getDetailArticle(slug, getDraft) {
             page: 1,
           },
         },
+        fetchPolicy: 'no-cache'
       })
       .then((res) => {
         dispatch({

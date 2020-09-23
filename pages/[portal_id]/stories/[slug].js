@@ -42,7 +42,6 @@ const EditPost = (props) => {
     const {
       query: { slug, getDraftPost },
     } = Router.router;
-
     const getDraft = getDraftPost === "Draft" ? true : false;
 
     props.getDetailArticle(slug, getDraft);
@@ -53,16 +52,13 @@ const EditPost = (props) => {
     useEffect(() => {
     let timer = null;
     if (!timer) {
-      console.log('set timer');
       timer = setInterval(async () => {
-        // console.log('called on every 5 seconds!', articleDetail)
         await handleSaveOnInterval();
       }, 5000);
     }
 
     return () => {
       if (timer) {
-        console.log('clear interval');
         clearInterval(timer);
       }
     }
@@ -136,7 +132,6 @@ const EditPost = (props) => {
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
-    console.log('editorHtml', editorHtml)
     const _obj = {
       title: title,
       subTitle: subTitle,
@@ -190,8 +185,7 @@ const EditPost = (props) => {
     }
     return description
   }
-  // console.log('data', data)
-  // console.log('articleDetail', articleDetail)
+
   const handleTitle = () => {
     let title, subTitle
     if (updateArticleDetail !== undefined) {
