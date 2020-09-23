@@ -32,7 +32,7 @@ const NewForm = (props) => {
         name="title"
         rules={[{ required: true, message: "Title is required!" }]}
       >
-        <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
+        <Input onBlur={onTitleChange} bordered={false} size="large" placeholder="Title" />
       </Form.Item>
       <Form.Item
         name="subTitle"
