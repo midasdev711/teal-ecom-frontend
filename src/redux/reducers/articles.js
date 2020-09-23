@@ -103,7 +103,6 @@ export const articlesReducer = (state = initData, action) => {
       postSaveState: 'saving...'
     }
     case ACTION_UPDATED_ARTICLE:
-      // console.log(action.data);
       return {
         ...state,
         updateArticleDetail: {

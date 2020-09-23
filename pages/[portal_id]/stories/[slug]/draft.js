@@ -42,6 +42,7 @@ const EditPost = (props) => {
   const prevProps = usePrevious({ updateArticleDetail });
 
   const onValuesChangePost = async () => {
+    console.log('sdsdsdsd', form.getFieldsValue())
     const { title, subTitle, imageData } = form.getFieldsValue();
     if (title || subTitle) {
       await updateDraft();
@@ -80,7 +81,7 @@ const EditPost = (props) => {
       // let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
-        subTitle,
+        subTitle
       });
 
       if (description && description.trim().length) {
@@ -118,7 +119,7 @@ const EditPost = (props) => {
     if (!timer) {
       // console.log('set timer');
       timer = setInterval(async () => {
-        // console.log('called on every 5 seconds!', articleDetail)
+        console.log('called on every 5 seconds!', articleDetail)
         await handleSaveData();
       }, 5000);
     }
