@@ -128,7 +128,7 @@ const ViewPosts = (props) => {
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
 
     const route = tabValue === postStatusTypes.drafts ? '/[portal_id]/stories/[slug]/draft' : '/[portal_id]/stories/[slug]';
-    url && router.push(route, format({ pathname: url }), { shallow: true });
+    url && router.push(route, { pathname: url }, { shallow: true });
   };
 
   const handleChangeTable = ({ key }) => {
