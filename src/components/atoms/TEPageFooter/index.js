@@ -17,14 +17,15 @@ const TEPageFooter = ({ children }) => {
 const PageFooter = styled.div`
   padding: 20px;
   width: 100%;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 const PageFooterContent = styled.div`
-  padding: 18px;
-  border-radius: 30px;
+  padding: 15px;
+  border-radius: 35px;
   max-width: 350px;
   display: flex;
   align-items: center;

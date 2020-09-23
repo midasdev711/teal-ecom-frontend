@@ -72,4 +72,7 @@ export default createGlobalStyle`
       }
     }
   }
+  .ant-popover-inner-content{
+    ${'' /* padding: 0; */}
+  }
 `;

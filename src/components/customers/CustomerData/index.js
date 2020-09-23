@@ -16,7 +16,7 @@ import {
   Checkbox,
   Timeline,
 } from "antd";
-import Tags from "./Tags";
+import Tags from "../../Tags";
 
 const { Content } = Layout;
 

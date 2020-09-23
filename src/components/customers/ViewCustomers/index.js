@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import languagesList from "language-list";
-import countryList from "react-select-country-list";
+import { CountryDropdown } from "react-country-region-selector";
+import Router from "next/router";
+import Link from "next/link";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -220,8 +222,6 @@ const dataFromUS = customerData.filter((el) => {
 
 const languagesData = languagesList().getData();
 
-const countriesData = countryList().getData();
-
 const ViewCustomers = () => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
@@ -241,6 +241,7 @@ const ViewCustomers = () => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  const [country, setCountry] = useState('United States');
 
   const columns = [
     {
@@ -249,9 +250,11 @@ const ViewCustomers = () => {
       render: (value, item) => {
         return (
           <div>
-            <h3>
-              {item.firstName} {item.lastName}
-            </h3>
+            <Link href="/customers/123">
+              <FullName href="">
+                {item.firstName} {item.lastName}
+              </FullName>
+            </Link>
             <p>{item.address}</p>
           </div>
         );
@@ -305,6 +308,10 @@ const ViewCustomers = () => {
 
   const handleMenuClickCheckbox = (e) => {};
 
+  const editCustomers = () => {
+    Router.router.push("/customers/edit");
+  };
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedList(selectedRows);
@@ -313,7 +320,9 @@ const ViewCustomers = () => {
         let node = (
           <div>
             <LabelSelected>{selectedRows.length} selected</LabelSelected>
-            <ButtonEditCustomer>Edit customers</ButtonEditCustomer>
+            <ButtonEditCustomer onClick={() => editCustomers()}>
+              Edit customers
+            </ButtonEditCustomer>
             <Dropdown
               overlay={
                 <Menu onClick={handleMenuClickCheckbox}>
@@ -805,15 +814,13 @@ const ViewCustomers = () => {
             }
             key="10"
           >
-            <SelectStyle placeholder="Select a country...">
-              {countriesData &&
-                countriesData.length > 0 &&
-                countriesData.map((item, i) => (
-                  <Option key={i} value={item.value}>
-                    {item.label}
-                  </Option>
-                ))}
-            </SelectStyle>
+            <CountryDropdown
+              defaultOptionLabel="Select a country."
+              value={country}
+              onChange={(val) => setCountry(val)}
+              blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
+              className="location"
+            />
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
         </CollapseStyle>
@@ -883,12 +890,19 @@ const CollapseStyle = styled(Collapse)`
 const PanelStyle = styled(Panel)`
   background: none;
   border: none;
+  .location{
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
 `;
 
 const PanelTitle = styled.h3`
   margin: 0px;
-  font-weight: bold;
+  font-weight: 600;
   color: #000;
+  font-size: 16px;
   opacity: 0.8;
 `;
 
@@ -943,6 +957,12 @@ const ButtonEditCustomer = styled(Button)`
 
 const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
+`;
+
+const FullName = styled.a`
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
 `;
 
 export default ViewCustomers;

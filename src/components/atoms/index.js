@@ -7,6 +7,11 @@ import TEPageFooter from "./TEPageFooter";
 import MDAddTags from "./MDAddTags";
 import MDDeleteSelected from "./MDDeleteSelected";
 import MDDeleteTags from "./MDDeleteTags";
+import MDExport from "./MDExport";
+import MDImportCSV from "./MDImportCSV";
+import RemirorEditor from "./RemirorEditor";
+import InputText from "./InputText";
+import TLogo from "./TLogo";
 
 export {
   TELogo,
@@ -18,4 +23,9 @@ export {
   MDAddTags,
   MDDeleteSelected,
   MDDeleteTags,
+  MDExport,
+  MDImportCSV,
+  RemirorEditor,
+  InputText,
+  TLogo,
 };
