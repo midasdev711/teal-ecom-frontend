@@ -131,7 +131,7 @@ const ViewPosts = (props) => {
     url && router.push(route, { pathname: url }, { shallow: true });
   };
 
-  const handleChangeTable = (key) => {
+  const handleChangeTable = ({ key }) => {
     console.log('key', key)
     // const userID = Number(localStorage.getItem("userID"));
     // setTabValue(key);
@@ -148,7 +148,7 @@ const ViewPosts = (props) => {
   };
 
   const tableMenu = (
-    <Menu onClick={(e) => handleChangeTable(e)}>
+    <Menu onClick={handleChangeTable}>
       {
         postStatusList.map(status => (
           <Menu.Item key={status.value}>{status.name}</Menu.Item>
@@ -268,45 +268,11 @@ const ViewPosts = (props) => {
       <ContentHeader>
         <StyledDropdown defaultValue="all">
           <TitleDropdown>{postStatusNames[tabValue]}</TitleDropdown>
-          <Dropdown overlay={
-            // <Menu>
-            // <Menu.Item>
-            //   {tabValue !== postStatusTypes.deleted ? (
-            //     <span onClick={() => getArticleDetail(item)}>
-            //       Edit
-            //     </span>
-            //   ) : (
-            //       <span>Edit</span>
-            //     )}
-            // </Menu.Item>
-            // <Menu.Item>Stats</Menu.Item>
-            // <Menu >
-            // {
-            //   name: 'Live Stories',
-            //   value: 'live'
-            // },
-            // {
-            //   name: 'Drafts',
-            //   value: 'drafts'
-            // },
-            // {
-            //   name: 'Archived',
-            //   value: 'archived'
-            // },
-            // {
-            //   name: 'Deleted',
-            //   value: 'deleted'
-            // }
-            <Menu>
-            
-        
-          <Menu.Item > <span onClick={() => handleChangeTable("live")}>Live Stories</span></Menu.Item>
-          <Menu.Item > <span onClick={() => handleChangeTable("drafts")}> Drafts</span></Menu.Item>
-          <Menu.Item > <span onClick={() => handleChangeTable("archived")}> Archived</span></Menu.Item>
-          <Menu.Item > <span onClick={() => handleChangeTable("deleted")}>Deleted</span></Menu.Item>
-       
-      </Menu>
-          } placement="bottomCenter" arrow>
+          <Dropdown overlay={(
+            <Menu onClick={handleChangeTable}>
+              {postStatusList.map(status => (<Menu.Item key={status.value}>{status.name}</Menu.Item>))}
+            </Menu>
+          )} placement="bottomCenter" arrow>
             <CaretDownOutlined />
           </Dropdown>
         </StyledDropdown>
