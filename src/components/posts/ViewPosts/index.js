@@ -287,13 +287,6 @@ const ViewPosts = (props) => {
                 </Button>
               </a>
             </Link>
-            <Link href="/posts/new">
-              <a>
-                <Button style={{marginLeft:"20px"}} type="primary" icon={<PlusOutlined />} size="middle">
-                  Create
-                </Button>
-              </a>
-            </Link>
             {checkedList.length > 0 && (
               <>
                 <TEIcon path="/images/posts/download.svg" />
