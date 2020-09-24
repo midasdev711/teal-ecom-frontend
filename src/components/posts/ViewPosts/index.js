@@ -150,9 +150,7 @@ const ViewPosts = (props) => {
     <Menu onClick={(e) => handleChangeTable(e)}>
       {
         postStatusList.map(status => (
-          <Fragment key={status.value}>
-            <Menu.Item key={status.value}>{status.name}</Menu.Item>
-          </Fragment>
+          <Menu.Item key={status.value}>{status.name}</Menu.Item>
         ))
       }
       {/* <Menu.Item key="Live Stories">Live Stories</Menu.Item>
