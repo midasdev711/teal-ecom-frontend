@@ -131,7 +131,8 @@ const ViewPosts = (props) => {
     url && router.push(route, { pathname: url }, { shallow: true });
   };
 
-  const handleChangeTable = ({ key }) => {
+  const handleChangeTable = (key) => {
+    console.log('key', key)
     // const userID = Number(localStorage.getItem("userID"));
     // setTabValue(key);
     // if (key === "Drafts") {
@@ -267,7 +268,26 @@ const ViewPosts = (props) => {
       <ContentHeader>
         <StyledDropdown defaultValue="all">
           <TitleDropdown>{postStatusNames[tabValue]}</TitleDropdown>
-          <Dropdown overlay={tableMenu} placement="bottomCenter" arrow>
+          <Dropdown overlay={
+            // <Menu>
+            // <Menu.Item>
+            //   {tabValue !== postStatusTypes.deleted ? (
+            //     <span onClick={() => getArticleDetail(item)}>
+            //       Edit
+            //     </span>
+            //   ) : (
+            //       <span>Edit</span>
+            //     )}
+            // </Menu.Item>
+            // <Menu.Item>Stats</Menu.Item>
+            // <Menu >
+            <Menu>{
+            
+        postStatusList.map(status => (
+          <Menu.Item key={status.value}> <span key={status.value} onClick={() => handleChangeTable(status.value)}> {status.name} </span></Menu.Item>
+        ))
+      } </Menu>
+          } placement="bottomCenter" arrow>
             <CaretDownOutlined />
           </Dropdown>
         </StyledDropdown>
