@@ -281,12 +281,31 @@ const ViewPosts = (props) => {
             // </Menu.Item>
             // <Menu.Item>Stats</Menu.Item>
             // <Menu >
-            <Menu>{
+            // {
+            //   name: 'Live Stories',
+            //   value: 'live'
+            // },
+            // {
+            //   name: 'Drafts',
+            //   value: 'drafts'
+            // },
+            // {
+            //   name: 'Archived',
+            //   value: 'archived'
+            // },
+            // {
+            //   name: 'Deleted',
+            //   value: 'deleted'
+            // }
+            <Menu>
             
-        postStatusList.map(status => (
-          <Menu.Item key={status.value}> <span key={status.value} onClick={() => handleChangeTable(status.value)}> {status.name} </span></Menu.Item>
-        ))
-      } </Menu>
+        
+          <Menu.Item > <span onClick={() => handleChangeTable("live")}>Live Stories</span></Menu.Item>
+          <Menu.Item > <span onClick={() => handleChangeTable("drafts")}> Drafts</span></Menu.Item>
+          <Menu.Item > <span onClick={() => handleChangeTable("archived")}> Archived</span></Menu.Item>
+          <Menu.Item > <span onClick={() => handleChangeTable("deleted")}>Deleted</span></Menu.Item>
+       
+      </Menu>
           } placement="bottomCenter" arrow>
             <CaretDownOutlined />
           </Dropdown>
