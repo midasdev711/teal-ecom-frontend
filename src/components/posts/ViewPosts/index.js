@@ -127,7 +127,7 @@ const ViewPosts = (props) => {
         ? `/${userData && userData.uniqueID}/stories/${item.slug}/draft`
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
 
-    const route = tabValue === postStatusTypes.drafts ? '/[portal_id]/stories/[slug]/draft' : '/[portal_id]/stories/[slug]';
+    const route = tabValue === postStatusTypes.drafts ? `/${userData.uniqueID}/stories/[slug]/draft` : `/${userData.uniqueID}/stories/[slug]`;
     url && router.push(route, { pathname: url }, { shallow: true });
   };
 
@@ -140,7 +140,7 @@ const ViewPosts = (props) => {
     // } else if (key === "Deleted") {
     //   props.getListArticlesDeleted(userID, userID, 100, 1);
     // }
-    router.push("/posts/[post_status]", { pathname: "/posts/" + key }, { shallow: true });
+    router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/` + key }, { shallow: true });
   };
 
   const onChangeSubscription = (e) => {

@@ -5,32 +5,45 @@ import { Layout, Typography, Select } from "antd";
 import { TELogo, TESelector } from "../../atoms";
 import { Routes, StoriesRoutes } from "../../../utils/Routes";
 import Link from "next/link";
+import { buildDynamicRoute } from "../../../utils";
 
 const SideMenu = () => {
   const [channelName, setChannelName] = useState("Ecommerce");
-
+  const [userData, setUserData] = useState("");
   useEffect(() => {
     setChannelName(localStorage.getItem("channelName") || "Ecommerce");
   });
+
+  useEffect(() => {
+    setUserData(JSON.parse(localStorage.getItem("userData")))
+  }, [])
 
   const { pathname } = useRouter();
   const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
 
   const MenuList = RoutesName.map((route, index) => {
+    const mainDynamicRoute = buildDynamicRoute(route.as, userData);
+
     return (
       <div key={index}>
-        <Link href={route.path} as={route.as}>
-          <LinkButton active={!route.components && pathname === route.path}>
+        <Link href={route.path} as={mainDynamicRoute} >
+          <LinkButton active={!route.components && pathname === route.as}>
             {route.title}
           </LinkButton>
         </Link>
-        {pathname.split("/", 2)[1] === route.path.split("/", 2)[1] &&
+        {/* {console.log('pathname.split("/", 2)[1]', pathname.split("/", 4)[3], route.path.split("/", 4)[3])} */}
+        {pathname.split("/", 4)[3] === route.path.split("/", 4)[3] &&
           route.components &&
           route.components.map((res, indexKey) => {
+
+
+            const dynamicRoute = buildDynamicRoute(res.as, userData);
+
             return (
-              <Link key={indexKey} href={res.path}>
+              <Link key={indexKey} href={res.path} as={dynamicRoute}>
+
                 <LinkButton
-                  active={pathname === res.path}
+                  active={pathname === res.as}
                   style={{ paddingLeft: "30px" }}
                 >
                   {res.title}

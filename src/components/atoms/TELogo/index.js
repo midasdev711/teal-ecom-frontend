@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import MainRoutes from '../../../utils/Routes'
 import styled from "styled-components";
 import TESelector from "../TESelector";
 import { Typography, Select } from "antd";
@@ -8,16 +9,31 @@ import Router from "next/router";
 const { Text } = Typography;
 const TELogo = () => {
   const [channelName, setChannelName] = useState("Ecommerce");
-
+  let userPortalId
   const handleChange = (value) => {
     setChannelName(value);
     localStorage.setItem("channelName", value);
-    Router.push("/");
+    userPortalId = JSON.parse(localStorage.getItem("userData"))
+    console.log('userPortalId', userPortalId?.uniqueID);
+    Router.push(`/[portal_id]/${MainRoutes.MainRoutes[value]}`, { pathname: `/${userPortalId?.uniqueID}/${MainRoutes.MainRoutes[value]}` }, { shallow: true });
   };
 
   useEffect(() => {
     setChannelName(localStorage.getItem("channelName") || "Ecommerce");
   });
+  useEffect(() => {
+    const {
+      query: { feature_type, param },
+    } = Router.router;
+
+    if (feature_type !== undefined && feature_type !== null) {
+      if (feature_type === "ecom") {
+        setChannelName("Ecommerce")
+      } else if (feature_type === "stories") {
+        setChannelName("Stories")
+      }
+    }
+  })
 
   return (
     <LogoWrapper>

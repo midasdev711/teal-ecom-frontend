@@ -45,3 +45,16 @@ export const mobileAndTabletCheck = () => {
   })(navigator.userAgent || navigator.vendor || window.opera);
   return check;
 };
+
+// export const getUserData = () => {
+//   let userData = JSON.parse(localStorage.getItem("userData"))
+//   return userData
+// }
+
+export const buildDynamicRoute = (route, userData) => {
+  let result = route;
+  if (route && route.includes('[portal_id]')) {
+    result = route.replace('[portal_id]', userData?.uniqueID);
+  }
+  return result;
+}

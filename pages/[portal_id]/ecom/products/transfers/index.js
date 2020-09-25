@@ -1,8 +1,8 @@
 import React from 'react';
-import { PageLayout } from '../../../src/components/views';
-import { TEPageFooter } from '../../../src/components/atoms';
-import { ViewData } from '../../../src/components/transfers';
-import PageHeader from '../../../src/components/PageHeader';
+import { PageLayout } from '../../../../../src/components/views';
+import { TEPageFooter } from '../../../../../src/components/atoms';
+import { ViewData } from '../../../../../src/components/transfers';
+import PageHeader from '../../../../../src/components/PageHeader';
 import styled from 'styled-components';
 import { Layout, Empty, Button } from 'antd';
 import Link from 'next/link';

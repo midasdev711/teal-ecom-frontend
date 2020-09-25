@@ -13,8 +13,7 @@ const Home = (props) => {
       props.getUserWithID(userID);
     }
   });
-
-  return (
+    return (
     <PageLayout>
       <HomeContent>
         <HomeContainer>

@@ -2,20 +2,19 @@ import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // components
-import { PageLayout } from "../../src/components/views";
+import { PageLayout } from "../../../../../src/components/views";
+import InventoryDetailView from "../../../../../src/components/products/InventoryDetail";
 // icons
 import {
-  EyeOutlined,
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CopyOutlined,
   LeftOutlined,
+  ArrowRightOutlined,
+  ArrowLeftOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 // ui
 import { Row, Col } from "antd";
-import ViewProductDetail from "../../src/components/products/ViewProductDetail";
 
-const ProductDetail = () => {
+const InventoryDetail = () => {
   return (
     <PageLayout>
       <CustomerContent>
@@ -23,9 +22,9 @@ const ProductDetail = () => {
           <ActionsTop>
             <Row gutter={24}>
               <Col md={12}>
-                <Link href="/products">
+                <Link href={`/products/[productId]`} as="/products/123456789">
                   <LinkBack>
-                    <LeftOutlined /> Products
+                    <LeftOutlined /> Back to product
                   </LinkBack>
                 </Link>
               </Col>
@@ -42,16 +41,13 @@ const ProductDetail = () => {
             </Row>
           </ActionsTop>
 
-          <TittleHeader>Indestructible Shoes</TittleHeader>
+          <TittleHeader>Black / US 10 | EU 44</TittleHeader>
           <ButtonPrint>
             <CopyOutlined /> Duplicate
           </ButtonPrint>
-          <ButtonView>
-            <EyeOutlined /> View
-          </ButtonView>
         </ContentHeader>
 
-        <ViewProductDetail />
+        <InventoryDetailView />
       </CustomerContent>
     </PageLayout>
   );
@@ -61,13 +57,6 @@ const CustomerContent = styled.div`
   padding: 20px;
   width: 60rem;
   margin: 30px auto;
-`;
-
-const ButtonView = styled.a`
-  color: #444;
-  margin-top: 15px;
-  display: inline-block;
-  margin-left: 24px;
 `;
 
 const ButtonPrint = styled.a`
@@ -115,4 +104,5 @@ const ButtonNext = styled.a`
 const LinkBack = styled.a`
   color: #333;
 `;
-export default ProductDetail;
+
+export default InventoryDetail;

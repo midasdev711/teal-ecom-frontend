@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { PageLayout } from "../../../src/components/views";
-import { TEPageFooter, MDExport } from "../../../src/components/atoms";
-import PageHeader from "../../../src/components/PageHeader";
+import { PageLayout } from "../../../../../src/components/views";
+import { TEPageFooter, MDExport } from "../../../../../src/components/atoms";
+import PageHeader from "../../../../../src/components/PageHeader";
 import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import { ViewInventory } from "../../../src/components/products";
+import { ViewInventory } from "../../../../../src/components/products";
 
 const Inventory = () => {
   return (

@@ -42,7 +42,7 @@ const EditPost = (props) => {
   const prevProps = usePrevious({ updateArticleDetail });
 
   const onValuesChangePost = async () => {
-    console.log('sdsdsdsd', form.getFieldsValue())
+   
     const { title, subTitle, imageData } = form.getFieldsValue();
     if (title || subTitle) {
       await updateDraft();
@@ -101,7 +101,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Publish article successfully!",
       });
-      Router.router.push("/posts/[post_status]", { pathname: "/posts/drafts" }, { shallow: true });
+      Router.router.push("/[portal_id]/stories/posts/[post_status]", { pathname: "/[portal_id]/stories/posts/drafts" }, { shallow: true });
     }
   }, [props.updateArticleDetail]);
 
@@ -170,7 +170,7 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts/[post_status]" as="/posts/drafts" shallow={true}>
+            <Link href="/[portal_id]/stories/posts/[post_status]" as="/[portal_id]/stories/posts/drafts" shallow={true}>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>

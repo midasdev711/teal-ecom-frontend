@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { Button, Layout } from "antd";
 
 // components
-import { PageLayout } from "../../../src/components/views";
-import { NewForm } from "../../../src/components/products";
+import { PageLayout } from "../../../../../src/components/views";
+import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 const newActions = () => {

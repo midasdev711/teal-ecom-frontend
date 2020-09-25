@@ -1,75 +1,93 @@
+// {const data = localStorage.getItem(channelName)
+// console.log('data', data)
+// }
 const Routes = [
   {
     title: "Home",
-    path: "/",
+    path: "/[portal_id]/ecom",
+    as: "/[portal_id]/ecom",
   },
   {
     title: "Orders",
-    path: "/orders",
+    path: "/[portal_id]/ecom/orders",
+    as: "/[portal_id]/ecom/orders",
     components: [
       {
         title: "Orders",
-        path: "/orders",
+        path: "/[portal_id]/ecom/orders",
+        as: "/[portal_id]/ecom/orders",
       },
       {
         title: "Drafts",
-        path: "/orders/drafts",
+        path: "/[portal_id]/ecom/orders/drafts",
+        as: "/[portal_id]/ecom/orders/drafts",
       },
       {
         title: "Abandoned checkouts",
-        path: "/orders/checkouts",
+        path: "/[portal_id]/ecom/orders/checkouts",
+        as: "/[portal_id]/ecom/orders/checkouts",
       },
     ],
   },
   {
     title: "Products",
-    path: "/products",
+    path: "/[portal_id]/ecom/products",
+    as: "/[portal_id]/ecom/products",
     components: [
       {
         title: "All products",
-        path: "/products",
+        path: "/[portal_id]/ecom/products",
+        as: "/[portal_id]/ecom/products",
       },
       {
         title: "Inventory",
-        path: "/products/inventory",
+        path: "/[portal_id]/ecom/products/inventory",
+        as: "/[portal_id]/ecom/products/inventory",
       },
       {
         title: "Transfers",
-        path: "/products/transfers",
+        path: "/[portal_id]/ecom/products/transfers",
+        as: "/[portal_id]/ecom/products/transfers",
       },
       {
         title: "Collections",
-        path: "/products/collections",
+        path: "/[portal_id]/ecom/products/collections",
+        as: "/[portal_id]/ecom/products/collections",
       },
       {
         title: "Gift cards",
         path: "/products/gift-cards",
+        as: "/[portal_id]/ecom/products/gift-cards",
       },
     ],
   },
   {
     title: "Customers",
-    path: "/customers",
+    path: "/[portal_id]/ecom/customers",
+    as: "/[portal_id]/ecom/customers",
   },
   {
     title: "Analytics",
-    path: "/analytics",
+    path: "/[portal_id]/ecom/analytics",
+    as: "/[portal_id]/ecom/analytics",
   },
   {
     title: "Discounts",
-    path: "/discounts",
+    path: "/[portal_id]/ecom/discounts",
+    as: "/[portal_id]/ecom/discounts",
   },
 ];
 
 const StoriesRoutes = [
   {
     title: "Home",
-    path: "/",
+    path: "/[portal_id]/stories",
+    as: "/[portal_id]/stories",
   },
   {
     title: "Posts",
-    path: "/posts/[post_status]",
-    as: "/posts/live",
+    path: "/[portal_id]/stories/posts/[post_status]",
+    as: "/[portal_id]/stories/posts/live",
   },
   {
     title: "Categories",
@@ -85,9 +103,15 @@ const StoriesRoutes = [
   },
 ];
 
-export { Routes, StoriesRoutes };
+const MainRoutes = {
+  "Ecommerce": "ecom",
+  "Stories": "stories"
+}
+
+export { Routes, StoriesRoutes, MainRoutes };
 
 export default {
   Routes,
+  MainRoutes,
   StoriesRoutes,
 };
