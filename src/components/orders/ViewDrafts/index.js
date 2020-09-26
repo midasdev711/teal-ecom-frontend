@@ -24,6 +24,7 @@ import {
 } from "antd";
 // fake data
 import { draftsData } from "../fakeData";
+import { getUserData } from "../../../utils";
 
 
 const { TabPane } = Tabs;
@@ -45,6 +46,7 @@ const ViewOrders = () => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -52,8 +54,8 @@ const ViewOrders = () => {
       dataIndex: "order_id",
       render: (order_id) => {
         return (
-          <Link href="/order/123">
-            <FullName href="">#{order_id}</FullName>
+          <Link href="/[portal_id]/ecom/order/123" as={`/${userData?.uniqueID}/ecom/order/123`}>
+                      <FullName href="">#{order_id}</FullName>
           </Link>
         );
       },

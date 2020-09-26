@@ -6,10 +6,14 @@ import { Button } from "antd";
 import Link from "next/link";
 import MDImportCSV from "../atoms/MDImportCSV";
 import MDExport from "../atoms/MDExport";
+import { getUserData } from "../../utils";
+
 
 const PageHeader = ({ ...props }) => {
   const [isOpenImport, setOpenImport] = useState(false);
   const [isOpenExport, setOpenExport] = useState(false);
+  let userData = getUserData()
+ 
   return (
     <PageHeaderContent>
       <TitleActionContent>
@@ -29,9 +33,18 @@ const PageHeader = ({ ...props }) => {
       </TitleActionContent>
       {props.isData && (
         <Button type="primary" size="large">
-          <Link href={props.path}>
+          {/* <Link href={props.path}> */}
+          {
+            console.log('props.path', props.path)
+          }
+          {
+            props.path === "/products" ? ( <Link href={props.path} as={`/${userData?.uniqueID}/ecom${props.path}`} shallow={true}>
             <a>{props.CreateButtonName}</a>
-          </Link>
+          </Link>) : ( <Link href={`${props.path}`} as={`/${userData?.uniqueID}/ecom/${props.path}`} shallow={true}>
+            <a>{props.CreateButtonName}</a>
+          </Link>)
+          }
+         
         </Button>
       )}
       <MDImportCSV

@@ -4,21 +4,26 @@ import styled from "styled-components";
 import { Button, Layout } from "antd";
 
 // components
-import { PageLayout } from "../../../src/components/views";
-import { CollectionDetail } from "../../../src/components/products";
+import { PageLayout } from "../../../../../src/components/views";
+import { CollectionDetail } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined, EyeOutlined } from "@ant-design/icons";
+import { getUserData } from "../../../../../src/utils";
+
 const newActions = () => {
+  let userData = getUserData()
   return (
     <ActionTopLayout>
-      <ActionContent> 
+      <ActionContent>
         <span>Unsaved changes</span>
         <NewOrderAction>
           <Button className="cancel" size="large">
-            Discard
-          </Button> 
+            <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
+              <a>Discard</a>
+            </Link>
+          </Button>
           <Button className="save" size="large" type="primary">
-            <Link href="/products/collections">
+            <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
               <a title="save">Save</a>
             </Link>
           </Button>
@@ -28,13 +33,14 @@ const newActions = () => {
   );
 };
 const NewCustomer = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <NewContent>
         {newActions()}
         <ContentPage>
           <ContentHeader>
-            <Link href="/products/collections">
+            <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
               <LinkBack>
                 <LeftOutlined /> Collections
               </LinkBack>

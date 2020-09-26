@@ -28,6 +28,7 @@ import {
 import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
+import { getUserData } from "../../../utils";
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -51,6 +52,7 @@ const ViewOrders = () => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -58,7 +60,7 @@ const ViewOrders = () => {
       dataIndex: "order_id",
       render: (order_id) => {
         return (
-          <Link href="/order/123">
+                    <Link href="/[portal_id]/ecom/order/123" as={`/${userData?.uniqueID}/ecom/order/123`}>
             <FullName href="">#{order_id}</FullName>
           </Link>
         );

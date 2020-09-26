@@ -485,9 +485,9 @@ const newForm = () => {
         </Row>
         <ActionBottom>
           <Divider className="divider-bottom" />
-          <Button size="large" type="primary">
+          {/* <Button size="large" type="primary">
             Save
-          </Button>
+          </Button> */}
         </ActionBottom>
       </SubForm>
     </Form>

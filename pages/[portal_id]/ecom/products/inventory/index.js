@@ -7,8 +7,11 @@ import { Layout, Empty, Button } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { ViewInventory } from "../../../../../src/components/products";
+import { getUserData } from "../../../../../src/utils";
+
 
 const Inventory = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <CustomerContent>
@@ -34,7 +37,9 @@ const Inventory = () => {
           </TEPageFooter>
         </EmptyCustomerContent> */}
         <ContentHeader>
-          <Link href="/products">
+       
+          <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+
             <LinkBack>
               <LeftOutlined /> Products
             </LinkBack>

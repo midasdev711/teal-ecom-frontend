@@ -2,31 +2,32 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
-
 // components
-import { PageLayout } from "../../../../src/components/views";
-import { NewForm } from "../../../../src/components/orders";
+import { PageLayout } from "../../../src/components/views";
+import { NewForm } from "../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
+
 const newActions = () => {
   return (
     <ActionTopLayout>
-      <ActionContent> 
+      <ActionContent>
         <span>Unsaved changes</span>
-        <NewOrderAction>
+        <NewCustomerAction>
           <Button className="cancel" size="large">
-            Discard
+            Cancel
           </Button>
-          <Button className="save" size="large" type="primary">
-            <Link href="/orders">
+          <Button size="large" type="primary">
+            <Link href="/customers/[pid]" as='/customers/123456789'>
               <a title="save">Save</a>
             </Link>
           </Button>
-        </NewOrderAction>
+        </NewCustomerAction>
       </ActionContent>
     </ActionTopLayout>
   );
 };
+
 const NewCustomer = () => {
   return (
     <PageLayout>
@@ -34,12 +35,12 @@ const NewCustomer = () => {
         {newActions()}
         <ContentPage>
           <ContentHeader>
-            <Link href="/orders">
+            <Link href="/customers">
               <LinkBack>
-                <LeftOutlined /> Orders
+                <LeftOutlined /> Add customer
               </LinkBack>
             </Link>
-            <TittleHeader>Create order</TittleHeader>
+            <TittleHeader>Customers</TittleHeader>
           </ContentHeader>
           <NewForm />
         </ContentPage>
@@ -59,7 +60,7 @@ const ContentPage = styled.div`
 `;
 
 const ContentHeader = styled.div`
-  padding-bottom: 10px;
+  padding-bottom: 30px;
 `;
 
 const TittleHeader = styled.h3`
@@ -98,16 +99,11 @@ const ActionContent = styled.div`
   align-items: center;
 `;
 
-const NewOrderAction = styled.div`
+const NewCustomerAction = styled.div`
   display: flex;
   .cancel {
     margin-right: 15px;
-    & span {
-      font-size: 14px;
-      margin-top: -5px;
-      color: #000;
-      font-weight: 100;
-    }
   }
 `;
+
 export default NewCustomer;

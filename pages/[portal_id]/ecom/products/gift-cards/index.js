@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { PageLayout } from "../../../../../src/components/views";
 import { TEPageFooter } from "../../../../../src/components/atoms";
 import styled from "styled-components";
@@ -7,11 +7,16 @@ import Link from "next/link";
 import { LeftOutlined, TagsOutlined, SendOutlined } from "@ant-design/icons";
 
 const Gifts = () => {
+  let userData
+  if (process.browser) {
+    userData = JSON.parse(localStorage.getItem("userData"))
+     }
+
   return (
     <PageLayout>
       <GiftContent>
         <EmptyGiftContent>
-          <Link href="/products">
+          <Link href="/[portal_id]/ecom/products" as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
             <LinkBack>
               <LeftOutlined /> Products
             </LinkBack>

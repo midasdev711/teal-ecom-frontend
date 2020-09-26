@@ -46,10 +46,14 @@ export const mobileAndTabletCheck = () => {
   return check;
 };
 
-// export const getUserData = () => {
-//   let userData = JSON.parse(localStorage.getItem("userData"))
-//   return userData
-// }
+export const getUserData = () => {
+  if(process.browser) {
+    let userData 
+      userData  = JSON.parse(localStorage.getItem("userData"))
+    return userData
+  }
+ 
+}
 
 export const buildDynamicRoute = (route, userData) => {
   let result = route;

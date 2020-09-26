@@ -7,6 +7,8 @@ import InventoryFilters from "../InventoryFilters";
 import { DownOutlined } from "@ant-design/icons";
 // ui
 import { Table, Tabs, Tag, Button, Dropdown, Menu, Input } from "antd";
+import { getUserData } from "../../../utils";
+
 
 const { TabPane } = Tabs;
 const customerData = [
@@ -44,6 +46,7 @@ const ViewInventory = () => {
   const [checkedList, setCheckedList] = useState([]);
   const [tagsFilter, setTagsFilter] = useState([]);
   const [tabIndex, setTabIndex] = useState(1);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -54,10 +57,11 @@ const ViewInventory = () => {
           <ProductContent>
             <ProductImage src={product.img}></ProductImage>
             <div className="inventory-link">
-              <Link href="/products/inventory/[inventoryId]" as='/products/inventory/123456789'>
+              <Link href="/[portal_id]/ecom/products/inventory/[inventoryId]" as={`/${userData?.uniqueID}/ecom/products/inventory/123456789`}>
                 <a> {product && product.name}</a>
               </Link>
-              <Link href="/products/inventory/[inventoryId]" as='/products/inventory/123456789'>
+              <Link href="/[portal_id]/ecom/products/inventory/[inventoryId]" as={`/${userData?.uniqueID}/ecom/products/inventory/123456789`}>
+             
                 <a> {product && product.type}</a>
               </Link>
             </div>

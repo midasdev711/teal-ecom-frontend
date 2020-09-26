@@ -24,6 +24,8 @@ import {
   Input,
   message,
 } from "antd";
+import { getUserData } from "../../../utils";
+
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -68,6 +70,7 @@ const ViewCustomers = () => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -77,7 +80,7 @@ const ViewCustomers = () => {
         return (
           <div>
             <ProductImage src={product.img}></ProductImage>
-            <Link href={`/products/[productId]`} as="/products/123456789">
+            <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/123456789`} shallow={true}>
               <a> {product && product.name}</a>
             </Link>
           </div>
@@ -102,7 +105,7 @@ const ViewCustomers = () => {
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const editCustomers = () => {
     Router.router.push("/customers/edit");
@@ -167,18 +170,18 @@ const ViewCustomers = () => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {

@@ -5,25 +5,28 @@ import { Button, Layout } from "antd";
 
 // components
 import { PageLayout } from "../../../../../../src/components/views";
-import { CollectionNewForm } from "../../../../../../src/components/products";
-
+import { NewForm } from "../../../../../../src/components/orders";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
-import { getUserData } from "../../../../../../src/utils";
 const newActions = () => {
-  let userData = getUserData()
+  let userData
+  if (process.browser) {
+    userData = JSON.parse(localStorage.getItem("userData"))
+     }
   return (
     <ActionTopLayout>
-      <ActionContent>
+      <ActionContent> 
         <span>Unsaved changes</span>
         <NewOrderAction>
           <Button className="cancel" size="large">
-            <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
-              <a>Discard</a>
+          <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+          <a>Discard</a>
+            
             </Link>
           </Button>
           <Button className="save" size="large" type="primary">
-            <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
+          <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+          
               <a title="save">Save</a>
             </Link>
           </Button>
@@ -33,21 +36,24 @@ const newActions = () => {
   );
 };
 const NewCustomer = () => {
-  let userData = getUserData()
+  let userData
+  if (process.browser) {
+    userData = JSON.parse(localStorage.getItem("userData"))
+     }
   return (
     <PageLayout>
       <NewContent>
         {newActions()}
         <ContentPage>
           <ContentHeader>
-          <Link href="/[portal_id]/ecom/products/collections" as={`/${userData?.uniqueID}/ecom/products/collections`}>
-              <LinkBack>
-                <LeftOutlined /> Collections
+          <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+                         <LinkBack>
+                <LeftOutlined /> Orders
               </LinkBack>
             </Link>
-            <TittleHeader>Create collection</TittleHeader>
+            <TittleHeader>Create order</TittleHeader>
           </ContentHeader>
-          <CollectionNewForm />
+          <NewForm />
         </ContentPage>
       </NewContent>
     </PageLayout>

@@ -8,17 +8,25 @@ import { PageLayout } from "../../../../../src/components/views";
 import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
+import { getUserData } from "../../../../../src/utils";
 const newActions = () => {
+  let userData = getUserData()
   return (
     <ActionTopLayout>
-      <ActionContent> 
+      <ActionContent>
         <span>Unsaved changes</span>
         <NewOrderAction>
           <Button className="cancel" size="large">
-            Discard
+            <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+              <a>
+                Discard
+            </a>
+            </Link>
           </Button>
           <Button className="save" size="large" type="primary">
-            <Link href="/products">
+            {/* <Link href="/products"> */}
+            <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+
               <a title="save">Save</a>
             </Link>
           </Button>
@@ -28,13 +36,15 @@ const newActions = () => {
   );
 };
 const NewCustomer = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <NewContent>
         {newActions()}
         <ContentPage>
           <ContentHeader>
-            <Link href="/products">
+          <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+           
               <LinkBack>
                 <LeftOutlined /> Products
               </LinkBack>

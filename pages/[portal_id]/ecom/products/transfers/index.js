@@ -6,8 +6,11 @@ import PageHeader from '../../../../../src/components/PageHeader';
 import styled from 'styled-components';
 import { Layout, Empty, Button } from 'antd';
 import Link from 'next/link';
+import { getUserData } from '../../../../../src/utils';
+
 
 const Transfers = () => {
+	let userData = getUserData()
 	return (
 		<PageLayout>
 			<TransferContent>
@@ -38,7 +41,7 @@ const Transfers = () => {
 							<PageHeaderTitle>Transfers</PageHeaderTitle>
 						</TitleActionContent>
 						<Button type="primary" size="large">
-							<Link href={`/transfers/new`}>
+						<Link href="/[portal_id]/ecom/products/transfers/new" as={`/${userData?.uniqueID}/ecom/products/transfers/new`}>
 								<a>Add transfer</a>
 							</Link>
 						</Button>

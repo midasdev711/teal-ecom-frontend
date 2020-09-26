@@ -7,6 +7,7 @@ import CollectionFilters from "../CollectionFilters";
 import { DownOutlined } from "@ant-design/icons";
 // ui
 import { Table, Tabs, Tag, Button, Dropdown, Menu, Input } from "antd";
+import { getUserData } from "../../../utils";
 
 const { TabPane } = Tabs;
 const customerData = [
@@ -24,6 +25,7 @@ const ViewInventory = () => {
   const [checkedList, setCheckedList] = useState([]);
   const [tagsFilter, setTagsFilter] = useState([]);
   const [tabIndex, setTabIndex] = useState(1);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -33,10 +35,12 @@ const ViewInventory = () => {
         return (
           <ProductContent>
             <ProductImage src={collection.img}></ProductImage>
-            <Link
+          <Link href="/[portal_id]/ecom/products/collections/[collectionId]" as={`/${userData?.uniqueID}/ecom/products/collections/123456789`}>
+
+            {/* <Link
               href="/products/collections/[collectionId]"
               as="/products/collections/123456789"
-            >
+            > */}
               <a> {collection && collection.name}</a>
             </Link>
           </ProductContent>

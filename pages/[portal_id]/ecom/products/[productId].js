@@ -14,8 +14,10 @@ import {
 // ui
 import { Row, Col } from "antd";
 import ViewProductDetail from "../../../../src/components/products/ViewProductDetail";
+import { getUserData } from "../../../../src/utils";
 
 const ProductDetail = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <CustomerContent>
@@ -23,7 +25,7 @@ const ProductDetail = () => {
           <ActionsTop>
             <Row gutter={24}>
               <Col md={12}>
-                <Link href="/products">
+              <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
                   <LinkBack>
                     <LeftOutlined /> Products
                   </LinkBack>

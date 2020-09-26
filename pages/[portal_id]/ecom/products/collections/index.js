@@ -7,8 +7,10 @@ import { Layout, Empty, Button } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { ViewCollections } from "../../../../../src/components/products";
+import { getUserData } from "../../../../../src/utils";
 
 const Collections = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <CollectionContent>
@@ -34,14 +36,14 @@ const Collections = () => {
           </TEPageFooter>
         </EmptyCollectionContent> */}
         <ContentHeader>
-          <Link href="/products">
+          <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
             <LinkBack>
               <LeftOutlined /> Products
             </LinkBack>
           </Link>
           <StyledContainer>
             <TittleHeader>Collections</TittleHeader>
-            <Link href="/products/collections/new">
+            <Link href="/[portal_id]/ecom/products/collections/new" as={`/${userData?.uniqueID}/ecom/products/collections/new`}>
               <a>
                 <CreateButton type="primary" size="large">
                   Create collection

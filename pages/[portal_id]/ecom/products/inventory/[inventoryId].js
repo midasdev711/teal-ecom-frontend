@@ -13,8 +13,11 @@ import {
 } from "@ant-design/icons";
 // ui
 import { Row, Col } from "antd";
+import { getUserData } from "../../../../../src/utils";
+
 
 const InventoryDetail = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <CustomerContent>
@@ -22,8 +25,8 @@ const InventoryDetail = () => {
           <ActionsTop>
             <Row gutter={24}>
               <Col md={12}>
-                <Link href={`/products/[productId]`} as="/products/123456789">
-                  <LinkBack>
+          <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+                                <LinkBack>
                     <LeftOutlined /> Back to product
                   </LinkBack>
                 </Link>
