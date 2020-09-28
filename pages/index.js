@@ -20,10 +20,8 @@ const Home = (props) => {
   });
   useEffect(() => {
     setUserData(JSON.parse(localStorage.getItem("userData")))
-  }, []);
-  useEffect(() => {
     setChannelName(localStorage.getItem('channelName'))
-  }, [])
+  }, []);
   useEffect(() => {
     if (userData !== null && userData !== undefined && userData !== "") {
       if (router.pathname === "/") {
