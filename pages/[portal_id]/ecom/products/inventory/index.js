@@ -37,7 +37,7 @@ const Inventory = () => {
           </TEPageFooter>
         </EmptyCustomerContent> */}
         <ContentHeader>
-       
+
           <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
 
             <LinkBack>
@@ -48,7 +48,7 @@ const Inventory = () => {
             PageName="Inventory"
             ImportButtonName="Import"
             CreateButtonName="View products"
-            path="/products"
+            path="products"
             isData={true}
             isImport={true}
           />

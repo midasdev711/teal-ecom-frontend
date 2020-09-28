@@ -25,6 +25,8 @@ import {
   Menu,
   message,
 } from "antd";
+import { getUserData } from "../../../utils";
+
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -242,6 +244,7 @@ const ViewCustomers = () => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [country, setCountry] = useState('United States');
+  let userData = getUserData()
 
   const columns = [
     {
@@ -250,7 +253,7 @@ const ViewCustomers = () => {
       render: (value, item) => {
         return (
           <div>
-            <Link href="/customers/123">
+            <Link href={`/[portal_id]/ecom/customers/123`} as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
               <FullName href="">
                 {item.firstName} {item.lastName}
               </FullName>
@@ -306,7 +309,7 @@ const ViewCustomers = () => {
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const editCustomers = () => {
     Router.router.push("/customers/edit");
@@ -384,26 +387,26 @@ const ViewCustomers = () => {
     setValueSubscription(e.target.value);
   };
 
-  const onChangeAmount = (e, name) => {};
+  const onChangeAmount = (e, name) => { };
 
-  const onChangeNumberOrders = (e, name) => {};
+  const onChangeNumberOrders = (e, name) => { };
 
   const onShowMdAddTags = (value) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {

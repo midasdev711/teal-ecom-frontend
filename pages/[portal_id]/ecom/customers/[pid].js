@@ -10,15 +10,20 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
+import { getUserData } from "../../../../src/utils";
+
 
 const NewCustomer = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <NewContent>
         <ContentPage>
           <ContentHeader>
             <TitleHeader>
-              <Link href="/customers">
+              {/* <Link href="/customers"> */}
+              <Link href={`/[portal_id]/ecom/customers`} as={`/${userData?.uniqueID}/ecom/customers`} shallow={true}>
+
                 <LinkBack>
                   <LeftOutlined /> Customers
                 </LinkBack>

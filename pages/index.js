@@ -4,8 +4,13 @@ import { LeftContent, RightContent } from "../src/components/home";
 import { getUserWithID } from "../src/redux/actions/users";
 import { connect } from "react-redux";
 import styled from "styled-components";
-
+import { useRouter } from "next/router";
 const Home = (props) => {
+
+  const [userData, setUserData] = useState("")
+  const [channelName, setChannelName] = useState("")
+  const router = useRouter()
+  let channelFlag
 
   useEffect(() => {
     let userID = localStorage.getItem("userID");
@@ -13,7 +18,24 @@ const Home = (props) => {
       props.getUserWithID(userID);
     }
   });
-    return (
+  useEffect(() => {
+    setUserData(JSON.parse(localStorage.getItem("userData")))
+  }, []);
+  useEffect(() => {
+    setChannelName(localStorage.getItem('channelName'))
+  }, [])
+  useEffect(() => {
+    if (userData !== null && userData !== undefined && userData !== "") {
+      if (router.pathname === "/") {
+        channelName !== "" && channelName !== undefined && channelName !== null ? (channelName === "Ecommerce" ? (
+          channelFlag = "ecom"
+        ) : (channelFlag = channelName)) : (channelFlag = "ecom")
+        router.replace(`${userData?.uniqueID}/${channelFlag.toLowerCase()}`)
+      }
+    }
+  }, [userData])
+
+  return (
     <PageLayout>
       <HomeContent>
         <HomeContainer>

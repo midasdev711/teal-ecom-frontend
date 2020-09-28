@@ -60,7 +60,7 @@ const ViewOrders = () => {
       dataIndex: "order_id",
       render: (order_id) => {
         return (
-                    <Link href="/[portal_id]/ecom/order/123" as={`/${userData?.uniqueID}/ecom/order/123`}>
+          <Link href="/[portal_id]/ecom/order/123" as={`/${userData?.uniqueID}/ecom/order/123`}>
             <FullName href="">#{order_id}</FullName>
           </Link>
         );
@@ -87,8 +87,11 @@ const ViewOrders = () => {
               </p>
               <TextPhone>{customer.phone}</TextPhone>
               <div>
-                <Button block type="default" href="/customers/123">
-                  View customer
+
+                <Button block type="default">
+                  <Link href="/[portal_id]/ecom/customers/123" as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
+                    <a>View customer</a>
+                  </Link>
                 </Button>
               </div>
             </PopupDetailTB>
@@ -187,7 +190,7 @@ const ViewOrders = () => {
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const onCreateShippingLabels = () => {
     Router.router.push("/orders/shipping-labels");
@@ -226,18 +229,18 @@ const ViewOrders = () => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
@@ -370,9 +373,8 @@ const ViewOrders = () => {
 
       <MDFulfill
         isOpen={isShowFulfill}
-        title={`Fulfill ${checkedList.length} order${
-          checkedList.length > 1 ? "s" : ""
-        }`}
+        title={`Fulfill ${checkedList.length} order${checkedList.length > 1 ? "s" : ""
+          }`}
         content="This will mark these orders as fulfilled."
         cancelText="Cancel"
         okText="Fulfil"

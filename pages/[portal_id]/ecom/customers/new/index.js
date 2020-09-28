@@ -7,8 +7,11 @@ import { PageLayout } from "../../../../../src/components/views";
 import { NewForm } from "../../../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
+import { getUserData } from "../../../../../src/utils";
+
 
 const newActions = () => {
+  let userData = getUserData()
   return (
     <ActionTopLayout>
       <ActionContent>
@@ -18,7 +21,9 @@ const newActions = () => {
             Cancel
           </Button>
           <Button size="large" type="primary">
-            <Link href="/customers/[pid]" as='/customers/123456789'>
+            <Link href="/[portal_id]/ecom/customers/[pid]" as={`/${userData?.uniqueID}/ecom/customers/123456789`}>
+
+              {/* <Link href="/customers/[pid]" as='/customers/123456789'> */}
               <a title="save">Save</a>
             </Link>
           </Button>
@@ -29,13 +34,15 @@ const newActions = () => {
 };
 
 const NewCustomer = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <NewContent>
         {newActions()}
         <ContentPage>
           <ContentHeader>
-            <Link href="/customers">
+            <Link href="/[portal_id]/ecom/customers" as={`/${userData?.uniqueID}/ecom/customers`}>
+              {/* <Link href="/customers"> */}
               <LinkBack>
                 <LeftOutlined /> Add customer
               </LinkBack>
