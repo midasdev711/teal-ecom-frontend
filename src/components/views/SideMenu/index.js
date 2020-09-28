@@ -23,9 +23,7 @@ const SideMenu = () => {
 
   const MenuList = RoutesName.map((route, index) => {
     const mainDynamicRoute = buildDynamicRoute(route.as, userData);
-      console.log('pathname', pathname)
-      console.log('route.as', route.as)
-    return (
+         return (
       <div key={index}>
         <Link href={route.path} as={mainDynamicRoute} >
           <LinkButton active={!route.components && pathname === route.as}>
