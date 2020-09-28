@@ -58,6 +58,11 @@ const Posts = (props) => {
             await props.getListArticles(userID, 100, 1);
         }
     };
+    useEffect(() => {
+        router.prefetch('/[portal_id]/stories/posts/new')
+        router.prefetch('/[portal_id]/stories/[slug]/draft')
+        router.prefetch('/[portal_id]/stories/[slug]')
+    }, [])
 
     return (
         <PageLayout>
