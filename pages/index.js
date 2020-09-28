@@ -28,7 +28,7 @@ const Home = (props) => {
         channelName !== "" && channelName !== undefined && channelName !== null ? (channelName === "Ecommerce" ? (
           channelFlag = "ecom"
         ) : (channelFlag = channelName)) : (channelFlag = "ecom")
-        router.replace(`${userData?.uniqueID}/${channelFlag.toLowerCase()}`)
+    			router.push(`/[portal_id]/${channelFlag.toLowerCase()}`, { pathname: `/${userData?.uniqueID}/${channelFlag.toLowerCase()}` }, { shallow: true });
       }
     }
   }, [userData])
