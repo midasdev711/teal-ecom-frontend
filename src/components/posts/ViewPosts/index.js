@@ -34,7 +34,9 @@ import {
   Popconfirm,
 } from "antd";
 import { TEIcon } from "../../atoms";
+import { getUserData } from "../../../utils";
 const { Panel } = Collapse;
+
 
 const postStatusList = [
   {
@@ -78,6 +80,7 @@ const ViewPosts = (props) => {
 
   const { userData } = props;
   const router = useRouter();
+  
 
   useEffect(() => {
     return () => {
@@ -280,7 +283,9 @@ const ViewPosts = (props) => {
       <ActionsTable>
         <AlignItem>
           <div className="actions-left">
-            <Link href="/posts/new">
+          <Link href="/[portal_id]/stories/posts/new" as={`/${userData?.uniqueID}/stories/posts/new`} shallow={true}>
+
+            {/* <Link href="/posts/new"> */}
               <a>
                 <Button type="primary" icon={<PlusOutlined />} size="middle">
                   Create

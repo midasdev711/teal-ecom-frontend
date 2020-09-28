@@ -8,13 +8,14 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails,
-} from "../../../src/redux/actions/articles";
+  clearArticleDetails
+} from "../../../../../src/redux/actions/articles";
 // components
-import NewForm from "../../../src/components/posts/NewForm";
+import NewForm from "../../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
-import { getUserData } from "../../../src/utils";
+import { getUserData } from "../../../../../src/utils";
+
 
 const usePrevious = (value) => {
   const ref = useRef();
@@ -29,102 +30,22 @@ const EditPost = (props) => {
   const [editorHtml, setContentEditorHtml] = useState("");
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
-  const [handlePageRefresh, setHandlePageRefresh] = useState(false)
-
-  const { updateArticleDetail, saveState, articleDetail } = props;
-  const prevProps = usePrevious({ updateArticleDetail });
+  const [submit, setSubmit] = useState(false);
   let userData = getUserData()
-  //const data = useSelector(state => state.articlesReducer.updateArticleDetail)
-  // useEffect(() => {
-  //   return () => {
-  //     props.clearArticleDetails();
-  //   }
-  // }, []);
-  useEffect(() => {
+
+  const getDetailArticle = async () => {
     const {
-      query: { slug, getDraftPost },
+      query: { slug },
     } = Router.router;
-    const getDraft = getDraftPost === "Draft" ? true : false;
 
-    props.getDetailArticle(slug, getDraft);
-    return () => {
-      props.clearArticleDetails();
-    }
-  }, []);
-  useEffect(() => {
-    let timer = null;
-    if (!timer) {
-      timer = setInterval(async () => {
-        await handleSaveOnInterval();
-      }, 5000);
-    }
-
-    return () => {
-      if (timer) {
-        clearInterval(timer);
-      }
-    }
-  }, [articleDetail, editorHtml, form])
-
-  useEffect(() => {
-    if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
-      form.setFieldsValue({
-        title,
-        subTitle,
-      });
-      if (description && description.trim().length) {
-        setContentEditorHtml(description);
-      }
-    }
-
-  }, [articleDetail]);
-
-  useEffect(() => {
-    if (prevProps && prevProps.updateArticleDetail !== updateArticleDetail && handlePageRefresh) {
-      notification.success({
-        message: "Successfully!",
-        description: "Updated article successfully!",
-      });
-      Router.router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/live` }, { shallow: true });
-    }
-  }, [props.updateArticleDetail]);
-
-  useEffect(() => {
-    if (props.msgErr) {
-      notification.error({
-        message: "Error",
-        description: "Update article failed!",
-      });
-    }
-  }, [props.msgErr]);
-
-  const onFinish = async (values) => {
-    if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
-      setIsStory(true);
-      setHandlePageRefresh(false);
-      return;
-    }
-    const { title, subTitle } = values;
-    let _variables = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      articleId: Number(articleDetail.ID),
-      featureImage: imageData ? imageData : "",
-    };
-    setHandlePageRefresh(true);
-
-    await props.updateArticle(_variables);
+    await props.getDetailArticle(slug, true);
   };
 
-  const handleSaveOnInterval = async () => {
-    if (articleDetail) {
-      await onValuesChangePost();
-    }
-  };
+  const { updateArticleDetail, articleDetail, saveState } = props;
+  const prevProps = usePrevious({ updateArticleDetail });
 
   const onValuesChangePost = async () => {
+   
     const { title, subTitle, imageData } = form.getFieldsValue();
     if (title || subTitle) {
       await updateDraft();
@@ -133,6 +54,7 @@ const EditPost = (props) => {
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
+    // console.log('editorHtml', editorHtml)
     const _obj = {
       title: title,
       subTitle: subTitle,
@@ -140,10 +62,104 @@ const EditPost = (props) => {
       articleId: Number(articleDetail.ID),
       featureImage: imageData ? imageData : "",
     };
+    // console.log('update article')
     await props.updateArticle(_obj);
   };
 
+  const handleSaveData = async () => {
+    // console.log('articleDetail from interval', articleDetail);
+    if (articleDetail) {
+      await onValuesChangePost();
+    }
+  };
+
+  useEffect(() => {
+
+    if (!articleDetail) {
+      getDetailArticle();
+    }
+    
+    if (articleDetail) {
+      const { title, subTitle, description } = articleDetail;
+      // let { title, subTitle } = handleTitle()
+      form.setFieldsValue({
+        title,
+        subTitle
+      });
+
+      if (description && description.trim().length) {
+        console.log('set description', description);
+        setContentEditorHtml(description);
+      }
+    }
+  }, [articleDetail]);
+
+  useEffect(() => {
+    if (
+      prevProps &&
+      prevProps.updateArticleDetail !== updateArticleDetail &&
+      submit
+    ) {
+      notification.success({
+        message: "Successfully!",
+        description: "Publish article successfully!",
+      });
+      
+      Router.router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/drafts` }, { shallow: true });
+    }
+  }, [props.updateArticleDetail]);
+
+  useEffect(() => {
+    if (props.msgErr) {
+      notification.error({
+        message: "Error",
+        description: "Publish article failed!",
+      });
+    }
+  }, [props.msgErr]);
+
+  useEffect(() => {
+    let timer = null;
+    if (!timer) {
+      // console.log('set timer');
+      timer = setInterval(async () => {
+        console.log('called on every 5 seconds!', articleDetail)
+        await handleSaveData();
+      }, 5000);
+    }
+
+    return () => {
+      if (timer) {
+        // console.log('clear interval');
+        clearInterval(timer);
+      }
+    }
+  }, [articleDetail, editorHtml, form])
+
+  const onFinish = async (values) => {
+    setSubmit(true);
+    if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
+      setIsStory(true);
+      setSubmit(false);
+      return;
+    }
+
+    const { title, subTitle } = values;
+    let _variables = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      articleId: Number(articleDetail.ID),
+      featureImage: imageData ? imageData : "",
+      isDraft: false,
+      isPublish: true,
+    };
+
+    await props.updateArticle(_variables);
+  };
+
   const onChangeEditor = (value) => {
+    console.log('change description', value)
     setContentEditorHtml(value);
     setIsStory(false);
   };
@@ -159,7 +175,7 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow={true}>
+            <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/drafts`} shallow={true}>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>
@@ -168,24 +184,31 @@ const EditPost = (props) => {
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
           <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
-            Save and publish
+            Publish
           </Button>
         </ActionContent>
       </ActionTopLayout>
     );
   };
+  
 
   return (
     <NewPageLayout>
-      <Form form={form} layout="vertical">
+      <Form
+        form={form}
+        layout="vertical"
+      >
         <NewContent>
           {newActions()}
+
           <ContentPage>
             <NewForm
               onChangeEditor={onChangeEditor}
               setImage={setImage}
               isStory={isStory}
-              description={articleDetail && articleDetail.description || ""}
+              description={
+                articleDetail && articleDetail.description || ""
+              }
             />
           </ContentPage>
         </NewContent>
@@ -265,7 +288,7 @@ const mapStateToProps = (store) => {
 const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails,
+  clearArticleDetails
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

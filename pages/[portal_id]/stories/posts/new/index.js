@@ -18,6 +18,7 @@ import {
 import NewForm from "../../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
+import { getUserData } from "../../../../../src/utils";
 
 const NewPost = (props) => {
   const [form] = Form.useForm();
@@ -26,6 +27,7 @@ const NewPost = (props) => {
   const [isStory, setIsStory] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [saveValues, setSaveValues] = useState("saved");
+  let userData = getUserData()
 
 
   const router = useRouter();
@@ -121,7 +123,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/posts/[post_status]", { pathname: "/posts/live" }, { shallow: true });
+          router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/live` }, { shallow: true });
         }
       })
       .catch((err) => {
@@ -130,37 +132,37 @@ const NewPost = (props) => {
       });
   };
 
-  const newActions = () => {
-    return (
-      <ActionTopLayout>
-        <ActionContent>
-          <NewPostAction>
-            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
-              <LinkBack>
-                <LogoImage className="logo" src="/favicon.svg" />
-              </LinkBack>
-            </Link>
-            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
-              <LinkBack>
-                <LogoImage className="logo" src="/images/back-icon.svg" />
-              </LinkBack>
-            </Link>
-            <StyledText>Draft</StyledText>
-            <StyledText>{saveValues}</StyledText>
-          </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit">
-            Publish
-          </Button>
-        </ActionContent>
-      </ActionTopLayout>
-    );
-  };
+  // const newActions = () => {
+  //   return (
+  //     );
+  // };
 
   return (
     <NewPageLayout>
       <Form onFinish={onFinish} form={form} layout="vertical">
         <NewContent>
-          {newActions()}
+          {/* {newActions()} */}
+          <ActionTopLayout>
+            <ActionContent>
+              <NewPostAction>
+                <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
+                  <LinkBack>
+                    <LogoImage className="logo" src="/favicon.svg" />
+                  </LinkBack>
+                </Link>
+                <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
+                  <LinkBack>
+                    <LogoImage className="logo" src="/images/back-icon.svg" />
+                  </LinkBack>
+                </Link>
+                <StyledText>Draft</StyledText>
+                <StyledText>{saveValues}</StyledText>
+              </NewPostAction>
+              <Button size="middle" type="primary" htmlType="submit">
+                Publish
+          </Button>
+            </ActionContent>
+          </ActionTopLayout>
           <ContentPage>
             <NewForm
               onTitleChange={onChangeTitle}
