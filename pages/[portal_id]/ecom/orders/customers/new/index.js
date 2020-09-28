@@ -3,8 +3,8 @@ import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
 // components
-import { PageLayout } from "../../../src/components/views";
-import { NewForm } from "../../../src/components/customers";
+import { PageLayout } from "../../../../../../src/components/views";
+import { NewForm } from "../../../../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 import { getUserData } from "../../../../../../src/utils";

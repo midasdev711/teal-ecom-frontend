@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // components
-import { PageLayout } from "../../../src/components/views";
-import { TEPageFooter } from "../../../src/components/atoms";
+import { PageLayout } from "../../../../../../src/components/views";
+import { TEPageFooter } from "../../../../../../src/components/atoms";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
-import { EditCustomersContent } from "../../../src/components/customers";
+import { EditCustomersContent } from "../../../../../../src/components/customers";
 
 const EditCustomers = () => {
   return (

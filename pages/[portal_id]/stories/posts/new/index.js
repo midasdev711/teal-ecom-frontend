@@ -6,16 +6,16 @@ import { useRouter } from "next/router";
 import { format } from "url";
 import { connect } from "react-redux";
 // apollo
-import { apolloClient } from "../../../src/graphql";
-import { CREATE_ARTICLE_MUTATION } from "../../../src/graphql/articles.query";
+import { apolloClient } from "../../../../../src/graphql";
+import { CREATE_ARTICLE_MUTATION } from "../../../../../src/graphql/articles.query";
 // actions
 import {
   createDraftArticle,
   getListArticlesDraft,
   clearArticleDetails,
-} from "../../../src/redux/actions/articles";
+} from "../../../../../src/redux/actions/articles";
 // components
-import NewForm from "../../../src/components/posts/NewForm";
+import NewForm from "../../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
 
