@@ -25,6 +25,8 @@ import {
   message,
 } from "antd";
 import { getUserData } from "../../../utils";
+import { getUserProductLists } from "../../../redux/actions/product";
+import { connect } from "react-redux";
 
 
 const { TabPane } = Tabs;
@@ -54,7 +56,8 @@ const customerData = [
   },
 ];
 
-const ViewCustomers = () => {
+const ViewCustomers = (props) => {
+  console.log('productList', props.productList)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -71,6 +74,10 @@ const ViewCustomers = () => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   let userData = getUserData()
+  useEffect(()=>{
+    let userId = userData?.ID  
+      props.getUserProductLists(userId)
+  },[])
 
   const columns = [
     {
@@ -480,4 +487,16 @@ const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
 `;
 
-export default ViewCustomers;
+const mapStateToProps = (store) => {
+  return {
+ 
+  productList: store.productReducer.UserProductList,
+
+  };
+};
+
+const mapDispatchToProps = {
+  getUserProductLists
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

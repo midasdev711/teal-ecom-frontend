@@ -39,6 +39,49 @@ import {
 const { Search } = Input;
 const { Option } = Select;
 const { Dragger } = Upload;
+const productInfo = {
+  ProductMerchantID:"",
+  ProductSKU:"",
+  ProductTitle:"",
+  ProductDescription:"",
+  ProductSlug: "",
+  ProductMRP: "",
+  ProductSalePrice: "",
+  isPublish: "",
+  ProductMerchantName: "",
+  ProductSearchEngineTitle: "",
+  ProductSearchEngineDescription:"",
+  ProductCategory: "",
+  ProductSubcategory: "",
+  ProductTotalQuantity: "",
+  ProductStartDate: "",
+  ProductFeaturedImage: "",
+  ProductImages : {},
+  ProductAttributes:{
+    ProductCompareAtPrice:"",
+    ProductCostPerItem:"",
+    ProductCharge:false,
+    InventoryBarcode:"",
+    InventorySKU:"",
+    TrackQuantity: false,
+    ContinueSellingWhenOutOfStock:false,
+    PhysicalProduct:false,
+    productWeight:"",
+    ProductVariants:false,
+    SearchEngineListingPreviewUrl:"",
+    Organization:{
+      ProductType:"",
+      Vendor:"",
+    },
+    ProductCollection:"",
+    ProductTags:[],
+    CustomerInformation:{
+      countryOrigin:"",
+      HarmonizedSystemCode:""
+    }
+  },
+ }
+
 
 const newForm = () => {
   const [visiable, setVisible] = useState(false);
@@ -49,7 +92,19 @@ const newForm = () => {
   const [openManageMD, setOpenManageMD] = useState(false);
   const [openEditSite, setOpenEditSite] = useState(false);
   const [country, setCountry] = useState("United States");
-
+  const [productDetails, setProductDetails] = useState(productInfo);
+  const [dummyData, setDummyData] = useState([1]);
+  useEffect(()=>{
+    let cloneProduct = productDetails
+    let cloneProductAttributes1 = productDetails?.ProductAttributes
+    let cloneProductAttributes = productDetails?.ProductAttributes?.CustomerInformation
+    cloneProductAttributes.countryOrigin = country
+    cloneProductAttributes1.CustomerInformation = cloneProductAttributes
+    cloneProduct.ProductAttributes = cloneProductAttributes1
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+      },[country])
+  
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -60,6 +115,16 @@ const newForm = () => {
 
   const onChangeDate = (date, dateString) => {
     console.log(date, dateString);
+    let dateFormate
+    if(date !==null){
+    dateFormate = date.format("DD-MM-YYYY")
+    }
+    let cloneProduct = productDetails
+    cloneProduct.ProductStartDate = date === null ? "" : dateFormate
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+
+
   };
 
   const deleteDate = () => {
@@ -73,12 +138,64 @@ const newForm = () => {
       console.log(info.file, info.fileList);
     }
     if (status === "done") {
+      let cloneProduct = productDetails
+      cloneProduct.ProductImages = info.fileList
+      setProductDetails(cloneProduct)
       console.log(`${info.file.name} file uploaded successfully.`);
     } else if (status === "error") {
       console.error(`${info.file.name} file upload failed.`);
     }
+    setDummyData([dummyData + 1])
   };
-
+  const handleInventory =(event) =>{
+    console.log('event', event)
+   
+   console.log('name , value', event?.target?.name , event?.target?.value)
+    const name = event?.target?.name 
+    const value = event?.target?.value
+    let cloneProduct = productDetails
+    let cloneProductAttributes = productDetails?.ProductAttributes
+    cloneProductAttributes[name] = value
+    cloneProduct.ProductAttributes = cloneProductAttributes
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }
+  const handleChange = (event , names) =>{
+    console.log('event', event)
+    console.log('names', names)
+   console.log('name , value', event?.target?.name , event?.target?.value)
+    const name = event?.target?.name 
+    const value = event?.target?.value
+    let cloneProduct = productDetails
+    let cloneProductAttributes = productDetails?.ProductAttributes
+    let keys = Object.keys(cloneProduct)
+  
+    let found = keys.find(data => data === name)
+    
+    if(found !== undefined){
+      console.log('data available')
+      cloneProduct[found] = value
+      setProductDetails(cloneProduct)
+    }else{
+      if(names === "ProductSalePrice"){
+        cloneProduct.ProductSalePrice = event
+        setProductDetails(cloneProduct)
+      }else if(names === "ProductTotalQuantity"){
+        cloneProduct.ProductTotalQuantity = event
+        setProductDetails(cloneProduct)
+      }else if(names ==="ProductMRP"){
+        cloneProduct.ProductMRP = event
+        setProductDetails(cloneProduct)
+      }else{
+        cloneProductAttributes[names] = event
+        cloneProduct.ProductAttributes = cloneProductAttributes
+        setProductDetails(cloneProduct)
+      }
+      console.log(`data not availabkle`);
+    }
+    setDummyData([dummyData + 1])
+  }
+console.log('productDetails', productDetails)
   // Tags group actions
   const handleClose = (removedTag) => {
     const removeTags = tags.filter((tag) => tag !== removedTag);
@@ -121,6 +238,17 @@ const newForm = () => {
       </span>
     );
   };
+  const handleHSCode = (event) =>{
+    let value = event.target.value
+    let cloneProduct = productDetails
+    let cloneProductAttributes1 = productDetails?.ProductAttributes
+    let cloneProductAttributes = productDetails?.ProductAttributes?.CustomerInformation
+    cloneProductAttributes.HarmonizedSystemCode = value
+    cloneProductAttributes1.CustomerInformation = cloneProductAttributes
+    cloneProduct.ProductAttributes = cloneProductAttributes1
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }  
 
   const tagChild = tags.map(forMap);
 
@@ -136,8 +264,8 @@ const newForm = () => {
         <Row gutter={24} className="margin-bottom">
           <Col md={16}>
             <ContentBox>
-              <Form.Item label="Title" name="title">
-                <TextInput placeholder="Short sleeve t-shirt" />
+              <Form.Item label="Title" name="ProductTitle" >
+                <TextInput name="ProductTitle" onChange={(event)=>handleChange(event)} placeholder="Short sleeve t-shirt" />
               </Form.Item>
               <TitleStyle>Description</TitleStyle>
               <DescriptionContent>
@@ -181,6 +309,7 @@ const newForm = () => {
                 <Col md={12}>
                   <Form.Item label="Price">
                     <InputNumberStyle
+                      onChange={(event)=>handleChange(event ,"ProductSalePrice")} 
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -191,6 +320,7 @@ const newForm = () => {
                 <Col md={12}>
                   <Form.Item label="Compare at price">
                     <InputNumberStyle
+                      onChange={(event)=>handleChange(event ,"ProductMRP")} 
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -201,6 +331,7 @@ const newForm = () => {
                 <Col md={12}>
                   <Form.Item label="Cost per item">
                     <InputNumberStyle
+                      onChange={(event)=>handleChange(event ,"ProductCostPerItem")} 
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -233,12 +364,12 @@ const newForm = () => {
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item label="SKU (Stock Keeping Unit)">
-                    <InputStyle />
+                    <InputStyle name="InventorySKU" onChange={(event)=>handleInventory(event)}/>
                   </Form.Item>
                 </Col>
                 <Col md={12}>
                   <Form.Item label="Barcode (ISBN, UPC, GTIN, etc.)">
-                    <InputStyle />
+                    <InputStyle name="InventoryBarcode" onChange={(event)=>handleInventory(event)}/>
                   </Form.Item>
                 </Col>
                 <Col md={24}>
@@ -258,7 +389,10 @@ const newForm = () => {
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item label="Available">
-                    <InputNumberStyle value="0" />
+                    <InputNumberStyle 
+                     placeholder="0"
+                     onChange={(event)=>handleChange(event ,"ProductTotalQuantity")} 
+                     />
                   </Form.Item>
                 </Col>
                 <Col md={12}></Col>
@@ -318,6 +452,7 @@ const newForm = () => {
                 <SearchStyle
                   placeholder="Search by product keyword or HS code"
                   onSearch={(value) => console.log(value)}
+                  onChange={(event)=>handleHSCode(event)}
                 />
                 <span>Used by border officers to classify this product.</span>
               </Form.Item>
@@ -434,6 +569,27 @@ const newForm = () => {
                   <Input
                     placeholder="e.g. Nike"
                     addonAfter={<EditOutlined />}
+                  />
+                </GroupContent>
+              </ItemContentBox>
+              <Divider />
+              <ItemContentBox>
+                <TitleBox>Categories</TitleBox>
+                <GroupContent>
+                  <TitleStyle>ProductCategory</TitleStyle>
+                  <Input
+                    placeholder="e.g. Shirts"
+                    name="ProductCategory"
+                    onChange={(event)=>handleChange(event)}
+                  />
+                </GroupContent>
+                <GroupContent>
+                  <TitleStyle>ProductSubCategory</TitleStyle>
+                  <Input
+                    placeholder="e.g. Nike"
+                    name="ProductSubcategory"
+                    onChange={(event)=>handleChange(event)}
+                    
                   />
                 </GroupContent>
               </ItemContentBox>
