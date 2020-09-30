@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
+import { connect } from "react-redux";
 
 // components
 import { PageLayout } from "../../../../../src/components/views";
@@ -9,10 +10,66 @@ import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 import { getUserData } from "../../../../../src/utils";
-const newActions = () => {
+import { AddMerchantProduct } from "../../../../../src/redux/actions/product";
+
+// const newActions = () => {
+//   let userData = getUserData()
+//   return (
+//     <ActionTopLayout>
+//       <ActionContent>
+//         <span>Unsaved changes</span>
+//         <NewOrderAction>
+//           <Button className="cancel" size="large">
+//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+//               <a>
+//                 Discard
+//             </a>
+//             </Link>
+//           </Button>
+//           <Button className="save" size="large" type="primary" onClick={()=>handleSubmit()}>
+//             {/* <Link href="/products"> */}
+//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+
+//               <a title="save">Save</a>
+//             </Link>
+//           </Button>
+//           <Button className="save" size="large" type="primary" style={{marginLeft:"15px"}}>
+//             {/* <Link href="/products"> */}
+//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+
+//               <a title="save">Save And Publish</a>
+//             </Link>
+//           </Button>
+//         </NewOrderAction>
+//       </ActionContent>
+//     </ActionTopLayout>
+//   );
+// };
+const NewCustomer = (props) => {
   let userData = getUserData()
+  const [flag, setFlag] = useState("")
+  const [productDetails, setProductDetails] = useState("")
+  const handleSubmit = (values) =>{
+      setFlag(values) 
+      console.log('values', values)
+      if(values !== undefined){
+        let cloneValues = values 
+        console.log('cloneValues', cloneValues)
+        cloneValues.ProductMerchantID = userData?.ID
+        cloneValues.ProductMerchantName = userData?.userName
+        setProductDetails(cloneValues)
+        props.AddMerchantProduct(cloneValues)
+
+      }
+    }
+
+
+  console.log('productDetails updates', productDetails)
   return (
-    <ActionTopLayout>
+    <PageLayout>
+      <NewContent>
+        {/* {newActions()} */}
+        <ActionTopLayout>
       <ActionContent>
         <span>Unsaved changes</span>
         <NewOrderAction>
@@ -23,24 +80,23 @@ const newActions = () => {
             </a>
             </Link>
           </Button>
-          <Button className="save" size="large" type="primary">
+          <Button className="save" size="large" type="primary" onClick={()=>handleSubmit()}>
+            {/* <Link href="/products"> */}
+            {/* <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}> */}
+
+              <a title="save">Save</a>
+            {/* </Link> */}
+          </Button>
+          <Button className="save" size="large" type="primary" style={{marginLeft:"15px"}}>
             {/* <Link href="/products"> */}
             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
 
-              <a title="save">Save</a>
+              <a title="save">Save And Publish</a>
             </Link>
           </Button>
         </NewOrderAction>
       </ActionContent>
     </ActionTopLayout>
-  );
-};
-const NewCustomer = () => {
-  let userData = getUserData()
-  return (
-    <PageLayout>
-      <NewContent>
-        {newActions()}
         <ContentPage>
           <ContentHeader>
           <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
@@ -51,7 +107,7 @@ const NewCustomer = () => {
             </Link>
             <TittleHeader>Add product</TittleHeader>
           </ContentHeader>
-          <NewForm />
+          <NewForm submit={(values)=>handleSubmit(values)} flag={flag}/>
         </ContentPage>
       </NewContent>
     </PageLayout>
@@ -120,4 +176,16 @@ const NewOrderAction = styled.div`
     }
   }
 `;
-export default NewCustomer;
+const mapStateToProps = (store) => {
+  return {
+    
+  };
+};
+
+const mapDispatchToProps = {
+  AddMerchantProduct
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewCustomer);
+
+

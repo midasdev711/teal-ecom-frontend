@@ -63,7 +63,7 @@ export const ADD_MERCHANT_PRODUCT_QUERY = gql`
       ){
 				_id
 				ProductID
-		   	ProductMerchantID
+		   	    ProductMerchantID
 				ProductMerchantName
 				ProductSKU
 				ProductTitle

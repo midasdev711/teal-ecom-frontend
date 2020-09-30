@@ -18,10 +18,9 @@ export const getUserProductLists = (userId) => {
         return apolloClient
             .query({
                 query: GET_MY_PRODUCT_LISTS_QUERY,
-                variables: {
-                    _id: Number(userId),
-                },
+                variables:{MerchantID:userId} 
             })
+           
             .then(res => {
                 console.log(res);
                 if (res.data.users.length > 0) {
@@ -40,21 +39,25 @@ export const getUserProductLists = (userId) => {
             });
     };
 };
-export const AddMerchantProduct = (userId) => {
-    console.log('userId', userId)
+export const AddMerchantProduct = (datas) => {
+   
     return dispatch => {
         return apolloClient
-            .query({
-                query: ADD_MERCHANT_PRODUCT,
-                variables: {
-                    _id: Number(userId),
-                },
-            })
+            // .query({
+            //     query: ADD_MERCHANT_PRODUCT_QUERY,
+            //     variables: {
+            //         _id: Number(userId.ProductMerchantID),
+            //     },
+            // })
+            .mutate({
+                mutation: GET_MY_PRODUCT_LISTS_QUERY,
+                variables: datas,
+              })
             .then(res => {
                 console.log(res);
                 if (res.data.users.length > 0) {
                     dispatch({
-                        type: GET_MY_PRODUCT_LISTS,
+                        type: ADD_MERCHANT_PRODUCT,
                         data: res.data,
                     });
                 }
