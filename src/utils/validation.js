@@ -1,4 +1,4 @@
-import { emailValidation, PLZNumber, DateOfBirth, PhoneNumber, PasswordValidation, confirmPassword, stringValue, isEmpty } from './regex'
+import { emailValidation, PLZNumber, DateOfBirth, PhoneNumber, PasswordValidation, confirmPassword, stringValue, isEmpty ,number } from './regex'
 import moment from 'moment';
 
 let password = '';
@@ -27,6 +27,7 @@ export default (name, value) => {
   }
   const isValidString = stringValue(value);
   const isEmptyString = isEmpty(value);
+
 
   switch (name) {
     // case 'firstname':
@@ -114,12 +115,15 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'ProductMRP':
-      if (!isEmptyString) {
-        return "Compare at price is required";
-      } else {
-        return false;
-      }
+    // case 'ProductMRP':
+    //   const onlyNumber = number(value)
+    //   if (!isEmptyString) {
+    //     return "Compare at price is required";
+    //   } else if(onlyNumber) {
+    //     return "Only digit allow string not allowed";
+    //   }else{
+    //     return false;
+    //   }
     // case 'ProductCostPerItem':
     //   if (!isEmptyString) {
     //     return "Product cost per item price is required";

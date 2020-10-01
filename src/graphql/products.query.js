@@ -13,7 +13,7 @@ const PRODUCTS_QUERY = gql`
 
 export const GET_MY_PRODUCT_LISTS_QUERY = gql`
    query($MerchantID: Int) { 
-	  getProductByMerchant(MerchantID:$MerchantID)  { 
+	products(MerchantID:$MerchantID)  { 
 		ProductID
     ProductMerchantID
     ProductTitle
@@ -28,7 +28,7 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 	  }
 		}`;
 
-export const ADD_MERCHANT_PRODUCT_QUERY = gql`
+export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
 		 mutation(
 			$merchant_id :Int,
 			$product_title: String,
@@ -39,11 +39,14 @@ export const ADD_MERCHANT_PRODUCT_QUERY = gql`
 			$Inventory : Int,
 			$Search_engine_title: String,
 			$Search_engine_description : String,
-			$ProductCategory: [ParentCategoriesInputt] $ProductSubcategory: [SubCategoriesInputt] $publication_date:String,
+			$ProductCategory: [ParentCategoriesInput],
+			$ProductSubcategory: [SubCategoriesInput],
+			$publication_date:String,
 			$merchant_name:String,
 			$visibility:String,
 			$ProductImage:String!
 			){ 
+			
 				addProductByMerchant(
 				ProductMerchantID: $merchant_id
 				ProductMerchantName: $merchant_name
@@ -74,9 +77,18 @@ export const ADD_MERCHANT_PRODUCT_QUERY = gql`
         }
 }
 `;
+export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
+      query($search:String){ getAllCategoryList(Search :$search){
+		Name
+		ID
+		FeatureImage Slug
+		Description ParentCategoryID
+		} }
+		`;
 
 export default {
 	PRODUCTS_QUERY,
 	GET_MY_PRODUCT_LISTS_QUERY,
-	ADD_MERCHANT_PRODUCT_QUERY
+	ADD_MERCHANT_PRODUCT_MUTATION,
+	GET_PRODUCT_CATEGORY_LISTS_QUERY,
 };

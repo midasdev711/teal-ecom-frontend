@@ -15,6 +15,7 @@ import {
   FileTextOutlined,
 } from "@ant-design/icons";
 
+
 // ui
 import { RemirorEditor } from "../../atoms";
 import {
@@ -38,6 +39,8 @@ import {
 import { validate } from "graphql";
 import { resolve } from "url";
 import { rejects } from "assert";
+import { connect } from "react-redux";
+import { getProductCategoryLists } from "../../../redux/actions/product";
 
 
 const { Search } = Input;
@@ -51,55 +54,44 @@ const productInfo = {
   ProductSlug: "",
   ProductMRP: "",
   ProductSalePrice: "",
-  isPublish: "false",
+ // isPublish: "false",
   ProductMerchantName: "",
   ProductSearchEngineTitle: "",
   ProductSearchEngineDescription: "",
-  ProductCategory: [{
-    ID: 101,
-    Name: "jemas",
-    typename: "cottan",
-    label: "matched",
-    value: 102,
-  }
-  ],
-  ProductSubcategory: [
-    {
-      ID: 102,
-      Name: "jena 2",
-      ParentCategoryID: 101,
-    }
-  ],
+  ProductCategory: "1",
+ 
+  ProductSubcategory: "3",
   ProductTotalQuantity: "",
-  ProductStartDate: "25-10-2020",
-  ProductFeaturedImage: "",
+  //ProductStartDate: "25-10-2020",
+  //ProductFeaturedImage: "",
   //SearchEngineListingPreviewUrl:"",
-  ProductImages: [],
-  ProductAttributes: [{
+  //ProductImages: [],
+  ProductAttributes:254
+  // ProductAttributes: [{
 
-    ProductCostPerItem: "",
-    // ProductCharge:false,
-    InventoryBarcode: "",
-    InventorySKU: "",
-    // TrackQuantity: false,
-    // ContinueSellingWhenOutOfStock:false,
-    //  PhysicalProduct:false,
-    productWeight: "",
-    // ProductVariants:false,
-    // Organization:{
-    //   ProductType:"",
-    //   Vendor:"",
-    // },
-    // ProductCollection:"",
-    // ProductTags:[],
-    // CustomerInformation:{
-    //   countryOrigin:"",
-    //   HarmonizedSystemCode:""
-    // }
-  }],
+  //   ProductCostPerItem: "",
+  //   // ProductCharge:false,
+  //   InventoryBarcode: "",
+  //   InventorySKU: "",
+  //   // TrackQuantity: false,
+  //   // ContinueSellingWhenOutOfStock:false,
+  //   //  PhysicalProduct:false,
+  //   productWeight: "",
+  //   // ProductVariants:false,
+  //   // Organization:{
+  //   //   ProductType:"",
+  //   //   Vendor:"",
+  //   // },
+  //   // ProductCollection:"",
+  //   // ProductTags:[],
+  //   // CustomerInformation:{
+  //   //   countryOrigin:"",
+  //   //   HarmonizedSystemCode:""
+  //   // }
+  // }],
 }
 
-const newForm = ({ submit, flag }) => {
+const newForm = ({ submit, flag , getProductCategoryLists }) => {
   const [visiable, setVisible] = useState(false);
   const [tags, setTags] = useState(["test"]);
   const [inputValue, setInputValue] = useState("");
@@ -128,7 +120,9 @@ const newForm = ({ submit, flag }) => {
       handleSubmit()
   }, [flag])
 
-
+useEffect(()=>{
+  getProductCategoryLists()
+},[])
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -238,14 +232,15 @@ const newForm = ({ submit, flag }) => {
       cloneProduct[found] = value
       setProductDetails(cloneProduct)
     } else {
+      console.log('event valuesss', event)
       if (names === "ProductSalePrice") {
-        cloneProduct.ProductSalePrice = event.toString()
+        cloneProduct.ProductSalePrice = event === null? "" : event.toString()
         setProductDetails(cloneProduct)
       } else if (names === "ProductTotalQuantity") {
-        cloneProduct.ProductTotalQuantity = event
+        cloneProduct.ProductTotalQuantity = event === null ? "" : event
         setProductDetails(cloneProduct)
       } else if (names === "ProductMRP") {
-        cloneProduct.ProductMRP = event.toString()
+        cloneProduct.ProductMRP = event === null? "" : event.toString()
         setProductDetails(cloneProduct)
       } else {
         cloneProductAttributes[names] = event
@@ -322,13 +317,13 @@ const newForm = ({ submit, flag }) => {
         validationErrors[name] = error;
       }
     });
-    Object.keys(productDetails.ProductAttributes[0]).forEach((name) => {
-      // console.log('productDetails.ProductAttributes[0][name]', productDetails.ProductAttributes[0][name])
-      const error = validation(name, productDetails.ProductAttributes[0][name]);
-      if (error && error.length > 0) {
-        validationErrors[name] = error;
-      }
-    });
+    // Object.keys(productDetails.ProductAttributes[0]).forEach((name) => {
+    //   // console.log('productDetails.ProductAttributes[0][name]', productDetails.ProductAttributes[0][name])
+    //   const error = validation(name, productDetails.ProductAttributes[0][name]);
+    //   if (error && error.length > 0) {
+    //     validationErrors[name] = error;
+    //   }
+    // });
 
 
     if (Object.keys(validationErrors).length > 0) {
@@ -1021,4 +1016,15 @@ const ActionBottom = styled.div`
   }
 `;
 
-export default newForm;
+const mapStateToProps = (store) => {
+  return {
+  
+  };
+};
+
+const mapDispatchToProps = {
+  getProductCategoryLists,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(newForm);
+

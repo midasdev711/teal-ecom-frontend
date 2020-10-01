@@ -1,7 +1,8 @@
 import { apolloClient } from '../../graphql';
 import { 
     GET_MY_PRODUCT_LISTS_QUERY,
-    ADD_MERCHANT_PRODUCT_QUERY
+    ADD_MERCHANT_PRODUCT_MUTATION,
+    GET_PRODUCT_CATEGORY_LISTS_QUERY
  } from '../../graphql/products.query';
 
 import {
@@ -9,8 +10,9 @@ import {
     GET_MY_PRODUCT_LISTS_ERROR,
     ADD_MERCHANT_PRODUCT,
     ADD_MERCHANT_PRODUCT_ERROR,
-
-} from './actionTypes';
+    GET_PRODUCT_CATEGORY_LISTS,
+    GET_PRODUCT_CATEGORY_LISTS_ERROR,
+   } from './actionTypes';
 
 export const getUserProductLists = (userId) => {
     console.log('userId', userId)
@@ -26,7 +28,7 @@ export const getUserProductLists = (userId) => {
                 if (res.data.users.length > 0) {
                     dispatch({
                         type: GET_MY_PRODUCT_LISTS,
-                        data: res.data.users[0],
+                        data: res.data,
                     });
                 }
             })
@@ -43,19 +45,13 @@ export const AddMerchantProduct = (datas) => {
    
     return dispatch => {
         return apolloClient
-            // .query({
-            //     query: ADD_MERCHANT_PRODUCT_QUERY,
-            //     variables: {
-            //         _id: Number(userId.ProductMerchantID),
-            //     },
-            // })
             .mutate({
-                mutation: GET_MY_PRODUCT_LISTS_QUERY,
+                mutation: ADD_MERCHANT_PRODUCT_MUTATION,
                 variables: datas,
               })
             .then(res => {
                 console.log(res);
-                if (res.data.users.length > 0) {
+                if (res) {
                     dispatch({
                         type: ADD_MERCHANT_PRODUCT,
                         data: res.data,
@@ -66,6 +62,33 @@ export const AddMerchantProduct = (datas) => {
                 console.log(err);
                 dispatch({
                     type: ADD_MERCHANT_PRODUCT_ERROR,
+                    errorMsg: err.message,
+                });
+            });
+    };
+};
+export const getProductCategoryLists = () => {
+   
+    return dispatch => {
+        return apolloClient
+            .query({
+                query: GET_PRODUCT_CATEGORY_LISTS_QUERY,
+                variables:{} 
+            })
+           
+            .then(res => {
+                console.log(res);
+                if (res) {
+                    dispatch({
+                        type: GET_PRODUCT_CATEGORY_LISTS,
+                        data: res.data,
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                dispatch({
+                    type: GET_PRODUCT_CATEGORY_LISTS_ERROR,
                     errorMsg: err.message,
                 });
             });
