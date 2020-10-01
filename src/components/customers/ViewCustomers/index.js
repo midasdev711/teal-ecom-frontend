@@ -4,6 +4,8 @@ import languagesList from "language-list";
 import { CountryDropdown } from "react-country-region-selector";
 import Router from "next/router";
 import Link from "next/link";
+import { connect } from "react-redux";
+import { getCustomers } from "../../../redux/actions/customers";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -222,7 +224,7 @@ const dataFromUS = customerData.filter((el) => {
 
 const languagesData = languagesList().getData();
 
-const ViewCustomers = () => {
+const ViewCustomers = (props) => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -242,7 +244,13 @@ const ViewCustomers = () => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [country, setCountry] = useState('United States');
-
+  useEffect(() => {
+    getCustomersCall();
+  }, [props]);
+  
+  const getCustomersCall = async () => {
+    await props.getCustomers(100, 1);
+  };
   const columns = [
     {
       title: (title) => nodeCheckbox,
@@ -965,4 +973,13 @@ const FullName = styled.a`
   font-weight: bold;
 `;
 
-export default ViewCustomers;
+const mapStateToProps = (store) => {
+  return {
+    articlesData: store.ordersReducer,
+  };
+};
+const mapDispatchToProps = {
+  getCustomers,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

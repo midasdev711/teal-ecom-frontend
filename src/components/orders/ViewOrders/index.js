@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
+import { connect } from "react-redux";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -28,7 +29,7 @@ import {
 import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
-
+import { getOrders } from "../../../redux/actions/orders";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
@@ -38,7 +39,9 @@ const dataNew = customerData.filter((el) => {
   return el.isNew === true;
 });
 
-const ViewOrders = () => {
+
+
+const ViewOrders = (props) => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -51,7 +54,13 @@ const ViewOrders = () => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
-
+  useEffect(() => {
+    getOrdersCall();
+  }, [props]);
+  
+  const getOrdersCall = async () => {
+    await props.getOrders(100, 1);
+  };
   const columns = [
     {
       title: "Order",
@@ -795,4 +804,13 @@ const ActionsTable = styled.div`
   padding: 24px;
 `;
 
-export default ViewOrders;
+const mapStateToProps = (store) => {
+  return {
+    articlesData: store.ordersReducer,
+  };
+};
+const mapDispatchToProps = {
+  getOrders,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewOrders);

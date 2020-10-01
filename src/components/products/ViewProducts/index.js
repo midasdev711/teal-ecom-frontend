@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
+import { connect } from "react-redux";
+import { getProducts } from "../../../redux/actions/products";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -52,7 +54,7 @@ const customerData = [
   },
 ];
 
-const ViewCustomers = () => {
+const ViewCustomers = (props) => {
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -69,6 +71,13 @@ const ViewCustomers = () => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
 
+  useEffect(() => {
+    getProductsCall();
+  }, [props]);
+
+  const getProductsCall = async () => {
+    await props.getProducts(100, 1);
+  };
   const columns = [
     {
       title: "Product",
@@ -477,4 +486,15 @@ const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
 `;
 
-export default ViewCustomers;
+const mapStateToProps = (store) => {
+  return {
+    articlesData: store.articlesReducer.articlesData,
+    msgErr: store.articlesReducer.msgErr,
+  };
+};
+
+const mapDispatchToProps = {
+  getProducts,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
@@ -8,27 +8,38 @@ import { NewForm } from "../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 
-const newActions = () => {
-  return (
-    <ActionTopLayout>
-      <ActionContent>
-        <span>Unsaved changes</span>
-        <NewCustomerAction>
-          <Button className="cancel" size="large">
-            Cancel
-          </Button>
-          <Button size="large" type="primary">
-            <Link href="/customers/[pid]" as='/customers/123456789'>
-              <a title="save">Save</a>
-            </Link>
-          </Button>
-        </NewCustomerAction>
-      </ActionContent>
-    </ActionTopLayout>
-  );
-};
+
 
 const NewCustomer = () => {
+  // const [form] = Form.useForm();
+  const [BasicDetails, setBasicDetails] = useState({});
+  const [AddressDetails, setAddressDetails] = useState({});
+  const [Tax, setTax] = useState('');
+  const [Notes, setNotes] = useState('');
+  const [Tags, setTags] = useState('');
+  const newActions = () => {
+    return (
+      <ActionTopLayout>
+        <ActionContent>
+          <span>Unsaved changes</span>
+          <NewCustomerAction>
+            <Button className="cancel" size="large">
+              Cancel
+            </Button>
+            <Button size="large" type="primary">
+              <Link href="/customers/[pid]" as='/customers/123456789'>
+                <a title="save">Save</a>
+              </Link>
+            </Button>
+          </NewCustomerAction>
+        </ActionContent>
+      </ActionTopLayout>
+    );
+  };
+  const onChange = (val) =>{
+
+  }
+console.log('Tax', Notes)
   return (
     <PageLayout>
       <NewContent>
@@ -42,7 +53,7 @@ const NewCustomer = () => {
             </Link>
             <TittleHeader>Customers</TittleHeader>
           </ContentHeader>
-          <NewForm />
+          <NewForm onChange={onChange} />
         </ContentPage>
       </NewContent>
     </PageLayout>
