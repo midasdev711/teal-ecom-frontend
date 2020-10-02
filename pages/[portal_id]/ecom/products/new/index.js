@@ -48,9 +48,12 @@ import { AddMerchantProduct } from "../../../../../src/redux/actions/product";
 const NewCustomer = (props) => {
   let userData = getUserData()
   const [flag, setFlag] = useState("")
+  const [dummy, setDummy] = useState([])
   const [productDetails, setProductDetails] = useState("")
   const handleSubmit = (values) =>{
-      setFlag(values) 
+     // setFlag([...flag, flag.length + 1]) 
+     values === undefined ? setFlag({name:`${flag + "demo"}`}) : setFlag(values) 
+     
       console.log('values', values)
       if(values !== undefined){
         let cloneValues = values 
@@ -60,9 +63,10 @@ const NewCustomer = (props) => {
         setProductDetails(cloneValues)
         props.AddMerchantProduct(cloneValues)
       }
+
     }
 
-
+   console.log('flag', flag) 
   console.log('productDetails updates', productDetails)
   return (
     <PageLayout>

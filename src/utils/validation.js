@@ -66,9 +66,11 @@ export default (name, value) => {
     case 'ProductCostPerItem':
       if (!isEmptyString) {
         return "Product cost per item price is required";
-      } else if(!onlyNumber) {
-        return "Only digit allow string not allowed";
-      }else {
+      } 
+      // else if(!onlyNumber) {
+      //   return "Only digit allow string not allowed";
+      // }
+      else {
         return false;
       }
   

@@ -13,6 +13,8 @@ import {
   EditOutlined,
   CloseOutlined,
   FileTextOutlined,
+  PlusCircleTwoTone,
+  MinusCircleTwoTone, ZoomInOutlined, PlusOutlined, MinusOutlined
 } from "@ant-design/icons";
 
 
@@ -62,9 +64,10 @@ const productInfo = {
 
   ProductSubcategory: "3",
   ProductTotalQuantity: "",
-  ProductStartDate: "25-10-2020",
+  productStartDate: "",
+  productEndDate: "",
   ProductFeaturedImage: "",
-  SearchEngineListingPreviewUrl:"",
+  SearchEngineListingPreviewUrl: "",
   ProductImages: [],
   ProductAttributes: 254,
   ProductAttributes: [{
@@ -84,9 +87,9 @@ const productInfo = {
     // },
     // ProductCollection:"",
     // ProductTags:[],
-    CustomerInformation:{
-      countryOrigin:"",
-      HarmonizedSystemCode:""
+    CustomerInformation: {
+      countryOrigin: "",
+      HarmonizedSystemCode: ""
     }
   }],
 }
@@ -105,6 +108,8 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const [dummyData, setDummyData] = useState([1]);
   const [imagesButtonDisable, setImagesButtonDisable] = useState(false);
   const [imagesFileList, setImagesFileList] = useState("");
+  const [VariantsFlag, setVariantsFlag] = useState(false);
+  const [variants, setVariants] = useState([{ name: "", value: "" }]);
 
   // useEffect(()=>{
   //   let cloneProduct = productDetails
@@ -118,10 +123,12 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   //     },[country])
   useEffect(() => {
     console.log('flag', flag)
-    if (flag !== "")
+    if (flag !== "") {
+      console.log('object datas in side objects')
       handleSubmit()
+    }
   }, [flag])
-
+  console.log('flag new form', flag)
   useEffect(() => {
     getProductCategoryLists()
   }, [])
@@ -133,18 +140,19 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     console.log("Failed:", errorInfo);
   };
 
-  const onChangeDate = (date, dateString) => {
-    console.log(date, dateString);
-    let dateFormate
-    if (date !== null) {
-      dateFormate = date.format("DD-MM-YYYY")
-    }
-    let cloneProduct = productDetails
-    cloneProduct.ProductStartDate = date === null ? "" : dateFormate
+  const onChangeDate = (date, name) => {
+    console.log(date?._d);
+    let UTCDate = date?._d
+    
+  
+    // let dateFormate
+    // if (date !== null) {
+    //   dateFormate = date.format("DD-MM-YYYY")
+    // }
+       let cloneProduct = productDetails
+       cloneProduct[name] = date === null ? "" : UTCDate
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
-
-
   };
 
   const deleteDate = () => {
@@ -210,6 +218,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     cloneProductAttributes[name] = value
     cloneProduct.ProductAttributes[0] = cloneProductAttributes
     setProductDetails(cloneProduct)
+    handleAttributesValidation(name)
     setDummyData([dummyData + 1])
   }
   const handleChange = (event, names) => {
@@ -255,6 +264,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
         cloneProductAttributes[names] = event
         cloneProduct.ProductAttributes[0] = cloneProductAttributes
         setProductDetails(cloneProduct)
+        handleAttributesValidation(names)
       }
       console.log(`data not available`);
     }
@@ -279,7 +289,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const handleValidation = (name) => {
     let error
     let errorData = errors
-    
+
     error = validation(name, productDetails[name]);
     if (!error) {
       delete errorData[name]
@@ -341,25 +351,27 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
 
   const handleSubmit = () => {
     let validationErrors = {};
+    console.log('inside submit 1')
     Object.keys(productDetails).forEach((name) => {
       const error = validation(name, productDetails[name]);
       if (error && error.length > 0) {
         validationErrors[name] = error;
       }
     });
-    // Object.keys(productDetails.ProductAttributes[0]).forEach((name) => {
-    //   // console.log('productDetails.ProductAttributes[0][name]', productDetails.ProductAttributes[0][name])
-    //   const error = validation(name, productDetails.ProductAttributes[0][name]);
-    //   if (error && error.length > 0) {
-    //     validationErrors[name] = error;
-    //   }
-    // });
+    Object.keys(productDetails.ProductAttributes[0]).forEach((name) => {
+      // console.log('productDetails.ProductAttributes[0][name]', productDetails.ProductAttributes[0][name])
+      const error = validation(name, productDetails.ProductAttributes[0][name]);
+      if (error && error.length > 0) {
+        validationErrors[name] = error;
+      }
+    });
 
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+    console.log('inside submit 2')
     setErrors({});
     submit(productDetails)
     setDummyData([dummyData + 1])
@@ -395,6 +407,35 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     cloneProductDetails.ProductFeaturedImage = ""
     setProductDetails(cloneProductDetails)
     //  setImagesFileList("")
+    setDummyData([dummyData + 1])
+  }
+  const handleAttributesValidation = (name) => {
+    let error
+    let errorData = errors
+
+    error = validation(name, productDetails.ProductAttributes[0][name]);
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+    setDummyData([dummyData + 1])
+  }
+  const handleAddVariants = () => {
+    setVariants([...variants, { name: "", value: "" }])
+  }
+  const handleDeleteVariants = (data, index) => {
+    let cloneVariant = variants
+    cloneVariant.splice(index, 1)
+    setVariants(cloneVariant)
+    setDummyData([dummyData + 1])
+  }
+  const handleCheckBox = (event) => {
+    const values = event.target.checked
+    console.log('values', values)
+    setVariantsFlag(values)
     setDummyData([dummyData + 1])
   }
 
@@ -562,21 +603,21 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
 
                   </Form.Item>
                 </Col>
-                <Col md={12}>
+                {/* <Col md={12}>
                   <Form.Item label="Barcode (ISBN, UPC, GTIN, etc.)">
                     <InputStyle name="InventoryBarcode" onChange={(event) => handleInventory(event)} />
                     <label style={{ color: "red" }} >{errors?.InventoryBarcode}</label>
 
                   </Form.Item>
-                </Col>
-                <Col md={24}>
+                </Col> */}
+                {/* <Col md={24}>
                   <Checkbox.Group>
                     <CheckboxStyle>Track quantity</CheckboxStyle>
                     <CheckboxStyle>
                       Continue selling when out of stock
                     </CheckboxStyle>
                   </Checkbox.Group>
-                </Col>
+                </Col> */}
               </Row>
 
               <LineBorder />
@@ -600,9 +641,9 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
 
             <CardStyle>
               <TitleCardStyle>Shipping</TitleCardStyle>
-              <CheckboxStyle>This is a physical product</CheckboxStyle>
+              {/* <CheckboxStyle>This is a physical product</CheckboxStyle>
 
-              <LineBorder />
+              <LineBorder /> */}
 
               <TitleSmall>WEIGHT</TitleSmall>
               <TextStyle>
@@ -630,16 +671,16 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                 </Col>
               </Row>
 
-              <LineBorder />
+              {/*           <LineBorder />
 
               <TitleSmall>CUSTOMS INFORMATION</TitleSmall>
               <p>
                 Used by border officers to calculate duties when shipping
                 internationally. Shown on customs forms you print during
                 fulfillment.
-              </p>
+              </p> */}
 
-              <Form.Item label="Country of origin">
+              {/* <Form.Item label="Country of origin">
                 <CountryDropdownStyle
                   defaultOptionLabel="Select a country."
                   value={country}
@@ -648,23 +689,65 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   className="dropDown"
                 />
                 <span>In most cases, where the product is manufactured.</span>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item label="HS (Harmonized System) code">
+              {/* <Form.Item label="HS (Harmonized System) code">
                 <SearchStyle
                   placeholder="Search by product keyword or HS code"
                   onSearch={(value) => console.log(value)}
                   onChange={(event) => handleHSCode(event)}
                 />
                 <span>Used by border officers to classify this product.</span>
-              </Form.Item>
+              </Form.Item> */}
             </CardStyle>
             <ContentBox marginTop="20px">
               <TitleBox>Variants</TitleBox>
-              <Checkbox className="margin-top">
+              <Checkbox className="margin-top"
+                onChange={(event) => handleCheckBox(event)}
+                checked={VariantsFlag}
+              >
                 This product has multiple options, like different sizes or
                 colors
               </Checkbox>
+              {
+                VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
+                  return <Row gutter={0}>
+                    <Col md={9}>
+                      <Form.Item label="Variant Name" name="ProductTitle" >
+                        <TextInput name="ProductTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                        {/* <label style={{ color: "red" }} >{errors?.ProductTitle}</label> */}
+                      </Form.Item>
+                    </Col>
+                    <Col md={9} style={{ marginLeft: "25px" }}>
+                      <Form.Item label="Variant Value" name="ProductTitle" >
+                        <TextInput name="ProductTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                        {/* <label style={{ color: "red" }} >{errors?.ProductTitle}</label> */}
+                      </Form.Item>
+                    </Col>
+                    <Col md={1}>
+                      <Button
+                        style={{ marginLeft: "10px", marginTop: "30px" }}
+                        type="primary"
+                        shape="circle"
+                        icon={variants.length === (index + 1) ? (<PlusOutlined />) : (<MinusOutlined />)}
+                        onClick={variants.length === (index + 1) ? (() => handleAddVariants()) : (() => handleDeleteVariants(data, index))}
+                      >
+                      </Button>
+                    </Col>
+                    {/* <Col md={1}>
+                      <Button
+                        style={{ marginLeft: "30px", marginTop: "30px" }}
+                        type="primary"
+                        shape="circle"
+                        icon={<MinusOutlined />}
+                        onClick={() => handleDeleteVariants()}
+                      >
+                      </Button>
+                    </Col> */}
+                  </Row>
+                })
+              }
+
             </ContentBox>
             <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
@@ -704,9 +787,9 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
               <ItemContentBox>
                 <AlignItem>
                   <TitleBox>Product availability</TitleBox>
-                  <ContentTitle onClick={() => setOpenManageMD(!openManageMD)}>
+                  {/* <ContentTitle onClick={() => setOpenManageMD(!openManageMD)}>
                     Manage
-                  </ContentTitle>
+                  </ContentTitle> */}
                   <ManageSalesMD
                     open={openManageMD}
                     close={() => setOpenManageMD(!openManageMD)}
@@ -729,19 +812,30 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   <>
                     <TextStyle>Publish product on</TextStyle>
                     <SelectContent>
+                      <div style={{display:"flex"}}>
                       <DatePicker
                         className="date-picker"
-                        onChange={onChangeDate}
+                        onChange={(date)=>onChangeDate(date ,"productStartDate")}
+                      />
+                       <DatePicker
+                        className="date-picker"
+                        onChange={(date)=>onChangeDate(date,"productEndDate")}
                       />
                       <Tooltip
                         placement="bottom"
                         title="Remove the future publishing date. The product will be published immediately."
                       >
-                        <CloseOutlined
+                        <CloseOutlined 
+                          style={{marginLeft:"250px"}}
                           onClick={() => deleteDate()}
                           className="delete-date-icon"
                         />
                       </Tooltip>
+                      </div>
+                      
+                      
+                      
+                     
                       {/* <Select
                         placeholder="Select time"
                       // onChange={(e) => onChangeTime(e)}
@@ -820,7 +914,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   </Form.Item>
                 </GroupContent>
               </ItemContentBox>
-              <Divider />
+              {/* <Divider />
               <ItemContentBox>
                 <TitleStyle className="title-box">COLLECTIONS</TitleStyle>
                 <SearchBox
@@ -831,7 +925,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   Add this product to a collection so it’s easy to find in your
                   store.
                 </TextStyle>
-              </ItemContentBox>
+              </ItemContentBox> */}
               <Divider />
               <ItemContentBox>
                 <TitleStyle className="title-box">TAGS</TitleStyle>
