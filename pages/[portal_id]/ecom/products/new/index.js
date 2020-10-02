@@ -59,7 +59,6 @@ const NewCustomer = (props) => {
         cloneValues.ProductMerchantName = userData?.userName
         setProductDetails(cloneValues)
         props.AddMerchantProduct(cloneValues)
-
       }
     }
 

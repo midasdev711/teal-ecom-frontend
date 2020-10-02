@@ -54,44 +54,44 @@ const productInfo = {
   ProductSlug: "",
   ProductMRP: "",
   ProductSalePrice: "",
- // isPublish: "false",
+  isPublish: "false",
   ProductMerchantName: "",
   ProductSearchEngineTitle: "",
   ProductSearchEngineDescription: "",
   ProductCategory: "1",
- 
+
   ProductSubcategory: "3",
   ProductTotalQuantity: "",
-  //ProductStartDate: "25-10-2020",
-  //ProductFeaturedImage: "",
-  //SearchEngineListingPreviewUrl:"",
-  //ProductImages: [],
-  ProductAttributes:254
-  // ProductAttributes: [{
+  ProductStartDate: "25-10-2020",
+  ProductFeaturedImage: "",
+  SearchEngineListingPreviewUrl:"",
+  ProductImages: [],
+  ProductAttributes: 254,
+  ProductAttributes: [{
 
-  //   ProductCostPerItem: "",
-  //   // ProductCharge:false,
-  //   InventoryBarcode: "",
-  //   InventorySKU: "",
-  //   // TrackQuantity: false,
-  //   // ContinueSellingWhenOutOfStock:false,
-  //   //  PhysicalProduct:false,
-  //   productWeight: "",
-  //   // ProductVariants:false,
-  //   // Organization:{
-  //   //   ProductType:"",
-  //   //   Vendor:"",
-  //   // },
-  //   // ProductCollection:"",
-  //   // ProductTags:[],
-  //   // CustomerInformation:{
-  //   //   countryOrigin:"",
-  //   //   HarmonizedSystemCode:""
-  //   // }
-  // }],
+    ProductCostPerItem: "",
+    // ProductCharge:false,
+    InventoryBarcode: "",
+    InventorySKU: "",
+    // TrackQuantity: false,
+    // ContinueSellingWhenOutOfStock:false,
+    //  PhysicalProduct:false,
+    productWeight: "",
+    // ProductVariants:false,
+    // Organization:{
+    //   ProductType:"",
+    //   Vendor:"",
+    // },
+    // ProductCollection:"",
+    // ProductTags:[],
+    CustomerInformation:{
+      countryOrigin:"",
+      HarmonizedSystemCode:""
+    }
+  }],
 }
 
-const newForm = ({ submit, flag , getProductCategoryLists }) => {
+const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const [visiable, setVisible] = useState(false);
   const [tags, setTags] = useState(["test"]);
   const [inputValue, setInputValue] = useState("");
@@ -103,6 +103,8 @@ const newForm = ({ submit, flag , getProductCategoryLists }) => {
   const [productDetails, setProductDetails] = useState(productInfo);
   const [errors, setErrors] = useState({});
   const [dummyData, setDummyData] = useState([1]);
+  const [imagesButtonDisable, setImagesButtonDisable] = useState(false);
+  const [imagesFileList, setImagesFileList] = useState("");
 
   // useEffect(()=>{
   //   let cloneProduct = productDetails
@@ -120,9 +122,9 @@ const newForm = ({ submit, flag , getProductCategoryLists }) => {
       handleSubmit()
   }, [flag])
 
-useEffect(()=>{
-  getProductCategoryLists()
-},[])
+  useEffect(() => {
+    getProductCategoryLists()
+  }, [])
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -156,10 +158,12 @@ useEffect(()=>{
         let b64 = fileReader.result.replace(/^data:.+;base64,/, '');
 
         if (names === "featureProducts") {
+          //   setImagesButtonDisable(true)
           let cloneProductDetails = productDetails
           let cloneProductDetails1 = productDetails.ProductFeaturedImage
           cloneProductDetails1 = b64
           cloneProductDetails.ProductFeaturedImage = cloneProductDetails1
+          // setImagesFileList(file)
           setProductDetails(cloneProductDetails)
           setDummyData([dummyData + 1])
         } else {
@@ -215,6 +219,7 @@ useEffect(()=>{
     const name = event?.target?.name
     const value = event?.target?.value
     let error
+    let errorData = errors
     let cloneProduct = productDetails
     let cloneProductAttributes = productDetails?.ProductAttributes[0]
     let keys = Object.keys(cloneProduct)
@@ -234,21 +239,35 @@ useEffect(()=>{
     } else {
       console.log('event valuesss', event)
       if (names === "ProductSalePrice") {
-        cloneProduct.ProductSalePrice = event === null? "" : event.toString()
+        cloneProduct.ProductSalePrice = event === null ? "" : event.toString()
         setProductDetails(cloneProduct)
+        handleValidation(names)
       } else if (names === "ProductTotalQuantity") {
         cloneProduct.ProductTotalQuantity = event === null ? "" : event
         setProductDetails(cloneProduct)
+        handleValidation(names)
       } else if (names === "ProductMRP") {
-        cloneProduct.ProductMRP = event === null? "" : event.toString()
+        cloneProduct.ProductMRP = event === null ? "" : event.toString()
         setProductDetails(cloneProduct)
+        handleValidation(names)
+        console.log('inside Data')
       } else {
         cloneProductAttributes[names] = event
         cloneProduct.ProductAttributes[0] = cloneProductAttributes
         setProductDetails(cloneProduct)
       }
-      console.log(`data not availabkle`);
+      console.log(`data not available`);
     }
+
+    error = validation(name, productDetails[name]);
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+
     setDummyData([dummyData + 1])
   }
   console.log('productDetails', productDetails)
@@ -257,7 +276,20 @@ useEffect(()=>{
     const removeTags = tags.filter((tag) => tag !== removedTag);
     setTags(removeTags);
   };
-
+  const handleValidation = (name) => {
+    let error
+    let errorData = errors
+    
+    error = validation(name, productDetails[name]);
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+    setDummyData([dummyData + 1])
+  }
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -305,9 +337,7 @@ useEffect(()=>{
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
   }
-  // useEffect(()=>{
-  //   handleSubmit()
-  // },[])
+
 
   const handleSubmit = () => {
     let validationErrors = {};
@@ -357,6 +387,15 @@ useEffect(()=>{
       setDummyData([dummyData + 1])
     }
 
+  }
+  const handleRemove = (event) => {
+    setImagesButtonDisable(false)
+    console.log('event', event)
+    let cloneProductDetails = productDetails
+    cloneProductDetails.ProductFeaturedImage = ""
+    setProductDetails(cloneProductDetails)
+    //  setImagesFileList("")
+    setDummyData([dummyData + 1])
   }
 
   return (
@@ -433,12 +472,21 @@ useEffect(()=>{
                 accept=".jpg, .gif, .png"
                 name="file"
                 multiple={false}
+                // fileList={[{
+                //   uid: '-1',
+                //   name: 'xxx.png',
+                //   status: 'done',
+                //   url: 'http://www.baidu.com/xxx.png',
+                // }]}
+                //fileList={[imagesFileList]}
+                // disabled={imagesButtonDisable}
                 onChange={(info) => onChangeFileCSV(info, "featureProducts")}
+                onRemove={(file) => handleRemove(file)}
               >
                 <p className="ant-upload-drag-icon">
                   <FileTextOutlined />
                 </p>
-                <Button>Add File</Button>
+                <Button disabled={imagesButtonDisable}>Add File</Button>
                 <p className="ant-upload-hint">or drop files to upload</p>
               </StyleDragger>
             </ContentBox>
@@ -685,7 +733,16 @@ useEffect(()=>{
                         className="date-picker"
                         onChange={onChangeDate}
                       />
-                      <Select
+                      <Tooltip
+                        placement="bottom"
+                        title="Remove the future publishing date. The product will be published immediately."
+                      >
+                        <CloseOutlined
+                          onClick={() => deleteDate()}
+                          className="delete-date-icon"
+                        />
+                      </Tooltip>
+                      {/* <Select
                         placeholder="Select time"
                       // onChange={(e) => onChangeTime(e)}
                       >
@@ -696,16 +753,8 @@ useEffect(()=>{
                               {item.name}
                             </Option>
                           ))}
-                      </Select>
-                      <Tooltip
-                        placement="bottom"
-                        title="Remove the future publishing date. The product will be published immediately."
-                      >
-                        <CloseOutlined
-                          onClick={() => deleteDate()}
-                          className="delete-date-icon"
-                        />
-                      </Tooltip>
+                      </Select> */}
+
                     </SelectContent>
                   </>
                 )}
@@ -937,8 +986,7 @@ const SelectContent = styled.div`
   .delete-date-icon {
     font-size: 22px;
     position: absolute;
-    top: 5px;
-    right: -8px;
+       top: 5px;
     cursor: pointer;
   }
 `;
@@ -1018,7 +1066,7 @@ const ActionBottom = styled.div`
 
 const mapStateToProps = (store) => {
   return {
-  
+
   };
 };
 
