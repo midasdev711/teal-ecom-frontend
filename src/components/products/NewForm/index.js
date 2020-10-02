@@ -688,11 +688,11 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   <InputStyle name="ProductSearchEngineTitle" onChange={(event) => handleChange(event)} />
                   <label style={{ color: "red" }} >{errors?.ProductSearchEngineTitle}</label>
 
-                  <TextStyle>0 of 70 characters used</TextStyle>
+                  <TextStyle> 0 of 70 characters used</TextStyle>
                   <TitleStyle className="margin-top">Description</TitleStyle>
                   <TextAreaStyle rows={5} name="ProductSearchEngineDescription" onChange={(event) => handleChange(event)} />
                   <label style={{ color: "red" }} >{errors?.ProductSearchEngineDescription}</label>
-                  <TextStyle>0 of 320 characters used</TextStyle>
+                  <TextStyle> 0 of 320 characters used</TextStyle>
                   <TitleStyle className="margin-top">URL and handle</TitleStyle>
                   <InputStyle prefix="https://sale.mysolidshoes.com/products/" name="SearchEngineListingPreviewUrl" onChange={(event) => handleChange(event)} />
                 </ContentBox>
