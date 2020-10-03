@@ -30,19 +30,19 @@ export default (name, value) => {
 
 
   switch (name) {
-      case 'ProductTitle':
+      case 'productTitle':
       if (!isEmptyString) {
         return "Title is required";
       } else {
         return false;
       }
-    case 'ProductDescription':
+    case 'productDescription':
       if (!isEmptyString) {
         return "Product description is required";
       } else {
         return false;
       }
-    case 'ProductSalePrice':
+    case 'productSalePrice':
       if (!isEmptyString) {
         return "Product price is required";
       }
@@ -52,7 +52,7 @@ export default (name, value) => {
       else {
         return false;
       }
-    case 'ProductMRP':
+    case 'productMRP':
       const onlyNumber = number(value)
       if (!isEmptyString) {
         return "Compare at price is required";
@@ -63,7 +63,7 @@ export default (name, value) => {
       else{
         return false;
       }
-    case 'ProductCostPerItem':
+    case 'productCostPerItem':
       if (!isEmptyString) {
         return "Product cost per item price is required";
       } 
@@ -86,7 +86,7 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'ProductTotalQuantity':
+    case 'productTotalQuantity':
       if (!isEmptyString) {
         return "Product quantity is required";
       } else {
@@ -98,32 +98,38 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'ProductCategory':
+    case 'productCategory':
       if (!isEmptyString) {
         return "Product category is required";
       } else {
         return false;
       }
-    case 'ProductSubcategory':
+    case 'productSubcategory':
       if (!isEmptyString) {
         return "Product sub category is required";
       } else {
         return false;
       }
-    // case 'ProductStartDate':
-    //   if (!isEmptyString) {
-    //     return "Product start state is required";
-    //   } else {
-    //     return false;
-    //   }
+    case 'productStartDate':
+      if (!isEmptyString) {
+        return "Product start date is required";
+      } else {
+        return false;
+      }
+      case 'productEndDate':
+      if (!isEmptyString) {
+        return "Product end date is required";
+      } else {
+        return false;
+      }
   
-    case 'ProductSearchEngineDescription':
+    case 'productSearchEngineDescription':
       if (!isEmptyString) {
         return "Product search engine description is required";
       } else {
         return false;
       }
-    case 'ProductSearchEngineTitle':
+    case 'productSearchEngineTitle':
       if (!isEmptyString) {
         return "Product search engine title is required";
       } else {

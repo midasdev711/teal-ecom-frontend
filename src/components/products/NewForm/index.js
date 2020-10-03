@@ -43,55 +43,71 @@ import { resolve } from "url";
 import { rejects } from "assert";
 import { connect } from "react-redux";
 import { getProductCategoryLists } from "../../../redux/actions/product";
-
+import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
 
 const { Search } = Input;
 const { Option } = Select;
 const { Dragger } = Upload;
 const productInfo = {
-  ProductMerchantID: "",
-  ProductSKU: "googles",
-  ProductTitle: "",
-  ProductDescription: "",
-  ProductSlug: "",
-  ProductMRP: "",
+  productMerchantID: "",
+  productMerchantName: "",
+  productSKU: "",
+  productTitle: "",
+  productDescription: "",
+  productSlug: "",
+  productMRP: "",
   ProductSalePrice: "",
   isPublish: "false",
-  ProductMerchantName: "",
+  productTags: [],
+  productStock: "",
+  productVariants: {
+    name: "",
+    values: "",
+  },
+  productThumbnailImage: "",
+  productImages: [],
+  productSEO: {
+    title: "",
+    description: "",
+    cronicalUrl: "",
+  },
   ProductSearchEngineTitle: "",
   ProductSearchEngineDescription: "",
   ProductCategory: "1",
-
+  productInventory: "",
   ProductSubcategory: "3",
-  ProductTotalQuantity: "",
+  productTotalQuantity: "",
   productStartDate: "",
   productEndDate: "",
-  ProductFeaturedImage: "",
+  productFeaturedImage: "",
   SearchEngineListingPreviewUrl: "",
-  ProductImages: [],
-  ProductAttributes: 254,
-  ProductAttributes: [{
+  productAttributes: [{
+    productWeight: ""
+  }]
+  // productImages: [],
+  // productAttributes: 254,
+  // productAttributes: [{
 
-    ProductCostPerItem: "",
-    // ProductCharge:false,
-    InventoryBarcode: "",
-    InventorySKU: "",
-    // TrackQuantity: false,
-    // ContinueSellingWhenOutOfStock:false,
-    //  PhysicalProduct:false,
-    productWeight: "",
-    // ProductVariants:false,
-    // Organization:{
-    //   ProductType:"",
-    //   Vendor:"",
-    // },
-    // ProductCollection:"",
-    // ProductTags:[],
-    CustomerInformation: {
-      countryOrigin: "",
-      HarmonizedSystemCode: ""
-    }
-  }],
+  //   ProductCostPerItem: "",
+  //   // ProductCharge:false,
+  //   InventoryBarcode: "",
+  //   InventorySKU: "",
+  //   // TrackQuantity: false,
+  //   // ContinueSellingWhenOutOfStock:false,
+  //   //  PhysicalProduct:false,
+  //   productWeight: "",
+  //   // ProductVariants:false,
+  //   // Organization:{
+  //   //   ProductType:"",
+  //   //   Vendor:"",
+  //   // },
+  //   // ProductCollection:"",
+  //   // ProductTags:[],
+  //   CustomerInformation: {
+  //     countryOrigin: "",
+  //     HarmonizedSystemCode: ""
+  //   }
+  // }],
 }
 
 const newForm = ({ submit, flag, getProductCategoryLists }) => {
@@ -110,28 +126,41 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const [imagesFileList, setImagesFileList] = useState("");
   const [VariantsFlag, setVariantsFlag] = useState(false);
   const [variants, setVariants] = useState([{ name: "", value: "" }]);
+  const [productFeaturedImageList, setProductFeaturedImageList] = useState([]);
 
   // useEffect(()=>{
   //   let cloneProduct = productDetails
-  //   let cloneProductAttributes1 = productDetails?.ProductAttributes[0]
-  //   let cloneProductAttributes = productDetails?.ProductAttributes[0]?.CustomerInformation
-  //   cloneProductAttributes.countryOrigin = country
-  //   cloneProductAttributes1.CustomerInformation = cloneProductAttributes
-  //   cloneProduct.ProductAttributes[0] = cloneProductAttributes1
+  //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
+  //   let cloneproductAttributes = productDetails?.productAttributes[0]?.CustomerInformation
+  //   cloneproductAttributes.countryOrigin = country
+  //   cloneproductAttributes1.CustomerInformation = cloneproductAttributes
+  //   cloneProduct.productAttributes[0] = cloneproductAttributes1
   //   setProductDetails(cloneProduct)
   //   setDummyData([dummyData + 1])
   //     },[country])
   useEffect(() => {
-    console.log('flag', flag)
+   // console.log('flag', flag)
     if (flag !== "") {
       console.log('object datas in side objects')
       handleSubmit()
     }
   }, [flag])
-  console.log('flag new form', flag)
+ 
   useEffect(() => {
     getProductCategoryLists()
   }, [])
+  const handleProductsImages = (value) => {
+    setImagesFileList(value)
+    let cloneProduct = productDetails
+    cloneProduct.productImages = value
+    if (value.length > 0) {
+      cloneProduct.productThumbnailImage = value[0]
+    } else {
+      cloneProduct.productThumbnailImage = ""
+    }
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -143,14 +172,12 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const onChangeDate = (date, name) => {
     console.log(date?._d);
     let UTCDate = date?._d
-    
-  
     // let dateFormate
     // if (date !== null) {
     //   dateFormate = date.format("DD-MM-YYYY")
     // }
-       let cloneProduct = productDetails
-       cloneProduct[name] = date === null ? "" : UTCDate
+    let cloneProduct = productDetails
+    cloneProduct[name] = date === null ? "" : UTCDate
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
   };
@@ -159,29 +186,28 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     setIsDatePicker(!isDatePicker);
   };
 
-  const base64 = (file, names) => {
+  const base64 = (file, names, fileData) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader()
       fileReader.onloadend = () => {
         let b64 = fileReader.result.replace(/^data:.+;base64,/, '');
-
         if (names === "featureProducts") {
-          //   setImagesButtonDisable(true)
           let cloneProductDetails = productDetails
-          let cloneProductDetails1 = productDetails.ProductFeaturedImage
+          let cloneProductDetails1 = productDetails.productFeaturedImage
           cloneProductDetails1 = b64
-          cloneProductDetails.ProductFeaturedImage = cloneProductDetails1
-          // setImagesFileList(file)
+          cloneProductDetails.productFeaturedImage = cloneProductDetails1
           setProductDetails(cloneProductDetails)
           setDummyData([dummyData + 1])
-        } else {
-          let cloneProductDetails = productDetails
-          let cloneProductDetails1 = productDetails.ProductImages
-          cloneProductDetails1.push(b64)
-          cloneProductDetails.ProductImages = cloneProductDetails1
-          setProductDetails(cloneProductDetails)
-          setDummyData([dummyData + 1])
-        }
+          setProductFeaturedImageList([fileData.file])
+        } 
+        // else {
+        //   let cloneProductDetails = productDetails
+        //   let cloneProductDetails1 = productDetails.productImages
+        //   cloneProductDetails1.push(b64)
+        //   cloneProductDetails.productImages = cloneProductDetails1
+        //   setProductDetails(cloneProductDetails)
+        //   setDummyData([dummyData + 1])
+        // }
         resolve(b64);
       };
       fileReader.onerror = (error) => {
@@ -193,15 +219,15 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
 
 
   const onChangeFileCSV = async (info, name) => {
-    console.log("image into", info);
+    
     const { status } = info.file;
     if (status !== "uploading") {
-      console.log("info.file", info.file, info.fileList);
+      console.log("file uploading");
     }
     if (status === "done") {
-      let datas = await base64(info.file.originFileObj, name)
+      let datas = await base64(info.file.originFileObj, name, info)
     } else if (status === "error") {
-      console.error(`${info.file.name} file upload failed.`);
+      console.error("file upload failed");
     }
     setDummyData([dummyData + 1])
   };
@@ -214,9 +240,9 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     console.log('name in', name)
     console.log('value in', value)
     let cloneProduct = productDetails
-    let cloneProductAttributes = productDetails?.ProductAttributes[0]
-    cloneProductAttributes[name] = value
-    cloneProduct.ProductAttributes[0] = cloneProductAttributes
+    let cloneproductAttributes = productDetails?.productAttributes[0]
+    cloneproductAttributes[name] = value
+    cloneProduct.productAttributes[0] = cloneproductAttributes
     setProductDetails(cloneProduct)
     handleAttributesValidation(name)
     setDummyData([dummyData + 1])
@@ -230,17 +256,17 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     let error
     let errorData = errors
     let cloneProduct = productDetails
-    let cloneProductAttributes = productDetails?.ProductAttributes[0]
+    let cloneproductAttributes = productDetails?.productAttributes[0]
     let keys = Object.keys(cloneProduct)
 
     let found = keys.find(data => data === name)
 
     if (found !== undefined) {
       console.log('data available')
-      if (found === "ProductTitle") {
+      if (found === "productTitle") {
         var b = value.toLowerCase().replace(/ /g, '-')
           .replace(/[^\w-]+/g, '');
-        cloneProduct.ProductSlug = b
+        cloneProduct.productSlug = b
         setProductDetails(cloneProduct)
       }
       cloneProduct[found] = value
@@ -251,18 +277,18 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
         cloneProduct.ProductSalePrice = event === null ? "" : event.toString()
         setProductDetails(cloneProduct)
         handleValidation(names)
-      } else if (names === "ProductTotalQuantity") {
-        cloneProduct.ProductTotalQuantity = event === null ? "" : event
+      } else if (names === "productTotalQuantity") {
+        cloneProduct.productTotalQuantity = event === null ? "" : event
         setProductDetails(cloneProduct)
         handleValidation(names)
-      } else if (names === "ProductMRP") {
-        cloneProduct.ProductMRP = event === null ? "" : event.toString()
+      } else if (names === "productMRP") {
+        cloneProduct.productMRP = event === null ? "" : event.toString()
         setProductDetails(cloneProduct)
         handleValidation(names)
         console.log('inside Data')
       } else {
-        cloneProductAttributes[names] = event
-        cloneProduct.ProductAttributes[0] = cloneProductAttributes
+        cloneproductAttributes[names] = event
+        cloneProduct.productAttributes[0] = cloneproductAttributes
         setProductDetails(cloneProduct)
         handleAttributesValidation(names)
       }
@@ -339,11 +365,11 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const handleHSCode = (event) => {
     let value = event.target.value
     let cloneProduct = productDetails
-    let cloneProductAttributes1 = productDetails?.ProductAttributes[0]
-    let cloneProductAttributes = productDetails?.ProductAttributes[0]?.CustomerInformation
-    cloneProductAttributes.HarmonizedSystemCode = value
-    cloneProductAttributes1.CustomerInformation = cloneProductAttributes
-    cloneProduct.ProductAttributes = cloneProductAttributes1
+    let cloneproductAttributes1 = productDetails?.productAttributes[0]
+    let cloneproductAttributes = productDetails?.productAttributes[0]?.CustomerInformation
+    cloneproductAttributes.HarmonizedSystemCode = value
+    cloneproductAttributes1.CustomerInformation = cloneproductAttributes
+    cloneProduct.productAttributes = cloneproductAttributes1
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
   }
@@ -358,9 +384,9 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
         validationErrors[name] = error;
       }
     });
-    Object.keys(productDetails.ProductAttributes[0]).forEach((name) => {
-      // console.log('productDetails.ProductAttributes[0][name]', productDetails.ProductAttributes[0][name])
-      const error = validation(name, productDetails.ProductAttributes[0][name]);
+    Object.keys(productDetails.productAttributes[0]).forEach((name) => {
+      // console.log('productDetails.productAttributes[0][name]', productDetails.productAttributes[0][name])
+      const error = validation(name, productDetails.productAttributes[0][name]);
       if (error && error.length > 0) {
         validationErrors[name] = error;
       }
@@ -383,14 +409,14 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     console.log('names dd', names)
 
     let cloneProduct = productDetails
-    let cloneProductAttributes = productDetails?.ProductAttributes[0]
+    let cloneproductAttributes = productDetails?.productAttributes[0]
     let data = ["oz", "kg", "g", "lb"]
     //  data.map((data,index)=>{
-    //   cloneProductAttributes[names] = `${cloneProductAttributes[names] event)}`
+    //   cloneproductAttributes[names] = `${cloneproductAttributes[names] event)}`
     //  })
     if (names === "productWeight") {
-      cloneProductAttributes[names] = `${cloneProductAttributes[names]} ${event}`
-      cloneProduct.ProductAttributes[0] = cloneProductAttributes
+      cloneproductAttributes[names] = `${cloneproductAttributes[names]} ${event}`
+      cloneProduct.productAttributes[0] = cloneproductAttributes
       setProductDetails(cloneProduct)
       setDummyData([dummyData + 1])
     } else {
@@ -401,10 +427,10 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
 
   }
   const handleRemove = (event) => {
-    setImagesButtonDisable(false)
+    setProductFeaturedImageList([])
     console.log('event', event)
     let cloneProductDetails = productDetails
-    cloneProductDetails.ProductFeaturedImage = ""
+    cloneProductDetails.productFeaturedImage = ""
     setProductDetails(cloneProductDetails)
     //  setImagesFileList("")
     setDummyData([dummyData + 1])
@@ -413,7 +439,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     let error
     let errorData = errors
 
-    error = validation(name, productDetails.ProductAttributes[0][name]);
+    error = validation(name, productDetails.productAttributes[0][name]);
     if (!error) {
       delete errorData[name]
       setErrors(errorData)
@@ -439,6 +465,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
     setDummyData([dummyData + 1])
   }
 
+
   return (
     <Form
       name="basic"
@@ -451,19 +478,20 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
         <Row gutter={24} className="margin-bottom">
           <Col md={16}>
             <ContentBox>
-              <Form.Item label="Title" name="ProductTitle" >
-                <TextInput name="ProductTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
-                <label style={{ color: "red" }} >{errors?.ProductTitle}</label>
+              <Form.Item label="Title" name="productTitle" >
+                <TextInput name="productTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                <label style={{ color: "red" }} >{errors?.productTitle}</label>
               </Form.Item>
               <TitleStyle>Description</TitleStyle>
               <DescriptionContent>
-                <TextAreaStyle rows={2} name="ProductDescription" onChange={(event) => handleChange(event)} />
-                <label style={{ color: "red" }} >{errors?.ProductDescription}</label>
+                <TextAreaStyle rows={2} name="productDescription" onChange={(event) => handleChange(event)} />
+                <label style={{ color: "red" }} >{errors?.productDescription}</label>
                 {/* <RemirorEditor /> */}
               </DescriptionContent>
             </ContentBox>
             <ContentBox marginTop="20px">
-              <AlignItem className="margin-bottom">
+              <ProductsImages imageData={(value) => handleProductsImages(value)} />
+              {/* <AlignItem className="margin-bottom">
                 <TitleBox>Product Images</TitleBox>
                 <Dropdown
                   trigger={["click"]}
@@ -490,11 +518,11 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                 </p>
                 <Button>Add File</Button>
                 <p className="ant-upload-hint">or drop files to upload</p>
-              </StyleDragger>
+              </StyleDragger> */}
             </ContentBox>
             <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
-                <TitleBox>Product Features Images</TitleBox>
+                <TitleBox>Product Featured Image </TitleBox>
                 <Dropdown
                   trigger={["click"]}
                   overlay={
@@ -513,13 +541,7 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                 accept=".jpg, .gif, .png"
                 name="file"
                 multiple={false}
-                // fileList={[{
-                //   uid: '-1',
-                //   name: 'xxx.png',
-                //   status: 'done',
-                //   url: 'http://www.baidu.com/xxx.png',
-                // }]}
-                //fileList={[imagesFileList]}
+                fileList={productFeaturedImageList}
                 // disabled={imagesButtonDisable}
                 onChange={(info) => onChangeFileCSV(info, "featureProducts")}
                 onRemove={(file) => handleRemove(file)}
@@ -550,13 +572,13 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                 <Col md={12}>
                   <Form.Item label="Compare at price">
                     <InputNumberStyle
-                      onChange={(event) => handleChange(event, "ProductMRP")}
+                      onChange={(event) => handleChange(event, "productMRP")}
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       }
                     />
-                    <label style={{ color: "red" }} >{errors?.ProductMRP}</label>
+                    <label style={{ color: "red" }} >{errors?.productMRP}</label>
 
                   </Form.Item>
                 </Col>
@@ -629,9 +651,9 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   <Form.Item label="Available">
                     <InputNumberStyle
                       placeholder="0"
-                      onChange={(event) => handleChange(event, "ProductTotalQuantity")}
+                      onChange={(event) => handleChange(event, "productTotalQuantity")}
                     />
-                    <label style={{ color: "red" }} >{errors?.ProductTotalQuantity}</label>
+                    <label style={{ color: "red" }} >{errors?.productTotalQuantity}</label>
 
                   </Form.Item>
                 </Col>
@@ -713,15 +735,15 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                 VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
                   return <Row gutter={0}>
                     <Col md={9}>
-                      <Form.Item label="Variant Name" name="ProductTitle" >
-                        <TextInput name="ProductTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
-                        {/* <label style={{ color: "red" }} >{errors?.ProductTitle}</label> */}
+                      <Form.Item label="Variant Name" name="productTitle" >
+                        <TextInput name="productTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                        {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
                       </Form.Item>
                     </Col>
                     <Col md={9} style={{ marginLeft: "25px" }}>
-                      <Form.Item label="Variant Value" name="ProductTitle" >
-                        <TextInput name="ProductTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
-                        {/* <label style={{ color: "red" }} >{errors?.ProductTitle}</label> */}
+                      <Form.Item label="Variant Value" name="productTitle" >
+                        <TextInput name="productTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                        {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
                       </Form.Item>
                     </Col>
                     <Col md={1}>
@@ -812,30 +834,30 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                   <>
                     <TextStyle>Publish product on</TextStyle>
                     <SelectContent>
-                      <div style={{display:"flex"}}>
-                      <DatePicker
-                        className="date-picker"
-                        onChange={(date)=>onChangeDate(date ,"productStartDate")}
-                      />
-                       <DatePicker
-                        className="date-picker"
-                        onChange={(date)=>onChangeDate(date,"productEndDate")}
-                      />
-                      <Tooltip
-                        placement="bottom"
-                        title="Remove the future publishing date. The product will be published immediately."
-                      >
-                        <CloseOutlined 
-                          style={{marginLeft:"250px"}}
-                          onClick={() => deleteDate()}
-                          className="delete-date-icon"
+                      <div style={{ display: "flex" }}>
+                        <DatePicker
+                          className="date-picker"
+                          onChange={(date) => onChangeDate(date, "productStartDate")}
                         />
-                      </Tooltip>
+                        <DatePicker
+                          className="date-picker"
+                          onChange={(date) => onChangeDate(date, "productEndDate")}
+                        />
+                        <Tooltip
+                          placement="bottom"
+                          title="Remove the future publishing date. The product will be published immediately."
+                        >
+                          <CloseOutlined
+                            style={{ marginLeft: "250px" }}
+                            onClick={() => deleteDate()}
+                            className="delete-date-icon"
+                          />
+                        </Tooltip>
                       </div>
-                      
-                      
-                      
-                     
+
+
+
+
                       {/* <Select
                         placeholder="Select time"
                       // onChange={(e) => onChangeTime(e)}
@@ -1169,4 +1191,5 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);
+
 
