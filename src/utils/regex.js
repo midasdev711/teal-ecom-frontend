@@ -54,3 +54,11 @@ export const FisrtCharUpperCase = val => {
         return ""
     }
 }
+export const nullArray = val => {
+    console.log('val', val)
+    if(val.length > 0){
+        return false
+    }else{
+        return true
+    }
+}

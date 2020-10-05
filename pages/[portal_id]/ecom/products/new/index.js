@@ -52,14 +52,14 @@ const NewCustomer = (props) => {
   const [productDetails, setProductDetails] = useState("")
   const handleSubmit = (values) =>{
      // setFlag([...flag, flag.length + 1]) 
-     values === undefined ? setFlag({name:`${flag + "demo"}`}) : setFlag(values) 
+     values === undefined ? setFlag({name:`${flag + "demo"}`}) : ""
      
       console.log('values', values)
       if(values !== undefined){
         let cloneValues = values 
         console.log('cloneValues', cloneValues)
-        cloneValues.ProductMerchantID = userData?.ID
-        cloneValues.ProductMerchantName = userData?.userName
+        cloneValues.productMerchantID = userData?.ID
+        cloneValues.productMerchantName = userData?.userName
         setProductDetails(cloneValues)
         props.AddMerchantProduct(cloneValues)
       }

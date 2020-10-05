@@ -1,4 +1,4 @@
-import { emailValidation, PLZNumber, DateOfBirth, PhoneNumber, PasswordValidation, confirmPassword, stringValue, isEmpty ,number } from './regex'
+import { emailValidation, PLZNumber, DateOfBirth, PhoneNumber, PasswordValidation, confirmPassword, stringValue, isEmpty, number , nullArray } from './regex'
 import moment from 'moment';
 
 let password = '';
@@ -14,23 +14,24 @@ export default (name, value) => {
   if (name === "min_age") {
     min_age = value
   }
-  if(name === "timefrom"){
+  if (name === "timefrom") {
     let start = moment(value).unix();
     timefrom = start
   }
-  if(name === "starttime"){
+  if (name === "starttime") {
     let timestart = moment(value).unix();
     starttime = timestart
   }
-  if(name === "min_price"){
+  if (name === "min_price") {
     min_price = value
   }
   const isValidString = stringValue(value);
   const isEmptyString = isEmpty(value);
+  
 
 
   switch (name) {
-      case 'productTitle':
+    case 'productTitle':
       if (!isEmptyString) {
         return "Title is required";
       } else {
@@ -52,31 +53,69 @@ export default (name, value) => {
       else {
         return false;
       }
-    case 'productMRP':
-      const onlyNumber = number(value)
+    case 'productImages':
+      let nullArrayData = nullArray(value)
       if (!isEmptyString) {
-        return "Compare at price is required";
-      }
-      //  else if(!onlyNumber) {
-      //   return "Only digit allow string not allowed";
-      // }
-      else{
+        return "Products images are required";
+      }else if(nullArrayData){
+        return "Products images are required";  
+      } else {
         return false;
       }
+    case 'productFeaturedImage':
+      if (!isEmptyString) {
+        return "Product featured image is required";
+      } else {
+        return false;
+      }
+    case 'variantName':
+      if (!isEmptyString) {
+        return "Products variant name is required";
+      } else {
+        return false;
+      }
+    case 'variantValues':
+      if (!isEmptyString) {
+        return "Product variant value is required";
+      } else {
+        return false;
+      }
+    // case 'productMRP':
+    //   const onlyNumber = number(value)
+    //   if (!isEmptyString) {
+    //     return "Compare at price is required";
+    //   }
+    //   //  else if(!onlyNumber) {
+    //   //   return "Only digit allow string not allowed";
+    //   // }
+    //   else {
+    //     return false;
+    //   }
     case 'productCostPerItem':
       if (!isEmptyString) {
         return "Product cost per item price is required";
-      } 
+      }
       // else if(!onlyNumber) {
       //   return "Only digit allow string not allowed";
       // }
       else {
         return false;
       }
-  
-    case 'InventorySKU':
+
+    case 'productSKU':
       if (!isEmptyString) {
-        return "Inventory SKU is required";
+        return "Product SKU is required";
+      } else {
+        return false;
+      }
+    case 'productTags':
+      console.log('object called into web site')
+      const nullArrayData1 = nullArray(value)
+      if (!isEmptyString) {
+        return "Product tags is required";
+      }else if(nullArrayData1){
+        console.log('dataa insde tags')
+        return "Product tags is required";
       } else {
         return false;
       }
@@ -92,10 +131,14 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'productWeight':
+    case 'attributeValues':
+      const nullArrayData2 = nullArray(value)
       if (!isEmptyString) {
         return "Product weight is required";
-      } else {
+      }else if(nullArrayData2){
+       
+        return "Product weight is required";
+      } else{
         return false;
       }
     case 'productCategory':
@@ -116,26 +159,32 @@ export default (name, value) => {
       } else {
         return false;
       }
-      case 'productEndDate':
+    case 'productEndDate':
       if (!isEmptyString) {
         return "Product end date is required";
       } else {
         return false;
       }
-  
-    case 'productSearchEngineDescription':
+
+    case 'description':
       if (!isEmptyString) {
         return "Product search engine description is required";
       } else {
         return false;
       }
-    case 'productSearchEngineTitle':
+    case 'title':
       if (!isEmptyString) {
         return "Product search engine title is required";
       } else {
         return false;
       }
-   
+    case 'cronicalUrl':
+      if (!isEmptyString) {
+        return "Product search engine url is required";
+      } else {
+        return false;
+      }
+
     default:
       return false
   }

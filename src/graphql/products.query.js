@@ -78,11 +78,12 @@ export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
 }
 `;
 export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
-      query($search:String){ getAllCategoryList(Search :$search){
-		Name
-		ID
-		FeatureImage Slug
-		Description ParentCategoryID
+      query{ categories{
+	id
+    ID
+    name
+    slug
+    parentCategoryID
 		} }
 		`;
 
