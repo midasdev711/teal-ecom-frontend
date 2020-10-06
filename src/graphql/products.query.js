@@ -78,18 +78,36 @@ export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
 }
 `;
 export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
-      query{ categories{
-	id
+      query{ getAllCategories{
+		id
     ID
-    name
-    slug
-    parentCategoryID
+    Name
+    isParent
 		} }
 		`;
 
+		// query
+// {
+//   getAllCategories
+//   {
+//   	id
+//     ID
+//     Name
+//     isParent
+//   }
+// }
+export const GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY = gql`
+query($ID:Int){ getSubCategories(ID:$ID) {
+	id
+	Name
+	ID
+	Description
+	} }
+	`;
 export default {
 	PRODUCTS_QUERY,
 	GET_MY_PRODUCT_LISTS_QUERY,
 	ADD_MERCHANT_PRODUCT_MUTATION,
 	GET_PRODUCT_CATEGORY_LISTS_QUERY,
+	GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY,
 };

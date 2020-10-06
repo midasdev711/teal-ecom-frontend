@@ -68,18 +68,18 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'variantName':
-      if (!isEmptyString) {
-        return "Products variant name is required";
-      } else {
-        return false;
-      }
-    case 'variantValues':
-      if (!isEmptyString) {
-        return "Product variant value is required";
-      } else {
-        return false;
-      }
+    // case 'variantName':
+    //   if (!isEmptyString) {
+    //     return "Products variant name is required";
+    //   } else {
+    //     return false;
+    //   }
+    // case 'variantValues':
+    //   if (!isEmptyString) {
+    //     return "Product variant value is required";
+    //   } else {
+    //     return false;
+    //   }
     // case 'productMRP':
     //   const onlyNumber = number(value)
     //   if (!isEmptyString) {
@@ -119,12 +119,12 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'InventoryBarcode':
-      if (!isEmptyString) {
-        return "Inventory barcode is required";
-      } else {
-        return false;
-      }
+    // case 'InventoryBarcode':
+    //   if (!isEmptyString) {
+    //     return "Inventory barcode is required";
+    //   } else {
+    //     return false;
+    //   }
     case 'productTotalQuantity':
       if (!isEmptyString) {
         return "Product quantity is required";

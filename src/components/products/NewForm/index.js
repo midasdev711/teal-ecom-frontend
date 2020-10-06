@@ -41,8 +41,8 @@ import {
 import { validate } from "graphql";
 import { resolve } from "url";
 import { rejects } from "assert";
-import { connect } from "react-redux";
-import product, { getProductCategoryLists } from "../../../redux/actions/product";
+import { connect, useSelector } from "react-redux";
+import product, { getProductCategoryLists , getProductSubCategoryLists } from "../../../redux/actions/product";
 import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
 
 const { Search } = Input;
@@ -90,7 +90,7 @@ const productInfo = {
 
 const ProductSEOInfo = ["title", "description", "cronicalUrl"]
 
-const newForm = ({ submit, flag, getProductCategoryLists }) => {
+const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists }) => {
   const [visiable, setVisible] = useState(false);
   const [tags, setTags] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -110,7 +110,10 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   const [profit, setProfit] = useState("");
   const [margin, setMargin] = useState("");
   const [unit, setUnit] = useState("kg");
-
+  const categoryLists = useSelector(state => state.productReducer.categoriesLists)
+  const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
+  console.log('subCategories', subCategories)
+  console.log('categoryLists', categoryLists)
   // useEffect(()=>{
   //   let cloneProduct = productDetails
   //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
@@ -123,9 +126,14 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   //     },[country])
   useEffect(() => {
     if (flag !== "") {
-      handleSubmit()
+      handleSubmit("save")
     }
   }, [flag])
+  useEffect(() => {
+    if (saveFlag !== "") {
+      handleSubmit("saveAndPublish")
+    }
+  }, [saveFlag])
   useEffect(() => {
     Object.values(errors).length > 0 ? (
       errors?.productEndDate || errors?.productStartDate ? (setIsDatePicker(true)) : ("")
@@ -140,9 +148,11 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
       ) : ("")
     ) : ("")
   }, [tags])
+
   useEffect(() => {
     getProductCategoryLists()
   }, [])
+ 
   useEffect(() => {
     let cloneProduct = productDetails
     cloneProduct.productTags = tags
@@ -413,7 +423,8 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
   // }
 
 
-  const handleSubmit = () => {
+  const handleSubmit = (info) => {
+    console.log('info', info)
     let validationErrors = {};
 
     Object.keys(productDetails).forEach((name) => {
@@ -453,13 +464,24 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
       return;
     }
     setErrors({});
-    submit(productDetails)
+    if (info === "save") {
+      submit(productDetails)
+    } else {
+      saveSubmit(productDetails)
+    }
     setDummyData([dummyData + 1])
   }
   console.log('errors', errors)
   const tagChild = tags.map(forMap);
   const handleDropDown = (event, names) => {
-    setUnit(event)
+   
+    if(names === "attributeValues"){
+      setUnit(event)
+    }
+   
+    if(names === "productCategory"){
+      getProductSubCategoryLists(event)
+    }
     let cloneProduct = productDetails
     let cloneproductAttributes = productDetails?.productAttributes[0]
     if (names === "attributeValues") {
@@ -1051,12 +1073,15 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                     name="productCategory"
                     onChange={(event)=>handleChange(event)}
                   /> */}
-                  <Form.Item name="productCategory" initialValue="kg">
-                    <Select onChange={(event) => handleDropDown(event, "productCategory")}>
-                      <Option value="1">lb</Option>
-                      <Option value="2">oz</Option>
-                      <Option value="3">kg</Option>
-                      <Option value="4">g</Option>
+                  {/* <Form.Item > */}
+                  <Form.Item>
+                    <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productCategory")}>
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.Name}</Option>
+                        })
+                      }
                     </Select>
                     <label style={{ color: "red" }} >{errors?.productCategory}</label>
 
@@ -1071,12 +1096,15 @@ const newForm = ({ submit, flag, getProductCategoryLists }) => {
                     onChange={(event)=>handleChange(event)}
                     
                   /> */}
-                  <Form.Item name="productSubcategory" initialValue="kg">
-                    <Select onChange={(event) => handleDropDown(event, "productSubcategory")}>
-                    <Option value="1">lb</Option>
-                      <Option value="2">oz</Option>
-                      <Option value="3">kg</Option>
-                      <Option value="4">g</Option>
+                  <Form.Item>
+                    <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productSubcategory")}>
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        subCategories && subCategories.length > 0 && subCategories.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.Name}</Option>
+                        })
+                      }
+
                     </Select>
                     <label style={{ color: "red" }} >{errors?.productSubcategory}</label>
 
@@ -1337,6 +1365,7 @@ const mapStateToProps = (store) => {
 
 const mapDispatchToProps = {
   getProductCategoryLists,
+  getProductSubCategoryLists,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);

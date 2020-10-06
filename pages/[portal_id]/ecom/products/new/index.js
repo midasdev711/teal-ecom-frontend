@@ -12,59 +12,45 @@ import { LeftOutlined } from "@ant-design/icons";
 import { getUserData } from "../../../../../src/utils";
 import { AddMerchantProduct } from "../../../../../src/redux/actions/product";
 
-// const newActions = () => {
-//   let userData = getUserData()
-//   return (
-//     <ActionTopLayout>
-//       <ActionContent>
-//         <span>Unsaved changes</span>
-//         <NewOrderAction>
-//           <Button className="cancel" size="large">
-//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
-//               <a>
-//                 Discard
-//             </a>
-//             </Link>
-//           </Button>
-//           <Button className="save" size="large" type="primary" onClick={()=>handleSubmit()}>
-//             {/* <Link href="/products"> */}
-//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
-
-//               <a title="save">Save</a>
-//             </Link>
-//           </Button>
-//           <Button className="save" size="large" type="primary" style={{marginLeft:"15px"}}>
-//             {/* <Link href="/products"> */}
-//             <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
-
-//               <a title="save">Save And Publish</a>
-//             </Link>
-//           </Button>
-//         </NewOrderAction>
-//       </ActionContent>
-//     </ActionTopLayout>
-//   );
-// };
 const NewCustomer = (props) => {
   let userData = getUserData()
   const [flag, setFlag] = useState("")
-  const [dummy, setDummy] = useState([])
-  const [productDetails, setProductDetails] = useState("")
+  const [saveFlag, setSaveFlag] = useState("")
+   const [productDetails, setProductDetails] = useState("")
   const handleSubmit = (values) =>{
      // setFlag([...flag, flag.length + 1]) 
      values === undefined ? setFlag({name:`${flag + "demo"}`}) : ""
-     
-      console.log('values', values)
+       console.log('values', values)
       if(values !== undefined){
         let cloneValues = values 
         console.log('cloneValues', cloneValues)
         cloneValues.productMerchantID = userData?.ID
         cloneValues.productMerchantName = userData?.userName
         setProductDetails(cloneValues)
+               // props.AddMerchantProduct(JSON.stringify(cloneValues))
         props.AddMerchantProduct(cloneValues)
       }
-
+   
     }
+  const handleSubmitSaveAndSubmit = (values) =>{
+      // setFlag([...flag, flag.length + 1]) 
+     values === undefined ? setSaveFlag({name:`${flag + "demo"}`}) : ""
+    
+     console.log('values', values)
+     if(values !== undefined){
+       let cloneValues = values 
+       console.log('cloneValues', cloneValues)
+       cloneValues.productMerchantID = userData?.ID
+       cloneValues.productMerchantName = userData?.userName
+       cloneValues.isPublish = "true"
+
+       setProductDetails(cloneValues)
+       
+      // props.AddMerchantProduct(JSON.stringify(cloneValues))
+       props.AddMerchantProduct(cloneValues)
+     }
+   
+  }  
 
    console.log('flag', flag) 
   console.log('productDetails updates', productDetails)
@@ -90,12 +76,12 @@ const NewCustomer = (props) => {
               <a title="save">Save</a>
             {/* </Link> */}
           </Button>
-          <Button className="save" size="large" type="primary" style={{marginLeft:"15px"}}>
+          <Button className="save" size="large" type="primary" style={{marginLeft:"15px"}} onClick={()=>handleSubmitSaveAndSubmit()}>
             {/* <Link href="/products"> */}
-            <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+            {/* <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}> */}
 
               <a title="save">Save And Publish</a>
-            </Link>
+            {/* </Link> */}
           </Button>
         </NewOrderAction>
       </ActionContent>
@@ -110,7 +96,7 @@ const NewCustomer = (props) => {
             </Link>
             <TittleHeader>Add product</TittleHeader>
           </ContentHeader>
-          <NewForm submit={(values)=>handleSubmit(values)} flag={flag}/>
+          <NewForm submit={(values)=>handleSubmit(values)} flag={flag} saveSubmit={(values)=>handleSubmitSaveAndSubmit(values)} saveFlag={saveFlag}/>
         </ContentPage>
       </NewContent>
     </PageLayout>

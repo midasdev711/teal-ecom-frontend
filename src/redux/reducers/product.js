@@ -5,6 +5,8 @@ import {
   ADD_MERCHANT_PRODUCT_ERROR,
   GET_PRODUCT_CATEGORY_LISTS,
   GET_PRODUCT_CATEGORY_LISTS_ERROR,
+  GET_PRODUCT_SUB_CATEGORY_LISTS,
+  GET_PRODUCT_SUB_CATEGORY_LISTS_ERROR,
 } from "../actions/actionTypes";
 
 const initData = {
@@ -12,7 +14,9 @@ const initData = {
   errorMsg: null,
   UserProductList: [],
   isGetDetail: false,
-  categoriesLists: []
+  categoriesLists: [],
+  subCategoriesLists:[],
+  success:false
 };
 
 export const productReducer = (state = initData, action) => {
@@ -49,11 +53,24 @@ export const productReducer = (state = initData, action) => {
     case GET_PRODUCT_CATEGORY_LISTS:
       return {
         ...state,
-        categoriesLists: action.data,
+        categoriesLists: action.data.getAllCategories,
         errorMsg: null,
         isGetDetail: true,
       };
     case GET_PRODUCT_CATEGORY_LISTS_ERROR:
+      return {
+        ...state,
+        errorMsg: action.errorMsg,
+        isGetDetail: false,
+      };
+    case GET_PRODUCT_SUB_CATEGORY_LISTS:
+      return {
+        ...state,
+        subCategoriesLists: action.data.getSubCategories,
+        errorMsg: null,
+        isGetDetail: true,
+      };
+    case GET_PRODUCT_SUB_CATEGORY_LISTS_ERROR:
       return {
         ...state,
         errorMsg: action.errorMsg,
