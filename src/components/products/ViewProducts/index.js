@@ -490,7 +490,7 @@ const ButtonMoreActions = styled(Button)`
 const mapStateToProps = (store) => {
   return {
  
-  productList: store.productReducer.UserProductList,
+  productList: store.productReducer.merchantProductLists,
 
   };
 };

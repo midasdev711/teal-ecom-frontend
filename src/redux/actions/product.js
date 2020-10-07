@@ -23,15 +23,15 @@ export const getUserProductLists = (userId) => {
         return apolloClient
             .query({
                 query: GET_MY_PRODUCT_LISTS_QUERY,
-                variables:{MerchantID:userId} 
+                variables:{ID:3} 
             })
            
             .then(res => {
-                console.log(res);
-                if (res.data.users.length > 0) {
+                console.log("M P Lists",res);
+                if (res.data) {
                     dispatch({
                         type: GET_MY_PRODUCT_LISTS,
-                        data: res.data,
+                        data: res.data.getProductByMerchant,
                     });
                 }
             })

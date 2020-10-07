@@ -53,21 +53,21 @@ export default (name, value) => {
       else {
         return false;
       }
-    case 'productImages':
-      let nullArrayData = nullArray(value)
-      if (!isEmptyString) {
-        return "Products images are required";
-      }else if(nullArrayData){
-        return "Products images are required";  
-      } else {
-        return false;
-      }
-    case 'productFeaturedImage':
-      if (!isEmptyString) {
-        return "Product featured image is required";
-      } else {
-        return false;
-      }
+    // case 'productImages':
+    //   let nullArrayData = nullArray(value)
+    //   if (!isEmptyString) {
+    //     return "Products images are required";
+    //   }else if(nullArrayData){
+    //     return "Products images are required";  
+    //   } else {
+    //     return false;
+    //   }
+    // case 'productFeaturedImage':
+    //   if (!isEmptyString) {
+    //     return "Product featured image is required";
+    //   } else {
+    //     return false;
+    //   }
     // case 'variantName':
     //   if (!isEmptyString) {
     //     return "Products variant name is required";

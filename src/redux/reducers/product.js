@@ -12,7 +12,7 @@ import {
 const initData = {
   loading: false,
   errorMsg: null,
-  UserProductList: [],
+  merchantProductLists: [],
   isGetDetail: false,
   categoriesLists: [],
   subCategoriesLists:[],
@@ -25,7 +25,7 @@ export const productReducer = (state = initData, action) => {
     case GET_MY_PRODUCT_LISTS:
       return {
         ...state,
-        UserProductList: action.data,
+        merchantProductLists: action.data === null ? [] : action.data,
         errorMsg: null,
         isGetDetail: true,
       };

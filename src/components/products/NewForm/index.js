@@ -73,7 +73,7 @@ const productInfo = {
     cronicalUrl: "",
   },
   productCategory: "",
-  productInventory: "",
+  // productInventory: "",
   productSubcategory: "",
   productTotalQuantity: "",
   productStartDate: "",
@@ -164,8 +164,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     let cloneProduct = productDetails
     if (VariantsFlag) {
       cloneProduct.productVariants = variants
+      handleProductInventoryTotal()
     } else {
       cloneProduct.productVariants = [{ variantName: "", variantValues: "" }]
+      cloneProduct.productStock = ""
     }
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
@@ -545,15 +547,18 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     handleProductInventoryTotal()
   }
   const handleChangeVariants = (event, index, names) => {
+    console.log('event', event)
     let cloneProductDetails = productDetails
     let cloneVariant = variants
     if (names !== undefined) {
       let cloneProductDetails = productDetails
       let cloneVariant = variants
-      cloneVariant[index][names] = event
+      
+      cloneVariant[index][names] = event.toString()
     } else {
       const { name, value } = event.target
-      cloneVariant[index][name] = value
+      console.log('name , value', name , value)
+      cloneVariant[index][name] = value 
     }
     setVariants(cloneVariant)
     cloneProductDetails.productVariants = cloneVariant
@@ -568,7 +573,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
       inventoryTotal = inventoryTotal + (data.variantValues * 1)
     })
-    cloneProduct.productInventory = inventoryTotal === NaN && inventoryTotal === undefined ? (0) : (inventoryTotal)
+    cloneProduct.productStock = inventoryTotal === NaN && inventoryTotal === undefined ? (0) : (inventoryTotal)
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
     console.log('InventoryTotal', inventoryTotal)
