@@ -157,8 +157,7 @@ mutation products(
 						productAttributes:$productAttributes
 						productStartDate: $productStartDate
 						productEndDate: $productEndDate
-      
-					})                 
+										})                 
 				  {
 						_id
 						productID

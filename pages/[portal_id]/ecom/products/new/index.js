@@ -9,11 +9,13 @@ import { PageLayout } from "../../../../../src/components/views";
 import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
-import { getUserData } from "../../../../../src/utils";
+import { getUserData , GetToken} from "../../../../../src/utils";
 import { AddMerchantProduct } from "../../../../../src/redux/actions/product";
 
 const NewCustomer = (props) => {
   let userData = getUserData()
+  let token = GetToken()
+  console.log('token', token)
   const [flag, setFlag] = useState("")
   const [saveFlag, setSaveFlag] = useState("")
   const [productDetails, setProductDetails] = useState("")
@@ -23,10 +25,11 @@ const NewCustomer = (props) => {
       let cloneValues = values
       console.log('cloneValues', cloneValues)
       cloneValues.productMerchantID = (userData?.ID * 1)
-      cloneValues.productMerchantName = userData?.userName
+      cloneValues.productMerchantName = userData?.name
       cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
+      // cloneValues.token = token.toString()
       setProductDetails(cloneValues)
       // props.AddMerchantProduct(JSON.stringify(cloneValues))
       props.AddMerchantProduct(cloneValues)
@@ -39,11 +42,13 @@ const NewCustomer = (props) => {
       let cloneValues = values
       console.log('cloneValues', cloneValues)
       cloneValues.productMerchantID = (userData?.ID * 1)
-      cloneValues.productMerchantName = userData?.userName
+      cloneValues.productMerchantName = userData?.name
       cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
       cloneValues.isPublish = "true"
+      // cloneValues.token = token.toString()
+
       setProductDetails(cloneValues)
       // props.AddMerchantProduct(JSON.stringify(cloneValues))
       props.AddMerchantProduct(cloneValues)

@@ -66,3 +66,15 @@ export const buildDynamicRoute = (route, userData) => {
   }
   return result;
 }
+export const GetToken = () => {
+  if (process.browser) {
+    try {
+      const token = localStorage.getItem("_token_tel");
+          return token;
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+
+}
