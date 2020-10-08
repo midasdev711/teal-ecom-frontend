@@ -58,7 +58,7 @@ const ViewOrders = () => {
       dataIndex: "order_id",
       render: (order_id) => {
         return (
-          <Link href="/order/123">
+          <Link href="/orders/123">
             <FullName href="">#{order_id}</FullName>
           </Link>
         );
