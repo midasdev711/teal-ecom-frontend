@@ -12,19 +12,14 @@ export function getCustomers(limit, page) {
     return (dispatch) => {
         return apolloClient.query({
             query: GET_CUSTOMERS,
-          variables: {
-            filters: {
-                limit: limit,
-                page: page
-              },
-          },
+          
             fetchPolicy: "network-only",
           })
           .then((res) => {
             if (res.data) {
               dispatch({
                 type: ACTION_GET_CUSTOMERS,
-                data: res.data.articles,
+                data: res.data.customers,
               });
             }
           })

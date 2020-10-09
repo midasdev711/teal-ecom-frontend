@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
@@ -8,13 +8,30 @@ import { NewForm } from "../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 
-
-
+import { apolloClient } from "../../../src/graphql";
+import { CREATE_CUSTOMER_MUTATION } from "../../../src/graphql/customers.query";
+import { message, Form } from "antd";
 const NewCustomer = () => {
   // const [form] = Form.useForm();
-  const [BasicDetails, setBasicDetails] = useState({});
-  const [AddressDetails, setAddressDetails] = useState({});
-  const [Tax, setTax] = useState('');
+  const [BasicDetails, setBasicDetails] = useState({
+    FirstName: '',
+    LastName: '',
+    Email: '',
+    Mobile: '',
+    EmailFlag: false
+  });
+  const [AddressDetails, setAddressDetails] = useState({
+    FirstName: '',
+    LastName: '',
+    Company: '',
+    Apartment: '',
+    City: '',
+    Country: '',
+    PostalCode: '',
+    Mobile: '',
+  });
+  const [TaxFlag, setTaxFlag] = useState(false);
+  const [Tax, setTax] = useState(0);
   const [Notes, setNotes] = useState('');
   const [Tags, setTags] = useState('');
   const newActions = () => {
@@ -26,20 +43,77 @@ const NewCustomer = () => {
             <Button className="cancel" size="large">
               Cancel
             </Button>
-            <Button size="large" type="primary">
-              <Link href="/customers/[pid]" as='/customers/123456789'>
-                <a title="save">Save</a>
-              </Link>
+            <Button size="large" type="primary" onClick={() => saveData()}>
+              Save
             </Button>
           </NewCustomerAction>
         </ActionContent>
       </ActionTopLayout>
     );
   };
-  const onChange = (val) =>{
+  const saveData = () => {
+    let _variables = {
+      BasicDetailsFirstName: BasicDetails.FirstName,
+      BasicDetailsLastName: BasicDetails.LastName,
+      BasicDetailsEmail: BasicDetails.Email,
+      BasicDetailsMobile: BasicDetails.Mobile,
+      BasicDetailsEmailFlag: BasicDetails.EmailFlag,
+      AddressDetailsFirstName: AddressDetails.FirstName,
+      AddressDetailsLastName: AddressDetails.LastName,
+      AddressDetailsCompany: AddressDetails.Company,
+      AddressDetailsApartment: AddressDetails.Apartment,
+      AddressDetailsCity: AddressDetails.City,
+      AddressDetailsCountry: AddressDetails.Country,
+      AddressDetailsPostalCode: AddressDetails.PostalCode,
+      AddressDetailsMobile: AddressDetails.Mobile,
+      Tax: Tax,
+      Notes: Notes,
+      Tags: Tags,
+    };
+
+    apolloClient
+      .mutate({
+        mutation: CREATE_CUSTOMER_MUTATION,
+        variables: _variables,
+      })
+      .then((res) => {
+        if (res.data) {
+          message.success("Created new customer successfully!");
+          // router.push("/customers", format({ pathname: "/customers" }), { shallow: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Created new customer failed!");
+      });
+  }
+
+  const handleChangeValue = (e, module, element) => {
+    console.log('dfdfdf', e.target, e, module)
+    if (module === 'BasicDetails') {
+      if (element === 'Mobile') {
+        setBasicDetails({ ...BasicDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setBasicDetails({ ...BasicDetails, [name]: value })
+      }
+    } else if (module === 'AddressDetails') {
+      if (element === 'Mobile' || element === 'Country') {
+        setAddressDetails({ ...AddressDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setAddressDetails({ ...AddressDetails, [name]: value })
+      }
+    } else {
+      let { name, value } = e.target
+      if (name === 'TaxFlag') {
+        setTaxFlag(e.target.checked)
+      } else if (name === 'Notes') {
+        setNotes(e.target.value)
+      }
+    }
 
   }
-console.log('Tax', Notes)
   return (
     <PageLayout>
       <NewContent>
@@ -53,7 +127,7 @@ console.log('Tax', Notes)
             </Link>
             <TittleHeader>Customers</TittleHeader>
           </ContentHeader>
-          <NewForm onChange={onChange} />
+          <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} />
         </ContentPage>
       </NewContent>
     </PageLayout>
