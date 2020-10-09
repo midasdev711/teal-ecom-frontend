@@ -79,8 +79,8 @@ export const login = (email, password) => {
 	};
 };
 
-export const signup = (email, password, name) => {
-	console.log(email, password, name);
+export const signup = (email, password, name , mobileNo) => {
+	console.log(email, password, name , mobileNo);
 	return dispatch => {
 		return apolloClient
 			.mutate({
@@ -89,6 +89,7 @@ export const signup = (email, password, name) => {
 					name,
 					email,
 					password,
+					mobileNo,
 					signUpMethod: 'Site',
 				},
 			})

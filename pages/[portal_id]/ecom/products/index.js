@@ -1,14 +1,4 @@
-// import React from 'react'
-// import Products from '../../../products'
 
-
-// export default function ProductTab() {
-//     return (
-//         <div>
-//             <Products />
-//         </div>
-//     )
-// }
 import React from "react";
 import { PageLayout } from "../../../../src/components/views";
 import { TEPageFooter } from "../../../../src/components/atoms";

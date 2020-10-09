@@ -58,6 +58,28 @@ export const getUserData = () => {
   return {};
 
 }
+export const dateFormat = (value) => {
+
+  let actualDate
+  if (value !== "" && value !== undefined) {
+    actualDate = new Date((value * 1))
+    let month, day, year
+      month = '' + (actualDate.getMonth() + 1),
+      day = '' + actualDate.getDate(),
+      year = actualDate.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+   actualDate = [year, month, day].join('-')
+  } else {
+    actualDate = ""
+  }
+
+  return actualDate
+
+}
 
 export const buildDynamicRoute = (route, userData) => {
   let result = route;
@@ -70,7 +92,7 @@ export const GetToken = () => {
   if (process.browser) {
     try {
       const token = localStorage.getItem("_token_tel");
-          return token;
+      return token;
     } catch (e) {
       return {};
     }

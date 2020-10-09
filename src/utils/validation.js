@@ -8,23 +8,23 @@ let min_price = 0;
 let starttime = 0;
 
 export default (name, value) => {
-  if (name === 'password') {
-    password = value
-  }
-  if (name === "min_age") {
-    min_age = value
-  }
-  if (name === "timefrom") {
-    let start = moment(value).unix();
-    timefrom = start
-  }
-  if (name === "starttime") {
-    let timestart = moment(value).unix();
-    starttime = timestart
-  }
-  if (name === "min_price") {
-    min_price = value
-  }
+  // if (name === 'password') {
+  //   password = value
+  // }
+  // if (name === "min_age") {
+  //   min_age = value
+  // }
+  // if (name === "timefrom") {
+  //   let start = moment(value).unix();
+  //   timefrom = start
+  // }
+  // if (name === "starttime") {
+  //   let timestart = moment(value).unix();
+  //   starttime = timestart
+  // }
+  // if (name === "min_price") {
+  //   min_price = value
+  // }
   const isValidString = stringValue(value);
   const isEmptyString = isEmpty(value);
   
@@ -53,44 +53,44 @@ export default (name, value) => {
       else {
         return false;
       }
-    // case 'productImages':
-    //   let nullArrayData = nullArray(value)
-    //   if (!isEmptyString) {
-    //     return "Products images are required";
-    //   }else if(nullArrayData){
-    //     return "Products images are required";  
-    //   } else {
-    //     return false;
-    //   }
-    // case 'productFeaturedImage':
-    //   if (!isEmptyString) {
-    //     return "Product featured image is required";
-    //   } else {
-    //     return false;
-    //   }
-    // case 'variantName':
-    //   if (!isEmptyString) {
-    //     return "Products variant name is required";
-    //   } else {
-    //     return false;
-    //   }
-    // case 'variantValues':
-    //   if (!isEmptyString) {
-    //     return "Product variant value is required";
-    //   } else {
-    //     return false;
-    //   }
-    // case 'productMRP':
-    //   const onlyNumber = number(value)
-    //   if (!isEmptyString) {
-    //     return "Compare at price is required";
-    //   }
-    //   //  else if(!onlyNumber) {
-    //   //   return "Only digit allow string not allowed";
-    //   // }
-    //   else {
-    //     return false;
-    //   }
+    case 'productImages':
+      let nullArrayData = nullArray(value)
+      if (!isEmptyString) {
+        return "Products images are required";
+      }else if(nullArrayData){
+        return "Products images are required";  
+      } else {
+        return false;
+      }
+    case 'productFeaturedImage':
+      if (!isEmptyString) {
+        return "Product featured image is required";
+      } else {
+        return false;
+      }
+    case 'variantName':
+      if (!isEmptyString) {
+        return "Products variant name is required";
+      } else {
+        return false;
+      }
+    case 'variantValues':
+      if (!isEmptyString) {
+        return "Product variant value is required";
+      } else {
+        return false;
+      }
+    case 'productMRP':
+      const onlyNumber = number(value)
+      if (!isEmptyString) {
+        return "Compare at price is required";
+      }
+      //  else if(!onlyNumber) {
+      //   return "Only digit allow string not allowed";
+      // }
+      else {
+        return false;
+      }
     case 'productCostPerItem':
       if (!isEmptyString) {
         return "Product cost per item price is required";
@@ -108,17 +108,17 @@ export default (name, value) => {
       } else {
         return false;
       }
-    case 'productTags':
-      console.log('object called into web site')
-      const nullArrayData1 = nullArray(value)
-      if (!isEmptyString) {
-        return "Product tags is required";
-      }else if(nullArrayData1){
-        console.log('dataa insde tags')
-        return "Product tags is required";
-      } else {
-        return false;
-      }
+    // case 'productTags':
+    //   console.log('object called into web site')
+    //   const nullArrayData1 = nullArray(value)
+    //   if (!isEmptyString) {
+    //     return "Product tags is required";
+    //   }else if(nullArrayData1){
+    //     console.log('dataa insde tags')
+    //     return "Product tags is required";
+    //   } else {
+    //     return false;
+    //   }
     // case 'InventoryBarcode':
     //   if (!isEmptyString) {
     //     return "Inventory barcode is required";
@@ -153,18 +153,18 @@ export default (name, value) => {
     //   } else {
     //     return false;
     //   }
-    case 'productStartDate':
-      if (!isEmptyString) {
-        return "Product start date is required";
-      } else {
-        return false;
-      }
-    case 'productEndDate':
-      if (!isEmptyString) {
-        return "Product end date is required";
-      } else {
-        return false;
-      }
+    // case 'productStartDate':
+    //   if (!isEmptyString) {
+    //     return "Product start date is required";
+    //   } else {
+    //     return false;
+    //   }
+    // case 'productEndDate':
+    //   if (!isEmptyString) {
+    //     return "Product end date is required";
+    //   } else {
+    //     return false;
+    //   }
 
     case 'description':
       if (!isEmptyString) {

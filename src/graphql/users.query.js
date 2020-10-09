@@ -48,6 +48,7 @@ export const LOGIN_USER_QUERY = gql`
 			name
 			uniqueID
 			password
+			mobileNo
 		}
 	}
 `;

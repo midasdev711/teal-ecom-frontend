@@ -14,6 +14,8 @@ const PRODUCTS_QUERY = gql`
 export const GET_MY_PRODUCT_LISTS_QUERY = gql`
    query($ID: Int) { 
 	getProductByMerchant(ID:$ID)  {
+		_id
+		ID
 		merchantID
 		merchantName
 		totalQuantity
@@ -29,6 +31,7 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		attributeName
 		attributeValues
 		}
+		stock
 		endDate
 		tags
 		description
@@ -38,101 +41,44 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		cronicalUrl
 		description
 		}
-		subCategory
-		category
-		sku
+		subCategory{
+			ID
+		}
+		category{
+			ID
+		}
+			sku
 		title
 		productCost
-		}
+				}
 		}`;
 
-// export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
-// 		 mutation products(
-// 			$productMerchantID: Int
-//    $productMerchantName: String
-//    $productSKU: String
-//    $productTitle: String
-//    $productSlug: String
-//    $productDescription: String
-//    $productMRP: String
-//    $productSalePrice: String
-//    $productThumbnailImage: String
-//    $productFeaturedImage: String
-//    $productImages : String
-//    $productCategory: Int
-//    $productSubcategory: Int
-//    $productSEO: ProductSEOInput
-//    $productTotalQuantity: Int
-//      $productTags: [String]
-//    $productStock: Int
-//      $productVariants: ProductVariantInput
-//    $productAttributes: [string]
-//    $productStartDate: String
-//    $productEndDate: String
 
-// 			){
-// 			upsertArticle{ 
-
-// 				productMerchantID: $productMerchantID
-// 				productMerchantName: $productMerchantName 
-// 				productSKU: $productSKU
-// 				productTitle: $productTitle
-// 				productSlug: $productSlug
-// 				productDescription: $productDescription
-// 				productMRP: $productMRP
-// 				productSalePrice: $productSalePrice
-// 				productThumbnailImage: $productThumbnailImage
-// 				productFeaturedImage: $productFeaturedImage
-// 				productImages : $productImages
-// 				productCategory: $productCategory
-// 				productSubcategory: $productSubcategory
-// 				productSEO: $productSEO
-// 				productTotalQuantity: $productTotalQuantity
-// 				productTags: $productTags
-// 				productStock: $productStock
-// 				productVariants: $productVariants
-// 				productAttributes:$productAttributes
-// 				productStartDate: $productStartDate
-// 				productEndDate: $productEndDate
-
-//       )        {
-// 				_id
-// 				productID
-// 		   	    productMerchantID
-// 				productMerchantName
-// 				productSKU
-// 				productTitle
-// 				productDescription
-// 				productSalePrice
-// 				productFeaturedImage
-// 				productTotalQuantity
-// 		       }
-// 	}
-// }
-// `;
 export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
 mutation products(
-    $productMerchantID: Int
-   $productMerchantName: String
-   $productSKU: String
-   $productTitle: String
-   $productSlug: String
-   $productDescription: String
-   $productMRP: String
-   $productSalePrice: String
-   $productThumbnailImage: String
-   $productFeaturedImage: String
-   $productImages : [String]
-   $productCategory: Int
-   $productSubcategory: Int
-   $productSEO: ProductSEOInput
-   $productTotalQuantity: Int
-     $productTags: [String]
-   $productStock: Int
-     $productVariants: [ProductVariantInput]
-   $productAttributes: [ProductAttributeInput]
-   $productStartDate: String
-  $productEndDate: String
+	$productMerchantID: Int
+	$productMerchantName: String
+	$productSKU: String
+	$productTitle: String
+	$productSlug: String
+	$productDescription: String
+	$productMRP: Int
+	$productCostPerItem:Int
+	$productSalePrice: Int
+	$productThumbnailImage: String
+	$productFeaturedImage: String
+	$productImages : [String]
+	$productCategory: Int
+	$productSubcategory: Int
+	$productSEO: ProductSEOInput
+	$productTotalQuantity: Int
+	$productTags: [String]
+	$productStock: Int
+	$productVariants: [ProductVariantInput]
+	$productAttributes: [ProductAttributeInput]
+	$productStartDate: String
+	$productEndDate: String
+	$isPublish:String
   ) {
     upsertProduct(
      product:{
@@ -157,101 +103,128 @@ mutation products(
 						productAttributes:$productAttributes
 						productStartDate: $productStartDate
 						productEndDate: $productEndDate
+						productCostPerItem:$productCostPerItem
+						isPublish:$isPublish
 										})                 
 				  {
 						_id
-						productID
-				   	    productMerchantID
-						productMerchantName
-						productSKU
-						productTitle
-						productDescription
-						productSalePrice
-						productFeaturedImage
-						productTotalQuantity
+						ID
+				   	    merchantID
+						merchantName
+						sku
+						title
+						description
+						salePrice
+						featuredImage
+						totalQuantity
+						productCost
+						mrp
+						stock
+					    thumbnailImage
+						featuredImage
+						images
+						isPublish
+						endDate
+                        startDate
+                        totalQuantity
+						attributes
+						{
+						attributeName
+						}
+						variants
+						{
+						variantName
+						}
+						seo
+						{
+						cronicalUrl
+						}
+						slug
+						tags
 				       }
   }
 `;
-// export const ADD_MERCHANT_PRODUCT_MUTATION = gql`
-// 		 mutation(
-// 			$merchant_id :Int,
-// 			$product_title: String,
-// 			$product_des: String,
-// 			$price_USD:String,
-// 			$slug:String,
-// 			$SKU: String,
-// 			$Inventory : Int,
-// 			$Search_engine_title: String,
-// 			$Search_engine_description : String,
-// 			$ProductCategory: [ParentCategoriesInput],
-// 			$ProductSubcategory: [SubCategoriesInput],
-// 			$publication_date:String,
-// 			$merchant_name:String,
-// 			$visibility:String,
-// 			$ProductImage:String!
-// 			){ 
 
-// 				upsertProduct(
-// 				productMerchantID: $merchant_id
-// 				productMerchantName: $merchant_name
-// 				productSKU: $SKU
-// 				productTitle: $product_title 
-// 				productDescription: $product_des 
-// 				productSlug: $slug
-// 				productSalePrice: $price_USD 
-// 				productStartDate:$publication_date 
-// 				productSearchEngineTitle:$Search_engine_title 
-// 				productSearchEngineDescription:$Search_engine_description 
-// 				productCategory: $ProductCategory
-// 				productSubcategory: $ProductSubcategory 
-// 				isPublish: $visibility 
-// 				productTotalQuantity: $Inventory 
-// 				productFeaturedImage: $ProductImage
-//       ){
-// 				_id
-// 				productID
-// 		   	    productMerchantID
-// 				productMerchantName
-// 				productSKU
-// 				productTitle
-// 				productDescription
-// 				productSalePrice
-// 				productFeaturedImage
-// 				productTotalQuantity
-//         }
-// }
-// `;
 export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
       query{ getAllCategories{
 		id
-    ID
-    Name
-    isParent
+        ID
+        name
+        isParent
 		} }
 		`;
 
-// query
-// {
-//   getAllCategories
-//   {
-//   	id
-//     ID
-//     Name
-//     isParent
-//   }
-// }
+
 export const GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY = gql`
 query($ID:Int){ getSubCategories(ID:$ID) {
 	id
-	Name
+	name
 	ID
-	Description
+	description
 	} }
 	`;
+export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
+
+	query($products:ID){
+		 products(filters:{productIds:[$products]})
+		 {
+		
+			_id
+			ID
+			merchantID
+			merchantName
+			sku
+			title
+			description
+			salePrice
+			featuredImage
+			totalQuantity
+			productCost
+			category
+    {
+      ID
+    }
+    subCategory
+    {
+      ID
+    }
+			mrp
+			stock
+			thumbnailImage
+			featuredImage
+			images
+			isPublish
+			endDate
+			startDate
+			totalQuantity
+			attributes
+			{
+			attributeName
+			attributeValues
+			}
+			seo
+    {
+		title		
+      description
+      cronicalUrl
+    }
+    variants
+    {
+      variantName
+      variantsValues
+    }
+			slug
+			tags
+			}
+ }
+			`;
+
+
 export default {
 	PRODUCTS_QUERY,
 	GET_MY_PRODUCT_LISTS_QUERY,
 	ADD_MERCHANT_PRODUCT_MUTATION,
 	GET_PRODUCT_CATEGORY_LISTS_QUERY,
 	GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY,
+	GET_MERCHANT_PRODUCT_BY_ID_QUERY,
 };

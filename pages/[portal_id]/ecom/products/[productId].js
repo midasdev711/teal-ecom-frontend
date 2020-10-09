@@ -11,12 +11,18 @@ import {
   CopyOutlined,
   LeftOutlined,
 } from "@ant-design/icons";
+import {
+  Divider,
+  Button,
+} from "antd";
 // ui
 import { Row, Col } from "antd";
+import ProductDetail from "./editProduct";
 import ViewProductDetail from "../../../../src/components/products/ViewProductDetail";
 import { getUserData } from "../../../../src/utils";
 
-const ProductDetail = () => {
+
+const EditProductDetails = () => {
   let userData = getUserData()
   return (
     <PageLayout>
@@ -52,8 +58,21 @@ const ProductDetail = () => {
             <EyeOutlined /> View
           </ButtonView>
         </ContentHeader>
-
-        <ViewProductDetail />
+        {
+          <ProductDetail />
+        }
+         <ActionBottom>
+    
+        <AlignItem>
+          <Button size="large" type="primary" danger>
+            Delete product
+          </Button>
+          <Button size="large" type="primary">
+            Save
+          </Button>
+        </AlignItem>
+      </ActionBottom>
+        {/* <ViewProductDetail /> */}
       </CustomerContent>
     </PageLayout>
   );
@@ -117,4 +136,15 @@ const ButtonNext = styled.a`
 const LinkBack = styled.a`
   color: #333;
 `;
-export default ProductDetail;
+const ActionBottom = styled.div`
+  margin-top: 20px;
+`;
+const AlignItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+export default EditProductDetails;
+
+
+
+

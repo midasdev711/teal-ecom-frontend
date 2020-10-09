@@ -16,10 +16,14 @@ import {
   PlusCircleTwoTone,
   MinusCircleTwoTone, ZoomInOutlined, PlusOutlined, MinusOutlined
 } from "@ant-design/icons";
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
+
 
 
 // ui
-import { RemirorEditor } from "../../atoms";
+import { RemirorEditor, TEPageLoader } from "../../atoms";
 import {
   Form,
   Input,
@@ -48,25 +52,25 @@ import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/prod
 const { Search } = Input;
 const { Option } = Select;
 const { Dragger } = Upload;
-const productInfo = {
+let productInfo = {
   productMerchantID: "",
   productMerchantName: "",
   productSKU: "",
   productTitle: "",
   productDescription: "",
   productSlug: "",
-  productMRP: "",
-  productSalePrice: "",
-  productCostPerItem: "",
+  productMRP: 0,
+  productSalePrice: 0,
+  productCostPerItem: 0,
   isPublish: "false",
   productTags: [],
-  productStock: "",
+  productStock: 0,
   productVariants: [{
     variantName: "",
     variantValues: "",
   }],
   productThumbnailImage: "",
-  productImages: [],
+  productImages:[],
   productSEO: {
     title: "",
     description: "",
@@ -88,6 +92,46 @@ const productInfo = {
 
 }
 
+let cleanData = {
+  productMerchantID: "",
+  productMerchantName: "",
+  productSKU: "",
+  productTitle: "",
+  productDescription: "",
+  productSlug: "",
+  productMRP: 0,
+  productSalePrice: 0,
+  productCostPerItem: 0,
+  isPublish: "false",
+  productTags: [],
+  productStock: 0,
+  productVariants: [{
+    variantName: "",
+    variantValues: "",
+  }],
+  productThumbnailImage: "",
+  productImages:[],
+  productSEO: {
+    title: "",
+    description: "",
+    cronicalUrl: "",
+  },
+  productCategory: "",
+  // productInventory: "",
+  productSubcategory: "",
+  productTotalQuantity: "",
+  productStartDate: "",
+  productEndDate: "",
+  productFeaturedImage: "",
+
+  productAttributes: [{
+    //  attributeValues: ""
+    attributeName: "productWeight",
+    attributeValues: []
+  }]
+
+}
+const antIcon = <LoadingOutlined style={{ fontSize: 30}} spin />;
 const ProductSEOInfo = ["title", "description", "cronicalUrl"]
 
 const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists }) => {
@@ -96,9 +140,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [inputValue, setInputValue] = useState("");
   const [inputVisible, setInputVisible] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
+  const [loadingFlag, setLoadingFlag] = useState(false);
   const [openManageMD, setOpenManageMD] = useState(false);
   const [openEditSite, setOpenEditSite] = useState(true);
   const [country, setCountry] = useState("United States");
+  const [clearFlag, setClearFlag] = useState("");
   const [productDetails, setProductDetails] = useState(productInfo);
   const [errors, setErrors] = useState({});
   const [dummyData, setDummyData] = useState([1]);
@@ -112,6 +158,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [unit, setUnit] = useState("kg");
   const categoryLists = useSelector(state => state.productReducer.categoriesLists)
   const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
+  const loading = useSelector(state => state.productReducer.status)
+  console.log('loading', loading)
   console.log('subCategories', subCategories)
   console.log('categoryLists', categoryLists)
   // useEffect(()=>{
@@ -124,6 +172,21 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   //   setProductDetails(cloneProduct)
   //   setDummyData([dummyData + 1])
   //     },[country])
+  console.log('productInfo', productInfo)
+  useEffect(()=>{
+    productInfo = cleanData
+    setProductDetails(cleanData)
+    setErrors({})
+  
+  },[clearFlag])
+  useEffect(()=>{
+   if(loading === "start"){
+    setLoadingFlag(true)
+   }else{
+    setLoadingFlag(false)
+   }
+  
+  },[loading])
   useEffect(() => {
     if (flag !== "") {
       handleSubmit("save")
@@ -219,7 +282,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader()
       fileReader.onloadend = () => {
-        let b64 = fileReader.result.replace(/^data:.+;base64,/, '');
+        let b64 = fileReader.result
         if (names === "featureProducts") {
           let cloneProductDetails = productDetails
           let cloneProductDetails1 = productDetails.productFeaturedImage
@@ -301,7 +364,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
 
       if (names === "productSalePrice") {
-        cloneProduct.productSalePrice = event === null ? ("") : event.toString()
+        cloneProduct.productSalePrice = event === null ? ("") : event
         setProductDetails(cloneProduct)
         handleValidation(names)
         handleProductCompareAtPrice()
@@ -311,11 +374,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         setProductDetails(cloneProduct)
         handleValidation(names)
       } else if (names === "productMRP") {
-        cloneProduct.productMRP = event === null ? "" : event.toString()
+        cloneProduct.productMRP = event === null ? "" : event
         setProductDetails(cloneProduct)
         handleValidation(names)
       } else if (names === "productCostPerItem") {
-        cloneProduct.productCostPerItem = event === null ? "" : event.toString()
+        cloneProduct.productCostPerItem = event === null ? "" : event
         setProductDetails(cloneProduct)
         handleValidation(names)
         handleProfitAndMargin()
@@ -604,6 +667,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
 
   return (
+    
     <Form
       name="basic"
       onFinish={onFinish}
@@ -611,6 +675,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       className="form-new"
       layout="vertical"
     >
+     
+        {
+          loadingFlag ? ( <Loader className="loader_wrap"> <Spin indicator={antIcon} />   </Loader>) : ("")
+        } 
+   
       <SubForm>
         <Row gutter={24} className="margin-bottom">
           <Col md={16}>
@@ -714,11 +783,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 <Col md={12}>
                   <Form.Item label="Compare at price">
                     <InputNumberStyle
-                      disabled
+                    
                       min={0}
                       onChange={(event) => handleChange(event, "productMRP")}
-                      placeholder="0.00"
-                      value={productDetails?.productMRP || 0}
+                      placeholder="0"
+                    //  value={productDetails?.productMRP || 0}
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       }
@@ -888,7 +957,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               </Checkbox> <br></br>
               {
                 VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
-                  return <Row gutter={0}>
+                  return <Row gutter={0} keys={index}>
                     <Col md={9}>
                       <Form.Item label="Variant Name" >
                         <TextInput name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
@@ -1084,7 +1153,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                       <Option value="Select" disabled>Select</Option>
                       {
                         categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
-                          return <Option key={index} value={data?.ID}>{data?.Name}</Option>
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
                         })
                       }
                     </Select>
@@ -1106,7 +1175,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                       <Option value="Select" disabled>Select</Option>
                       {
                         subCategories && subCategories.length > 0 && subCategories.map((data, index) => {
-                          return <Option key={index} value={data?.ID}>{data?.Name}</Option>
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
                         })
                       }
 
@@ -1269,6 +1338,19 @@ const GroupContent = styled.div`
   input {
     padding: 8px 12px;
   }
+`;
+const Loader = styled.div`
+    position: fixed;
+    left: 250px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255,255,255,0.7);
 `;
 
 const SearchBox = styled(Search)`

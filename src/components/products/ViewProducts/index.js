@@ -26,7 +26,7 @@ import {
 } from "antd";
 import { getUserData } from "../../../utils";
 import { getUserProductLists } from "../../../redux/actions/product";
-import { connect } from "react-redux";
+import { connect , useSelector } from "react-redux";
 
 
 const { TabPane } = Tabs;
@@ -57,7 +57,10 @@ const customerData = [
 ];
 
 const ViewCustomers = (props) => {
-  console.log('productList', props.productList)
+  // const { productList } = props
+  const productList = useSelector(state =>state.productReducer.merchantProductLists)
+
+   console.log(`productList`, productList)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -74,40 +77,45 @@ const ViewCustomers = (props) => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   let userData = getUserData()
-  useEffect(()=>{
-    let userId = userData?.ID  
-      props.getUserProductLists(userId)
-  },[])
+
+  useEffect(() => {
+    
+    let userId = userData?.ID
+    props.getUserProductLists(userId)
+  }, [productList])
 
   const columns = [
     {
       title: "Product",
-      dataIndex: "product",
-      render: (product) => {
+      dataIndex: "title",
+      render: (title, productListsData ) => {
+      
+        console.log('productListsData', productListsData)
+        console.log('title', title)
         return (
           <div>
-            <ProductImage src={product.img}></ProductImage>
-            <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/123456789`} shallow={true}>
-              <a> {product && product.name}</a>
+            <ProductImage src={productListsData.thumbnailImage}></ProductImage>
+            <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/${productListsData.ID}`} shallow={true}>
+              <a> {title || ""}</a>
             </Link>
           </div>
         );
       },
     },
     {
-      title: "Inventory",
-      dataIndex: "inventory",
-      render: (inventory) => <div>{inventory}</div>,
+      title: "Stock",
+      dataIndex: "stock",
+      render: (stock) => <div>{stock || ""}</div>,
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      render: (type) => <div>{type}</div>,
+      title: "Price",
+      dataIndex: "salePrice",
+      render: (salePrice) => <div>{`$ ${salePrice}` || ""}</div>,
     },
     {
-      title: "Vendor",
-      dataIndex: "vendor",
-      render: (vendor) => <div>{vendor}</div>,
+      title: "Quantity",
+      dataIndex: "totalQuantity",
+      render: (totalQuantity) => <div>{totalQuantity || ""}</div>,
       align: "center",
     },
   ];
@@ -228,8 +236,8 @@ const ViewCustomers = (props) => {
                 ...rowSelection,
               }}
               columns={columns}
-              dataSource={customerData}
-              pagination={customerData.length > 10}
+              dataSource={productList}
+              pagination={productList.length > 10}
             />
           )}
         </ContentTab>
@@ -489,8 +497,8 @@ const ButtonMoreActions = styled(Button)`
 
 const mapStateToProps = (store) => {
   return {
- 
-  productList: store.productReducer.merchantProductLists,
+
+    // productList: store.productReducer.merchantProductLists,
 
   };
 };

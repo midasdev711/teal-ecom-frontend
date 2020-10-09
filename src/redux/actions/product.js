@@ -4,6 +4,8 @@ import {
     ADD_MERCHANT_PRODUCT_MUTATION,
     GET_PRODUCT_CATEGORY_LISTS_QUERY,
     GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY,
+    GET_MERCHANT_PRODUCT_BY_ID_QUERY,
+   
  } from '../../graphql/products.query';
 
 import {
@@ -11,19 +13,25 @@ import {
     GET_MY_PRODUCT_LISTS_ERROR,
     ADD_MERCHANT_PRODUCT,
     ADD_MERCHANT_PRODUCT_ERROR,
+    ADD_MERCHANT_PRODUCT_START,
     GET_PRODUCT_CATEGORY_LISTS,
     GET_PRODUCT_CATEGORY_LISTS_ERROR,
     GET_PRODUCT_SUB_CATEGORY_LISTS,
     GET_PRODUCT_SUB_CATEGORY_LISTS_ERROR,
+    RESET_PRODUCT_STATUS,
+    GET_MERCHANT_PRODUCT_BY_ID_ERROR,
+    GET_MERCHANT_PRODUCT_BY_ID_START,
+    GET_MERCHANT_PRODUCT_BY_ID_SUCCESS,
    } from './actionTypes';
 
 export const getUserProductLists = (userId) => {
     console.log('userId', userId)
     return dispatch => {
+        
         return apolloClient
             .query({
                 query: GET_MY_PRODUCT_LISTS_QUERY,
-                variables:{ID:3} 
+                variables:{ID:userId} 
             })
            
             .then(res => {
@@ -47,6 +55,9 @@ export const getUserProductLists = (userId) => {
 export const AddMerchantProduct = (datas) => {
    
     return dispatch => {
+        dispatch({
+            type: ADD_MERCHANT_PRODUCT_START,
+                   })
         return apolloClient
             .mutate({
                 mutation: ADD_MERCHANT_PRODUCT_MUTATION,
@@ -54,7 +65,7 @@ export const AddMerchantProduct = (datas) => {
               })
             .then(res => {
                 console.log(res);
-                if (res) {
+                if (res.data) {
                     dispatch({
                         type: ADD_MERCHANT_PRODUCT,
                         data: res.data,
@@ -122,6 +133,45 @@ export const getProductSubCategoryLists = (id) => {
                 console.log(err);
                 dispatch({
                     type: GET_PRODUCT_SUB_CATEGORY_LISTS_ERROR,
+                    errorMsg: err.message,
+                });
+            });
+    };
+};
+export const resetProductStatus = () => {
+     return dispatch => {
+        dispatch({
+            type: RESET_PRODUCT_STATUS,
+                   })   
+    };
+};
+
+export const getMerchantProductByID = (id) => {
+    
+    return dispatch => {
+        dispatch({
+            type: GET_MERCHANT_PRODUCT_BY_ID_START,
+            
+        });
+        return apolloClient
+            .query({
+                query: GET_MERCHANT_PRODUCT_BY_ID_QUERY,
+                variables:{products:id} 
+            })
+           
+            .then(res => {
+                console.log("M P ID Details",res);
+                if (res.data) {
+                    dispatch({
+                        type: GET_MERCHANT_PRODUCT_BY_ID_SUCCESS,
+                        data: res.data.products,
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                dispatch({
+                    type: GET_MERCHANT_PRODUCT_BY_ID_ERROR,
                     errorMsg: err.message,
                 });
             });

@@ -2,20 +2,21 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { Button, Layout } from "antd";
-import { connect } from "react-redux";
-
+import { connect , useSelector } from "react-redux";
+import Router from "next/router";
 // components
 import { PageLayout } from "../../../../../src/components/views";
 import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 import { getUserData , GetToken} from "../../../../../src/utils";
-import { AddMerchantProduct } from "../../../../../src/redux/actions/product";
+import { AddMerchantProduct  , resetProductStatus } from "../../../../../src/redux/actions/product";
 
 const NewCustomer = (props) => {
   let userData = getUserData()
   let token = GetToken()
   console.log('token', token)
+  const apiStatus = useSelector((state)=>state.productReducer.status)
   const [flag, setFlag] = useState("")
   const [saveFlag, setSaveFlag] = useState("")
   const [productDetails, setProductDetails] = useState("")
@@ -26,12 +27,15 @@ const NewCustomer = (props) => {
       console.log('cloneValues', cloneValues)
       cloneValues.productMerchantID = (userData?.ID * 1)
       cloneValues.productMerchantName = userData?.name
-      cloneValues.productMRP = cloneValues.productMRP.toString()
+    //  cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
+      cloneValues.isPublish = "false"
       // cloneValues.token = token.toString()
       setProductDetails(cloneValues)
       // props.AddMerchantProduct(JSON.stringify(cloneValues))
+      // let data = JSON.parse(cloneValues)
+      // console.log('data', data)
       props.AddMerchantProduct(cloneValues)
     }
 
@@ -43,7 +47,7 @@ const NewCustomer = (props) => {
       console.log('cloneValues', cloneValues)
       cloneValues.productMerchantID = (userData?.ID * 1)
       cloneValues.productMerchantName = userData?.name
-      cloneValues.productMRP = cloneValues.productMRP.toString()
+     // cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
       cloneValues.isPublish = "true"
@@ -51,12 +55,22 @@ const NewCustomer = (props) => {
 
       setProductDetails(cloneValues)
       // props.AddMerchantProduct(JSON.stringify(cloneValues))
+      // let data = JSON.parse(cloneValues)
+      // console.log('data', data)
       props.AddMerchantProduct(cloneValues)
     }
 
   }
+  console.log('apiStatus', apiStatus)
+  useEffect(() =>{
+  
+    if(apiStatus === "success"){
+    
+      props.resetProductStatus(),
+      Router.router.push("/[portal_id]/ecom/products" ,{ pathname: `/${userData?.uniqueID}/ecom/products`}, { shallow: true });
+    }
+  },[apiStatus])
 
-  console.log('flag', flag)
   console.log('productDetails updates', productDetails)
   return (
     <PageLayout>
@@ -177,7 +191,8 @@ const mapStateToProps = (store) => {
 };
 
 const mapDispatchToProps = {
-  AddMerchantProduct
+  AddMerchantProduct,
+  resetProductStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewCustomer);
