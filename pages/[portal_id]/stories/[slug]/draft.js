@@ -75,9 +75,10 @@ const EditPost = (props) => {
     if (!articleDetail) {
       getDetailArticle();
     }
+    
     if (articleDetail) {
-      const { description } = articleDetail;
-      let { title, subTitle } = handleTitle()
+      const { title, subTitle, description } = articleDetail;
+      // let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
         subTitle
@@ -116,7 +117,7 @@ const EditPost = (props) => {
   useEffect(() => {
     let timer = null;
     if (!timer) {
-      console.log('set timer');
+      // console.log('set timer');
       timer = setInterval(async () => {
         console.log('called on every 5 seconds!', articleDetail)
         await handleSaveData();
@@ -125,7 +126,7 @@ const EditPost = (props) => {
 
     return () => {
       if (timer) {
-        console.log('clear interval');
+        // console.log('clear interval');
         clearInterval(timer);
       }
     }
@@ -184,38 +185,7 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
-  const handleData = () => {
-    let description
-    if (updateArticleDetail !== undefined) {
-      if (updateArticleDetail?.ID === articleDetail?.ID) {
-        description = updateArticleDetail?.description
-
-      } else {
-        description = articleDetail?.description
-      }
-    } else {
-      description = articleDetail?.description
-    }
-    return description
-  }
-  const handleTitle = () => {
-    let title, subTitle
-    if (updateArticleDetail !== undefined) {
-      if (updateArticleDetail?.ID === articleDetail?.ID) {
-        title = updateArticleDetail?.title
-        subTitle = updateArticleDetail?.subTitle
-
-      } else {
-        title = articleDetail?.title
-        subTitle = articleDetail?.subTitle
-      }
-    } else {
-      title = articleDetail?.title
-      subTitle = articleDetail?.subTitle
-    }
-    let datass = { title: title, subTitle: subTitle }
-    return datass
-  }
+  
 
   return (
     <NewPageLayout>
@@ -232,7 +202,7 @@ const EditPost = (props) => {
               setImage={setImage}
               isStory={isStory}
               description={
-                handleData()
+                articleDetail && articleDetail.description || ""
               }
             />
           </ContentPage>

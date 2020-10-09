@@ -54,7 +54,7 @@ const NewPost = (props) => {
       const userData = JSON.parse(localStorage.getItem("userData"));
       const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
       console.log('url', url);
-      router.replace('/[portal_id]/stories/[slug]/draft', format({ pathname: url }), { shallow: true });
+      router.replace('/[portal_id]/stories/[slug]/draft', { pathname: url }, { shallow: true });
     }
   }, [articleDetail])
 
@@ -121,7 +121,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/posts/[post_status]", format({ pathname: "/posts/live" }), { shallow: true });
+          router.push("/posts/[post_status]", { pathname: "/posts/live" }, { shallow: true });
         }
       })
       .catch((err) => {

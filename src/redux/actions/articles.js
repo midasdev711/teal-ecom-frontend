@@ -47,7 +47,7 @@ export function getListArticlesDraft(userId, getDraft, limit, page) {
             page,
           },
         },
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
       })
       .then((res) => {
         dispatch({
@@ -133,7 +133,7 @@ export function getDetailArticle(slug, getDraft) {
             page: 1,
           },
         },
-        fetchPolicy: 'no-cache'
+        fetchPolicy: "no-cache",
       })
       .then((res) => {
         dispatch({
@@ -164,7 +164,7 @@ export function getListArticlesDeleted(userId, authorId, limit, page) {
             page,
           },
         },
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
       })
       .then((res) => {
         dispatch({
@@ -245,7 +245,7 @@ export function getListArticles(authorId, limit, page) {
             authorId: authorId,
           },
         },
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
       })
       .then((res) => {
         if (res.data) {

@@ -128,10 +128,11 @@ const ViewPosts = (props) => {
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
 
     const route = tabValue === postStatusTypes.drafts ? '/[portal_id]/stories/[slug]/draft' : '/[portal_id]/stories/[slug]';
-    url && router.push(route, format({ pathname: url }), { shallow: true });
+    url && router.push(route, { pathname: url }, { shallow: true });
   };
 
   const handleChangeTable = ({ key }) => {
+    console.log('key', key)
     // const userID = Number(localStorage.getItem("userID"));
     // setTabValue(key);
     // if (key === "Drafts") {
@@ -147,12 +148,10 @@ const ViewPosts = (props) => {
   };
 
   const tableMenu = (
-    <Menu onClick={(e) => handleChangeTable(e)}>
+    <Menu onClick={handleChangeTable}>
       {
         postStatusList.map(status => (
-          <Fragment key={status.value}>
-            <Menu.Item key={status.value}>{status.name}</Menu.Item>
-          </Fragment>
+          <Menu.Item key={status.value}>{status.name}</Menu.Item>
         ))
       }
       {/* <Menu.Item key="Live Stories">Live Stories</Menu.Item>
@@ -269,7 +268,11 @@ const ViewPosts = (props) => {
       <ContentHeader>
         <StyledDropdown defaultValue="all">
           <TitleDropdown>{postStatusNames[tabValue]}</TitleDropdown>
-          <Dropdown overlay={tableMenu} placement="bottomCenter" arrow>
+          <Dropdown overlay={(
+            <Menu onClick={handleChangeTable}>
+              {postStatusList.map(status => (<Menu.Item key={status.value}>{status.name}</Menu.Item>))}
+            </Menu>
+          )} placement="bottomCenter" arrow>
             <CaretDownOutlined />
           </Dropdown>
         </StyledDropdown>

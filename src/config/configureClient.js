@@ -78,7 +78,13 @@ export default withApollo(
     console.log('initialState', initialState);
     return new ApolloClient({
       link: concat(authMiddleware, link),
-      cache: new InMemoryCache().restore(initialState || {}),
+      cache: new InMemoryCache({
+        typePolicies: {
+          Article: {
+            keyFields: ['ID']
+          }
+        }
+      }).restore(initialState || {}),
     })
   }
 );

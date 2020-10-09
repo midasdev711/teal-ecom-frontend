@@ -49,7 +49,7 @@ const EditPost = (props) => {
       props.clearArticleDetails();
     }
   }, []);
-    useEffect(() => {
+  useEffect(() => {
     let timer = null;
     if (!timer) {
       timer = setInterval(async () => {
@@ -66,8 +66,7 @@ const EditPost = (props) => {
 
   useEffect(() => {
     if (articleDetail) {
-      const { description } = articleDetail;
-      let { title, subTitle } = handleTitle()
+      const { title, subTitle, description } = articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
@@ -172,38 +171,7 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
-  const handleData = () => {
-    let description
-    if (updateArticleDetail !== undefined) {
-      if (updateArticleDetail?.ID === articleDetail?.ID) {
-        description = updateArticleDetail?.description
-      } else {
-        description = articleDetail?.description
-      }
-    } else {
-      description = articleDetail?.description
-    }
-    return description
-  }
 
-  const handleTitle = () => {
-    let title, subTitle
-    if (updateArticleDetail !== undefined) {
-      if (updateArticleDetail?.ID === articleDetail?.ID) {
-        title = updateArticleDetail?.title
-        subTitle = updateArticleDetail?.subTitle
-
-      } else {
-        title = articleDetail?.title
-        subTitle = articleDetail?.subTitle
-      }
-    } else {
-      title = articleDetail?.title
-      subTitle = articleDetail?.subTitle
-    }
-    let datass = { title: title, subTitle: subTitle }
-    return datass
-  }
   return (
     <NewPageLayout>
       <Form form={form} layout="vertical">
@@ -214,9 +182,7 @@ const EditPost = (props) => {
               onChangeEditor={onChangeEditor}
               setImage={setImage}
               isStory={isStory}
-              description={
-                handleData()
-              }
+              description={articleDetail && articleDetail.description || ""}
             />
           </ContentPage>
         </NewContent>
