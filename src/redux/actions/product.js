@@ -62,6 +62,7 @@ export const AddMerchantProduct = (datas) => {
             .mutate({
                 mutation: ADD_MERCHANT_PRODUCT_MUTATION,
                 variables: datas,
+                fetchPolicy: 'no-cache',
               })
             .then(res => {
                 console.log(res);

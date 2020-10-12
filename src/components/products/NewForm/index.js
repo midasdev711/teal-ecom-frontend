@@ -46,7 +46,7 @@ import { validate } from "graphql";
 import { resolve } from "url";
 import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
-import product, { getProductCategoryLists , getProductSubCategoryLists } from "../../../redux/actions/product";
+import product, { getProductCategoryLists, getProductSubCategoryLists } from "../../../redux/actions/product";
 import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
 
 const { Search } = Input;
@@ -215,7 +215,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   useEffect(() => {
     getProductCategoryLists()
   }, [])
- 
+
   useEffect(() => {
     let cloneProduct = productDetails
     cloneProduct.productTags = tags
@@ -230,7 +230,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       handleProductInventoryTotal()
     } else {
       cloneProduct.productVariants = [{ variantName: "", variantValues: "" }]
-      cloneProduct.productStock = ""
+      cloneProduct.productStock = 0
     }
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
@@ -284,11 +284,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       fileReader.onloadend = () => {
         let b64 = fileReader.result
         if (names === "featureProducts") {
-          let cloneProductDetails = productDetails
-          let cloneProductDetails1 = productDetails.productFeaturedImage
-          let cloneError = errors
-          cloneProductDetails1 = b64
-          cloneProductDetails.productFeaturedImage = cloneProductDetails1
+          let cloneProductDetails = {
+            ...productDetails
+          }
+          // let cloneProductDetails1 = productDetails.productFeaturedImage
+          let cloneError = {
+            ...errors
+          };
+          // cloneProductDetails1 = b64
+          cloneProductDetails.productFeaturedImage = file;
           setProductDetails(cloneProductDetails)
           setProductFeaturedImageList([fileData.file])
           delete cloneError.productFeaturedImage
@@ -539,12 +543,12 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   console.log('errors', errors)
   const tagChild = tags.map(forMap);
   const handleDropDown = (event, names) => {
-   
-    if(names === "attributeValues"){
+
+    if (names === "attributeValues") {
       setUnit(event)
     }
-   
-    if(names === "productCategory"){
+
+    if (names === "productCategory") {
       getProductSubCategoryLists(event)
     }
     let cloneProduct = productDetails
@@ -616,12 +620,12 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     if (names !== undefined) {
       let cloneProductDetails = productDetails
       let cloneVariant = variants
-      
+
       cloneVariant[index][names] = event.toString()
     } else {
       const { name, value } = event.target
-      console.log('name , value', name , value)
-      cloneVariant[index][name] = value 
+      console.log('name , value', name, value)
+      cloneVariant[index][name] = value
     }
     setVariants(cloneVariant)
     cloneProductDetails.productVariants = cloneVariant

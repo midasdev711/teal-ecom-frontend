@@ -65,9 +65,9 @@ mutation products(
 	$productMRP: Int
 	$productCostPerItem:Int
 	$productSalePrice: Int
-	$productThumbnailImage: String
-	$productFeaturedImage: String
-	$productImages : [String]
+	$productThumbnailImage: Upload
+	$productFeaturedImage: Upload!
+	$productImages : [Upload]!
 	$productCategory: Int
 	$productSubcategory: Int
 	$productSEO: ProductSEOInput

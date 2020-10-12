@@ -4,6 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { getMainDefinition } from 'apollo-utilities';
 import withApollo from 'next-with-apollo';
 import { HttpLink } from 'apollo-link-http';
+import { createUploadLink } from 'apollo-upload-client';
 import fetch from 'isomorphic-unfetch';
 import Cookies from 'js-cookie';
 import { SERVER } from './config';
@@ -73,11 +74,14 @@ const link = process.browser
   }, httpLink)
   : httpLink;
 
+
+const uploadLink = createUploadLink({ uri: "http://localhost:9200/graphql" })
+
 export default withApollo(
   ({ initialState }) => {
     console.log('initialState', initialState);
     return new ApolloClient({
-      link: concat(authMiddleware, link),
+      link: concat(authMiddleware, link, uploadLink),
       cache: new InMemoryCache({
         typePolicies: {
           Article: {
