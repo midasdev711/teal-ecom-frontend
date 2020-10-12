@@ -81,7 +81,7 @@ export default withApollo(
   ({ initialState }) => {
     console.log('initialState', initialState);
     return new ApolloClient({
-      link: concat(authMiddleware, link, uploadLink),
+      link: concat(uploadLink, authMiddleware, link),
       cache: new InMemoryCache({
         typePolicies: {
           Article: {

@@ -27,8 +27,6 @@ import {
 import { getUserData } from "../../../utils";
 import { getUserProductLists } from "../../../redux/actions/product";
 import { connect , useSelector } from "react-redux";
-
-
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -58,9 +56,8 @@ const customerData = [
 
 const ViewCustomers = (props) => {
   // const { productList } = props
-  const productList = useSelector(state =>state.productReducer.merchantProductLists)
-
-   console.log(`productList`, productList)
+  const productLists = useSelector(state =>state.productReducer.merchantProductLists)
+   console.log(`productList`, productLists)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -76,13 +73,20 @@ const ViewCustomers = (props) => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  const [productList, setProductList] = useState([]);
+  const [apiCallFlag, setApiCallFlag] = useState("start");
   let userData = getUserData()
 
   useEffect(() => {
     
     let userId = userData?.ID
     props.getUserProductLists(userId)
-  }, [productList])
+  }, [apiCallFlag])
+  useEffect(() => {
+    if(productLists?.length > 0){
+         setProductList(productLists)
+    }
+     }, [productLists])
 
   const columns = [
     {
@@ -209,13 +213,17 @@ const ViewCustomers = (props) => {
     setShowMDDeleteSelected(false);
   };
 
+  const handleFilterData = (value) =>{
+      console.log('value filters Data', value)
+      setProductList(value)
+  }
   return (
     <ViewContent>
       <Tabs defaultActiveKey={tabIndex}>
         <TabPane tab="All" key="1" />
       </Tabs>
 
-      <Filters onOpen={setOpenMoreFilters} />
+      <Filters onOpen={setOpenMoreFilters} productLists={productLists} getFilterData={(value)=>handleFilterData(value)} />
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>

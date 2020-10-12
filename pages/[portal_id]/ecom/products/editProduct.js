@@ -39,7 +39,7 @@ import { validate } from "graphql";
 import { resolve } from "url";
 import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
-import product, { getProductCategoryLists, getProductSubCategoryLists, getMerchantProductByID } from "../../../../src/redux/actions/product";
+import product, { getProductCategoryLists, getProductSubCategoryLists, getMerchantProductByID, UpdateMerchantProduct } from "../../../../src/redux/actions/product";
 import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
 import validation from "../../../../src/utils/validation";
 import { ManageSalesMD } from "../../../../src/components/products/Modals";
@@ -70,7 +70,7 @@ let productInfo = {
         variantName: "",
         variantValues: "",
     }],
-    productThumbnailImage: "",
+    productThumbnailImage: null,
     productImages: [],
     productSEO: {
         title: "",
@@ -92,7 +92,7 @@ let productInfo = {
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const ProductSEOInfo = ["title", "description", "cronicalUrl"]
 
-const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID }) => {
+const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID , UpdateMerchantProduct }) => {
     const [visiable, setVisible] = useState(false);
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState("");
@@ -299,7 +299,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                 if (names === "featureProducts") {
                     let cloneProductDetails = productDetails
                     let cloneProductDetails1 = productDetails.productFeaturedImage
-                    let cloneError = errors
+                    let cloneError = {...errors}
                     cloneProductDetails1 = b64
                     cloneProductDetails.productFeaturedImage = cloneProductDetails1
                     setProductDetails(cloneProductDetails)
@@ -550,7 +550,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         setDummyData([dummyData + 1])
     }
     console.log('errors', errors)
-    const tagChild = tags.map(forMap);
+    const tagChild =tags?.length > 0 && tags.map(forMap);
     const handleDropDown = (event, names) => {
 
         if (names === "attributeValues") {
@@ -679,7 +679,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     }
     const handleProductWeight = () => {
         let values = 0
-        productDetails?.productAttributes.map((data, index) => {
+        productDetails?.productAttributes !== null &&  productDetails?.productAttributes.length > 0 && productDetails?.productAttributes.map((data, index) => {
             if (data.attributeName === "productWeight") {
                 values = data.attributeValues === null && data.attributeValues === undefined ? 0 : data.attributeValues
             } else {
@@ -1482,6 +1482,7 @@ const mapDispatchToProps = {
     getProductCategoryLists,
     getProductSubCategoryLists,
     getMerchantProductByID,
+    UpdateMerchantProduct
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);

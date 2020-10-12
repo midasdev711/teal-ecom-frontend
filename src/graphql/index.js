@@ -4,16 +4,14 @@ import { setContext } from '@apollo/client/link/context';
 import { GetToken } from '../utils';
 let token = GetToken()
 const httpLink = createHttpLink({
- // uri: "http://192.168.1.49:9200/graphql",
+// uri: "http://198.168.1.48:9200/graphql",
+// uri: "http://192.168.1.49:9200/graphql",
   uri: "http://localhost:9200/graphql",
 });
 
-const uploadLink = createUploadLink({ uri: "http://localhost:9200/graphql" })
+const uploadLink = createUploadLink({ uri: "http://localhost:9200/graphql"})
 
 const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
- 
-  // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -30,6 +28,9 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     typePolicies: {
       Article: {
+        keyFields: ['ID']
+      },
+      product: {
         keyFields: ['ID']
       }
     }

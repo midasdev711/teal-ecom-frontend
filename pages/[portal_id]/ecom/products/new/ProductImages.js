@@ -10,6 +10,7 @@ const ProductsImages = ({ imageData }) => {
   const [previewTitle, setPreviewTitle] = useState("");
   const [dataFiles, setDataFiles] = useState([]);
   const [base64Data, setBase64Data] = useState([]);
+ // console.log('dataFiles', dataFiles)
 
   const handleCancel = () => {
     setPreviewVisible(false);

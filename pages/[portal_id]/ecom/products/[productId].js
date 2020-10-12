@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState ,useEffect} from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // components
@@ -14,16 +14,41 @@ import {
 import {
   Divider,
   Button,
+  message,
 } from "antd";
 // ui
 import { Row, Col } from "antd";
 import ProductDetail from "./editProduct";
 import ViewProductDetail from "../../../../src/components/products/ViewProductDetail";
 import { getUserData } from "../../../../src/utils";
+import { useRouter } from 'next/router'
+import { deleteMerchantProduct } from "../../../../src/redux/actions/product";
+import { connect, useSelector } from "react-redux";
+import DeletePopUp from "../../../../src/components/commanComponents/deletePopup";
+//import { MDDeleteSelected } from "../../../../src/components/atoms";
 
 
-const EditProductDetails = () => {
+
+const EditProductDetails = ({deleteMerchantProduct}) => {
   let userData = getUserData()
+  const router = useRouter()
+  const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+    const { productId } = router.query
+   // console.log('product deleted id', productId)
+    const handleDeleteProduct = () =>{
+      deleteMerchantProduct((productId * 1))
+    }
+    
+    const onShowMdDeleteSelected = (value) => {
+      console.log("value: ", value);
+      setShowMDDeleteSelected(value);
+    };  
+    const onDeleteSelected = () => {
+       handleDeleteProduct()
+      // message.success("Product deleted successfully!");
+       setShowMDDeleteSelected(false);
+    };
+
   return (
     <PageLayout>
       <CustomerContent>
@@ -61,10 +86,19 @@ const EditProductDetails = () => {
         {
           <ProductDetail />
         }
+        <DeletePopUp
+        name="Product"
+       // count={checkedList.length}
+        onCancel={onShowMdDeleteSelected}
+        onDelete={onDeleteSelected}
+        isOpen={isOpenDeleteSelected}
+        message="Are sure to delete this product ?"
+        buttonText="Delete"
+      />
          <ActionBottom>
-    
+
         <AlignItem>
-          <Button size="large" type="primary" danger>
+          <Button size="large" type="primary" danger onClick={() => setShowMDDeleteSelected(true)}>
             Delete product
           </Button>
           <Button size="large" type="primary">
@@ -143,7 +177,18 @@ const AlignItem = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-export default EditProductDetails;
+const mapStateToProps = (store) => {
+  return {
+
+  };
+};
+
+const mapDispatchToProps = {
+  deleteMerchantProduct
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditProductDetails);
+
 
 
 

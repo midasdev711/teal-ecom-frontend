@@ -19,9 +19,6 @@ import {
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-
-
-
 // ui
 import { RemirorEditor, TEPageLoader } from "../../atoms";
 import {
@@ -69,7 +66,7 @@ let productInfo = {
     variantName: "",
     variantValues: "",
   }],
-  productThumbnailImage: "",
+  productThumbnailImage: null,
   productImages:[],
   productSEO: {
     title: "",
@@ -109,7 +106,7 @@ let cleanData = {
     variantName: "",
     variantValues: "",
   }],
-  productThumbnailImage: "",
+  productThumbnailImage: null,
   productImages:[],
   productSEO: {
     title: "",
@@ -161,7 +158,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const loading = useSelector(state => state.productReducer.status)
   console.log('loading', loading)
   console.log('subCategories', subCategories)
-  console.log('categoryLists', categoryLists)
+ 
   // useEffect(()=>{
   //   let cloneProduct = productDetails
   //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
@@ -239,15 +236,17 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const handleProductsImages = (value) => {
     setImagesFileList(value)
-    let cloneProduct = {
-      ...productDetails
-    };
-    cloneProduct.productImages = value.slice();
-    cloneProduct.productThumbnailImage = (value && value[0] || null);
-    let cloneError = errors;
-    delete cloneError.productImages;
-    setProductDetails(cloneProduct);
-    setErrors(cloneError);
+    let cloneProduct = productDetails
+    cloneProduct.productImages = value
+    if (value.length > 0) {
+      cloneProduct.productThumbnailImage = value[0]
+    } else {
+      cloneProduct.productThumbnailImage = null
+    }
+    let cloneError = errors
+    delete cloneError.productImages
+    setProductDetails(cloneProduct)
+    setErrors(cloneError)
     setDummyData([dummyData + 1])
   }
 
@@ -1459,5 +1458,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);
+
 
 

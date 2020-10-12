@@ -12,6 +12,13 @@ import {
   GET_MERCHANT_PRODUCT_BY_ID_ERROR,
   GET_MERCHANT_PRODUCT_BY_ID_START,
   GET_MERCHANT_PRODUCT_BY_ID_SUCCESS,
+  DELETE_MERCHANT_PRODUCT_ERROR,
+  DELETE_MERCHANT_PRODUCT_START,
+  DELETE_MERCHANT_PRODUCT_SUCCESS,
+  EDIT_MERCHANT_PRODUCT_ERROR,
+  EDIT_MERCHANT_PRODUCT_START,
+  EDIT_MERCHANT_PRODUCT_SUCCESS,
+
 } from "../actions/actionTypes";
 
 const initData = {
@@ -23,7 +30,8 @@ const initData = {
   categoriesLists: [],
   subCategoriesLists:[],
   success:false,
-  productById:[]
+  productById:[],
+  deletedProduct:{}
 };
 
 export const productReducer = (state = initData, action) => {
@@ -130,7 +138,67 @@ export const productReducer = (state = initData, action) => {
         errorMsg: action.errorMsg,
         merchantProductLists:[],
      
-      };   
+      }; 
+      case DELETE_MERCHANT_PRODUCT_START:
+        return {
+          ...state,
+          status:"start",
+          loading:true,
+         
+        };  
+    case DELETE_MERCHANT_PRODUCT_SUCCESS:
+      console.log('action.data deleted Data', action.data)
+      const { ID } = action.data
+      
+    
+      let cloneMerchantProduct = state.merchantProductLists.slice()
+      let index = cloneMerchantProduct.findIndex(({ID}) => ID === action.data.ID)
+      console.log('index', index)
+
+      
+
+
+      return {
+        ...state,
+        status:"deleted",
+        loading:false,
+        deletedProduct: action.data,
+        errorMsg: null,
+    
+      };
+    case DELETE_MERCHANT_PRODUCT_ERROR:
+      return {
+        ...state,
+        status:"fail",
+        errorMsg: action.errorMsg,
+     
+     
+      };         
+      case EDIT_MERCHANT_PRODUCT_START:
+        return {
+          ...state,
+          status:"start",
+          loading:true,
+         
+        };  
+    case EDIT_MERCHANT_PRODUCT_SUCCESS:
+      console.log('action.data', action.data)
+      return {
+        ...state,
+        status:"success",
+        loading:false,
+       
+        errorMsg: null,
+    
+      };
+    case EDIT_MERCHANT_PRODUCT_ERROR:
+      return {
+        ...state,
+        status:"fail",
+        errorMsg: action.errorMsg,
+     
+     
+      };         
     default:
       return {
         ...state,
