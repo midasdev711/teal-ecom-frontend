@@ -239,19 +239,18 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const handleProductsImages = (value) => {
     setImagesFileList(value)
-    let cloneProduct = productDetails
-    cloneProduct.productImages = value
-    if (value.length > 0) {
-      cloneProduct.productThumbnailImage = value[0]
-    } else {
-      cloneProduct.productThumbnailImage = ""
-    }
-    let cloneError = errors
-    delete cloneError.productImages
-    setProductDetails(cloneProduct)
-    setErrors(cloneError)
+    let cloneProduct = {
+      ...productDetails
+    };
+    cloneProduct.productImages = value.slice();
+    cloneProduct.productThumbnailImage = (value && value[0] || null);
+    let cloneError = errors;
+    delete cloneError.productImages;
+    setProductDetails(cloneProduct);
+    setErrors(cloneError);
     setDummyData([dummyData + 1])
   }
+
   const onFinish = (values) => {
     console.log("Success:", values);
   };

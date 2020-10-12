@@ -3,13 +3,12 @@ import styled from "styled-components";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { Upload, Modal, Dropdown, Menu, Button, Card } from "antd";
 
-const fileList = [];
 
 const ProductsImages = ({ imageData }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-  const [dataFiles, setDataFiles] = useState(fileList);
+  const [dataFiles, setDataFiles] = useState([]);
   const [base64Data, setBase64Data] = useState([]);
 
   const handleCancel = () => {
@@ -37,27 +36,11 @@ const ProductsImages = ({ imageData }) => {
 
   useEffect(() => {
     let cloneBase = []
-    if (dataFiles.length > 1) {
-      dataFiles.length > 0 && dataFiles.map((data, index) => {
-        if (data.preview !== undefined) {
-          cloneBase.push(data.preview)
-        }
-      })
-      imageData(cloneBase)
-    } else {
-      let data = dataFiles !== undefined && dataFiles.map(data => data.preview)
-      console.log('data', data)
-      if (data[0] === undefined) {
-      } else {
-        cloneBase.push(data[0])
-        imageData(cloneBase)
-      }
-      if (data.length === 0) {
-        cloneBase = []
-        imageData(cloneBase)
-      }
+    if (dataFiles.length) {
+      cloneBase = dataFiles.map(fileObj => fileObj.originFileObj);
     }
-    setBase64Data(cloneBase)
+    imageData(cloneBase);
+    setBase64Data(cloneBase);
   }, [dataFiles])
 
   const getBase64 = (file) => {

@@ -257,7 +257,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         if (value.length > 0) {
             cloneProduct.productThumbnailImage = value[0]
         } else {
-            cloneProduct.productThumbnailImage = ""
+            cloneProduct.productThumbnailImage = null
         }
         let cloneError = errors
         delete cloneError.productImages
