@@ -22,32 +22,33 @@ import {
 } from "../actions/actionTypes";
 
 const initData = {
-  status:"",
+  status: "",
   loading: false,
   errorMsg: null,
   merchantProductLists: [],
   isGetDetail: false,
   categoriesLists: [],
-  subCategoriesLists:[],
-  success:false,
-  productById:[],
-  deletedProduct:{}
+  subCategoriesLists: [],
+  success: false,
+  productById: [],
+  deletedProduct: {}
 };
 
 export const productReducer = (state = initData, action) => {
   switch (action.type) {
-    
+
     case RESET_PRODUCT_STATUS:
       return {
         ...state,
-        status:""
-            };
+        status: "",
+
+      };
     case GET_MY_PRODUCT_LISTS:
       return {
         ...state,
         merchantProductLists: action.data === null ? [] : action.data,
         errorMsg: null,
-     
+
       };
     case GET_MY_PRODUCT_LISTS_ERROR:
       return {
@@ -57,34 +58,34 @@ export const productReducer = (state = initData, action) => {
         isGetDetail: false,
       };
     case ADD_MERCHANT_PRODUCT_START:
-        return {
-          ...state,
-          status:"start",
-          loading:true,
-        
-        };  
-    case ADD_MERCHANT_PRODUCT:
-      console.log('state.merchantProductLists', state.merchantProductLists)
-      let cloneData = state.merchantProductLists.slice()
-      console.log('cloneData original', cloneData)
-      cloneData.push(action.data.upsertProduct)
-       console.log('action.data.upsertProduct', action.data.upsertProduct)
-       console.log('cloneData', cloneData)
       return {
         ...state,
-        status:"success",
-        loading:false,
-        merchantProductLists:cloneData,
+        status: "start",
+        loading: true,
+
+      };
+    case ADD_MERCHANT_PRODUCT:
+     // console.log('state.merchantProductLists', state.merchantProductLists)
+      let cloneData = state.merchantProductLists.slice()
+    //  console.log('cloneData original', cloneData)
+      cloneData.push(action.data.upsertProduct)
+    //  console.log('action.data.upsertProduct', action.data.upsertProduct)
+    //  console.log('cloneData', cloneData)
+      return {
+        ...state,
+        status: "success",
+        loading: false,
+        merchantProductLists: cloneData,
         UserProductList: {
           ...action.data.upsertProduct
         },
         errorMsg: null,
-       
+
       };
     case ADD_MERCHANT_PRODUCT_ERROR:
       return {
         ...state,
-        status:"fail",
+        status: "fail",
         UserProductList: [],
         errorMsg: action.errorMsg,
         isGetDetail: false,
@@ -115,90 +116,79 @@ export const productReducer = (state = initData, action) => {
         errorMsg: action.errorMsg,
         isGetDetail: false,
       };
-      case GET_MERCHANT_PRODUCT_BY_ID_START:
-        return {
-          ...state,
-          status:"start",
-          loading:true,
-         
-        };  
+    case GET_MERCHANT_PRODUCT_BY_ID_START:
+      return {
+        ...state,
+        status: "start",
+        loading: true,
+
+      };
     case GET_MERCHANT_PRODUCT_BY_ID_SUCCESS:
       return {
         ...state,
-        status:"success",
-        loading:false,
+        status: "success",
+        loading: false,
         productById: action.data,
         errorMsg: null,
-    
+
       };
     case GET_MERCHANT_PRODUCT_BY_ID_ERROR:
       return {
         ...state,
-        status:"fail",
+        status: "fail",
         errorMsg: action.errorMsg,
-        merchantProductLists:[],
-     
-      }; 
-      case DELETE_MERCHANT_PRODUCT_START:
-        return {
-          ...state,
-          status:"start",
-          loading:true,
-         
-        };  
+        merchantProductLists: [],
+
+      };
+    case DELETE_MERCHANT_PRODUCT_START:
+      return {
+        ...state,
+        status: "start",
+        loading: true,
+
+      };
     case DELETE_MERCHANT_PRODUCT_SUCCESS:
-      console.log('action.data deleted Data', action.data)
-      const { ID } = action.data
-      
-    
       let cloneMerchantProduct = state.merchantProductLists.slice()
-      let index = cloneMerchantProduct.findIndex(({ID}) => ID === action.data.ID)
-      console.log('index', index)
-
-      
-
+      let index = cloneMerchantProduct.findIndex(({ ID }) => ID === action.data.ID)
+      if (index !== -1) {
+        cloneMerchantProduct.splice(index, 1)
+      }
 
       return {
         ...state,
-        status:"deleted",
-        loading:false,
+        status: "deleted",
+        loading: false,
+        merchantProductLists: cloneMerchantProduct,
         deletedProduct: action.data,
         errorMsg: null,
-    
+
       };
     case DELETE_MERCHANT_PRODUCT_ERROR:
       return {
         ...state,
-        status:"fail",
+        status: "fail",
         errorMsg: action.errorMsg,
-     
-     
-      };         
-      case EDIT_MERCHANT_PRODUCT_START:
-        return {
-          ...state,
-          status:"start",
-          loading:true,
-         
-        };  
-    case EDIT_MERCHANT_PRODUCT_SUCCESS:
-      console.log('action.data', action.data)
+      };
+    case EDIT_MERCHANT_PRODUCT_START:
       return {
         ...state,
-        status:"success",
-        loading:false,
-       
+        status: "start",
+        loading: true,
+
+      };
+    case EDIT_MERCHANT_PRODUCT_SUCCESS:
+      return {
+        ...state,
+        status: "updated",
+        loading: false,
         errorMsg: null,
-    
       };
     case EDIT_MERCHANT_PRODUCT_ERROR:
       return {
         ...state,
-        status:"fail",
+        status: "fail",
         errorMsg: action.errorMsg,
-     
-     
-      };         
+      };
     default:
       return {
         ...state,

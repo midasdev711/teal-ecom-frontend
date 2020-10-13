@@ -130,14 +130,18 @@ mutation products(
 						attributes
 						{
 						attributeName
+						attributeValues
+						}
+						seo
+						{
+							title		
+						description
+						cronicalUrl
 						}
 						variants
 						{
 						variantName
-						}
-						seo
-						{
-						cronicalUrl
+						variantValues
 						}
 						slug
 						tags
@@ -211,7 +215,7 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			variants
 			{
 			variantName
-			variantsValues
+			variantValues
 			}
 			slug
 			tags
@@ -239,9 +243,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 				$productMRP: Int
 				$productCostPerItem:Int
 				$productSalePrice: Int
-				$productThumbnailImage: Upload
-				$productFeaturedImage: Upload!
-				$productImages : [Upload]!
+				
 				$productCategory: Int
 				$productSubcategory: Int
 				$productSEO: ProductSEOInput
@@ -266,9 +268,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									productDescription: $productDescription
 									productMRP: $productMRP
 									productSalePrice: $productSalePrice
-									productThumbnailImage: $productThumbnailImage
-									productFeaturedImage: $productFeaturedImage
-									productImages : $productImages
+								
 									productCategory: $productCategory
 									productSubcategory: $productSubcategory
 									productSEO: $productSEO
@@ -285,8 +285,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 							  {
 									_id
 									ID
-									
-									   merchantID
+								    merchantID
 									merchantName
 									sku
 									title
@@ -297,9 +296,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									productCost
 									mrp
 									stock
-									thumbnailImage
-									featuredImage
-									images
+								
 									isPublish
 									endDate
 									startDate
@@ -307,14 +304,18 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									attributes
 									{
 									attributeName
+									attributeValues
+									}
+									seo
+									{
+										title		
+									description
+									cronicalUrl
 									}
 									variants
 									{
 									variantName
-									}
-									seo
-									{
-									cronicalUrl
+									variantValues
 									}
 									slug
 									tags

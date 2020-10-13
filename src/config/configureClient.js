@@ -79,14 +79,20 @@ const uploadLink = createUploadLink({ uri: "http://localhost:9200/graphql" })
 
 export default withApollo(
   ({ initialState }) => {
-    console.log('initialState', initialState);
+   // console.log('initialState', initialState);
     return new ApolloClient({
       link: concat(uploadLink, authMiddleware, link),
       cache: new InMemoryCache({
         typePolicies: {
           Article: {
             keyFields: ['ID']
-          }
+          },
+          Product: {
+            keyFields: ['ID']
+          },
+          MyProductType: {
+            keyFields: ['ID']
+          },
         }
       }).restore(initialState || {}),
     })

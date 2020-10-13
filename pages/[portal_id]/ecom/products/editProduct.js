@@ -70,19 +70,19 @@ let productInfo = {
         variantName: "",
         variantValues: "",
     }],
-    productThumbnailImage: null,
-    productImages: [],
+    // productThumbnailImage: null,
+    // productImages: [],
     productSEO: {
         title: "",
         description: "",
         cronicalUrl: "",
     },
-    productCategory: "",
-    productSubcategory: "",
+    productCategory: null,
+    productSubcategory: null,
     productTotalQuantity: "",
     productStartDate: "",
     productEndDate: "",
-    productFeaturedImage: "",
+   // productFeaturedImage: "",
     productAttributes: [{
         attributeName: "productWeight",
         attributeValues: []
@@ -92,8 +92,9 @@ let productInfo = {
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const ProductSEOInfo = ["title", "description", "cronicalUrl"]
 
-const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID , UpdateMerchantProduct }) => {
+const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID, UpdateMerchantProduct }) => {
     const [visiable, setVisible] = useState(false);
+    const [getFlag, setGetFlag] = useState(false);
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [inputVisible, setInputVisible] = useState(false);
@@ -121,9 +122,9 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     const { productId } = router.query
     const merchantProductDetails = useSelector(state => state.productReducer.productById)
     //console.log('loading', loading)
-    console.log('merchantProductDetails', merchantProductDetails)
-    console.log('subCategories', subCategories)
-    console.log('categoryLists', categoryLists)
+    //console.log('merchantProductDetails', merchantProductDetails)
+    //console.log('subCategories', subCategories)
+    //console.log('categoryLists', categoryLists)
     // useEffect(()=>{
     //   let cloneProduct = productDetails
     //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
@@ -134,21 +135,18 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     //   setProductDetails(cloneProduct)
     //   setDummyData([dummyData + 1])
     //     },[country])
-    console.log('productInfo', productInfo)
+    //console.log('productInfo', productInfo)
     useEffect(() => {
         getMerchantProductByID((productId * 1))
-    }, [])
+    }, [getFlag])
     useEffect(() => {
         if (merchantProductDetails && merchantProductDetails !== undefined && merchantProductDetails.length > 0) {
             let cloneData = productDetails
             let cloneDataProduct = merchantProductDetails[0]
-            // console.log('cloneData', cloneData)
-            // console.log('cloneDataProduct', cloneDataProduct)
-
             cloneData.productTitle = cloneDataProduct.title
             cloneData.productDescription = cloneDataProduct.description
-            cloneData.productImages = cloneDataProduct.images
-            cloneData.productFeaturedImage = cloneDataProduct.featuredImage
+           // cloneData.productImages = cloneDataProduct.images
+           // cloneData.productFeaturedImage = cloneDataProduct.featuredImage
             cloneData.productSalePrice = cloneDataProduct.salePrice
             cloneData.productMRP = cloneDataProduct.mrp
             cloneData.productCostPerItem = cloneDataProduct.productCost
@@ -157,30 +155,45 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
             cloneData.productEndDate = cloneDataProduct.endDate
             cloneData.productStartDate = cloneDataProduct.startDate
             cloneData.isPublish = cloneDataProduct.isPublish
-            cloneData.productAttributes = cloneDataProduct.attributes
-            cloneData.productSEO = cloneDataProduct.seo
-            cloneData.productVariants = cloneDataProduct.variants
+           // cloneData.productVariants =  cloneDataProduct.variants
+            cloneData.productAttributes[0].attributeName = cloneDataProduct.attributes[0].attributeName
+            cloneData.productAttributes[0].attributeValues = cloneDataProduct.attributes[0].attributeValues
+            cloneData.productSEO.title = cloneDataProduct.seo.title
+            cloneData.productSEO.description = cloneDataProduct.seo.description
+            cloneData.productSEO.cronicalUrl = cloneDataProduct.seo.cronicalUrl
             cloneData.productSlug = cloneDataProduct.slug
             cloneData.productTags = cloneDataProduct.tags
             cloneData.productMerchantID = cloneDataProduct.merchantID
             cloneData.productMerchantName = cloneDataProduct.merchantName
             cloneData.productStock = cloneDataProduct.stock
-            cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
+          //  cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
             cloneData.productCategory = cloneDataProduct.category[0].ID
             cloneData.productSubcategory = cloneDataProduct.subCategory[0].ID
             cloneData.ID = cloneDataProduct.ID
             cloneData._id = cloneDataProduct._id
-            setProductDetails(cloneData)
+            
             setDummyData([dummyData + 1])
             setTags(cloneDataProduct.tags)
-            if(cloneDataProduct.variants && cloneDataProduct.variants.length > 0){
-                if(cloneDataProduct.variants[0].variantName !== null || cloneDataProduct.variants[0].variantValues !== null || cloneDataProduct.variants[0].variantValues !== "" || cloneDataProduct.variants[0].variantName !== "" ){
-                    setVariants(cloneDataProduct.variants)
+             let cloneVariant = []
+            if (cloneDataProduct.variants && cloneDataProduct.variants.length > 0) {
+                if (cloneDataProduct.variants[0].variantName !== null || cloneDataProduct.variants[0].variantValues !== null || cloneDataProduct.variants[0].variantValues !== "" || cloneDataProduct.variants[0].variantName !== "") {
+                   
+                    cloneDataProduct.variants.map((data,index)=>{
+                        cloneVariant.push({
+                            variantName: data.variantName,
+                            variantValues: data.variantValues,
+                        })
+                    })
+                  cloneData.productVariants = cloneVariant
+                //    console.log('cloneVariant', cloneVariant)
+                    setVariants(cloneVariant)
                     setVariantsFlag(true)
-                }else{
-                    setVariantsFlag(false) 
+                } else {
+                    setVariantsFlag(false)
                 }
             }
+           
+            setProductDetails(cloneData)
 
         }
     }, [merchantProductDetails])
@@ -274,7 +287,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     };
 
     const onChangeDate = (date, name) => {
-        console.log(date?._d);
+       // console.log(date?._d);
         let UTCDate = date?._d
         // let dateFormate
         // if (date !== null) {
@@ -299,7 +312,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                 if (names === "featureProducts") {
                     let cloneProductDetails = productDetails
                     let cloneProductDetails1 = productDetails.productFeaturedImage
-                    let cloneError = {...errors}
+                    let cloneError = { ...errors }
                     cloneProductDetails1 = b64
                     cloneProductDetails.productFeaturedImage = cloneProductDetails1
                     setProductDetails(cloneProductDetails)
@@ -550,7 +563,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         setDummyData([dummyData + 1])
     }
     console.log('errors', errors)
-    const tagChild =tags?.length > 0 && tags.map(forMap);
+    const tagChild = tags?.length > 0 && tags.map(forMap);
     const handleDropDown = (event, names) => {
 
         if (names === "attributeValues") {
@@ -679,7 +692,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     }
     const handleProductWeight = () => {
         let values = 0
-        productDetails?.productAttributes !== null &&  productDetails?.productAttributes.length > 0 && productDetails?.productAttributes.map((data, index) => {
+        productDetails?.productAttributes !== null && productDetails?.productAttributes.length > 0 && productDetails?.productAttributes.map((data, index) => {
             if (data.attributeName === "productWeight") {
                 values = data.attributeValues === null && data.attributeValues === undefined ? 0 : data.attributeValues
             } else {
@@ -688,7 +701,54 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         })
         return values
     }
+    const handleCategory = (value) => {
+        let categoryValue = "Select"
+        let cateName
+        if (categoryLists.length) {
+            if (value !== undefined && value !== "") {
+                let cloneProduct = { ...productDetails }
+                let catId = cloneProduct.productCategory !== null ? cloneProduct.productCategory : null
+                if (catId !== null && catId !== "") {
+                    if (!subCategories.length) {
+                        getProductSubCategoryLists(catId)
+                    }
 
+                    cateName = categoryLists.find(({ ID }) => ID == catId)
+                }
+            }
+            let name = cateName?.name
+            if (cateName !== undefined) {
+                return name
+            } else {
+                return categoryValue
+            }
+        } else {
+            return categoryValue
+        }
+    }
+    const handleSubCategory = (value) => {
+        let categoryValue = "Select"
+        let cateName
+        if (subCategories.length) {
+            if (value !== undefined && value !== "") {
+                let cloneProduct = { ...productDetails }
+                let catId = cloneProduct.productSubcategory !== null ? cloneProduct.productSubcategory : null
+                console.log('catId', catId)
+                if (catId !== null && catId !== "") {
+                    cateName = subCategories.find(({ ID }) => ID == catId)
+                }
+            }
+            let name = cateName?.name
+            console.log('name', name)
+            if (cateName !== undefined) {
+                return name
+            } else {
+                return categoryValue
+            }
+        } else {
+            return categoryValue
+        }
+    }
     return (
 
         <Form
@@ -698,11 +758,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
             className="form-new"
             layout="vertical"
         >
-
-            {
-                loadingFlag ? (<Loader className="loader_wrap"> <Spin indicator={antIcon} />   </Loader>) : ("")
-            }
-
+            {loadingFlag ? (<Loader className="loader_wrap"> <Spin indicator={antIcon} />   </Loader>) : ("")}
             <SubForm>
                 <Row gutter={24} className="margin-bottom">
                     <Col md={16}>
@@ -915,13 +971,13 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                             <TitleCardStyle>Shipping</TitleCardStyle>
                             {/* <CheckboxStyle>This is a physical product</CheckboxStyle>
 
-              <LineBorder /> */}
+                            <LineBorder /> */}
 
                             <TitleSmall>WEIGHT</TitleSmall>
                             <TextStyle>
                                 Used to calculate shipping rates at checkout and label prices
                                 during fulfillment.
-              </TextStyle>
+                             </TextStyle>
                             <Row gutter={0}>
                                 <Col md={8}>
                                     <Form.Item label="Weight">
@@ -980,10 +1036,10 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                             >
                                 This product has multiple options, like different sizes or
                                 colors
-              </Checkbox> <br></br>
+                            </Checkbox> <br></br>
                             {
                                 VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
-                                    return <Row gutter={0}>
+                                    return <Row gutter={0} key={index}>
                                         <Col md={9}>
                                             <Form.Item label="Variant Name" >
                                                 <TextInput name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
@@ -1177,7 +1233,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                   /> */}
                                     {/* <Form.Item > */}
                                     <Form.Item>
-                                        <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productCategory")}>
+                                        <Select value={handleCategory(productDetails.productCategory) || ""} onChange={(event) => handleDropDown(event, "productCategory")}>
                                             <Option value="Select" disabled>Select</Option>
                                             {
                                                 categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
@@ -1199,7 +1255,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                     
                   /> */}
                                     <Form.Item>
-                                        <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productSubcategory")}>
+                                        <Select value={handleSubCategory(productDetails.productSubcategory || "")} onChange={(event) => handleDropDown(event, "productSubcategory")}>
                                             <Option value="Select" disabled>Select</Option>
                                             {
                                                 subCategories && subCategories.length > 0 && subCategories.map((data, index) => {
@@ -1482,7 +1538,7 @@ const mapDispatchToProps = {
     getProductCategoryLists,
     getProductSubCategoryLists,
     getMerchantProductByID,
-    UpdateMerchantProduct
+    UpdateMerchantProduct,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);

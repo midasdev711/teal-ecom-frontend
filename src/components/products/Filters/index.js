@@ -116,9 +116,42 @@ const Filters = (props) => {
     setInputValue("");
   
   };
+  const handleSearchTagsData = () =>{
+     
+      let cloneProductData = originalProductLists.slice()
+      let productNameFilter  
+      if (cloneProductData?.length > 0) {
+        productNameFilter = cloneProductData.filter(data => {
+          return (
+            (data && data.tags?.length > 0 && data.tags?.map(t => t === tags.length > 0 && tags.map(d => d))
+          ))
+        })
+      }
+      console.log('productNameFilter', productNameFilter)
+      if(productNameFilter === undefined){
+        setFilterProductLists(originalProductLists)
+      }else{
+        setFilterProductLists(productNameFilter)
+      }
+  }
+  const handleClearTags = () =>{
+      setTags([])
+  }
+  // const handleShortHighToLowPrice = () =>{
+
+  // }
+  // const handleShortLowToHighPrice = () =>{
+    
+  // }
+  // const handleLatestData = () =>{
+    
+  // }
+  // const handleOldData = () =>{
+    
+  // }
   //console.log('inside filters')
-  console.log('originalProductLists', originalProductLists)
-  console.log('filterProductLists', filterProductLists)
+ // console.log('originalProductLists', originalProductLists)
+ // console.log('filterProductLists', filterProductLists)
   return (
     <ContentFilters>
       <Row gutter={0}>
@@ -204,9 +237,9 @@ const Filters = (props) => {
                   {tagChild}
                 </TweenOneGroup>
                 <TagsConformButtons>
-                <ButtonLink type="link">Clear</ButtonLink>
+                <ButtonLink type="link" onClick={()=>handleClearTags()}>Clear</ButtonLink>
                 <SearchTags>
-                <ButtonLink type="link">Search</ButtonLink>
+                <ButtonLink type="link" onClick={()=>handleSearchTagsData()}>Search</ButtonLink>
                 </SearchTags>
               
                 </TagsConformButtons>

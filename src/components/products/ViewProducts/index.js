@@ -57,7 +57,7 @@ const customerData = [
 const ViewCustomers = (props) => {
   // const { productList } = props
   const productLists = useSelector(state =>state.productReducer.merchantProductLists)
-   console.log(`productList`, productLists)
+   //console.log(`productList`, productLists)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -92,12 +92,13 @@ const ViewCustomers = (props) => {
     {
       title: "Product",
       dataIndex: "title",
+      key:"title",
       render: (title, productListsData ) => {
       
-        console.log('productListsData', productListsData)
-        console.log('title', title)
+     //   console.log('productListsData', productListsData)
+      //  console.log('title', title)
         return (
-          <div>
+          <div key={productListsData.ID}>
             <ProductImage src={productListsData.thumbnailImage}></ProductImage>
             <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/${productListsData.ID}`} shallow={true}>
               <a> {title || ""}</a>
@@ -109,17 +110,20 @@ const ViewCustomers = (props) => {
     {
       title: "Stock",
       dataIndex: "stock",
-      render: (stock) => <div>{stock || ""}</div>,
+      key:"stock",
+      render: (stock) => <div key={stock}>{stock || ""}</div>,
     },
     {
       title: "Price",
       dataIndex: "salePrice",
-      render: (salePrice) => <div>{`$ ${salePrice}` || ""}</div>,
+      key:"price",
+      render: (salePrice) => <div key={salePrice}>{`$ ${salePrice}` || ""}</div>,
     },
     {
       title: "Quantity",
       dataIndex: "totalQuantity",
-      render: (totalQuantity) => <div>{totalQuantity || ""}</div>,
+      key:"Qty",
+      render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || ""}</div>,
       align: "center",
     },
   ];
@@ -204,7 +208,7 @@ const ViewCustomers = (props) => {
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
-    console.log("value: ", value);
+  //  console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
 
@@ -214,7 +218,7 @@ const ViewCustomers = (props) => {
   };
 
   const handleFilterData = (value) =>{
-      console.log('value filters Data', value)
+    //  console.log('value filters Data', value)
       setProductList(value)
   }
   return (

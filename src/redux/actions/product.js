@@ -33,13 +33,14 @@ import {
 } from './actionTypes';
 
 export const getUserProductLists = (userId) => {
-
+            
     return dispatch => {
 
         return apolloClient
             .query({
                 query: GET_MY_PRODUCT_LISTS_QUERY,
-                variables: { ID: userId }
+                variables: { ID: userId },
+                fetchPolicy: "no-cache",
             })
 
             .then(res => {
@@ -96,7 +97,8 @@ export const getProductCategoryLists = () => {
         return apolloClient
             .query({
                 query: GET_PRODUCT_CATEGORY_LISTS_QUERY,
-                variables: {}
+                variables: {},
+                fetchPolicy: 'no-cache',
             })
 
             .then(res => {
@@ -120,13 +122,14 @@ export const getProductCategoryLists = () => {
 export const getProductSubCategoryLists = (id) => {
 
     const subCategoryId = id * 1
-    console.log('subCategoryId', subCategoryId)
-    console.log('typeof(subCategoryId)', typeof (subCategoryId))
+   // console.log('subCategoryId', subCategoryId)
+   // console.log('typeof(subCategoryId)', typeof (subCategoryId))
     return dispatch => {
         return apolloClient
             .query({
                 query: GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY,
-                variables: { ID: subCategoryId }
+                variables: { ID: subCategoryId },
+                fetchPolicy: 'no-cache',
             })
 
             .then(res => {
@@ -165,7 +168,8 @@ export const getMerchantProductByID = (id) => {
         return apolloClient
             .query({
                 query: GET_MERCHANT_PRODUCT_BY_ID_QUERY,
-                variables: { products: id }
+                variables: { products: id },
+                fetchPolicy: 'no-cache',
             })
 
             .then(res => {
@@ -195,14 +199,15 @@ export const deleteMerchantProduct = (userId) => {
         return apolloClient
             .mutate({
                 mutation: DELETE_MERCHANT_PRODUCT_MUTATION,
-                variables: { ID: userId }
+                variables: { ID: userId },
+                fetchPolicy: 'no-cache',
             })
             .then(res => {
-              
-                if (res.data) {
+            
+                if (res) {
                     dispatch({
                         type: DELETE_MERCHANT_PRODUCT_SUCCESS,
-                        data: res.data,
+                        data: res.data.removeProduct,
                     });
                 }
             })
@@ -216,9 +221,9 @@ export const deleteMerchantProduct = (userId) => {
     };
 };
 export const UpdateMerchantProduct = (data) => {
-    data.productId = data.ID
-    console.log('data', data)
-    console.log('object', object)
+    
+   // console.log('data', data)
+    
     return dispatch => {
         dispatch({
             type: EDIT_MERCHANT_PRODUCT_START,
@@ -226,10 +231,11 @@ export const UpdateMerchantProduct = (data) => {
         return apolloClient
             .mutate({
                 mutation: UPDATE_MERCHANT_PRODUCT_MUTATION,
-                variables: data
+                variables: data,
+                fetchPolicy: 'no-cache',
             })
             .then(res => {
-                console.log("edit product", res);
+               // console.log("edit product", res);
                 if (res.data) {
                     dispatch({
                         type:EDIT_MERCHANT_PRODUCT_SUCCESS,

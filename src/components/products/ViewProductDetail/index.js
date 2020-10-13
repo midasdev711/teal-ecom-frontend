@@ -46,8 +46,8 @@ const ViewProductDetail = (props) => {
   const router = useRouter()
   const { productId } = router.query
   const ProductInfo = useSelector((state)=>state.productReducer.productById[0])
-  console.log('ProductDetails', productDetails)
-  console.log('productId', productId)
+ // console.log('ProductDetails', productDetails)
+  //console.log('productId', productId)
   useEffect(()=>{
     getMerchantProductByID((productId * 1))
   },[])
@@ -61,7 +61,7 @@ const ViewProductDetail = (props) => {
   };
 
   const onChangeDate = (date, dateString) => {
-    console.log(date, dateString);
+    //console.log(date, dateString);
   };
 
   const deleteDate = () => {

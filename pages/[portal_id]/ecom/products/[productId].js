@@ -22,21 +22,26 @@ import ProductDetail from "./editProduct";
 import ViewProductDetail from "../../../../src/components/products/ViewProductDetail";
 import { getUserData } from "../../../../src/utils";
 import { useRouter } from 'next/router'
-import { deleteMerchantProduct } from "../../../../src/redux/actions/product";
+import {resetProductStatus, UpdateMerchantProduct , deleteMerchantProduct } from "../../../../src/redux/actions/product";
 import { connect, useSelector } from "react-redux";
 import DeletePopUp from "../../../../src/components/commanComponents/deletePopup";
+import Router from "next/router";
 //import { MDDeleteSelected } from "../../../../src/components/atoms";
 
 
 
-const EditProductDetails = ({deleteMerchantProduct}) => {
+const EditProductDetails = (props) => {
   let userData = getUserData()
   const router = useRouter()
+  const [flag, setFlag] = useState("")
+  const [saveFlag, setSaveFlag] = useState("")
+  const [productDetails, setProductDetails] = useState("")
+  const apiResponse = useSelector(state =>state.productReducer.status)
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
     const { productId } = router.query
-   // console.log('product deleted id', productId)
+    let Id = productId * 1 
     const handleDeleteProduct = () =>{
-      deleteMerchantProduct((productId * 1))
+      props.deleteMerchantProduct(Id)
     }
     
     const onShowMdDeleteSelected = (value) => {
@@ -48,6 +53,44 @@ const EditProductDetails = ({deleteMerchantProduct}) => {
       // message.success("Product deleted successfully!");
        setShowMDDeleteSelected(false);
     };
+    // console.log('apiResponse', apiResponse)
+    useEffect(()=>{
+        if(apiResponse === "deleted" || apiResponse === "updated"){
+          props.resetProductStatus(),
+          Router.router.push("/[portal_id]/ecom/products" ,{ pathname: `/${userData?.uniqueID}/ecom/products`}, { shallow: true });
+        }else if(apiResponse === "fail"){ 
+          message.error("Something went to wrong!");   
+        }
+    },[apiResponse])
+    const handleSubmit = (values) => {
+     
+      values === undefined ? setFlag({ name: `${flag + "demo"}` }) : ""
+      if (values !== undefined) {
+        let cloneValues = values
+        console.log('cloneValues', cloneValues)
+            cloneValues.productCategory = (cloneValues.productCategory * 1)
+        cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
+        cloneValues.productId = cloneValues.ID
+        cloneValues.isPublish = "false"
+        setProductDetails(cloneValues)
+        props.UpdateMerchantProduct(cloneValues)
+      }
+  
+    }
+    const handleSubmitSaveAndSubmit = (values) => {
+      values === undefined ? setSaveFlag({ name: `${flag + "demo"}` }) : ""
+      if (values !== undefined) {
+        let cloneValues = values
+        console.log('cloneValues', cloneValues)
+        cloneValues.productCategory = (cloneValues.productCategory * 1)
+        cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
+        cloneValues.productId = cloneValues.ID
+        cloneValues.isPublish = "true"
+        setProductDetails(cloneValues)
+        props.UpdateMerchantProduct(cloneValues)
+      }
+  
+    }
 
   return (
     <PageLayout>
@@ -84,7 +127,7 @@ const EditProductDetails = ({deleteMerchantProduct}) => {
           </ButtonView>
         </ContentHeader>
         {
-          <ProductDetail />
+          <ProductDetail submit={(values) => handleSubmit(values)} flag={flag} saveSubmit={(values) => handleSubmitSaveAndSubmit(values)} saveFlag={saveFlag}/>
         }
         <DeletePopUp
         name="Product"
@@ -94,14 +137,14 @@ const EditProductDetails = ({deleteMerchantProduct}) => {
         isOpen={isOpenDeleteSelected}
         message="Are sure to delete this product ?"
         buttonText="Delete"
-      />
+        />
          <ActionBottom>
 
         <AlignItem>
           <Button size="large" type="primary" danger onClick={() => setShowMDDeleteSelected(true)}>
             Delete product
           </Button>
-          <Button size="large" type="primary">
+          <Button size="large" type="primary" onClick={() => handleSubmit()}>
             Save
           </Button>
         </AlignItem>
@@ -184,7 +227,9 @@ const mapStateToProps = (store) => {
 };
 
 const mapDispatchToProps = {
-  deleteMerchantProduct
+  deleteMerchantProduct,
+  resetProductStatus,
+  UpdateMerchantProduct,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProductDetails);
