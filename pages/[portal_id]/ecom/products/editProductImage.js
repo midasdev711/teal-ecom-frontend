@@ -4,7 +4,7 @@ import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { Upload, Modal, Dropdown, Menu, Button, Card } from "antd";
 
 
-const ProductsImages = ({ imageData , existImages }) => {
+const EditProductsImages = ({ imageData , existImages }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -31,6 +31,7 @@ console.log('dataFiles', dataFiles)
   },[existImages])
 
   const handlePreview = async (file) => {
+      console.log('file', file)
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -40,6 +41,13 @@ console.log('dataFiles', dataFiles)
       file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
     );
   };
+  const handleSetPreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    return file.preview
+  };
+
 
   const handleChange = async ({ file, fileList }) => {
 
@@ -146,4 +154,4 @@ const TitleStyle = styled.h3`
   width: 100%;
 `;
 
-export default ProductsImages;
+export default EditProductsImages;

@@ -150,7 +150,7 @@ mutation products(
 `;
 
 export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
-      query{ getAllCategories{
+      query{ getParentCategories{
 		id
         ID
         name
@@ -243,7 +243,10 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 				$productMRP: Int
 				$productCostPerItem:Int
 				$productSalePrice: Int
-				
+				$productExistingImages:[String]
+				$productThumbnailImage: Upload
+	            $productFeaturedImage: Upload
+             	$productImages : [Upload]
 				$productCategory: Int
 				$productSubcategory: Int
 				$productSEO: ProductSEOInput
@@ -256,7 +259,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 				$productEndDate: String
 				$isPublish:String
 			  ) {
-				upsertProduct(
+				updateProduct(
 				 product:{
 									
 					                productId: $productId
@@ -268,7 +271,10 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									productDescription: $productDescription
 									productMRP: $productMRP
 									productSalePrice: $productSalePrice
-								
+									productExistingImages:$productExistingImages
+									productImages :$productImages 
+									productThumbnailImage:$productThumbnailImage
+	                                productFeaturedImage:$productFeaturedImage
 									productCategory: $productCategory
 									productSubcategory: $productSubcategory
 									productSEO: $productSEO
@@ -291,7 +297,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									title
 									description
 									salePrice
-									featuredImage
+								
 									totalQuantity
 									productCost
 									mrp
@@ -322,6 +328,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 								   }
 			  }
 			`;
+		
 export default {
 	PRODUCTS_QUERY,
 	GET_MY_PRODUCT_LISTS_QUERY,

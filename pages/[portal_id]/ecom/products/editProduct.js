@@ -40,15 +40,14 @@ import { resolve } from "url";
 import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
 import product, { getProductCategoryLists, getProductSubCategoryLists, getMerchantProductByID, UpdateMerchantProduct } from "../../../../src/redux/actions/product";
-import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
+
 import validation from "../../../../src/utils/validation";
 import { ManageSalesMD } from "../../../../src/components/products/Modals";
 import { useRouter } from 'next/router'
 import { dateFormat } from "../../../../src/utils";
 import moment from 'moment';
-// import 'moment/locale/zh-cn';
-// import locale from 'antd/es/locale/zh_CN';
 
+import EditProductsImages from "./editProductImage"
 
 const { Search } = Input;
 const { Option } = Select;
@@ -70,8 +69,8 @@ let productInfo = {
         variantName: "",
         variantValues: "",
     }],
-    // productThumbnailImage: null,
-    // productImages: [],
+    productThumbnailImage: null,
+     productImages: [],
     productSEO: {
         title: "",
         description: "",
@@ -82,11 +81,12 @@ let productInfo = {
     productTotalQuantity: "",
     productStartDate: "",
     productEndDate: "",
-   // productFeaturedImage: "",
+    productFeaturedImage: "",
     productAttributes: [{
         attributeName: "productWeight",
         attributeValues: []
-    }]
+    }],
+    productExistingImages: []
 }
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
@@ -121,6 +121,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     const router = useRouter()
     const { productId } = router.query
     const merchantProductDetails = useSelector(state => state.productReducer.productById)
+    const [oldImagesData, setOldImagesData] = useState([]);
     //console.log('loading', loading)
     //console.log('merchantProductDetails', merchantProductDetails)
     //console.log('subCategories', subCategories)
@@ -139,38 +140,63 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     useEffect(() => {
         getMerchantProductByID((productId * 1))
     }, [getFlag])
+    useEffect(()=>{
+      let image  = []
+      let data = {...productDetails}  
+      data.productImages.length > 0 ? (
+          console.log('inside'),
+        data.productImages.map((data1,index)=>{
+            console.log('data1', data1)
+            if(data1 === undefined || data1 === "undefined"){
+               
+            }else{
+                image.push(data1)
+            }
+        }),
+        data.productImages = image,
+        data.productThumbnailImage = image[0],
+        data.productFeaturedImage = image[0],
+        console.log('data', data),
+        console.log('image', image),
+        setProductDetails(data),
+        setDummyData([dummyData + 1])
+      ) : ("")  
+    },[imagesFileList])
     useEffect(() => {
         if (merchantProductDetails && merchantProductDetails !== undefined && merchantProductDetails.length > 0) {
             let cloneData = productDetails
             let cloneDataProduct = merchantProductDetails[0]
             cloneData.productTitle = cloneDataProduct.title
             cloneData.productDescription = cloneDataProduct.description
-           // cloneData.productImages = cloneDataProduct.images
+          //  cloneData.productImages = cloneDataProduct.images
+            cloneData.productExistingImages = cloneDataProduct.images
+           
+            setOldImagesData(cloneDataProduct.images)
            // cloneData.productFeaturedImage = cloneDataProduct.featuredImage
-            cloneData.productSalePrice = cloneDataProduct.salePrice
-            cloneData.productMRP = cloneDataProduct.mrp
-            cloneData.productCostPerItem = cloneDataProduct.productCost
-            cloneData.productSKU = cloneDataProduct.sku
-            cloneData.productTotalQuantity = cloneDataProduct.totalQuantity
-            cloneData.productEndDate = cloneDataProduct.endDate
-            cloneData.productStartDate = cloneDataProduct.startDate
-            cloneData.isPublish = cloneDataProduct.isPublish
+            cloneData.productSalePrice = cloneDataProduct.salePrice || 0
+            cloneData.productMRP = cloneDataProduct.mrp || 0
+            cloneData.productCostPerItem = cloneDataProduct.productCost || 0
+            cloneData.productSKU = cloneDataProduct.sku || 0
+            cloneData.productTotalQuantity = cloneDataProduct.totalQuantity || 0
+            cloneData.productEndDate = cloneDataProduct.endDate || ""
+            cloneData.productStartDate = cloneDataProduct.startDate || ""
+            cloneData.isPublish = cloneDataProduct.isPublish || "false"
            // cloneData.productVariants =  cloneDataProduct.variants
-            cloneData.productAttributes[0].attributeName = cloneDataProduct.attributes[0].attributeName
-            cloneData.productAttributes[0].attributeValues = cloneDataProduct.attributes[0].attributeValues
-            cloneData.productSEO.title = cloneDataProduct.seo.title
-            cloneData.productSEO.description = cloneDataProduct.seo.description
-            cloneData.productSEO.cronicalUrl = cloneDataProduct.seo.cronicalUrl
-            cloneData.productSlug = cloneDataProduct.slug
-            cloneData.productTags = cloneDataProduct.tags
-            cloneData.productMerchantID = cloneDataProduct.merchantID
-            cloneData.productMerchantName = cloneDataProduct.merchantName
-            cloneData.productStock = cloneDataProduct.stock
+            cloneData.productAttributes[0].attributeName = cloneDataProduct.attributes.length > 0  ? cloneDataProduct.attributes[0].attributeName : ""
+            cloneData.productAttributes[0].attributeValues = cloneDataProduct.attributes.length > 0 ? cloneDataProduct.attributes[0].attributeValues : 0
+            cloneData.productSEO.title = cloneDataProduct.seo.title || ""
+            cloneData.productSEO.description = cloneDataProduct.seo.description || ""
+            cloneData.productSEO.cronicalUrl = cloneDataProduct.seo.cronicalUrl || "" 
+            cloneData.productSlug = cloneDataProduct.slug || "" 
+            cloneData.productTags = cloneDataProduct.tags || []
+            cloneData.productMerchantID = cloneDataProduct.merchantID || ""
+            cloneData.productMerchantName = cloneDataProduct.merchantName || ""
+            cloneData.productStock = cloneDataProduct.stock || 0
           //  cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
-            cloneData.productCategory = cloneDataProduct.category[0].ID
-            cloneData.productSubcategory = cloneDataProduct.subCategory[0].ID
-            cloneData.ID = cloneDataProduct.ID
-            cloneData._id = cloneDataProduct._id
+            cloneData.productCategory = cloneDataProduct.category.length > 0  ? cloneDataProduct.category[0].ID : null
+            cloneData.productSubcategory = cloneDataProduct.subCategory.length > 0  ? cloneDataProduct.subCategory[0].ID : null 
+            cloneData.ID = cloneDataProduct.ID || ""
+            cloneData._id = cloneDataProduct._id || ""
             
             setDummyData([dummyData + 1])
             setTags(cloneDataProduct.tags)
@@ -238,9 +264,9 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         ) : ("")
     }, [tags])
 
-    useEffect(() => {
-        getProductCategoryLists()
-    }, [])
+    // useEffect(() => {
+    //     getProductCategoryLists()
+    // }, [getFlag])
 
     useEffect(() => {
         let cloneProduct = productDetails
@@ -304,33 +330,62 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         setIsDatePicker(!isDatePicker);
     };
 
+    // const base64 = (file, names, fileData) => {
+    //     return new Promise((resolve, reject) => {
+    //         const fileReader = new FileReader()
+    //         fileReader.onloadend = () => {
+    //             let b64 = fileReader.result
+    //             if (names === "featureProducts") {
+    //                 let cloneProductDetails = productDetails
+    //                 let cloneProductDetails1 = productDetails.productFeaturedImage
+    //                 let cloneError = { ...errors }
+    //                 cloneProductDetails1 = b64
+    //                 cloneProductDetails.productFeaturedImage = cloneProductDetails1
+    //                 setProductDetails(cloneProductDetails)
+    //                 setProductFeaturedImageList([fileData.file])
+    //                 delete cloneError.productFeaturedImage
+    //                 delete cloneError.productImages
+    //                 setErrors(cloneError)
+    //                 setDummyData([dummyData + 1])
+    //             }
+    //             resolve(b64);
+    //         };
+    //         fileReader.onerror = (error) => {
+    //             reject(error)
+    //         }
+    //         fileReader.readAsDataURL(file);
+    //     });
+    // }
     const base64 = (file, names, fileData) => {
         return new Promise((resolve, reject) => {
-            const fileReader = new FileReader()
-            fileReader.onloadend = () => {
-                let b64 = fileReader.result
-                if (names === "featureProducts") {
-                    let cloneProductDetails = productDetails
-                    let cloneProductDetails1 = productDetails.productFeaturedImage
-                    let cloneError = { ...errors }
-                    cloneProductDetails1 = b64
-                    cloneProductDetails.productFeaturedImage = cloneProductDetails1
-                    setProductDetails(cloneProductDetails)
-                    setProductFeaturedImageList([fileData.file])
-                    delete cloneError.productFeaturedImage
-                    delete cloneError.productImages
-                    setErrors(cloneError)
-                    setDummyData([dummyData + 1])
-                }
-                resolve(b64);
-            };
-            fileReader.onerror = (error) => {
-                reject(error)
+          const fileReader = new FileReader()
+          fileReader.onloadend = () => {
+            let b64 = fileReader.result
+            if (names === "featureProducts") {
+              let cloneProductDetails = {
+                ...productDetails
+              }
+              // let cloneProductDetails1 = productDetails.productFeaturedImage
+              let cloneError = {
+                ...errors
+              };
+              // cloneProductDetails1 = b64
+              cloneProductDetails.productFeaturedImage = file;
+              setProductDetails(cloneProductDetails)
+              setProductFeaturedImageList([fileData.file])
+              delete cloneError.productFeaturedImage
+              delete cloneError.productImages
+              setErrors(cloneError)
+              setDummyData([dummyData + 1])
             }
-            fileReader.readAsDataURL(file);
+            resolve(b64);
+          };
+          fileReader.onerror = (error) => {
+            reject(error)
+          }
+          fileReader.readAsDataURL(file);
         });
-    }
-
+      }
 
     const onChangeFileCSV = async (info, name) => {
         const { status } = info.file;
@@ -723,6 +778,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                 return categoryValue
             }
         } else {
+            getProductCategoryLists()
             return categoryValue
         }
     }
@@ -775,7 +831,10 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                             </DescriptionContent>
                         </ContentBox>
                         <ContentBox marginTop="20px">
-                            <ProductsImages imageData={(value) => handleProductsImages(value)} />
+                            {
+                                console.log('oldImagesData', oldImagesData)
+                            }
+                            <EditProductsImages imageData={(value) => handleProductsImages(value)} existImages={oldImagesData}/>
                             {/* <AlignItem className="margin-bottom">
                 <TitleBox>Product Images</TitleBox>
                 <Dropdown

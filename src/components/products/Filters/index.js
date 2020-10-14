@@ -163,7 +163,7 @@ const Filters = (props) => {
             onChange={(event)=>handleSearch(event)}
           />
         </Col>
-        <Col md={3}>
+        {/* <Col md={3}>
           <Dropdown
             overlay={
               <DropdownBox>
@@ -182,8 +182,8 @@ const Filters = (props) => {
               Product vendor <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
-        <Col md={3}>
+        </Col> */}
+        {/* <Col md={3}>
           <Dropdown
             overlay={
               <DropdownBox>
@@ -203,8 +203,8 @@ const Filters = (props) => {
               Availability <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
-        <Col md={2}>
+        </Col> */}
+        {/* <Col md={2}>
           <Dropdown
             onClick={handleTagsDropDown}
             overlay={
@@ -252,17 +252,17 @@ const Filters = (props) => {
               Tagged with <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
+        </Col> */}
         <Col md={2}>
           <ButtonLast block type="default" onClick={() => props.onOpen(true)}>
             More filters
           </ButtonLast>
         </Col>
-        <Col md={2}>
+        {/* <Col md={2}>
           <ButtonSaved block type="default" disabled icon={<StarOutlined />}>
             Saved
           </ButtonSaved>
-        </Col>
+        </Col> */}
         <Col md={2}>
           <Dropdown
             overlay={
@@ -272,16 +272,16 @@ const Filters = (props) => {
                   onChange={onChangeSubscription}
                   value={valueSubscription}
                 >
-                  <RadioStyle value={1}>Order number (ascending)</RadioStyle>
-                  <RadioStyle value={2}>Order number (descending)</RadioStyle>
+                  {/* <RadioStyle value={1}>Order number (ascending)</RadioStyle>
+                  <RadioStyle value={2}>Order number (descending)</RadioStyle> */}
                   <RadioStyle value={3}>Date (oldest first)</RadioStyle>
                   <RadioStyle value={4}>Date (newest first)</RadioStyle>
-                  <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
-                  <RadioStyle value={6}>Customer name (Z-A)</RadioStyle>
-                  <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
+                  {/* <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
+                  <RadioStyle value={6}>Customer name (Z-A)</RadioStyle> */}
+                  {/* <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
                   <RadioStyle value={8}>Payment status (Z-A)</RadioStyle>
                   <RadioStyle value={9}>Fulfillment status (A-Z)</RadioStyle>
-                  <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle>
+                  <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle> */}
                   <RadioStyle value={11}>Total price (low to high)</RadioStyle>
                   <RadioStyle value={12}>Total price (high to low)</RadioStyle>
                 </RadioGroupStyle>

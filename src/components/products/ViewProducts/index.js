@@ -23,13 +23,15 @@ import {
   Menu,
   Input,
   message,
+  Form,
 } from "antd";
 import { getUserData } from "../../../utils";
-import { getUserProductLists } from "../../../redux/actions/product";
+import { getUserProductLists , getProductCategoryLists} from "../../../redux/actions/product";
 import { connect , useSelector } from "react-redux";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Search } = Input;
+const { Option } = Select;
 
 const customerData = [
   {
@@ -76,12 +78,15 @@ const ViewCustomers = (props) => {
   const [productList, setProductList] = useState([]);
   const [apiCallFlag, setApiCallFlag] = useState("start");
   let userData = getUserData()
+  const categoryLists = useSelector(state => state.productReducer.categoriesLists)
 
   useEffect(() => {
-    
     let userId = userData?.ID
     props.getUserProductLists(userId)
   }, [apiCallFlag])
+  useEffect(() => {
+        props.getProductCategoryLists()
+  }, [])
   useEffect(() => {
     if(productLists?.length > 0){
          setProductList(productLists)
@@ -306,7 +311,7 @@ const ViewCustomers = (props) => {
           onChange={(values) => setShowCollapse(values)}
           expandIconPosition="right"
         >
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Product vendor</PanelTitle>
@@ -321,9 +326,9 @@ const ViewCustomers = (props) => {
               <RadioStyle value={1}>mysolidshoes</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
 
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Availability</PanelTitle>
@@ -339,7 +344,7 @@ const ViewCustomers = (props) => {
               <RadioStyle value={2}>Unavailable on Online Store</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
           <PanelStyle
             header={
               <div>
@@ -361,9 +366,22 @@ const ViewCustomers = (props) => {
             }
             key="4"
           >
+            <Form.Item>
+            {/* onChange={(event) => handleDropDown(event, "productCategory")} */}
+                    <Select defaultValue="Select" >
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
+                        })
+                      }
+                    </Select>
+                 
+
+                  </Form.Item>
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Collection</PanelTitle>
@@ -390,7 +408,7 @@ const ViewCustomers = (props) => {
               <RadioStyle value={1}>Online Store</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
         </CollapseStyle>
       </DrawerStyle>
     </ViewContent>
@@ -516,7 +534,8 @@ const mapStateToProps = (store) => {
 };
 
 const mapDispatchToProps = {
-  getUserProductLists
+  getUserProductLists,
+  getProductCategoryLists,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

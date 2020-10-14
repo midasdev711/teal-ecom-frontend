@@ -93,7 +93,7 @@ export const productReducer = (state = initData, action) => {
     case GET_PRODUCT_CATEGORY_LISTS:
       return {
         ...state,
-        categoriesLists: action.data.getAllCategories,
+        categoriesLists: action.data.getParentCategories,
         errorMsg: null,
         isGetDetail: true,
       };
