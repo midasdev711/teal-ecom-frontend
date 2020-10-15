@@ -29,6 +29,13 @@ console.log('dataFiles', dataFiles)
      setDataFiles(cloneDataFile) 
     }
   },[existImages])
+        
+  // useEffect(()=>{
+  //     if(dataFiles.length > 0){
+  //         dataFiles.map((data))
+  //       handleSetPreview()
+  //     }
+  // },[dataFiles])
 
   const handlePreview = async (file) => {
       console.log('file', file)
