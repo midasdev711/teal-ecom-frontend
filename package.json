@@ -30,7 +30,7 @@
     "js-cookie": "^2.2.1",
     "language-list": "^0.0.3",
     "less": "^3.12.2",
-    "moment": "^2.27.0",
+    "moment": "^2.29.1",
     "next": "9.5.2",
     "next-with-apollo": "^5.1.0",
     "rc-tween-one": "^2.7.3",

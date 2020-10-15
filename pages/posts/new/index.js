@@ -18,6 +18,8 @@ import {
 import NewForm from "../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
+import { getUserData } from "../../../src/utils";
+
 
 const NewPost = (props) => {
   const [form] = Form.useForm();
@@ -26,6 +28,7 @@ const NewPost = (props) => {
   const [isStory, setIsStory] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [saveValues, setSaveValues] = useState("saved");
+  let userData = getUserData()
 
 
   const router = useRouter();
@@ -51,7 +54,7 @@ const NewPost = (props) => {
   useEffect(() => {
     if (articleDetail) {
       console.log('articleDetail', articleDetail)
-      const userData = JSON.parse(localStorage.getItem("userData"));
+      
       const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
       console.log('url', url);
       router.replace('/[portal_id]/stories/[slug]/draft', { pathname: url }, { shallow: true });
@@ -121,7 +124,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/posts/[post_status]", { pathname: "/posts/live" }, { shallow: true });
+          router.push("[portal_id]/stories/posts/[post_status]", { pathname: `${userData?.uniqueID}/stories/posts/live` }, { shallow: true });
         }
       })
       .catch((err) => {
@@ -135,12 +138,12 @@ const NewPost = (props) => {
       <ActionTopLayout>
         <ActionContent>
           <NewPostAction>
-            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
+            <Link passHref={true} href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
               <LinkBack>
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link passHref={true} href="/posts/[post_status]" as="/posts/live" shallow>
+            <Link passHref={true} href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>

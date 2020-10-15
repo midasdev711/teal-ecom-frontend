@@ -34,7 +34,7 @@ const NewCustomer = () => {
   const [Tax, setTax] = useState(0);
   const [Notes, setNotes] = useState('');
   const [Tags, setTags] = useState('');
-  const newActions = () => {
+  const newActions = (props) => {
     return (
       <ActionTopLayout>
         <ActionContent>

@@ -6,8 +6,11 @@ import styled from "styled-components";
 import { Layout, Empty, Button } from "antd";
 import Link from "next/link";
 import { ViewDrafts } from "../../../src/components/orders";
+import { getUserData } from "../../../src/utils";
+
 
 const Drafts = () => {
+  let userData = getUserData()
   return (
     <PageLayout>
       <CustomerContent>
@@ -36,7 +39,7 @@ const Drafts = () => {
         <PageHeader
           PageName="Your Drafts"
           CreateButtonName="Create order"
-          path="drafts/new"
+          path="orders/drafts/new"
           isData={true}
         />
         <ViewDrafts />

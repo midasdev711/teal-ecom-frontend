@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 // components
@@ -28,16 +28,34 @@ import {
 import GalleryImages from "./GalleryImages";
 import { TweenOneGroup } from "rc-tween-one";
 import { TimeData } from "../fakeData";
+import { connect, useSelector } from "react-redux";
+import { getMerchantProductByID } from "../../../redux/actions/product";
+import { useRouter } from 'next/router'
+
 
 const { Search } = Input;
 
-const ViewProductDetail = () => {
+const ViewProductDetail = (props) => {
+  const { getMerchantProductByID } = props
   const [openEditSite, setOpenEditSite] = useState(false);
   const [openManageMD, setOpenManageMD] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
+  const [productDetails, setProductDetails] = useState();
   const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState(["test"]);
-
+  const router = useRouter()
+  const { productId } = router.query
+  const ProductInfo = useSelector((state)=>state.productReducer.productById[0])
+  console.log('ProductDetails', productDetails)
+  console.log('productId', productId)
+  useEffect(()=>{
+    getMerchantProductByID((productId * 1))
+  },[])
+  useEffect(()=>{
+      if(ProductInfo !== undefined){
+        setProductDetails(ProductInfo)
+      }
+  },[ProductInfo])
   const onFinish = (values) => {
     console.log(values);
   };
@@ -106,7 +124,12 @@ const ViewProductDetail = () => {
               </Form.Item>
               <Form.Item label="Description">
                 <EditorContent>
-                  <RemirorEditor />
+                {/* <DescriptionContent> */}
+                <TextAreaStyle rows={2} name="productDescription" />
+                {/* <label style={{ color: "red" }} >{errors?.productDescription}</label> */}
+                {/* <RemirorEditor /> */}
+              {/* </DescriptionContent> */}
+                  {/* <RemirorEditor /> */}
                 </EditorContent>
               </Form.Item>
             </Form>
@@ -416,6 +439,10 @@ const TitleBox = styled.h3`
   margin: 0;
   opacity: 0.9;
 `;
+const TextAreaStyle = styled(Input.TextArea)`
+  width: 100%;
+  padding: 8px 12px;
+`;
 
 const ActionBottom = styled.div`
   margin-top: 20px;
@@ -426,4 +453,15 @@ const TagContent = styled(Tag)`
   marginbottom: 10px;
 `;
 
-export default ViewProductDetail;
+const mapStateToProps = (store) => {
+  return {
+
+  };
+};
+
+const mapDispatchToProps = {
+  getMerchantProductByID
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewProductDetail);
+

@@ -31,14 +31,16 @@ const InputPasswordForm = props => {
 
 	useEffect(() => {
 		if (props.isLogin) {
-      setLoading(false)
-      router.push('/')
+			setLoading(false)
+			let userPortalId = JSON.parse(localStorage.getItem("userData"))
+			console.log('userPortalId', userPortalId?.uniqueID)
+			router.push("/[portal_id]/ecom", { pathname: `/${userPortalId?.uniqueID}/ecom` }, { shallow: true });
 		}
 	}, [props.isLogin]);
 
 	useEffect(() => {
 		if (props.errorMsg) {
-      setLoading(false)
+			setLoading(false)
 			notification.error({
 				message: 'Error',
 				description: props.errorMsg,
@@ -47,7 +49,7 @@ const InputPasswordForm = props => {
 	}, [props.errorMsg]);
 
 	const onFinish = async values => {
-    setLoading(true)
+		setLoading(true)
 		const { password } = values;
 		await props.login(props.email, password);
 	};

@@ -27,6 +27,8 @@ import {
   Menu,
   message,
 } from "antd";
+import { getUserData } from "../../../utils";
+
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -84,17 +86,17 @@ const languagesData = languagesList().getData();
 const ViewCustomers = (props) => {
   console.log('props.customerDataprops.customerData', props)
   const customerData =props.customerData === undefined ? [] : props.customerData
-  const dataNew = customerData.filter((el) => {
-    return el.isNew === true;
-  });
+  // const dataNew = customerData.filter((el) => {
+  //   return el.isNew === true;
+  // });
   
-  const dataEmailSubscription = customerData.filter((el) => {
-    return el.status === "Subscribed";
-  });
+  // const dataEmailSubscription = customerData.filter((el) => {
+  //   return el.status === "Subscribed";
+  // });
   
-  const dataFromUS = customerData.filter((el) => {
-    return el.isUS === true;
-  });
+  // const dataFromUS = customerData.filter((el) => {
+  //   return el.isUS === true;
+  // });
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -184,7 +186,7 @@ const ViewCustomers = (props) => {
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const editCustomers = () => {
     Router.router.push("/customers/edit");
@@ -262,26 +264,26 @@ const ViewCustomers = (props) => {
     setValueSubscription(e.target.value);
   };
 
-  const onChangeAmount = (e, name) => {};
+  const onChangeAmount = (e, name) => { };
 
-  const onChangeNumberOrders = (e, name) => {};
+  const onChangeNumberOrders = (e, name) => { };
 
   const onShowMdAddTags = (value) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
@@ -330,7 +332,7 @@ const ViewCustomers = (props) => {
               pagination={customerData.length > 10}
             />
           )}
-          {tabIndex === 2 && (
+          {/* {tabIndex === 2 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -340,7 +342,7 @@ const ViewCustomers = (props) => {
               dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
               pagination={customerData.length > 10}
             />
-          )}
+          )} */}
           {tabIndex === 3 && (
             <Table
               rowSelection={{
@@ -363,7 +365,7 @@ const ViewCustomers = (props) => {
               pagination={customerData.length > 10}
             />
           )}
-          {tabIndex === 5 && (
+          {/* {tabIndex === 5 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -373,8 +375,8 @@ const ViewCustomers = (props) => {
               dataSource={dataEmailSubscription}
               pagination={customerData.length > 10}
             />
-          )}
-          {tabIndex === 6 && (
+          )} */}
+          {/* {tabIndex === 6 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -384,7 +386,7 @@ const ViewCustomers = (props) => {
               dataSource={dataFromUS}
               pagination={customerData.length > 10}
             />
-          )}
+          )} */}
         </ContentTab>
       )}
 

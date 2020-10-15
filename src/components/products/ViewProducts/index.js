@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
-import { connect } from "react-redux";
 import { getProducts } from "../../../redux/actions/products";
 // components
 import Filters from "../Filters";
@@ -26,6 +25,10 @@ import {
   Input,
   message,
 } from "antd";
+import { getUserData } from "../../../utils";
+import { getUserProductLists } from "../../../redux/actions/product";
+import { connect , useSelector } from "react-redux";
+
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -55,6 +58,10 @@ const customerData = [
 ];
 
 const ViewCustomers = (props) => {
+  // const { productList } = props
+  const productList = useSelector(state =>state.productReducer.merchantProductLists)
+
+   console.log(`productList`, productList)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -70,48 +77,51 @@ const ViewCustomers = (props) => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  let userData = getUserData()
 
   useEffect(() => {
-    getProductsCall();
-  }, [props]);
+    
+    let userId = userData?.ID
+    props.getUserProductLists(userId)
+  }, [productList])
 
-  const getProductsCall = async () => {
-    await props.getProducts(100, 1);
-  };
   const columns = [
     {
       title: "Product",
-      dataIndex: "product",
-      render: (product) => {
+      dataIndex: "title",
+      render: (title, productListsData ) => {
+      
+        console.log('productListsData', productListsData)
+        console.log('title', title)
         return (
           <div>
-            <ProductImage src={product.img}></ProductImage>
-            <Link href={`/products/[productId]`} as="/products/123456789">
-              <a> {product && product.name}</a>
+            <ProductImage src={productListsData.thumbnailImage}></ProductImage>
+            <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/${productListsData.ID}`} shallow={true}>
+              <a> {title || ""}</a>
             </Link>
           </div>
         );
       },
     },
     {
-      title: "Inventory",
-      dataIndex: "inventory",
-      render: (inventory) => <div>{inventory}</div>,
+      title: "Stock",
+      dataIndex: "stock",
+      render: (stock) => <div>{stock || ""}</div>,
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      render: (type) => <div>{type}</div>,
+      title: "Price",
+      dataIndex: "salePrice",
+      render: (salePrice) => <div>{`$ ${salePrice}` || ""}</div>,
     },
     {
-      title: "Vendor",
-      dataIndex: "vendor",
-      render: (vendor) => <div>{vendor}</div>,
+      title: "Quantity",
+      dataIndex: "totalQuantity",
+      render: (totalQuantity) => <div>{totalQuantity || ""}</div>,
       align: "center",
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const editCustomers = () => {
     Router.router.push("/customers/edit");
@@ -176,18 +186,18 @@ const ViewCustomers = (props) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
@@ -227,8 +237,8 @@ const ViewCustomers = (props) => {
                 ...rowSelection,
               }}
               columns={columns}
-              dataSource={customerData}
-              pagination={customerData.length > 10}
+              dataSource={productList}
+              pagination={productList.length > 10}
             />
           )}
         </ContentTab>
@@ -488,13 +498,14 @@ const ButtonMoreActions = styled(Button)`
 
 const mapStateToProps = (store) => {
   return {
-    articlesData: store.articlesReducer.articlesData,
-    msgErr: store.articlesReducer.msgErr,
+
+    // productList: store.productReducer.merchantProductLists,
+
   };
 };
 
 const mapDispatchToProps = {
-  getProducts,
+  getUserProductLists
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

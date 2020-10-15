@@ -30,6 +30,7 @@ import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
 import { getOrders } from "../../../redux/actions/orders";
+import { getUserData } from "../../../utils";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
@@ -54,6 +55,7 @@ const ViewOrders = (props) => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
+  let userData = getUserData()
   useEffect(() => {
     getOrdersCall();
   }, [props]);
@@ -67,9 +69,9 @@ const ViewOrders = (props) => {
       dataIndex: "order_id",
       render: (order_id) => {
         return (
-          <Link href="/orders/123">
-            <FullName href="">#{order_id}</FullName>
-          </Link>
+          <Link href="/orders/123" as={`/orders/123`}>
+          <FullName href="">#{order_id}</FullName>
+        </Link>
         );
       },
     },
@@ -94,8 +96,11 @@ const ViewOrders = (props) => {
               </p>
               <TextPhone>{customer.phone}</TextPhone>
               <div>
-                <Button block type="default" href="/customers/123">
-                  View customer
+
+                <Button block type="default">
+                  <Link href="/[portal_id]/ecom/customers/123" as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
+                    <a>View customer</a>
+                  </Link>
                 </Button>
               </div>
             </PopupDetailTB>
@@ -194,7 +199,7 @@ const ViewOrders = (props) => {
     },
   ];
 
-  const handleMenuClickCheckbox = (e) => {};
+  const handleMenuClickCheckbox = (e) => { };
 
   const onCreateShippingLabels = () => {
     Router.router.push("/orders/shipping-labels");
@@ -233,18 +238,18 @@ const ViewOrders = (props) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => {};
+  const onSaveAddTags = (value) => { };
 
-  const onFinishAddTags = (value) => {};
+  const onFinishAddTags = (value) => { };
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => {};
+  const onSaveDeleteTags = (value) => { };
 
-  const onFinishDeleteTags = (value) => {};
+  const onFinishDeleteTags = (value) => { };
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
@@ -377,9 +382,8 @@ const ViewOrders = (props) => {
 
       <MDFulfill
         isOpen={isShowFulfill}
-        title={`Fulfill ${checkedList.length} order${
-          checkedList.length > 1 ? "s" : ""
-        }`}
+        title={`Fulfill ${checkedList.length} order${checkedList.length > 1 ? "s" : ""
+          }`}
         content="This will mark these orders as fulfilled."
         cancelText="Cancel"
         okText="Fulfil"

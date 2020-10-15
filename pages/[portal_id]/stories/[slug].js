@@ -14,6 +14,7 @@ import {
 import NewForm from "../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
+import { getUserData } from "../../../src/utils";
 
 const usePrevious = (value) => {
   const ref = useRef();
@@ -32,6 +33,7 @@ const EditPost = (props) => {
 
   const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
+  let userData = getUserData()
   //const data = useSelector(state => state.articlesReducer.updateArticleDetail)
   // useEffect(() => {
   //   return () => {
@@ -84,7 +86,7 @@ const EditPost = (props) => {
         message: "Successfully!",
         description: "Updated article successfully!",
       });
-      Router.router.push("/posts/[post_status]", { pathname: "/posts/live" }, { shallow: true });
+      Router.router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/live` }, { shallow: true });
     }
   }, [props.updateArticleDetail]);
 
@@ -147,6 +149,7 @@ const EditPost = (props) => {
   };
 
   const newActions = () => {
+    let userData = getUserData()
     return (
       <ActionTopLayout>
         <ActionContent>
@@ -156,7 +159,7 @@ const EditPost = (props) => {
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link href="/posts/[post_status]" as="/posts/live" shallow={true}>
+            <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow={true}>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>

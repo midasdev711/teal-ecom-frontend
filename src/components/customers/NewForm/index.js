@@ -35,6 +35,7 @@ const NewForm = (props) => {
     console.log(`selected ${value}`);
   };
   const { BasicDetails, AddressDetails, Tags, TaxFlag, Tax, Notes, handleChangeValue } = props
+  
   return (
     <Form
       name="basic"
@@ -43,6 +44,7 @@ const NewForm = (props) => {
       className="form-new"
       layout="vertical"
     >
+      {console.log('BasicDetails', props)}
       <SubForm>
         <Row gutter={24}>
           <Col md={8}>

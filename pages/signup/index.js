@@ -43,7 +43,7 @@ const SignupForm = props => {
 	}, [props.errorMsg]);
 
 	const onFinish = async values => {
-		await props.signup(values.email, values.password, values.name);
+		await props.signup(values.email, values.password, values.name , values.mobileNo);
 	};
 
 	const handleSocialRegister = type => {};
@@ -57,6 +57,9 @@ const SignupForm = props => {
 				</AdjustRow>
 				<Form.Item name="name" rules={[{ required: true, message: 'Please input your Full Name!' }]}>
 					<InputText placeholder="Full Name" />
+				</Form.Item>
+				<Form.Item name="mobileNo" rules={[{ required: true, message: 'Please input your mobile number!' }]}>
+					<InputText type="text" placeholder="Mobile Number" />
 				</Form.Item>
 				<Form.Item
 					name="email"

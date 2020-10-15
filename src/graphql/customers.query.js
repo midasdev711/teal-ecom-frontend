@@ -63,6 +63,7 @@ export const CREATE_CUSTOMER_MUTATION = gql`
         Tags: $Tags
       }
     ) {
+      _id
       BasicDetailsFirstName
       BasicDetailsLastName
       BasicDetailsEmail

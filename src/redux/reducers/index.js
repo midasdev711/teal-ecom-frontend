@@ -2,9 +2,9 @@ import { combineReducers } from 'redux';
 
 import { articlesReducer } from './articles';
 import { usersReducer } from './users';
-import { productReducer } from './products';
 import { orderReducer } from './orders';
 import { customerReducer } from './customers';
+import { productReducer } from './product';
 
 export const reducers = combineReducers({
 	articlesReducer,

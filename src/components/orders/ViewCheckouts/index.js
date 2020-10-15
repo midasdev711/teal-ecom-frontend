@@ -17,6 +17,8 @@ import {
   Dropdown,
   Menu,
 } from "antd";
+import { getUserData } from "../../../utils";
+
 
 const { TabPane } = Tabs;
 const customerData = [
@@ -65,6 +67,7 @@ const ViewOrders = () => {
   const [checkedList, setCheckedList] = useState([]);
   const [tagsFilter, setTagsFilter] = useState([]);
   const [tabIndex, setTabIndex] = useState(1);
+  let userData = getUserData()
 
   const columns = [
     {
@@ -72,7 +75,7 @@ const ViewOrders = () => {
       dataIndex: "checkout_id",
       render: (checkout_id) => {
         return (
-          <Link href={`/checkouts/${checkout_id}`}>
+          <Link href={`/[portal_id]/ecom/orders/checkouts/${checkout_id}`} as={`/${userData?.uniqueID}/ecom/orders/checkouts/${checkout_id}`}>
             <FullName>#{checkout_id}</FullName>
           </Link>
         );
@@ -88,7 +91,7 @@ const ViewOrders = () => {
       render: (placed_by) => (
         <ButtonCustomer type="text">
           {placed_by.first_name} {placed_by.last_name}
-          <Link href={`/customers/[pid]`} as="/customers/123456789" >
+          <Link href={`/[portal_id]/ecom/orders/customers/[pid]`} as={`/${userData?.uniqueID}/ecom/orders/customers/123456789`} >
             <FullName>
               {" "}
               <RightCircleOutlined />

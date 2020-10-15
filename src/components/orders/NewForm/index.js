@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { TweenOneGroup } from "rc-tween-one";
+import { connect } from "react-redux";
 import Link from "next/link";
 // icon
 import {
@@ -39,47 +40,24 @@ import {
   EditEmail,
   ShippingAddress,
 } from "../Modal";
-import { customer } from "../fakeData";
+import { getCustomers } from "../../../redux/actions/customers";
+// import { customer } from "../fakeData";
 
 const { Search } = Input;
+const newForm = (props) => {
+  let orderInfo = {
+    listOrders: [],
+    selectedCustomer: null,
+    subTotal: 0.0,
+    tags: ['test']
 
-const content = (data, change) => {
-  const [customerdata, setCustomerData] = useState([]);
-
-  const UpdateData = () => {
-    setCustomerData(customer.filter((res) => !res.name.search(data)));
-  };
-
-  useEffect(() => {
-    UpdateData();
-  }, [data]);
-
-  return (
-    <div>
-      <PopoverHeader>
-        <PlusOutlined />
-        <p>Create a new customer</p>
-      </PopoverHeader>
-      {customerdata.map((res, index) => {
-        return (
-          <PopoverContent key={index} onClick={() => change(res)}>
-            <StyledAvatar src={res.profile_url} alt="profile image" />
-            <div className="customer-infor">
-              <p>{res.name}</p>
-              <p>{res.email}</p>
-            </div>
-          </PopoverContent>
-        );
-      })}
-    </div>
-  );
-};
-
-const newForm = () => {
+  
+  }
+  const [orderDetails, setOrderDetails] = useState(orderInfo);
   const [visiable, setVisible] = useState(false);
   const [openCustumItem, setopenCustumItem] = useState(false);
   const [searchCustomner, setSearchcustomer] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  // const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
   const [listOrders, setListOrders] = useState([]);
   const [subTotal, setSubTotal] = useState(0.0);
@@ -92,6 +70,62 @@ const newForm = () => {
     name: "",
   });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
+  useEffect(() => {
+    getCustomersCall();
+  }, [props]);
+
+  useEffect(() => {
+    if (props.saveFlag !== "") {
+      handleSubmit()
+    }
+  }, [props.saveFlag])
+
+  const handleSubmit = () => {
+
+      props.saveSubmit(productDetails)
+  }
+
+  const getCustomersCall = async () => {
+    await props.getCustomers();
+  };
+
+  const content = (data, change) => {
+    
+    const customer = props.customerData === undefined ? [] : props.customerData
+    const [customerdata, setCustomerData] = useState([]);
+    const UpdateData = () => {
+      setCustomerData(customer.filter((res) => !res.BasicDetailsFirstName.search(data)));
+    };
+
+    useEffect(() => {
+      UpdateData();
+    }, [data]);
+
+    
+
+    return (
+      <div>
+        <PopoverHeader>
+          <PlusOutlined />
+          <p>Create a new customer</p>
+        </PopoverHeader>
+        {customerdata.map((res, index) => {
+          return (
+            <PopoverContent key={index} onClick={() => change(res)}>
+              <StyledAvatar src={res.profile_url} alt="profile image" />
+              <div className="customer-infor">
+                <p>{res.BasicDetailsFirstName}</p>
+                <p>{res.BasicDetailsEmail}</p>
+              </div>
+            </PopoverContent>
+          );
+        })}
+      </div>
+    );
+  };
+
+
+
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -106,11 +140,13 @@ const newForm = () => {
   };
 
   const data = (res) => {
-    console.log(res);
-    setSelectedCustomer(res);
+    let cloneCustomer = orderDetails
+    cloneCustomer.selectedCustomer=res
+    console.log('dsfdfdfdfdf',cloneCustomer )
+    setOrderDetails(cloneCustomer);
   };
 
-  useEffect(() => {}, [searchCustomner, selectedCustomer]);
+  useEffect(() => { }, [searchCustomner, orderInfo.selectedCustomer]);
 
   const showModal = () => {
     setopenCustumItem(!openCustumItem);
@@ -176,7 +212,9 @@ const newForm = () => {
   };
 
   const handleColsecontact = (e) => {
-    setSelectedCustomer(null);
+    let cloneCustomer = orderDetails
+    cloneCustomer.selectedCustomer=null
+    setOrderDetails(cloneCustomer);
   };
 
   // Edit email
@@ -352,8 +390,8 @@ const newForm = () => {
                         placement="bottomRight"
                         trigger="click"
                         className="new-order"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Add discount</ContentTitle>
                       </Popover>
@@ -362,8 +400,8 @@ const newForm = () => {
                         content={AddShipment}
                         placement="bottom"
                         trigger="click"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Add shipment</ContentTitle>
                       </Popover>
@@ -371,8 +409,8 @@ const newForm = () => {
                         content={Taxes}
                         placement="bottomRight"
                         trigger="click"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Taxes</ContentTitle>
                       </Popover>
@@ -421,7 +459,7 @@ const newForm = () => {
             </Row>
           </Col>
           <Col md={8}>
-            {selectedCustomer === null && (
+            {orderInfo.selectedCustomer === null && (
               <ContentBox>
                 <TitleBox>Find and Create customer </TitleBox>
                 <Popover
@@ -441,7 +479,7 @@ const newForm = () => {
                 </Popover>
               </ContentBox>
             )}
-            {selectedCustomer !== null && (
+            {orderInfo.selectedCustomer !== null && (
               <>
                 <ContentBox>
                   <AlignItem>
@@ -451,14 +489,14 @@ const newForm = () => {
                   <StyledAvatar
                     width="55"
                     height="55"
-                    src={selectedCustomer.profile_url}
+                    src={orderInfo.selectedCustomer.profile_url}
                     alt="avatar"
                   />
                   <ContentTitle align="left">
-                    {selectedCustomer.name}
+                    {orderInfo.selectedCustomer.BasicDetailsFirstName}
                   </ContentTitle>
                   <AlignItem>
-                    <ContentTitle>{selectedCustomer.email}</ContentTitle>
+                    <ContentTitle>{orderInfo.selectedCustomer.BasicDetailsEmail}</ContentTitle>
                     <ContentTitle onClick={handleEmailEditModal}>
                       Edit
                     </ContentTitle>
@@ -474,14 +512,13 @@ const newForm = () => {
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {selectedCustomer.address.address_one}
-                    {selectedCustomer.address.address_two}
+                    {orderInfo.selectedCustomer.AddressDetailsApartment}
+                    {orderInfo.selectedCustomer.AddressDetailsCompany}
                   </p>
                   <p>
-                    {selectedCustomer.address.city}
-                    {selectedCustomer.address.state}
+                    {orderInfo.selectedCustomer.AddressDetailsCity}
                   </p>
-                  <p>{selectedCustomer.address.country}</p>
+                  <p>{orderInfo.selectedCustomer.AddressDetailsCountry}</p>
                 </ContentBox>
                 <ContentBox>
                   <AlignItem>
@@ -493,14 +530,13 @@ const newForm = () => {
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {selectedCustomer.address.address_one}
-                    {selectedCustomer.address.address_two}
+                    {orderInfo.selectedCustomer.AddressDetailsApartment}
+                    {orderInfo.selectedCustomer.AddressDetailsCompany}
                   </p>
                   <p>
-                    {selectedCustomer.address.city}
-                    {selectedCustomer.address.state}
+                    {orderInfo.selectedCustomer.AddressDetailsCity}
                   </p>
-                  <p>{selectedCustomer.address.country}</p>
+                  <p>{orderInfo.selectedCustomer.AddressDetailsCountry}</p>
                 </ContentBox>
               </>
             )}
@@ -605,107 +641,107 @@ const newForm = () => {
                 touched,
                 /* and other goodies */
               }) => (
-                <form id="myForm" onSubmit={handleSubmit}>
-                  <Row gutter={24}>
-                    <Col className="gutter-row" span={12}>
-                      <div>
-                        <span>
-                          <label>Line item name </label>
-                        </span>
-                        <Input
-                          name="item_name"
+                  <form id="myForm" onSubmit={handleSubmit}>
+                    <Row gutter={24}>
+                      <Col className="gutter-row" span={12}>
+                        <div>
+                          <span>
+                            <label>Line item name </label>
+                          </span>
+                          <Input
+                            name="item_name"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.item_name}
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                      <Col className="gutter-row" span={6}>
+                        <div>
+                          <span>
+                            <label>Price per item </label>
+                          </span>
+                          <Input
+                            name="price"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.price}
+                            prefix="$"
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                      <Col className="gutter-row" span={6}>
+                        <div>
+                          <span>
+                            <label>Quantity </label>
+                          </span>
+                          <Input
+                            name="qty"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.qty}
+                            type="number"
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginTop: "1rem" }}>
+                      <Col className="gutter-row" span={16}>
+                        <Checkbox
+                          name="item_taxable"
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          value={values.item_name}
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={6}>
-                      <div>
-                        <span>
-                          <label>Price per item </label>
-                        </span>
-                        <Input
-                          name="price"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.price}
-                          prefix="$"
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={6}>
-                      <div>
-                        <span>
-                          <label>Quantity </label>
-                        </span>
-                        <Input
-                          name="qty"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.qty}
-                          type="number"
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row gutter={16} style={{ marginTop: "1rem" }}>
-                    <Col className="gutter-row" span={16}>
-                      <Checkbox
-                        name="item_taxable"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        checked={values.item_taxable}
-                      >
-                        Item is taxable
+                          checked={values.item_taxable}
+                        >
+                          Item is taxable
                       </Checkbox>
-                    </Col>
-                  </Row>
-                  <Row gutter={16} style={{ marginTop: "1rem" }}>
-                    <Col className="gutter-row" span={16}>
-                      <Checkbox
-                        name="item_shipping"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        checked={values.item_shipping}
-                      >
-                        Item requires shipping
+                      </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginTop: "1rem" }}>
+                      <Col className="gutter-row" span={16}>
+                        <Checkbox
+                          name="item_shipping"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          checked={values.item_shipping}
+                        >
+                          Item requires shipping
                       </Checkbox>
-                    </Col>
-                  </Row>
-                  {values.item_shipping ? (
-                    <StyledAlert
-                      message={
-                        <>
-                          <Link href="#">
-                            <a>Create a product</a>
-                          </Link>{" "}
+                      </Col>
+                    </Row>
+                    {values.item_shipping ? (
+                      <StyledAlert
+                        message={
+                          <>
+                            <Link href="#">
+                              <a>Create a product</a>
+                            </Link>{" "}
                           with weight specified to calculate shipping rates
                           accurately
-                        </>
-                      }
-                      type="warning"
-                    />
-                  ) : null}
-                  <Divider />
-                  <ItemAction>
-                    <Button size="large">Cancel</Button>
-                    <Button
-                      form="myForm"
-                      key="submit"
-                      size="large"
-                      htmlType="submit"
-                      type="primary"
-                      disabled={isSubmitting}
-                    >
-                      Save line item
+                          </>
+                        }
+                        type="warning"
+                      />
+                    ) : null}
+                    <Divider />
+                    <ItemAction>
+                      <Button size="large">Cancel</Button>
+                      <Button
+                        form="myForm"
+                        key="submit"
+                        size="large"
+                        htmlType="submit"
+                        type="primary"
+                        disabled={isSubmitting}
+                      >
+                        Save line item
                     </Button>
-                  </ItemAction>
-                </form>
-              )}
+                    </ItemAction>
+                  </form>
+                )}
             </Formik>
           </CardViews>
         </Wraper>
@@ -713,13 +749,13 @@ const newForm = () => {
       <ShippingAddress
         open={openShippingPopup.status}
         close={handleCloseShippingPopup}
-        values={selectedCustomer && selectedCustomer.email}
+        values={orderInfo.selectedCustomer && orderInfo.selectedCustomer.email}
         name={openShippingPopup.name}
       />
       <EditEmail
         open={openEmailPopup}
         close={handleCloseEmailPopup}
-        values={selectedCustomer && selectedCustomer.email}
+        values={orderInfo.selectedCustomer && orderInfo.selectedCustomer.email}
       />
       <ViewTags
         open={openViewTagsPopup}
@@ -990,5 +1026,13 @@ const CardViews = styled(Card)`
   .ant-card-body {
   }
 `;
+const mapStateToProps = (store) => {
+  return {
+    customerData: store.customerReducer.customerData,
+  };
+};
+const mapDispatchToProps = {
+  getCustomers,
+};
 
-export default newForm;
+export default connect(mapStateToProps, mapDispatchToProps)(newForm);

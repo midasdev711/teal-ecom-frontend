@@ -45,3 +45,58 @@ export const mobileAndTabletCheck = () => {
   })(navigator.userAgent || navigator.vendor || window.opera);
   return check;
 };
+
+export const getUserData = () => {
+  if (process.browser) {
+    try {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      return userData;
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+
+}
+export const dateFormat = (value) => {
+
+  let actualDate
+  if (value !== "" && value !== undefined) {
+    actualDate = new Date((value * 1))
+    let month, day, year
+      month = '' + (actualDate.getMonth() + 1),
+      day = '' + actualDate.getDate(),
+      year = actualDate.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+   actualDate = [year, month, day].join('-')
+  } else {
+    actualDate = ""
+  }
+
+  return actualDate
+
+}
+
+export const buildDynamicRoute = (route, userData) => {
+  let result = route;
+  if (route && route.includes('[portal_id]')) {
+    result = route.replace('[portal_id]', userData?.uniqueID);
+  }
+  return result;
+}
+export const GetToken = () => {
+  if (process.browser) {
+    try {
+      const token = localStorage.getItem("_token_tel");
+      return token;
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+
+}

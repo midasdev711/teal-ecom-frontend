@@ -45,8 +45,10 @@ export const LOGIN_USER_QUERY = gql`
 			isVerified
 			isFollowing
 			email
+			name
 			uniqueID
 			password
+			mobileNo
 		}
 	}
 `;

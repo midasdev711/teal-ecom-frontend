@@ -5,7 +5,7 @@ import { TweenOneGroup } from "rc-tween-one";
 import { TimeData } from "../../../utils/Consts";
 import { ManageSalesMD } from "../Modals";
 import { CountryDropdown } from "react-country-region-selector";
-
+import validation from "../../../utils/validation"
 // icon
 import {
   DownOutlined,
@@ -13,10 +13,17 @@ import {
   EditOutlined,
   CloseOutlined,
   FileTextOutlined,
+  PlusCircleTwoTone,
+  MinusCircleTwoTone, ZoomInOutlined, PlusOutlined, MinusOutlined
 } from "@ant-design/icons";
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+
+
+
 
 // ui
-import { RemirorEditor } from "../../atoms";
+import { RemirorEditor, TEPageLoader } from "../../atoms";
 import {
   Form,
   Input,
@@ -35,21 +42,216 @@ import {
   Menu,
   Upload,
 } from "antd";
+import { validate } from "graphql";
+import { resolve } from "url";
+import { rejects } from "assert";
+import { connect, useSelector } from "react-redux";
+import product, { getProductCategoryLists , getProductSubCategoryLists } from "../../../redux/actions/product";
+import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/ProductImages";
 
 const { Search } = Input;
 const { Option } = Select;
 const { Dragger } = Upload;
+let productInfo = {
+  productMerchantID: "",
+  productMerchantName: "",
+  productSKU: "",
+  productTitle: "",
+  productDescription: "",
+  productSlug: "",
+  productMRP: 0,
+  productSalePrice: 0,
+  productCostPerItem: 0,
+  isPublish: "false",
+  productTags: [],
+  productStock: 0,
+  productVariants: [{
+    variantName: "",
+    variantValues: "",
+  }],
+  productThumbnailImage: "",
+  productImages:[],
+  productSEO: {
+    title: "",
+    description: "",
+    cronicalUrl: "",
+  },
+  productCategory: "",
+  // productInventory: "",
+  productSubcategory: "",
+  productTotalQuantity: "",
+  productStartDate: "",
+  productEndDate: "",
+  productFeaturedImage: "",
 
-const newForm = () => {
+  productAttributes: [{
+    //  attributeValues: ""
+    attributeName: "productWeight",
+    attributeValues: []
+  }]
+
+}
+
+let cleanData = {
+  productMerchantID: "",
+  productMerchantName: "",
+  productSKU: "",
+  productTitle: "",
+  productDescription: "",
+  productSlug: "",
+  productMRP: 0,
+  productSalePrice: 0,
+  productCostPerItem: 0,
+  isPublish: "false",
+  productTags: [],
+  productStock: 0,
+  productVariants: [{
+    variantName: "",
+    variantValues: "",
+  }],
+  productThumbnailImage: "",
+  productImages:[],
+  productSEO: {
+    title: "",
+    description: "",
+    cronicalUrl: "",
+  },
+  productCategory: "",
+  // productInventory: "",
+  productSubcategory: "",
+  productTotalQuantity: "",
+  productStartDate: "",
+  productEndDate: "",
+  productFeaturedImage: "",
+
+  productAttributes: [{
+    //  attributeValues: ""
+    attributeName: "productWeight",
+    attributeValues: []
+  }]
+
+}
+const antIcon = <LoadingOutlined style={{ fontSize: 30}} spin />;
+const ProductSEOInfo = ["title", "description", "cronicalUrl"]
+
+const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists }) => {
   const [visiable, setVisible] = useState(false);
-  const [tags, setTags] = useState(["test"]);
+  const [tags, setTags] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [inputVisible, setInputVisible] = useState(false);
   const [isDatePicker, setIsDatePicker] = useState(false);
+  const [loadingFlag, setLoadingFlag] = useState(false);
   const [openManageMD, setOpenManageMD] = useState(false);
-  const [openEditSite, setOpenEditSite] = useState(false);
+  const [openEditSite, setOpenEditSite] = useState(true);
   const [country, setCountry] = useState("United States");
+  const [clearFlag, setClearFlag] = useState("");
+  const [productDetails, setProductDetails] = useState(productInfo);
+  const [errors, setErrors] = useState({});
+  const [dummyData, setDummyData] = useState([1]);
+  const [imagesButtonDisable, setImagesButtonDisable] = useState(false);
+  const [imagesFileList, setImagesFileList] = useState("");
+  const [VariantsFlag, setVariantsFlag] = useState(false);
+  const [variants, setVariants] = useState([{ variantName: "", variantValues: "" }]);
+  const [productFeaturedImageList, setProductFeaturedImageList] = useState([]);
+  const [profit, setProfit] = useState("");
+  const [margin, setMargin] = useState("");
+  const [unit, setUnit] = useState("kg");
+  const categoryLists = useSelector(state => state.productReducer.categoriesLists)
+  const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
+  const loading = useSelector(state => state.productReducer.status)
+  console.log('loading', loading)
+  console.log('subCategories', subCategories)
+  console.log('categoryLists', categoryLists)
+  // useEffect(()=>{
+  //   let cloneProduct = productDetails
+  //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
+  //   let cloneproductAttributes = productDetails?.productAttributes[0]?.CustomerInformation
+  //   cloneproductAttributes.countryOrigin = country
+  //   cloneproductAttributes1.CustomerInformation = cloneproductAttributes
+  //   cloneProduct.productAttributes[0] = cloneproductAttributes1
+  //   setProductDetails(cloneProduct)
+  //   setDummyData([dummyData + 1])
+  //     },[country])
+  console.log('productInfo', productInfo)
+  useEffect(()=>{
+    productInfo = cleanData
+    setProductDetails(cleanData)
+    setErrors({})
+  
+  },[clearFlag])
+  useEffect(()=>{
+   if(loading === "start"){
+    setLoadingFlag(true)
+   }else{
+    setLoadingFlag(false)
+   }
+  
+  },[loading])
+  useEffect(() => {
+    if (flag !== "") {
+      handleSubmit("save")
+    }
+  }, [flag])
+  useEffect(() => {
+    if (saveFlag !== "") {
+      handleSubmit("saveAndPublish")
+    }
+  }, [saveFlag])
+  useEffect(() => {
+    Object.values(errors).length > 0 ? (
+      errors?.productEndDate || errors?.productStartDate ? (setIsDatePicker(true)) : ("")
+    ) : ("")
+  }, [errors])
+  let tagData = errors
+  useEffect(() => {
+    tags && tags.length > 0 ? (
+      errors?.productTags ? (
+        delete tagData.productTags,
+        setErrors(tagData)
+      ) : ("")
+    ) : ("")
+  }, [tags])
 
+  useEffect(() => {
+    getProductCategoryLists()
+  }, [])
+ 
+  useEffect(() => {
+    let cloneProduct = productDetails
+    cloneProduct.productTags = tags
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }, [tags])
+  useEffect(() => {
+    setVariantsFlag
+    let cloneProduct = productDetails
+    if (VariantsFlag) {
+      cloneProduct.productVariants = variants
+      handleProductInventoryTotal()
+    } else {
+      cloneProduct.productVariants = [{ variantName: "", variantValues: "" }]
+      cloneProduct.productStock = ""
+    }
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }, [VariantsFlag])
+
+
+  const handleProductsImages = (value) => {
+    setImagesFileList(value)
+    let cloneProduct = productDetails
+    cloneProduct.productImages = value
+    if (value.length > 0) {
+      cloneProduct.productThumbnailImage = value[0]
+    } else {
+      cloneProduct.productThumbnailImage = ""
+    }
+    let cloneError = errors
+    delete cloneError.productImages
+    setProductDetails(cloneProduct)
+    setErrors(cloneError)
+    setDummyData([dummyData + 1])
+  }
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -58,35 +260,186 @@ const newForm = () => {
     console.log("Failed:", errorInfo);
   };
 
-  const onChangeDate = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeDate = (date, name) => {
+    console.log(date?._d);
+    let UTCDate = date?._d
+    // let dateFormate
+    // if (date !== null) {
+    //   dateFormate = date.format("DD-MM-YYYY")
+    // }
+    let cloneProduct = productDetails
+    cloneProduct[name] = date === null ? "" : UTCDate
+    setProductDetails(cloneProduct)
+    handleValidation(name)
+    setDummyData([dummyData + 1])
   };
 
   const deleteDate = () => {
     setIsDatePicker(!isDatePicker);
   };
 
-  const onChangeFileCSV = (info) => {
-    console.log(info);
+  const base64 = (file, names, fileData) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader()
+      fileReader.onloadend = () => {
+        let b64 = fileReader.result
+        if (names === "featureProducts") {
+          let cloneProductDetails = productDetails
+          let cloneProductDetails1 = productDetails.productFeaturedImage
+          let cloneError = errors
+          cloneProductDetails1 = b64
+          cloneProductDetails.productFeaturedImage = cloneProductDetails1
+          setProductDetails(cloneProductDetails)
+          setProductFeaturedImageList([fileData.file])
+          delete cloneError.productFeaturedImage
+          delete cloneError.productImages
+          setErrors(cloneError)
+          setDummyData([dummyData + 1])
+        }
+        resolve(b64);
+      };
+      fileReader.onerror = (error) => {
+        reject(error)
+      }
+      fileReader.readAsDataURL(file);
+    });
+  }
+
+
+  const onChangeFileCSV = async (info, name) => {
     const { status } = info.file;
     if (status !== "uploading") {
-      console.log(info.file, info.fileList);
+      console.log("file uploading");
     }
     if (status === "done") {
-      console.log(`${info.file.name} file uploaded successfully.`);
-    } else if (status === "error") {
-      console.error(`${info.file.name} file upload failed.`);
-    }
-  };
+      let datas = await base64(info.file.originFileObj, name, info)
 
+    } else if (status === "error") {
+      console.error("file upload failed");
+    }
+    setDummyData([dummyData + 1])
+  };
+  // const handleInventory = (event) => {
+  //     console.log('event', event)
+
+  //     console.log('name , value', event?.target?.name, event?.target?.value)
+  //     const name = event?.target?.name
+  //     const value = event?.target?.value
+  //     console.log('name in', name)
+  //     console.log('value in', value)
+  //     let cloneProduct = productDetails
+  //     let cloneproductAttributes = productDetails?.productAttributes[0]
+  //     cloneproductAttributes[name] = value
+  //     cloneProduct.productAttributes[0] = cloneproductAttributes
+  //     setProductDetails(cloneProduct)
+  //     handleAttributesValidation(name)
+  //     setDummyData([dummyData + 1])
+  // }
+
+  const handleChange = (event, names) => {
+
+    const name = event?.target?.name
+    const value = event?.target?.value
+    let error
+    let errorData = errors
+    let cloneProduct = productDetails
+    let cloneproductAttributes = productDetails?.productAttributes[0]
+    let keys = Object.keys(cloneProduct)
+
+    let found = keys.find(data => data === name)
+    let SEO = ProductSEOInfo.find(data => data === name)
+
+
+    if (found !== undefined) {
+      console.log('data available')
+      if (found === "productTitle") {
+        var b = value.toLowerCase().replace(/ /g, '-')
+          .replace(/[^\w-]+/g, '');
+        cloneProduct.productSlug = b
+        setProductDetails(cloneProduct)
+      }
+      cloneProduct[found] = value
+      setProductDetails(cloneProduct)
+    } else {
+
+
+      if (names === "productSalePrice") {
+        cloneProduct.productSalePrice = event === null ? ("") : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
+        handleProductCompareAtPrice()
+        handleProfitAndMargin()
+      } else if (names === "productTotalQuantity") {
+        cloneProduct.productTotalQuantity = event === null ? "" : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
+      } else if (names === "productMRP") {
+        cloneProduct.productMRP = event === null ? "" : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
+      } else if (names === "productCostPerItem") {
+        cloneProduct.productCostPerItem = event === null ? "" : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
+        handleProfitAndMargin()
+
+      } else if (names === "attributeValues") {
+        cloneproductAttributes[names] = [`${event}`, `${unit}`]
+        cloneProduct.productAttributes[0] = cloneproductAttributes
+        setProductDetails(cloneProduct)
+        handleAttributesValidation(names)
+      } else if (name === SEO) {
+        cloneProduct.productSEO[name] = value
+        setProductDetails(cloneProduct)
+      } else {
+
+        cloneproductAttributes[names] = event
+        cloneProduct.productAttributes[0] = cloneproductAttributes
+        setProductDetails(cloneProduct)
+        handleAttributesValidation(names)
+      }
+
+    }
+    if (name === SEO) {
+      error = validation(name, productDetails.productSEO[name]);
+    } else if (names === "attributeValues") {
+      error = validation(names, productDetails?.productAttributes[0][names]);
+    } else {
+      error = validation(name, productDetails[name]);
+    }
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+    setDummyData([dummyData + 1])
+  }
+  console.log('productDetails', productDetails)
   // Tags group actions
   const handleClose = (removedTag) => {
     const removeTags = tags.filter((tag) => tag !== removedTag);
     setTags(removeTags);
   };
+  const handleValidation = (name) => {
+    console.log('name validatiojn', name)
+    let error
+    let errorData = errors
 
+    error = validation(name, productDetails[name]);
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+    setDummyData([dummyData + 1])
+  }
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+    handleValidation("productTags")
   };
 
   const handleInputConfirm = () => {
@@ -97,6 +450,7 @@ const newForm = () => {
     setTags(tag);
     setInputVisible(false);
     setInputValue("");
+    handleValidation("productTags")
   };
 
   const saveInputRef = (input) => {
@@ -121,10 +475,199 @@ const newForm = () => {
       </span>
     );
   };
+  // const handleHSCode = (event) => {
+  //     let value = event.target.value
+  //     let cloneProduct = productDetails
+  //     let cloneproductAttributes1 = productDetails?.productAttributes[0]
+  //     let cloneproductAttributes = productDetails?.productAttributes[0]?.CustomerInformation
+  //     cloneproductAttributes.HarmonizedSystemCode = value
+  //     cloneproductAttributes1.CustomerInformation = cloneproductAttributes
+  //     cloneProduct.productAttributes = cloneproductAttributes1
+  //     setProductDetails(cloneProduct)
+  //     setDummyData([dummyData + 1])
+  // }
 
+
+  const handleSubmit = (info) => {
+    console.log('info', info)
+    let validationErrors = {};
+
+    Object.keys(productDetails).forEach((name) => {
+      const error = validation(name, productDetails[name]);
+      if (error && error.length > 0) {
+        validationErrors[name] = error;
+      }
+    });
+    Object.keys(productDetails.productAttributes[0]).forEach((name) => {
+      const error = validation(name, productDetails.productAttributes[0][name]);
+      if (error && error.length > 0) {
+        validationErrors[name] = error;
+      }
+    });
+    Object.keys(productDetails.productSEO).forEach((name) => {
+      const error = validation(name, productDetails.productSEO[name]);
+      if (error && error.length > 0) {
+        validationErrors[name] = error;
+      }
+    });
+    // Object.keys(productDetails.productVariants).forEach((name) => {
+    //     console.log('name', name)
+    //     const error = validation("variantName", productDetails?.productVariants?.variantName);
+    //     if (error && error.length > 0) {
+    //         validationErrors.variantName = error;
+    //     }
+    // });
+    // Object.keys(productDetails.productVariants).forEach((name) => {
+    //     console.log('name', name)
+    //     const error = validation("variantValues", productDetails?.productVariants?.variantValues);
+    //     if (error && error.length > 0) {
+    //         validationErrors.variantValues = error;
+    //     }
+    // });
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    if (info === "save") {
+      submit(productDetails)
+    } else {
+      saveSubmit(productDetails)
+    }
+    setDummyData([dummyData + 1])
+  }
+  console.log('errors', errors)
   const tagChild = tags.map(forMap);
+  const handleDropDown = (event, names) => {
+   
+    if(names === "attributeValues"){
+      setUnit(event)
+    }
+   
+    if(names === "productCategory"){
+      getProductSubCategoryLists(event)
+    }
+    let cloneProduct = productDetails
+    let cloneproductAttributes = productDetails?.productAttributes[0]
+    if (names === "attributeValues") {
+      let data = cloneproductAttributes[names]
+      cloneproductAttributes[names] = [`${data[0]}`, `${event}`]
+      cloneProduct.productAttributes[0] = cloneproductAttributes
+      setProductDetails(cloneProduct)
+      setDummyData([dummyData + 1])
+    } else {
+      cloneProduct[names] = event
+      setProductDetails(cloneProduct)
+      setDummyData([dummyData + 1])
+      handleValidation(names)
+    }
+  }
+  const handleRemove = (event) => {
+    setProductFeaturedImageList([])
+    console.log('event', event)
+    let cloneProductDetails = productDetails
+    cloneProductDetails.productFeaturedImage = ""
+    setProductDetails(cloneProductDetails)
+    //  setImagesFileList("")
+    setDummyData([dummyData + 1])
+  }
+  const handleAttributesValidation = (name) => {
+    let error
+    let errorData = errors
+
+    error = validation(name, productDetails.productAttributes[0][name]);
+    if (!error) {
+      delete errorData[name]
+      setErrors(errorData)
+    } else {
+      errorData[name] = error
+      setErrors(errorData)
+    }
+    setDummyData([dummyData + 1])
+  }
+  const handleAddVariants = () => {
+    setVariants([...variants, { variantName: "", variantValues: "" }])
+    handleProductInventoryTotal()
+  }
+  const handleDeleteVariants = (data, index) => {
+
+    let cloneVariant = variants
+    cloneVariant.splice(index, 1)
+    setVariants(cloneVariant)
+    let cloneProductDetails = productDetails
+    cloneProductDetails.productVariants = cloneVariant
+    setProductDetails(cloneProductDetails)
+    setDummyData([dummyData + 1])
+    handleProductInventoryTotal()
+  }
+
+  const handleCheckBox = (event) => {
+    const values = event.target.checked
+    console.log('values', values)
+
+    setVariantsFlag(values)
+    setDummyData([dummyData + 1])
+    handleProductInventoryTotal()
+  }
+  const handleChangeVariants = (event, index, names) => {
+    console.log('event', event)
+    let cloneProductDetails = productDetails
+    let cloneVariant = variants
+    if (names !== undefined) {
+      let cloneProductDetails = productDetails
+      let cloneVariant = variants
+      
+      cloneVariant[index][names] = event.toString()
+    } else {
+      const { name, value } = event.target
+      console.log('name , value', name , value)
+      cloneVariant[index][name] = value 
+    }
+    setVariants(cloneVariant)
+    cloneProductDetails.productVariants = cloneVariant
+    setProductDetails(cloneProductDetails)
+    setDummyData([dummyData + 1])
+    handleProductInventoryTotal()
+  }
+  const handleProductInventoryTotal = () => {
+    let cloneProduct = productDetails
+    let inventoryTotal = 0
+    cloneProduct?.productVariants.map((data) => {
+
+      inventoryTotal = inventoryTotal + (data.variantValues * 1)
+    })
+    cloneProduct.productStock = inventoryTotal === NaN && inventoryTotal === undefined ? (0) : (inventoryTotal)
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+    console.log('InventoryTotal', inventoryTotal)
+  }
+  const handleProductCompareAtPrice = () => {
+    console.log('method called')
+    let cloneProduct = productDetails
+    let actualPrice = cloneProduct.productSalePrice * 1
+    let MrpValue = actualPrice * 80 / 100
+    let productMrpValues = actualPrice + MrpValue
+    console.log('MrpValue', MrpValue)
+    console.log('productMrpValues', productMrpValues)
+    cloneProduct.productMRP = productMrpValues
+    setProductDetails(cloneProduct)
+    setDummyData([dummyData + 1])
+  }
+  const handleProfitAndMargin = () => {
+    let cloneProduct = productDetails
+    let actualPrice = cloneProduct.productSalePrice * 1
+    let costPrice = cloneProduct.productCostPerItem * 1
+    let profit = actualPrice - costPrice
+    let margin = (profit * 100) / actualPrice
+    setProfit(`$ ${profit}`)
+    let data = margin.toString().substr(0, 5)
+    setMargin(`${data} %`)
+    setDummyData([dummyData + 1])
+  }
+
 
   return (
+    
     <Form
       name="basic"
       onFinish={onFinish}
@@ -132,21 +675,62 @@ const newForm = () => {
       className="form-new"
       layout="vertical"
     >
+     
+        {
+          loadingFlag ? ( <Loader className="loader_wrap"> <Spin indicator={antIcon} />   </Loader>) : ("")
+        } 
+   
       <SubForm>
         <Row gutter={24} className="margin-bottom">
           <Col md={16}>
             <ContentBox>
-              <Form.Item label="Title" name="title">
-                <TextInput placeholder="Short sleeve t-shirt" />
+              <Form.Item label="Title" name="productTitle" >
+                <TextInput name="productTitle" onChange={(event) => handleChange(event)} placeholder="Short sleeve t-shirt" />
+                <label style={{ color: "red" }} >{errors?.productTitle}</label>
               </Form.Item>
               <TitleStyle>Description</TitleStyle>
               <DescriptionContent>
-                <RemirorEditor />
+                <TextAreaStyle rows={2} name="productDescription" onChange={(event) => handleChange(event)} />
+                <label style={{ color: "red" }} >{errors?.productDescription}</label>
+                {/* <RemirorEditor /> */}
               </DescriptionContent>
             </ContentBox>
             <ContentBox marginTop="20px">
+              <ProductsImages imageData={(value) => handleProductsImages(value)} />
+              {/* <AlignItem className="margin-bottom">
+                <TitleBox>Product Images</TitleBox>
+                <Dropdown
+                  trigger={["click"]}
+                  overlay={
+                    <Menu>
+                      <Menu.Item key="0">Add image from URL</Menu.Item>
+                      <Menu.Item key="1">Embed Youtube video</Menu.Item>
+                    </Menu>
+                  }
+                >
+                  <Button type="link">
+                    Add media from URL <DownOutlined />
+                  </Button>
+                </Dropdown>
+              </AlignItem>
+              <StyleDragger
+                accept=".jpg, .gif, .png"
+                name="file"
+                multiple={true}
+                onChange={(info) => onChangeFileCSV(info)}
+              >
+                <p className="ant-upload-drag-icon">
+                  <FileTextOutlined />
+                </p>
+                <Button>Add File</Button>
+                <p className="ant-upload-hint">or drop files to upload</p>
+              </StyleDragger> */}
+              <label style={{ color: "red" }} >{errors?.productImages}</label>
+
+            </ContentBox>
+            <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
-                <TitleBox>Media</TitleBox>
+                <TitleBox>Product Featured Image </TitleBox>
                 <Dropdown
                   trigger={["click"]}
                   overlay={
@@ -165,15 +749,19 @@ const newForm = () => {
                 accept=".jpg, .gif, .png"
                 name="file"
                 multiple={false}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                onChange={(info) => onChangeFileCSV(info)}
+                fileList={productFeaturedImageList}
+                // disabled={imagesButtonDisable}
+                onChange={(info) => onChangeFileCSV(info, "featureProducts")}
+                onRemove={(file) => handleRemove(file)}
               >
                 <p className="ant-upload-drag-icon">
                   <FileTextOutlined />
                 </p>
-                <Button>Add File</Button>
+                <Button disabled={imagesButtonDisable}>Add File</Button>
                 <p className="ant-upload-hint">or drop files to upload</p>
               </StyleDragger>
+              <label style={{ color: "red" }} >{errors?.productFeaturedImage}</label>
+
             </ContentBox>
             <CardStyle>
               <TitleCardStyle>Pricing</TitleCardStyle>
@@ -181,44 +769,58 @@ const newForm = () => {
                 <Col md={12}>
                   <Form.Item label="Price">
                     <InputNumberStyle
+                      min={0}
+                      onChange={(event) => handleChange(event, "productSalePrice")}
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       }
                     />
+                    <label style={{ color: "red" }} >{errors?.productSalePrice}</label>
+
                   </Form.Item>
                 </Col>
                 <Col md={12}>
                   <Form.Item label="Compare at price">
                     <InputNumberStyle
-                      placeholder="0.00"
+                    
+                      min={0}
+                      onChange={(event) => handleChange(event, "productMRP")}
+                      placeholder="0"
+                    //  value={productDetails?.productMRP || 0}
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       }
                     />
+                    <label style={{ color: "red" }} >{errors?.productMRP}</label>
+
                   </Form.Item>
                 </Col>
                 <Col md={12}>
                   <Form.Item label="Cost per item">
                     <InputNumberStyle
+                      min={0}
+                      onChange={(event) => handleChange(event, "productCostPerItem")}
                       placeholder="0.00"
                       formatter={(value) =>
                         `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                       }
                     />
-                    <span>Customers won’t see this</span>
+                    <label style={{ color: "red" }} >{errors?.productCostPerItem}</label>
+
+                    {/* <span>Customers won’t see this</span> */}
                   </Form.Item>
                 </Col>
                 <Col md={6}>
                   <StoreContent>
                     <TextStyle>Margin</TextStyle>
-                    <span>-</span>
+                    <span>: {margin.trim()}</span>
                   </StoreContent>
                 </Col>
                 <Col md={6}>
                   <StoreContent>
                     <TextStyle>Profit</TextStyle>
-                    <span>-</span>
+                    <span>: {profit}</span>
                   </StoreContent>
                 </Col>
                 <Col md={24}>
@@ -233,22 +835,34 @@ const newForm = () => {
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item label="SKU (Stock Keeping Unit)">
-                    <InputStyle />
+                    <InputStyle name="productSKU" onChange={(event) => handleChange(event)} />
+                    <label style={{ color: "red" }} >{errors?.productSKU}</label>
+
                   </Form.Item>
                 </Col>
-                <Col md={12}>
+                {/* <Col md={12}>
+                  <Form.Item label="Product Inventory">
+                    <InputStyle name="productInventory" disabled />
+
+                    <label style={{ color: "red" }} >{errors?.InventorySKU}</label>
+
+                  </Form.Item>
+                </Col> */}
+                {/* <Col md={12}>
                   <Form.Item label="Barcode (ISBN, UPC, GTIN, etc.)">
-                    <InputStyle />
+                    <InputStyle name="InventoryBarcode" onChange={(event) => handleInventory(event)} />
+                    <label style={{ color: "red" }} >{errors?.InventoryBarcode}</label>
+
                   </Form.Item>
-                </Col>
-                <Col md={24}>
+                </Col> */}
+                {/* <Col md={24}>
                   <Checkbox.Group>
                     <CheckboxStyle>Track quantity</CheckboxStyle>
                     <CheckboxStyle>
                       Continue selling when out of stock
                     </CheckboxStyle>
                   </Checkbox.Group>
-                </Col>
+                </Col> */}
               </Row>
 
               <LineBorder />
@@ -258,7 +872,13 @@ const newForm = () => {
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item label="Available">
-                    <InputNumberStyle value="0" />
+                    <InputNumberStyle
+                      min={0}
+                      placeholder="0"
+                      onChange={(event) => handleChange(event, "productTotalQuantity")}
+                    />
+                    <label style={{ color: "red" }} >{errors?.productTotalQuantity}</label>
+
                   </Form.Item>
                 </Col>
                 <Col md={12}></Col>
@@ -267,9 +887,9 @@ const newForm = () => {
 
             <CardStyle>
               <TitleCardStyle>Shipping</TitleCardStyle>
-              <CheckboxStyle>This is a physical product</CheckboxStyle>
+              {/* <CheckboxStyle>This is a physical product</CheckboxStyle>
 
-              <LineBorder />
+              <LineBorder /> */}
 
               <TitleSmall>WEIGHT</TitleSmall>
               <TextStyle>
@@ -279,31 +899,34 @@ const newForm = () => {
               <Row gutter={0}>
                 <Col md={8}>
                   <Form.Item label="Weight">
-                    <InputNumberStyle />
+                    <InputNumberStyle min={0} name="attributeValues" onChange={(event) => handleChange(event, "attributeValues")} />
+                    <label style={{ color: "red" }} >{errors?.attributeValues}</label>
+
                   </Form.Item>
                 </Col>
                 <Col md={3}>
                   <Form.Item label=" " name="" initialValue="kg">
-                    <Select>
+                    <Select onChange={(event) => handleDropDown(event, "attributeValues")}>
                       <Option value="lb">lb</Option>
                       <Option value="oz">oz</Option>
                       <Option value="kg">kg</Option>
                       <Option value="g">g</Option>
                     </Select>
                   </Form.Item>
+
                 </Col>
               </Row>
 
-              <LineBorder />
+              {/*           <LineBorder />
 
               <TitleSmall>CUSTOMS INFORMATION</TitleSmall>
               <p>
                 Used by border officers to calculate duties when shipping
                 internationally. Shown on customs forms you print during
                 fulfillment.
-              </p>
+              </p> */}
 
-              <Form.Item label="Country of origin">
+              {/* <Form.Item label="Country of origin">
                 <CountryDropdownStyle
                   defaultOptionLabel="Select a country."
                   value={country}
@@ -312,22 +935,78 @@ const newForm = () => {
                   className="dropDown"
                 />
                 <span>In most cases, where the product is manufactured.</span>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item label="HS (Harmonized System) code">
+              {/* <Form.Item label="HS (Harmonized System) code">
                 <SearchStyle
                   placeholder="Search by product keyword or HS code"
                   onSearch={(value) => console.log(value)}
+                  onChange={(event) => handleHSCode(event)}
                 />
                 <span>Used by border officers to classify this product.</span>
-              </Form.Item>
+              </Form.Item> */}
             </CardStyle>
             <ContentBox marginTop="20px">
               <TitleBox>Variants</TitleBox>
-              <Checkbox className="margin-top">
+              <Checkbox className="margin-top"
+                onChange={(event) => handleCheckBox(event)}
+                checked={VariantsFlag}
+              >
                 This product has multiple options, like different sizes or
                 colors
-              </Checkbox>
+              </Checkbox> <br></br>
+              {
+                VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
+                  return <Row gutter={0} keys={index}>
+                    <Col md={9}>
+                      <Form.Item label="Variant Name" >
+                        <TextInput name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
+                        {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
+                      </Form.Item>
+                    </Col>
+                    <Col md={9} style={{ marginLeft: "25px" }}>
+                      <Form.Item label="Variant Value" >
+                        <InputNumberStyle
+                          min={0}
+                          onChange={(event) => handleChangeVariants(event, index, "variantValues")}
+                          value={variants[index]?.variantValues || ""}
+                          name="variantValues"
+                          placeholder="0.00"
+                          formatter={(value) =>
+                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          }
+                        />
+                        {/* <TextInput name="variantValues" value={variants[index]?.variantValues || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant value" /> */}
+                        {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
+                      </Form.Item>
+                    </Col>
+                    <Col md={1}>
+                      <Button
+                        style={{ marginLeft: "10px", marginTop: "30px" }}
+                        type="primary"
+                        shape="circle"
+                        icon={variants.length === (index + 1) ? (<PlusOutlined />) : (<MinusOutlined />)}
+                        onClick={variants.length === (index + 1) ? (() => handleAddVariants()) : (() => handleDeleteVariants(data, index))}
+                      >
+                      </Button>
+                    </Col>
+                    {/* <Col md={1}>
+                      <Button
+                        style={{ marginLeft: "30px", marginTop: "30px" }}
+                        type="primary"
+                        shape="circle"
+                        icon={<MinusOutlined />}
+                        onClick={() => handleDeleteVariants()}
+                      >
+                      </Button>
+                    </Col> */}
+                  </Row>
+                })
+              }
+              <label style={{ color: "red" }} >{errors?.variantName}</label> <br />
+              <label style={{ color: "red" }} >{errors?.variantValues}</label>
+
+
             </ContentBox>
             <ContentBox marginTop="20px">
               <AlignItem className="margin-bottom">
@@ -348,13 +1027,18 @@ const newForm = () => {
                 <Divider />
                 <ContentBox>
                   <TitleStyle>Page title</TitleStyle>
-                  <InputStyle />
-                  <TextStyle>0 of 70 characters used</TextStyle>
+                  <InputStyle name="title" onChange={(event) => handleChange(event)} />
+                  <label style={{ color: "red" }} >{errors?.title}</label>
+
+                  <TextStyle> 0 of 70 characters used</TextStyle>
                   <TitleStyle className="margin-top">Description</TitleStyle>
-                  <TextAreaStyle rows={5} />
-                  <TextStyle>0 of 320 characters used</TextStyle>
+                  <TextAreaStyle rows={5} name="description" onChange={(event) => handleChange(event)} />
+                  <label style={{ color: "red" }} >{errors?.description}</label>
+                  <TextStyle> 0 of 320 characters used</TextStyle>
                   <TitleStyle className="margin-top">URL and handle</TitleStyle>
-                  <InputStyle prefix="https://sale.mysolidshoes.com/products/" />
+                  <InputStyle prefix="https://sale.mysolidshoes.com/products/" name="cronicalUrl" onChange={(event) => handleChange(event)} />
+                  <label style={{ color: "red" }} >{errors?.cronicalUrl}</label>
+
                 </ContentBox>
               </>
             )}
@@ -364,9 +1048,9 @@ const newForm = () => {
               <ItemContentBox>
                 <AlignItem>
                   <TitleBox>Product availability</TitleBox>
-                  <ContentTitle onClick={() => setOpenManageMD(!openManageMD)}>
+                  {/* <ContentTitle onClick={() => setOpenManageMD(!openManageMD)}>
                     Manage
-                  </ContentTitle>
+                  </ContentTitle> */}
                   <ManageSalesMD
                     open={openManageMD}
                     close={() => setOpenManageMD(!openManageMD)}
@@ -389,13 +1073,35 @@ const newForm = () => {
                   <>
                     <TextStyle>Publish product on</TextStyle>
                     <SelectContent>
-                      <DatePicker
-                        className="date-picker"
-                        onChange={onChangeDate}
-                      />
-                      <Select
+                      <div style={{ display: "flex" }}>
+                        <DatePicker
+                          className="date-picker"
+                          onChange={(date) => onChangeDate(date, "productStartDate")}
+                        />
+                        <DatePicker
+                          className="date-picker"
+                          onChange={(date) => onChangeDate(date, "productEndDate")}
+                        />
+
+                        <Tooltip
+                          placement="bottom"
+                          title="Remove the future publishing date. The product will be published immediately."
+                        >
+                          <CloseOutlined
+                            style={{ marginLeft: "250px" }}
+                            onClick={() => deleteDate()}
+                            className="delete-date-icon"
+                          />
+                        </Tooltip>
+
+                      </div>
+
+
+
+
+                      {/* <Select
                         placeholder="Select time"
-                        // onChange={(e) => onChangeTime(e)}
+                      // onChange={(e) => onChangeTime(e)}
                       >
                         {TimeData &&
                           TimeData.length > 0 &&
@@ -404,23 +1110,17 @@ const newForm = () => {
                               {item.name}
                             </Option>
                           ))}
-                      </Select>
-                      <Tooltip
-                        placement="bottom"
-                        title="Remove the future publishing date. The product will be published immediately."
-                      >
-                        <CloseOutlined
-                          onClick={() => deleteDate()}
-                          className="delete-date-icon"
-                        />
-                      </Tooltip>
+                      </Select> */}
+
                     </SelectContent>
+                    <label style={{ color: "red" }} >{errors?.productStartDate}</label><br />
+                    <label style={{ color: "red" }} >{errors?.productEndDate}</label>
                   </>
                 )}
               </ItemContentBox>
             </ContentBox>
             <ContentBox marginTop="20px" notPadding bgColor="#f9fafb">
-              <ItemContentBox>
+              {/* <ItemContentBox>
                 <TitleBox>Organization</TitleBox>
                 <GroupContent>
                   <TitleStyle>Product type</TitleStyle>
@@ -437,7 +1137,55 @@ const newForm = () => {
                   />
                 </GroupContent>
               </ItemContentBox>
-              <Divider />
+              <Divider /> */}
+              <ItemContentBox>
+                <TitleBox>Categories</TitleBox>
+                <GroupContent>
+                  <TitleStyle>Product Category</TitleStyle>
+                  {/* <Input
+                    placeholder="e.g. Shirts"
+                    name="productCategory"
+                    onChange={(event)=>handleChange(event)}
+                  /> */}
+                  {/* <Form.Item > */}
+                  <Form.Item>
+                    <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productCategory")}>
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
+                        })
+                      }
+                    </Select>
+                    <label style={{ color: "red" }} >{errors?.productCategory}</label>
+
+                  </Form.Item>
+                </GroupContent>
+                <GroupContent>
+                  <TitleStyle>Product Sub Category</TitleStyle>
+
+                  {/* <Input
+                    placeholder="e.g. Nike"
+                    name="productSubcategory"
+                    onChange={(event)=>handleChange(event)}
+                    
+                  /> */}
+                  <Form.Item>
+                    <Select defaultValue="Select" onChange={(event) => handleDropDown(event, "productSubcategory")}>
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        subCategories && subCategories.length > 0 && subCategories.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
+                        })
+                      }
+
+                    </Select>
+                    <label style={{ color: "red" }} >{errors?.productSubcategory}</label>
+
+                  </Form.Item>
+                </GroupContent>
+              </ItemContentBox>
+              {/* <Divider />
               <ItemContentBox>
                 <TitleStyle className="title-box">COLLECTIONS</TitleStyle>
                 <SearchBox
@@ -448,7 +1196,7 @@ const newForm = () => {
                   Add this product to a collection so it’s easy to find in your
                   store.
                 </TextStyle>
-              </ItemContentBox>
+              </ItemContentBox> */}
               <Divider />
               <ItemContentBox>
                 <TitleStyle className="title-box">TAGS</TitleStyle>
@@ -462,6 +1210,8 @@ const newForm = () => {
                   onBlur={handleInputConfirm}
                   onPressEnter={handleInputConfirm}
                 />
+                <label style={{ color: "red" }} >{errors?.productTags}</label>
+
                 <TweenOneGroup
                   className="tag-content"
                   enter={{
@@ -485,9 +1235,9 @@ const newForm = () => {
         </Row>
         <ActionBottom>
           <Divider className="divider-bottom" />
-          <Button size="large" type="primary">
+          {/* <Button size="large" type="primary">
             Save
-          </Button>
+          </Button> */}
         </ActionBottom>
       </SubForm>
     </Form>
@@ -589,6 +1339,19 @@ const GroupContent = styled.div`
     padding: 8px 12px;
   }
 `;
+const Loader = styled.div`
+    position: fixed;
+    left: 250px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    text-align: center;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255,255,255,0.7);
+`;
 
 const SearchBox = styled(Search)`
   border-radius: 4px 0 0 4px;
@@ -603,8 +1366,7 @@ const SelectContent = styled.div`
   .delete-date-icon {
     font-size: 22px;
     position: absolute;
-    top: 5px;
-    right: -8px;
+       top: 5px;
     cursor: pointer;
   }
 `;
@@ -682,4 +1444,17 @@ const ActionBottom = styled.div`
   }
 `;
 
-export default newForm;
+const mapStateToProps = (store) => {
+  return {
+
+  };
+};
+
+const mapDispatchToProps = {
+  getProductCategoryLists,
+  getProductSubCategoryLists,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(newForm);
+
+
