@@ -34,6 +34,7 @@ const EditProductDetails = (props) => {
   let userData = getUserData()
   const router = useRouter()
   const [flag, setFlag] = useState("")
+  const [productTitle, setProductTitle] = useState("")
   const [saveFlag, setSaveFlag] = useState("")
   const [productDetails, setProductDetails] = useState("")
   const apiResponse = useSelector(state =>state.productReducer.status)
@@ -45,7 +46,7 @@ const EditProductDetails = (props) => {
     }
     
     const onShowMdDeleteSelected = (value) => {
-      console.log("value: ", value);
+     // console.log("value: ", value);
       setShowMDDeleteSelected(value);
     };  
     const onDeleteSelected = () => {
@@ -68,10 +69,14 @@ const EditProductDetails = (props) => {
       if (values !== undefined) {
         let cloneValues = values
         console.log('cloneValues', cloneValues)
-            cloneValues.productCategory = (cloneValues.productCategory * 1)
+        cloneValues.productCategory = (cloneValues.productCategory * 1)
         cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
         cloneValues.productId = cloneValues.ID
+        cloneValues.productFeaturedImage === null || cloneValues.productFeaturedImage === "" || cloneValues.productFeaturedImage === undefined ? delete cloneValues.productFeaturedImage : "" 
+        cloneValues.productThumbnailImage === null || cloneValues.productThumbnailImage === "" || cloneValues.productThumbnailImage === undefined ? delete cloneValues.productThumbnailImage : "" 
         cloneValues.isPublish = "false"
+      console.log('cloneValues save time', cloneValues)
+
         setProductDetails(cloneValues)
         props.UpdateMerchantProduct(cloneValues)
       }
@@ -81,15 +86,21 @@ const EditProductDetails = (props) => {
       values === undefined ? setSaveFlag({ name: `${flag + "demo"}` }) : ""
       if (values !== undefined) {
         let cloneValues = values
-        console.log('cloneValues', cloneValues)
+      //  console.log('cloneValues', cloneValues)
         cloneValues.productCategory = (cloneValues.productCategory * 1)
         cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
         cloneValues.productId = cloneValues.ID
+        cloneValues.productFeaturedImage === null || cloneValues.productFeaturedImage === "" || cloneValues.productFeaturedImage === undefined ? delete cloneValues.productFeaturedImage : "" 
+        cloneValues.productThumbnailImage === null ||  cloneValues.productThumbnailImage === "" || cloneValues.productThumbnailImage === undefined ? delete cloneValues.productThumbnailImage : "" 
+       // console.log('cloneValues save time', cloneValues)
         cloneValues.isPublish = "true"
         setProductDetails(cloneValues)
         props.UpdateMerchantProduct(cloneValues)
       }
   
+    }
+    const handleProduct = (value) =>{
+      setProductTitle(value)
     }
 
   return (
@@ -118,7 +129,7 @@ const EditProductDetails = (props) => {
             </Row>
           </ActionsTop>
 
-          <TittleHeader>Indestructible Shoes</TittleHeader>
+  <TittleHeader>{productTitle || ""}</TittleHeader>
           <ButtonPrint>
             <CopyOutlined /> Duplicate
           </ButtonPrint>
@@ -127,7 +138,7 @@ const EditProductDetails = (props) => {
           </ButtonView>
         </ContentHeader>
         {
-          <ProductDetail submit={(values) => handleSubmit(values)} flag={flag} saveSubmit={(values) => handleSubmitSaveAndSubmit(values)} saveFlag={saveFlag}/>
+          <ProductDetail submit={(values) => handleSubmit(values)} flag={flag} saveSubmit={(values) => handleSubmitSaveAndSubmit(values)} saveFlag={saveFlag} productName={(value)=>handleProduct(value)}/>
         }
         <DeletePopUp
         name="Product"
@@ -199,6 +210,7 @@ const TittleHeader = styled.h3`
   color: #000;
   font-weight: bold;
   margin-bottom: 0;
+  text-transform: capitalize;
 `;
 
 const ButtonPrev = styled.a`

@@ -618,7 +618,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       let cloneProductDetails = productDetails
       let cloneVariant = variants
 
-      cloneVariant[index][names] = event.toString()
+      cloneVariant[index][names] = event === null ? ("") : (event.toString())
     } else {
       const { name, value } = event.target
    

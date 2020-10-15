@@ -4,18 +4,18 @@ import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { Upload, Modal, Dropdown, Menu, Button, Card } from "antd";
 
 
-const EditProductsImages = ({ imageData , existImages }) => {
+const EditProductsImages = ({ imageData , existImages , deletedImage }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [dataFiles, setDataFiles] = useState([]);
   const [base64Data, setBase64Data] = useState([]);
- // console.log('dataFiles', dataFiles)
+
 console.log('dataFiles', dataFiles)
   const handleCancel = () => {
     setPreviewVisible(false);
   };
-  let cloneDataFile = dataFiles.slice()
+  let cloneDataFile = []
   useEffect(() => {
     if(existImages.length > 0){
       existImages.map((data,index)=>{
@@ -28,15 +28,9 @@ console.log('dataFiles', dataFiles)
       }) 
      setDataFiles(cloneDataFile) 
     }
-  },[existImages])
-        
-  // useEffect(()=>{
-  //     if(dataFiles.length > 0){
-  //         dataFiles.map((data))
-  //       handleSetPreview()
-  //     }
-  // },[dataFiles])
+  },[existImages])  
 
+        
   const handlePreview = async (file) => {
       console.log('file', file)
     if (!file.url && !file.preview) {
@@ -57,7 +51,9 @@ console.log('dataFiles', dataFiles)
 
 
   const handleChange = async ({ file, fileList }) => {
-
+    if(dataFiles.length > fileList.length){
+        deletedImage(file)
+    }
     setDataFiles(fileList);
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -67,6 +63,7 @@ console.log('dataFiles', dataFiles)
   useEffect(() => {
     let cloneBase = []
     if (dataFiles.length) {
+   
       cloneBase = dataFiles.map(fileObj => fileObj.originFileObj);
     }
     imageData(cloneBase);

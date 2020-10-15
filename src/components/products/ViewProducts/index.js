@@ -97,11 +97,9 @@ const ViewCustomers = (props) => {
     {
       title: "Product",
       dataIndex: "title",
-      key:"title",
+      key:"ID",
       render: (title, productListsData ) => {
-      
-     //   console.log('productListsData', productListsData)
-      //  console.log('title', title)
+
         return (
           <div key={productListsData.ID}>
             <ProductImage src={productListsData.thumbnailImage}></ProductImage>
@@ -115,19 +113,19 @@ const ViewCustomers = (props) => {
     {
       title: "Stock",
       dataIndex: "stock",
-      key:"stock",
-      render: (stock) => <div key={stock}>{stock || ""}</div>,
+      key:"ID",
+      render: (stock) => <div key={stock}>{stock || "0"}</div>,
     },
     {
       title: "Price",
       dataIndex: "salePrice",
-      key:"price",
+      key:"ID",
       render: (salePrice) => <div key={salePrice}>{`$ ${salePrice}` || ""}</div>,
     },
     {
       title: "Quantity",
       dataIndex: "totalQuantity",
-      key:"Qty",
+      key:"ID",
       render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || ""}</div>,
       align: "center",
     },
@@ -252,6 +250,7 @@ const ViewCustomers = (props) => {
                 type: "checkbox",
                 ...rowSelection,
               }}
+              rowKey="ID"
               columns={columns}
               dataSource={productList}
               pagination={productList.length > 10}
@@ -367,7 +366,6 @@ const ViewCustomers = (props) => {
             key="4"
           >
             <Form.Item>
-            {/* onChange={(event) => handleDropDown(event, "productCategory")} */}
                     <Select defaultValue="Select" >
                       <Option value="Select" disabled>Select</Option>
                       {
@@ -376,8 +374,6 @@ const ViewCustomers = (props) => {
                         })
                       }
                     </Select>
-                 
-
                   </Form.Item>
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
