@@ -250,8 +250,10 @@ const ProductDetail = ({ productName, submit, flag, getProductCategoryLists, sav
             cloneData.productMerchantName = cloneDataProduct?.merchantName || ""
             cloneData.productStock = cloneDataProduct?.stock || 0
             //  cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
-            cloneData.productCategory = cloneDataProduct?.category.length > 0 ? cloneDataProduct.category[0].ID : null
-            cloneData.productSubcategory = cloneDataProduct?.subCategory.length > 0 ? cloneDataProduct.subCategory[0].ID : null
+             cloneData.productCategory = cloneDataProduct?.category || null
+             cloneData.productSubcategory = cloneDataProduct?.subCategory || null
+            // cloneData.productCategory = cloneDataProduct?.category.length > 0 ? cloneDataProduct.category[0].ID : null
+            // cloneData.productSubcategory = cloneDataProduct?.subCategory.length > 0 ? cloneDataProduct.subCategory[0].ID : null
             cloneData.ID = cloneDataProduct.ID || ""
             cloneData._id = cloneDataProduct._id || ""
 

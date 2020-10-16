@@ -26,8 +26,9 @@ import {
   Form,
 } from "antd";
 import { getUserData } from "../../../utils";
-import { getUserProductLists , getProductCategoryLists} from "../../../redux/actions/product";
-import { connect , useSelector } from "react-redux";
+import { getUserProductLists, getProductCategoryLists } from "../../../redux/actions/product";
+import { connect, useSelector } from "react-redux";
+import { TweenOneGroup } from "rc-tween-one";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -55,11 +56,15 @@ const customerData = [
     vendor: "mysolidshoes",
   },
 ];
+const filterInfo = {
+  category: "",
+  tags: [],
+}
 
 const ViewCustomers = (props) => {
   // const { productList } = props
-  const productLists = useSelector(state =>state.productReducer.merchantProductLists)
-   //console.log(`productList`, productLists)
+  const productLists = useSelector(state => state.productReducer.merchantProductLists)
+  //console.log(`productList`, productLists)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -77,6 +82,12 @@ const ViewCustomers = (props) => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [productList, setProductList] = useState([]);
   const [apiCallFlag, setApiCallFlag] = useState("start");
+  const [originalProductList, setOriginalProductList] = useState([]);
+  const [filterData, setFilterData] = useState({ ...filterInfo });
+  const [inputValue, setInputValue] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Select");
+  //const [refreshFlag, setRefreshFlag] = useState([0]);
+
   let userData = getUserData()
   const categoryLists = useSelector(state => state.productReducer.categoriesLists)
 
@@ -85,20 +96,21 @@ const ViewCustomers = (props) => {
     props.getUserProductLists(userId)
   }, [apiCallFlag])
   useEffect(() => {
-        props.getProductCategoryLists()
+    props.getProductCategoryLists()
   }, [])
   useEffect(() => {
-    if(productLists?.length > 0){
-         setProductList(productLists)
+    if (productLists?.length > 0) {
+      setProductList(productLists)
+      setOriginalProductList(productLists)
     }
-     }, [productLists])
+  }, [productLists])
 
   const columns = [
     {
       title: "Product",
       dataIndex: "title",
-      key:"ID",
-      render: (title, productListsData ) => {
+      key: "ID",
+      render: (title, productListsData) => {
 
         return (
           <div key={productListsData.ID}>
@@ -113,20 +125,20 @@ const ViewCustomers = (props) => {
     {
       title: "Stock",
       dataIndex: "stock",
-      key:"ID",
+      key: "ID",
       render: (stock) => <div key={stock}>{stock || "0"}</div>,
     },
     {
       title: "Price",
       dataIndex: "salePrice",
-      key:"ID",
+      key: "ID",
       render: (salePrice) => <div key={salePrice}>{`$ ${salePrice}` || ""}</div>,
     },
     {
       title: "Quantity",
       dataIndex: "totalQuantity",
-      key:"ID",
-      render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || ""}</div>,
+      key: "ID",
+      render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || "0"}</div>,
       align: "center",
     },
   ];
@@ -211,7 +223,7 @@ const ViewCustomers = (props) => {
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
-  //  console.log("value: ", value);
+    //  console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
 
@@ -220,9 +232,138 @@ const ViewCustomers = (props) => {
     setShowMDDeleteSelected(false);
   };
 
-  const handleFilterData = (value) =>{
+  const handleFilterData = (value) => {
     //  console.log('value filters Data', value)
-      setProductList(value)
+    setProductList(value)
+  }
+  const handleProductType = (value) => {
+
+    let catName = categoryLists.length > 0 && categoryLists.find(({ ID }) => ID === value)
+    //  console.log('catName', catName?.name)
+    setSelectedCategory(catName?.name ? catName?.name : "Select")
+    let cloneFilterData = { ...filterData }
+    cloneFilterData.category = (value * 1)
+    setFilterData(cloneFilterData)
+  }
+  const saveInputRef = (input) => {
+    input = input;
+  };
+  const forMap = (tag) => {
+    const tagElem = (
+      <TagContent
+        closable
+        onClose={(e) => {
+          e.preventDefault();
+          handleClose(tag);
+        }}
+      >
+        {tag}
+      </TagContent>
+    );
+    return (
+      <span key={tag} style={{ display: "inline-block" }}>
+        {tagElem}
+      </span>
+    );
+  };
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+
+  };
+
+  const handleInputConfirm = () => {
+    let tag = tags;
+    if (inputValue && tag.indexOf(inputValue) === -1) {
+      tag = [...tag, inputValue];
+    }
+    setTags(tag);
+    //setInputVisible(false);
+    setInputValue("");
+
+  };
+  const handleClose = (removedTag) => {
+    const removeTags = tags.filter((tag) => tag !== removedTag);
+    setTags(removeTags);
+  };
+  const handleClearTags = () => {
+    setTags([])
+    setFilterData(filterInfo)
+  }
+  useEffect(() => {
+    let cloneFilterData = { ...filterData }
+    cloneFilterData.tags = tags
+    setFilterData(cloneFilterData)
+  }, [tags])
+  const tagChild = tags.map(forMap);
+  // useEffect(() => {
+  //   if (productLists !== undefined) {
+  //     setOriginalProductLists(productLists)
+  //        }
+  // }, [props])
+  const handleFilterResult = () => {
+    let catList, tagLists = []
+    let flag = {
+      catFlag: false,
+      tagFlag: false
+    }
+    // let  , tagFlag = false
+    let array = []
+    let cloneFilterData = { ...filterData }
+    if (cloneFilterData.tags) {
+      cloneFilterData.tags.forEach((tag) => {
+        array = array.concat(originalProductList.filter((data) => data.tags.includes(tag)))
+      })
+    }
+    if (cloneFilterData.category !== "") {
+      originalProductList.length > 0 && originalProductList.forEach((data) => {
+        catList = data?.category == cloneFilterData.category
+        if (catList) {
+          array.push(data)
+        }
+      })
+      if (array.length) {
+        flag.catFlag = false
+      } else {
+        flag.catFlag = true
+      }
+    }
+    if (cloneFilterData.tags.length > 0 && cloneFilterData.category !== "") {
+      array = []
+      cloneFilterData.tags.forEach((tag) => {
+        array = array.concat(originalProductList.filter((data) => data.tags.includes(tag)))
+      })
+      if (array.length) {
+        originalProductList.length > 0 && originalProductList.forEach((data) => {
+          catList = data?.category == cloneFilterData.category
+          if (catList) {
+            tagLists.push(data)
+          }
+        })
+        if (tagLists.length) {
+          array = array.concat(tagLists)
+        } else {
+          array = []
+        }
+      }
+    }
+    if (array.length) {
+      const output = [...new Map(array.map(o => [o.ID, o])).values()]
+      array = output
+    }
+    if (flag.catFlag === false && flag.tagFlag === false && cloneFilterData.category !== "" || cloneFilterData.tags.length > 0) {
+      setProductList(array)
+    } else if (cloneFilterData.category !== "") {
+      setProductList([])
+    }
+  }
+  const handleClearAllFilter = () => {
+
+    setFilterData({ ...filterInfo })
+    setProductList(originalProductList)
+    setSelectedCategory("Select")
+    handleClearTags()
+    setShowCollapse([])
+    // setRefreshFlag([refreshFlag + 1])
   }
   return (
     <ViewContent>
@@ -230,7 +371,7 @@ const ViewCustomers = (props) => {
         <TabPane tab="All" key="1" />
       </Tabs>
 
-      <Filters onOpen={setOpenMoreFilters} productLists={productLists} getFilterData={(value)=>handleFilterData(value)} />
+      <Filters onOpen={setOpenMoreFilters} productLists={productLists} getFilterData={(value) => handleFilterData(value)} />
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>
@@ -298,10 +439,10 @@ const ViewCustomers = (props) => {
         visible={isOpenMoreFilter}
         footer={
           <>
-            <ButtonFooterLeft type="default">
+            <ButtonFooterLeft type="default" onClick={() => handleClearAllFilter()}>
               Clear all filters
             </ButtonFooterLeft>
-            <ButtonFooterRight type="primary">Done</ButtonFooterRight>
+            <ButtonFooterRight type="primary" onClick={() => handleFilterResult()}>Done</ButtonFooterRight>
           </>
         }
       >
@@ -352,10 +493,40 @@ const ViewCustomers = (props) => {
             }
             key="3"
           >
-            <SelectStyle mode="tags" onChange={setTags}>
+            <Input
+              ref={saveInputRef}
+              type="text"
+              size="large"
+              placeholder="Vintage, cotton, summer"
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputConfirm}
+              onPressEnter={handleInputConfirm}
+            />
+            <TweenOneGroup
+              className="tag-content"
+              enter={{
+                scale: 0.8,
+                opacity: 0,
+                type: "from",
+                duration: 100,
+                with: 10,
+                onComplete: (e) => {
+                  e.target.style = "";
+                },
+              }}
+              leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+              appear={false}
+            >
+              {tagChild}
+            </TweenOneGroup>
+            <TagsConformButtons>
+              <ButtonLink type="text" onClick={() => handleClearTags()}>Clear</ButtonLink>
+            </TagsConformButtons>
+            {/* <SelectStyle mode="tags" onChange={setTags}>
               {tags}
             </SelectStyle>
-            <ButtonLink type="text">Clear</ButtonLink>
+            <ButtonLink type="text">Clear</ButtonLink> */}
           </PanelStyle>
           <PanelStyle
             header={
@@ -366,16 +537,18 @@ const ViewCustomers = (props) => {
             key="4"
           >
             <Form.Item>
-                    <Select defaultValue="Select" >
-                      <Option value="Select" disabled>Select</Option>
-                      {
-                        categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
-                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
-                        })
-                      }
-                    </Select>
-                  </Form.Item>
+              <Select defaultValue="Select" value={selectedCategory} onChange={(event) => handleProductType(event)}>
+                <Option value="Select" disabled>Select</Option>
+                {
+                  categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
+                    return <Option key={index} name={data?.name} value={data?.ID}>{data?.name}</Option>
+                  })
+                }
+              </Select>
+            </Form.Item>
+
             <ButtonLink type="text">Clear</ButtonLink>
+
           </PanelStyle>
           {/* <PanelStyle
             header={
@@ -520,11 +693,19 @@ const ButtonEditCustomer = styled(Button)`
 const ButtonMoreActions = styled(Button)`
   border-radius: 0 4px 4px 0px;
 `;
+const TagsConformButtons = styled.div`
+  display:flex,
+`;
+const SearchTags = styled.div`
+
+`;
+const TagContent = styled(Tag)`
+  padding: 5px 10px;
+  marginbottom: 10px;
+`;
 
 const mapStateToProps = (store) => {
   return {
-
-    // productList: store.productReducer.merchantProductLists,
 
   };
 };
