@@ -19,9 +19,13 @@ const SmallEditor = () => {
   const { getRootProps, commands } = useRemirror();
 
   return (
-    <div>
-      <button onClick={() => commands.toggleBold()}>bold</button>
-      <button onClick={() => commands.toggleItalic()}>italic</button>
+    <div style={{
+      backgroundColor: "black",
+      color: "white",
+      borderRadius: "5px",
+      }}>
+      {/* <button onClick={() => commands.toggleBold()}>bold</button>
+      <button onClick={() => commands.toggleItalic()}>italic</button> */}
       <div {...getRootProps()} />
     </div>
   );

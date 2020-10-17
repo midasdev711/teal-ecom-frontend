@@ -119,7 +119,7 @@ export const productReducer = (state = initData, action) => {
     case GET_MERCHANT_PRODUCT_BY_ID_START:
       return {
         ...state,
-        status: "getId",
+        status: "start",
         loading: true,
 
       };

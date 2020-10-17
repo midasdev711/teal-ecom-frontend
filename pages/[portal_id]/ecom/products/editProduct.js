@@ -176,7 +176,7 @@ const ProductDetail = ({ productName, submit, flag, getProductCategoryLists, sav
     //console.log('productInfo', productInfo)
     useEffect(() => {
         getMerchantProductByID((productId * 1))
-    }, [getFlag])
+    }, [getFlag || productId])
     useEffect(() => {
         handleProfitAndMargin()
     }, [productDetails])
@@ -186,6 +186,13 @@ const ProductDetail = ({ productName, submit, flag, getProductCategoryLists, sav
     //     setProductDetails(clearData)
     //    }
     // }, [apiResponse])
+    useEffect(() => {
+       if(apiResponse === "start"){
+        setLoadingFlag(true)
+   }else{
+    setLoadingFlag(false)
+       }
+    }, [apiResponse])
     useEffect(() => {
         let image = []
         let data = { ...productDetails }
