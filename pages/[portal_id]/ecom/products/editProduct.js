@@ -290,7 +290,6 @@ const ProductDetail = ({ productName, submit, flag, getProductCategoryLists, sav
         }
     }, [merchantProductDetails])
 
-    console.log('productDetails', productDetails)
     useEffect(() => {
         setErrors({})
     }, [clearFlag])

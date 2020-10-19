@@ -103,14 +103,14 @@ const EditProductDetails = (props) => {
       values === undefined ? setFlag({ name: `${flag + "demo"}` }) : ""
       if (values !== undefined) {
         let cloneValues = values
-        console.log('cloneValues', cloneValues)
+      //  console.log('cloneValues', cloneValues)
         cloneValues.productCategory = (cloneValues.productCategory * 1)
         cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
         cloneValues.productId = cloneValues.ID
         cloneValues.productFeaturedImage === null || cloneValues.productFeaturedImage === "" || cloneValues.productFeaturedImage === undefined ? delete cloneValues.productFeaturedImage : "" 
         cloneValues.productThumbnailImage === null || cloneValues.productThumbnailImage === "" || cloneValues.productThumbnailImage === undefined ? delete cloneValues.productThumbnailImage : "" 
         cloneValues.isPublish = "false"
-      console.log('cloneValues save time', cloneValues)
+   //   console.log('cloneValues save time', cloneValues)
 
         setProductDetails(cloneValues)
         props.UpdateMerchantProduct(cloneValues)
