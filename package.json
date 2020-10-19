@@ -19,6 +19,7 @@
     "apollo-link": "^1.2.14",
     "apollo-link-http": "^1.5.17",
     "apollo-upload-client": "^14.1.2",
+    "axios": "^0.20.0",
     "babel-plugin-import": "^1.13.0",
     "babel-plugin-styled-components": "^1.11.1",
     "chart.js": "^2.9.3",
