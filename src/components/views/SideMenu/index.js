@@ -59,7 +59,7 @@ const SideMenu = () => {
       <TELogo name={channelName} />
       <MenuTitle>CHANNELS</MenuTitle>
       <TESelector value="teal">
-        <Select.Option value="teal">Teal</Select.Option>
+        <Select.Option value="teal">Juicy Pie</Select.Option>
       </TESelector>
       <MainMenu>{MenuList}</MainMenu>
     </StyledSider>

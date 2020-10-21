@@ -4,6 +4,8 @@ import languagesList from "language-list";
 import { CountryDropdown } from "react-country-region-selector";
 import Router from "next/router";
 import Link from "next/link";
+import { connect } from "react-redux";
+import { getCustomers } from "../../../redux/actions/customers";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -32,140 +34,7 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 const { Panel } = Collapse;
 
-const customerData = [
-  {
-    key: 1,
-    firstName: "Tony",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 4,
-    spent: "66.89",
-    isNew: true,
-    isUS: true,
-  },
-  {
-    key: 2,
-    firstName: "ggggg",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "Subscribed",
-    order: 1,
-    spent: "66.89",
-    isNew: false,
-    isUS: true,
-  },
-  {
-    key: 3,
-    firstName: "nnnn",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 2,
-    spent: "66.89",
-    isNew: false,
-    isUS: false,
-  },
-  {
-    key: 4,
-    firstName: "vvvv",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 1,
-    spent: "66.89",
-    isNew: true,
-    isUS: false,
-  },
-  {
-    key: 5,
-    firstName: "Tony",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 2,
-    spent: "66.89",
-    isNew: true,
-    isUS: true,
-  },
-  {
-    key: 6,
-    firstName: "ggggg",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "Subscribed",
-    order: 1,
-    spent: "66.89",
-    isNew: false,
-    isUS: false,
-  },
-  {
-    key: 7,
-    firstName: "nnnn",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 4,
-    spent: "66.89",
-    isNew: false,
-    isUS: true,
-  },
-  {
-    key: 8,
-    firstName: "vvvv",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 1,
-    spent: "66.89",
-    isNew: false,
-    isUS: false,
-  },
-  {
-    key: 9,
-    firstName: "Tony",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 1,
-    spent: "66.89",
-    isNew: true,
-    isUS: true,
-  },
-  {
-    key: 10,
-    firstName: "ggggg",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "Subscribed",
-    order: 1,
-    spent: "66.89",
-    isNew: true,
-    isUS: false,
-  },
-  {
-    key: 11,
-    firstName: "nnnn",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 1,
-    spent: "66.89",
-    isNew: false,
-    isUS: false,
-  },
-  {
-    key: 12,
-    firstName: "vvvv",
-    lastName: "Tee",
-    address: "Lakeland , FL, United States",
-    status: "",
-    order: 1,
-    spent: "66.89",
-    isNew: false,
-    isUS: false,
-  },
-];
+
 
 const sortOptions = [
   {
@@ -210,21 +79,24 @@ const sortOptions = [
   },
 ];
 
-const dataNew = customerData.filter((el) => {
-  return el.isNew === true;
-});
 
-const dataEmailSubscription = customerData.filter((el) => {
-  return el.status === "Subscribed";
-});
-
-const dataFromUS = customerData.filter((el) => {
-  return el.isUS === true;
-});
 
 const languagesData = languagesList().getData();
 
-const ViewCustomers = () => {
+const ViewCustomers = (props) => {
+  console.log('props.customerDataprops.customerData', props)
+  const customerData =props.customerData === undefined ? [] : props.customerData
+  // const dataNew = customerData.filter((el) => {
+  //   return el.isNew === true;
+  // });
+  
+  // const dataEmailSubscription = customerData.filter((el) => {
+  //   return el.status === "Subscribed";
+  // });
+  
+  // const dataFromUS = customerData.filter((el) => {
+  //   return el.isUS === true;
+  // });
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -244,8 +116,13 @@ const ViewCustomers = () => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [country, setCountry] = useState('United States');
-  let userData = getUserData()
-
+  useEffect(() => {
+    getCustomersCall();
+  }, [props]);
+  
+  const getCustomersCall = async () => {
+    await props.getCustomers();
+  };
   const columns = [
     {
       title: (title) => nodeCheckbox,
@@ -253,12 +130,12 @@ const ViewCustomers = () => {
       render: (value, item) => {
         return (
           <div>
-            <Link href={`/[portal_id]/ecom/customers/123`} as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
-              <FullName href="">
-                {item.firstName} {item.lastName}
+            <Link href={`/customers/${item._id}`}>
+              <FullName >
+                {item.BasicDetailsFirstName} {item.BasicDetailsLastName}
               </FullName>
             </Link>
-            <p>{item.address}</p>
+        <p>{item.AddressDetailsApartment} {item.AddressDetailsCity}</p>
           </div>
         );
       },
@@ -455,7 +332,7 @@ const ViewCustomers = () => {
               pagination={customerData.length > 10}
             />
           )}
-          {tabIndex === 2 && (
+          {/* {tabIndex === 2 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -465,7 +342,7 @@ const ViewCustomers = () => {
               dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
               pagination={customerData.length > 10}
             />
-          )}
+          )} */}
           {tabIndex === 3 && (
             <Table
               rowSelection={{
@@ -488,7 +365,7 @@ const ViewCustomers = () => {
               pagination={customerData.length > 10}
             />
           )}
-          {tabIndex === 5 && (
+          {/* {tabIndex === 5 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -498,8 +375,8 @@ const ViewCustomers = () => {
               dataSource={dataEmailSubscription}
               pagination={customerData.length > 10}
             />
-          )}
-          {tabIndex === 6 && (
+          )} */}
+          {/* {tabIndex === 6 && (
             <Table
               rowSelection={{
                 type: "checkbox",
@@ -509,7 +386,7 @@ const ViewCustomers = () => {
               dataSource={dataFromUS}
               pagination={customerData.length > 10}
             />
-          )}
+          )} */}
         </ContentTab>
       )}
 
@@ -968,4 +845,13 @@ const FullName = styled.a`
   font-weight: bold;
 `;
 
-export default ViewCustomers;
+const mapStateToProps = (store) => {
+  return {
+    customerData: store.customerReducer.customerData,
+  };
+};
+const mapDispatchToProps = {
+  getCustomers,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

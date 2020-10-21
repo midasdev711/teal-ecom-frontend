@@ -15,9 +15,8 @@ const NewForm = (props) => {
   };
 
   const onChange = (content) => {
-    onChangeEditor(content.getHTML());
+    onChangeEditor(content);
   };
-
   const onChangeImage = (e) => {
     if (e.target.files.length > 0) {
       let url = getBase64(e.target.files[0], (imageUrl) => {
@@ -45,6 +44,7 @@ const NewForm = (props) => {
         <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item> */}
       <RemirorEditorNew
+        flag={props.flag} 
         onChangeEditor={onChange}
         description={props.description}
       />

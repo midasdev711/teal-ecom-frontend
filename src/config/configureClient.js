@@ -75,13 +75,13 @@ const link = process.browser
   : httpLink;
 
 
-const uploadLink = createUploadLink({ uri: "http://3.135.208.27:9200/graphql" })
+const uploadLink = createUploadLink({ uri: SERVER })
 
 export default withApollo(
   ({ initialState }) => {
    // console.log('initialState', initialState);
     return new ApolloClient({
-      link: concat(uploadLink, authMiddleware, link),
+      link: concat(authMiddleware, uploadLink, link),
       cache: new InMemoryCache({
         typePolicies: {
           Article: {

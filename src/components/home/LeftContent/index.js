@@ -58,7 +58,7 @@ const LeftContent = () => {
               <ProductImage src={img}></ProductImage>
               <div>
                 <Link href="#">
-                  <a>Teal Essentials hand...</a>
+                  <a>Juicy Pie Essentials hand...</a>
                 </Link>
                 <br />
                 <StyledText>3 Pack</StyledText>

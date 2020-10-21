@@ -11,7 +11,7 @@ const EditProductsImages = ({ imageData , existImages , deletedImage }) => {
   const [dataFiles, setDataFiles] = useState([]);
   const [base64Data, setBase64Data] = useState([]);
 
-console.log('dataFiles', dataFiles)
+//console.log('dataFiles', dataFiles)
   const handleCancel = () => {
     setPreviewVisible(false);
   };

@@ -10,7 +10,7 @@ import { Form, Input, Row, Col, Checkbox, Select } from "antd";
 
 const { Option } = Select;
 
-const NewForm = () => {
+const NewForm = (props) => {
   const [collect_tax, setCollectTax] = useState(true);
   const [exemptions, setExemptions] = useState([]);
   const [phone, setPhone] = useState("");
@@ -29,12 +29,13 @@ const NewForm = () => {
     setExemptions(values);
   };
 
-  const handleChangeValue = (val) => {};
+
 
   const handleChangeTags = (value) => {
     console.log(`selected ${value}`);
   };
-
+  const { BasicDetails, AddressDetails, Tags, TaxFlag, Tax, Notes, handleChangeValue } = props
+  
   return (
     <Form
       name="basic"
@@ -43,6 +44,7 @@ const NewForm = () => {
       className="form-new"
       layout="vertical"
     >
+      {console.log('BasicDetails', props)}
       <SubForm>
         <Row gutter={24}>
           <Col md={8}>
@@ -62,8 +64,10 @@ const NewForm = () => {
                     ]}
                   >
                     <TextInput
-                      onChange={(e) => handleChangeValue(e.target.value)}
+                      onChange={(e) => handleChangeValue(e, 'BasicDetails')}
                       placeholder="First Name"
+                      name='FirstName'
+                      value={BasicDetails.FirstName}
                     />
                   </Form.Item>
                 </Col>
@@ -77,7 +81,8 @@ const NewForm = () => {
                       },
                     ]}
                   >
-                    <TextInput placeholder="Last Name" />
+                    <TextInput placeholder="Last Name" onChange={(e) => handleChangeValue(e, 'BasicDetails')} name='LastName'
+                      value={BasicDetails.LastName} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
@@ -91,7 +96,8 @@ const NewForm = () => {
                       },
                     ]}
                   >
-                    <TextInput placeholder="Email" />
+                    <TextInput placeholder="Email" onChange={(e) => handleChangeValue(e, 'BasicDetails')} name='Email'
+                      value={BasicDetails.Email} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
@@ -108,8 +114,8 @@ const NewForm = () => {
                       className="phone-input"
                       placeholder="Phone"
                       country={"us"}
-                      value={phone}
-                      onChange={(phone) => setPhone(phone)}
+                      onChange={(e) => handleChangeValue(e, 'BasicDetails', 'Mobile')} name='Mobile'
+                      value={BasicDetails.Mobile}
                     />
                   </Form.Item>
                 </Col>
@@ -152,35 +158,42 @@ const NewForm = () => {
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item name="address_first_name">
-                    <TextInput placeholder="First name" />
+                    <TextInput onChange={(e) => handleChangeValue(e, 'AddressDetails')}
+                      placeholder="First Name"
+                      name='FirstName'
+                      value={AddressDetails.FirstName} />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_last_name">
-                    <TextInput placeholder="Last Name" />
+                    <TextInput placeholder="Last Name" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='LastName'
+                      value={AddressDetails.LastName} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
                   <Form.Item name="address_company">
-                    <TextInput placeholder="Company" />
+                    <TextInput placeholder="Company" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='Company'
+                      value={AddressDetails.Company} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
                   <Form.Item name="address_suite">
-                    <TextInput placeholder="Apartment, suite, etc." />
+                    <TextInput placeholder="Apartment, suite, etc." onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='Apartment'
+                      value={AddressDetails.Apartment} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
                   <Form.Item name="address_city">
-                    <TextInput placeholder="City" />
+                    <TextInput placeholder="City" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='City'
+                      value={AddressDetails.City} />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_country">
                     <CountryDropdown
                       defaultOptionLabel="Country/Region"
-                      value={country}
-                      onChange={(val) => setCountry(val)}
+                      onChange={(e) => handleChangeValue(e, 'AddressDetails', 'Country')} name='Country'
+                      value={AddressDetails.Country}
                       blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
                       className="country-region"
                     />
@@ -188,7 +201,8 @@ const NewForm = () => {
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_postal_code">
-                    <TextInput placeholder="Postal code" />
+                    <TextInput placeholder="Postal code" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='PostalCode'
+                      value={AddressDetails.PostalCode} />
                   </Form.Item>
                 </Col>
                 <Col md={24}>
@@ -196,8 +210,8 @@ const NewForm = () => {
                     <PhoneInput
                       country={"us"}
                       className="phone-input"
-                      value={address_phone}
-                      onChange={(phone) => setAddressPhone(phone)}
+                      onChange={(e) => handleChangeValue(e, 'AddressDetails', 'Mobile')} name='Mobile'
+                      value={AddressDetails.Mobile}
                     />
                   </Form.Item>
                 </Col>
@@ -222,20 +236,21 @@ const NewForm = () => {
             <ContentBox>
               <Form.Item name="collect_tax">
                 <Checkbox
-                  onChange={(e) => setCollectTax(e.target.checked)}
-                  checked={collect_tax}
+                  onChange={(e) => handleChangeValue(e)} name='TaxFlag'
+                  checked={TaxFlag}
                 >
                   Collect tax
                 </Checkbox>
               </Form.Item>
-              <Form.Item name="exemptions">
+              {TaxFlag &&<Form.Item name="exemptions">
                 <Select
                   placeholder="Select Tax"
-                  onChange={handleChangeExemptions}
+                  onChange={(e) => handleChangeValue(e)} name='Tax'
+                  value={Tax}
                 >
                   {exemptions}
                 </Select>
-              </Form.Item>
+              </Form.Item>}
             </ContentBox>
           </Col>
         </Row>
@@ -250,7 +265,8 @@ const NewForm = () => {
           <Col md={16}>
             <ContentBox>
               <Form.Item name="notes">
-                <TextInput placeholder="Note" />
+                <TextInput placeholder="Note" onChange={(e) => handleChangeValue(e)} name='Notes'
+                  value={Notes} />
               </Form.Item>
             </ContentBox>
           </Col>
@@ -271,7 +287,8 @@ const NewForm = () => {
                 <Select
                   placeholder="Tags"
                   mode="tags"
-                  onChange={handleChangeTags}
+                  onChange={(e) => handleChangeValue(e)} name='Tags'
+                  value={Tags}
                 ></Select>
               </Form.Item>
             </ContentBox>

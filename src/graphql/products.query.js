@@ -1,21 +1,54 @@
 import gql from 'graphql-tag';
 
-const PRODUCTS_QUERY = gql`
-  query Products {
-    products {
-      id
-      title
-      cost
-      created_at
+export const GET_PRODUCTS = gql`
+  query products($filters: ProductFilters) {
+    products(filters: $filters) {
+       productID  
+      productMerchantID
+      productMerchantName 
+      productSKU 
+      productTitle 
+      productSlug 
+      productDescription 
+      productMRP 
+      productSalePrice
+      productThumbnailImage 
+      productFeaturedImage
+      productImages:String
+      productCategory
+      productSubcategory
+      productSEO
+      ampSlug
+      productTotalQuantity
+      productInventory
+      productTags
+      productStock
+      productTermsAndConditions 
+      productVariants
+      productAttributes
+      productStartDate
+      productEndDate
+      isPublish
+      productSearchEngineTitle
+      productSearchEngineDescription
+      status
+      createdBy
+      modifiedBy
     }
   }
 `;
+
 
 export const GET_MY_PRODUCT_LISTS_QUERY = gql`
    query($ID: Int) { 
 	getProductByMerchant(ID:$ID)  {
 		_id
 		ID
+		variants {
+			variantName
+		  variantValues
+		  
+		  }
 		merchantID
 		merchantName
 		totalQuantity
@@ -320,9 +353,8 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 								   }
 			  }
 			`;
-		
+
 export default {
-	PRODUCTS_QUERY,
 	GET_MY_PRODUCT_LISTS_QUERY,
 	ADD_MERCHANT_PRODUCT_MUTATION,
 	GET_PRODUCT_CATEGORY_LISTS_QUERY,

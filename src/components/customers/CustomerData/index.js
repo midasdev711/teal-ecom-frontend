@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
+import { useRouter } from 'next/router'
 import styled from "styled-components";
 import Link from "next/link";
+import { getCustomers } from "../../../redux/actions/customers";
+import { connect } from "react-redux";
 // icon
 import { CopyOutlined, InfoCircleOutlined } from "@ant-design/icons";
 // ui
@@ -20,12 +23,23 @@ import Tags from "../../Tags";
 
 const { Content } = Layout;
 
-const CustomerData = () => {
-  const [isTimeline, setTimeline] = useState(true);
+const CustomerData = (props) => {
+  const router = useRouter()
+  const { pid } = router.query
 
+  const [isTimeline, setTimeline] = useState(true);
+  let customerData = props.customerData && props.customerData.find(data=> data._id === pid)
+
+  useEffect(() => {
+    getCustomersCall();
+  }, [props]);
+  
+  const getCustomersCall = async () => {
+    await props.getCustomers();
+  };
   return (
     <CustomerDataContent>
-      <CustomerName fontSize={`28px`}> Ninh Le</CustomerName>
+      <CustomerName fontSize={`28px`}> {customerData && customerData.BasicDetailsFirstName}{customerData && customerData.BasicDetailsLastName}</CustomerName>
       <Row gutter={24}>
         <Col md={16}>
           <ContentBox padding="0px">
@@ -36,8 +50,8 @@ const CustomerData = () => {
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               />
               <ItemTitle>
-                <CustomerName> Ninh Le</CustomerName>
-                <StyledText>Lakeland , FL, United States</StyledText>
+                <CustomerName>{customerData && customerData.BasicDetailsFirstName}{customerData && customerData.BasicDetailsLastName}</CustomerName>
+                <StyledText>{customerData && customerData.AddressDetailsApartment}, {customerData && customerData.AddressDetailsCity}, {customerData && customerData.AddressDetailsCountry}</StyledText>
                 <StyledText>Customer for 1 day</StyledText>
               </ItemTitle>
             </ItemContent>
@@ -134,7 +148,7 @@ const CustomerData = () => {
               <StyledLink>Edit</StyledLink>
             </LayoutTitles>
             <LayoutTitles>
-              <StyledLink>ninhle@google.dev</StyledLink>
+              <StyledLink>{customerData && customerData.BasicDetailsEmail}</StyledLink>
               <Tooltip placement="bottom" title="Copy email">
                 <CopyOutlined className="copy-icon" />
               </Tooltip>
@@ -146,10 +160,10 @@ const CustomerData = () => {
               <TitleName>DEFAULT ADDRESS</TitleName>
               <StyledLink>Manage</StyledLink>
             </LayoutTitles>
-            <StyledText>Ninh Le</StyledText>
-            <StyledText>8524 Tocoi path</StyledText>
-            <StyledText>Lakeland Florida 33810</StyledText>
-            <StyledText>United States</StyledText>
+            <StyledText>{customerData && customerData.BasicDetailsFirstName}{customerData && customerData.BasicDetailsLastName}</StyledText>
+            <StyledText>{customerData && customerData.AddressDetailsApartment}</StyledText>
+            <StyledText>{customerData && customerData.AddressDetailsCity}{customerData && customerData.AddressDetailsPostalCode}</StyledText>
+            <StyledText>{customerData && customerData.AddressDetailsCountry}</StyledText>
             <StyledLink className="add-address">Add new address</StyledLink>
           </ContentBox>
 
@@ -367,5 +381,13 @@ const TimeLineContent = styled.div`
 `;
 
 const CommentAction = styled.div``;
+const mapStateToProps = (store) => {
+  return {
+    customerData: store.customerReducer.customerData,
+  };
+};
+const mapDispatchToProps = {
+  getCustomers,
+};
 
-export default CustomerData;
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerData);

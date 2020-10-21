@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { TweenOneGroup } from "rc-tween-one";
+import { connect } from "react-redux";
 import Link from "next/link";
+import { getUserData } from "../../../utils";
 // icon
 import {
   SearchOutlined,
@@ -39,43 +41,15 @@ import {
   EditEmail,
   ShippingAddress,
 } from "../Modal";
-import { customer } from "../fakeData";
+import { getCustomers } from "../../../redux/actions/customers";
+import { getUserProductLists } from "../../../redux/actions/product";
+// import { customer } from "../fakeData";
 
 const { Search } = Input;
+const newForm = (props) => {
+  const { Products, OrderAmount, ShippingAddresss, DeliveryAddress, PaymentMethod, TransactionID, Notes, Tags, handleChangeValue } = props
 
-const content = (data, change) => {
-  const [customerdata, setCustomerData] = useState([]);
 
-  const UpdateData = () => {
-    setCustomerData(customer.filter((res) => !res.name.search(data)));
-  };
-
-  useEffect(() => {
-    UpdateData();
-  }, [data]);
-
-  return (
-    <div>
-      <PopoverHeader>
-        <PlusOutlined />
-        <p>Create a new customer</p>
-      </PopoverHeader>
-      {customerdata.map((res, index) => {
-        return (
-          <PopoverContent key={index} onClick={() => change(res)}>
-            <StyledAvatar src={res.profile_url} alt="profile image" />
-            <div className="customer-infor">
-              <p>{res.name}</p>
-              <p>{res.email}</p>
-            </div>
-          </PopoverContent>
-        );
-      })}
-    </div>
-  );
-};
-
-const newForm = () => {
   const [visiable, setVisible] = useState(false);
   const [openCustumItem, setopenCustumItem] = useState(false);
   const [searchCustomner, setSearchcustomer] = useState("");
@@ -83,15 +57,70 @@ const newForm = () => {
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
   const [listOrders, setListOrders] = useState([]);
   const [subTotal, setSubTotal] = useState(0.0);
-  const [tags, setTags] = useState(["test"]);
+  // const [tags, setTags] = useState(["test"]);
   const [inputValue, setInputValue] = useState("");
   const [inputVisible, setInputVisible] = useState(false);
   const [openEmailPopup, setOpenEmailPopup] = useState(false);
   const [openShippingPopup, setOpenShippingPopup] = useState({
     status: false,
-    name: "",
+    data: {},
+    name: null
   });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
+
+  useEffect(() => {
+    getCustomersCall();
+  }, [props.customerData]);
+  useEffect(() => {
+    getProductsCall();
+  }, []);
+
+  const getCustomersCall = async () => {
+    await props.getCustomers();
+  };
+  const getProductsCall = async () => {
+    let userData = getUserData()
+    let userId = userData?.ID
+    await props.getUserProductLists(userId)
+  };
+
+
+  const content = (data) => {
+
+    const customer = props.customerData === undefined ? [] : props.customerData
+    const [customerdata, setCustomerData] = useState([]);
+    const UpdateData = () => {
+      setCustomerData(customer.filter((res) => !res.BasicDetailsFirstName.search(data)));
+    };
+
+    useEffect(() => {
+      UpdateData();
+    }, [data]);
+
+
+    return (
+      <div>
+        <PopoverHeader>
+          <PlusOutlined />
+          <p>Create a new customer</p>
+        </PopoverHeader>
+        {customerdata.map((res, index) => {
+          return (
+            <PopoverContent key={index} onClick={() => handleChangeValue(res, 'customer')}>
+              <StyledAvatar src={res.profile_url} alt="profile image" />
+              <div className="customer-infor">
+                <p>{res.BasicDetailsFirstName}</p>
+                <p>{res.BasicDetailsEmail}</p>
+              </div>
+            </PopoverContent>
+          );
+        })}
+      </div>
+    );
+  };
+
+
+
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -105,12 +134,6 @@ const newForm = () => {
     setVisible(!visiable);
   };
 
-  const data = (res) => {
-    console.log(res);
-    setSelectedCustomer(res);
-  };
-
-  useEffect(() => {}, [searchCustomner, selectedCustomer]);
 
   const showModal = () => {
     setopenCustumItem(!openCustumItem);
@@ -127,11 +150,11 @@ const newForm = () => {
   };
 
   const handleInputConfirm = () => {
-    let tag = tags;
+    let tag = Tags;
     if (inputValue && tag.indexOf(inputValue) === -1) {
       tag = [...tag, inputValue];
     }
-    setTags(tag);
+    handleChangeValue(tag, 'Tags');
     setInputVisible(false);
     setInputValue("");
   };
@@ -159,7 +182,7 @@ const newForm = () => {
     );
   };
 
-  const tagChild = tags.map(forMap);
+  const tagChild = Tags && Tags.map(forMap);
 
   // Tags modal
   const handleOpenViewTagsPopup = () => {
@@ -176,7 +199,7 @@ const newForm = () => {
   };
 
   const handleColsecontact = (e) => {
-    setSelectedCustomer(null);
+    handleChangeValue(null, 'customer');
   };
 
   // Edit email
@@ -189,66 +212,98 @@ const newForm = () => {
   };
 
   // Edit address
-  const handleShippingEditModal = (value) => {
-    setOpenShippingPopup({ status: !openShippingPopup.status, name: value });
+  const handleShippingEditModal = (value, data) => {
+    setOpenShippingPopup({ status: !openShippingPopup.status, data: data, name: value });
+  };
+
+  const handleShippingEditValues = (e, data) => {
+
+    let val = openShippingPopup.data
+    if (data === 'AddressDetailsMobile' || data === 'AddressDetailsCountry') {
+      setOpenShippingPopup({ ...openShippingPopup, ...val, [data]: e })
+    } else {
+      setOpenShippingPopup({ ...openShippingPopup, ...val, [data]: e.target.value });
+    }
   };
 
   const handleCloseShippingPopup = () => {
-    setOpenShippingPopup({ status: false, name: openShippingPopup.name });
+    setOpenShippingPopup({ status: false, data: {}, name: null });
+  };
+  const saveShiipingDetails = (value, flag, element) => {
+    handleChangeValue(value, flag, element)
+    handleCloseShippingPopup();
   };
 
   const onChangeTotal = (e, index) => {
     let data = [];
     let subTotal = 0;
-    for (let i = 0; i < listOrders.length; i++) {
-      const item = listOrders[i];
+    // if (e >= 1) {
+    //   Products[index].variants.total_value = e
+    //   let _price = Products[index].variants.variantValues * Products[index].variants.total_value
+    //   subtotal += _price;
+    //   console.log('sssssssssssssssssssssssssssssssssssssss', _price)
+    //   handleChangeValue(Products, 'product')
+    // setSubTotal(subtotal);
+    // }
+    if (e >= 1) {
+      for (let i = 0; i < Products.length; i++) {
+        const item = Products[i];
 
-      if (i === index) {
-        item.total = e;
-        data.push(item);
-      } else {
-        data.push(item);
+        if (i === index) {
+          item.variants.total_value = e;
+          data.push(item);
+        } else {
+          data.push(item);
+        }
+
+        let _price = item.variants.variantValues * item.variants.total_value;
+        subTotal += _price;
       }
 
-      let _price = item.price * item.total;
-      subTotal += _price;
+      handleChangeValue(Products, 'product')
+      setSubTotal(subTotal);
     }
-
-    setListOrders(data);
-    setSubTotal(subTotal);
   };
 
   const onAddProductsSearch = (num) => {
     let data = [];
     let subTotal = 0;
-    for (let i = 0; i < num; i++) {
-      data.push({
-        id: i + 1,
-        image:
-          "https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_1_300x300_cc63d031-a9b3-4a95-8fb4-e12f8cf7e49d_small.jpg?v=1596714418",
-        name: "Indestructible Shoes " + i,
-        style: "Black / US 9 - 9.5 | EU 43 • 112",
-        sku: 101,
-        price: 59.99,
-        total: 1,
-      });
-      subTotal += 59.99;
-    }
-    setListOrders(data);
+    num.map(item => {
+      //  let value={...item}
+
+      item.variants.map((val) => {
+        let value = { ...item }
+        value.variants = {}
+        if (val.isChecked) {
+          value.variants = val
+          subTotal += parseFloat(val.variantValues)
+          data.push(value)
+        }
+
+      })
+
+    })
+
+    // subTotal += 59.99;
+
+    console.log('****************', data)
+    handleChangeValue(data, 'product')
+    // setListOrders(data);
     setShowSelectProduct(false);
     setSubTotal(subTotal);
   };
 
   const onRemoveOrderItem = async (index) => {
     let subTotal = 0;
-    let data = await listOrders.filter((item, i) => {
+    let data = await Products.filter((item, i) => {
       if (index !== i) {
-        let _price = item.price * item.total;
+        let _price = item.variants.variantValues * item.variants.total_value;
         subTotal += _price;
         return item;
       }
     });
-    await setListOrders(data);
+    await handleChangeValue(data, 'product');
+    // await setListOrders(data);
     await setSubTotal(subTotal);
   };
 
@@ -287,17 +342,17 @@ const newForm = () => {
                     prefix={<SearchOutlined />}
                   />
 
-                  {listOrders && listOrders.length > 0 && (
+                  {Products && Products.length > 0 && (
                     <List
-                      dataSource={listOrders}
+                      dataSource={Products}
                       renderItem={(item, i) => (
                         <List.Item>
                           <ProductDetail>
                             <ProductView>
-                              <ImageView src={item.image} alt="" />
+                              <ImageView src={item.thumbnailImage} alt="" />
                               <div>
                                 <Link href={`/products/[productId]`} as="/products/123456789">
-                                  <a href="#">{item.name}</a>
+                                  <a href="#">{item.variants.variantName}</a>
                                 </Link>
                                 <TextStyle>{item.style}</TextStyle>
                                 <TextStyle>SKU: {item.sku}</TextStyle>
@@ -317,17 +372,18 @@ const newForm = () => {
                                     </Card>
                                   }
                                 >
-                                  <a href="#">${item.price}</a>
+                                  <a href="#">${item.variants.variantValues}</a>
                                 </Dropdown>
                               </LabelPriceStyle>
                               <InputNumberStyle
                                 onChange={(e) => onChangeTotal(e, i)}
-                                value={item.total}
+                                value={item.variants.total_value}
                                 min={0}
                                 max={10}
                               />
+                              {console.log('1111111111111', item.variants)}
                               <LabelStyle>
-                                ${item.total * item.price}
+                                ${item.variants.total_value * parseFloat(item.variants.variantValues)}
                               </LabelStyle>
                             </InputTotal>
 
@@ -343,7 +399,7 @@ const newForm = () => {
                   <Row className="price-content" gutter={24}>
                     <Col md={12}>
                       <Form.Item label="Notes" name="notes">
-                        <TextInput placeholder="Add a note..." />
+                        <TextInput placeholder="Add a note..." value={Notes} onChange={(e) => handleChangeValue(e, 'Notes')} />
                       </Form.Item>
                     </Col>
                     <Col className="title" md={6}>
@@ -352,8 +408,8 @@ const newForm = () => {
                         placement="bottomRight"
                         trigger="click"
                         className="new-order"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Add discount</ContentTitle>
                       </Popover>
@@ -362,8 +418,8 @@ const newForm = () => {
                         content={AddShipment}
                         placement="bottom"
                         trigger="click"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Add shipment</ContentTitle>
                       </Popover>
@@ -371,8 +427,8 @@ const newForm = () => {
                         content={Taxes}
                         placement="bottomRight"
                         trigger="click"
-                        // visible={true}
-                        // onVisibleChange={handleVisibleChange}
+                      // visible={true}
+                      // onVisibleChange={handleVisibleChange}
                       >
                         <ContentTitle>Taxes</ContentTitle>
                       </Popover>
@@ -421,11 +477,12 @@ const newForm = () => {
             </Row>
           </Col>
           <Col md={8}>
-            {selectedCustomer === null && (
+            {console.log('sdsdsdsdsd', ShippingAddresss.length)}
+            {Object.keys(ShippingAddresss).length === 0 && (
               <ContentBox>
                 <TitleBox>Find and Create customer </TitleBox>
                 <Popover
-                  content={() => content(searchCustomner, data)}
+                  content={() => content(searchCustomner)}
                   placement="bottom"
                   trigger="click"
                   visible={visiable}
@@ -441,7 +498,7 @@ const newForm = () => {
                 </Popover>
               </ContentBox>
             )}
-            {selectedCustomer !== null && (
+            {Object.keys(ShippingAddresss).length !== 0 && (
               <>
                 <ContentBox>
                   <AlignItem>
@@ -451,14 +508,14 @@ const newForm = () => {
                   <StyledAvatar
                     width="55"
                     height="55"
-                    src={selectedCustomer.profile_url}
+                    src={ShippingAddresss.profile_url}
                     alt="avatar"
                   />
                   <ContentTitle align="left">
-                    {selectedCustomer.name}
+                    {ShippingAddresss.BasicDetailsFirstName}
                   </ContentTitle>
                   <AlignItem>
-                    <ContentTitle>{selectedCustomer.email}</ContentTitle>
+                    <ContentTitle>{ShippingAddresss.BasicDetailsEmail}</ContentTitle>
                     <ContentTitle onClick={handleEmailEditModal}>
                       Edit
                     </ContentTitle>
@@ -468,39 +525,37 @@ const newForm = () => {
                   <AlignItem>
                     <TitleBoxAddress>SHIPPING ADDRESS</TitleBoxAddress>
                     <ContentTitle
-                      onClick={() => handleShippingEditModal("shipping")}
+                      onClick={() => handleShippingEditModal("shipping", ShippingAddresss)}
                     >
                       Edit
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {selectedCustomer.address.address_one}
-                    {selectedCustomer.address.address_two}
+                    {ShippingAddresss.AddressDetailsApartment}
+                    {ShippingAddresss.AddressDetailsCompany}
                   </p>
                   <p>
-                    {selectedCustomer.address.city}
-                    {selectedCustomer.address.state}
+                    {ShippingAddresss.AddressDetailsCity}
                   </p>
-                  <p>{selectedCustomer.address.country}</p>
+                  <p>{ShippingAddresss.AddressDetailsCountry}</p>
                 </ContentBox>
                 <ContentBox>
                   <AlignItem>
                     <TitleBoxAddress>BILLING ADDRESS</TitleBoxAddress>
                     <ContentTitle
-                      onClick={() => handleShippingEditModal("billing")}
+                      onClick={() => handleShippingEditModal("billing", DeliveryAddress)}
                     >
                       Edit
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {selectedCustomer.address.address_one}
-                    {selectedCustomer.address.address_two}
+                    {DeliveryAddress.AddressDetailsApartment}
+                    {DeliveryAddress.AddressDetailsCompany}
                   </p>
                   <p>
-                    {selectedCustomer.address.city}
-                    {selectedCustomer.address.state}
+                    {DeliveryAddress.AddressDetailsCity}
                   </p>
-                  <p>{selectedCustomer.address.country}</p>
+                  <p>{DeliveryAddress.AddressDetailsCountry}</p>
                 </ContentBox>
               </>
             )}
@@ -552,6 +607,7 @@ const newForm = () => {
         isOpen={isOpenSelectProduct}
         onCancel={() => setShowSelectProduct(false)}
         onAdd={onAddProductsSearch}
+        products={props.productLists}
       />
 
       {/*  add customer item modal */}
@@ -605,107 +661,107 @@ const newForm = () => {
                 touched,
                 /* and other goodies */
               }) => (
-                <form id="myForm" onSubmit={handleSubmit}>
-                  <Row gutter={24}>
-                    <Col className="gutter-row" span={12}>
-                      <div>
-                        <span>
-                          <label>Line item name </label>
-                        </span>
-                        <Input
-                          name="item_name"
+                  <form id="myForm" onSubmit={handleSubmit}>
+                    <Row gutter={24}>
+                      <Col className="gutter-row" span={12}>
+                        <div>
+                          <span>
+                            <label>Line item name </label>
+                          </span>
+                          <Input
+                            name="item_name"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.item_name}
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                      <Col className="gutter-row" span={6}>
+                        <div>
+                          <span>
+                            <label>Price per item </label>
+                          </span>
+                          <Input
+                            name="price"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.price}
+                            prefix="$"
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                      <Col className="gutter-row" span={6}>
+                        <div>
+                          <span>
+                            <label>Quantity </label>
+                          </span>
+                          <Input
+                            name="qty"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.qty}
+                            type="number"
+                            size="large"
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginTop: "1rem" }}>
+                      <Col className="gutter-row" span={16}>
+                        <Checkbox
+                          name="item_taxable"
                           onChange={handleChange}
                           onBlur={handleBlur}
-                          value={values.item_name}
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={6}>
-                      <div>
-                        <span>
-                          <label>Price per item </label>
-                        </span>
-                        <Input
-                          name="price"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.price}
-                          prefix="$"
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                    <Col className="gutter-row" span={6}>
-                      <div>
-                        <span>
-                          <label>Quantity </label>
-                        </span>
-                        <Input
-                          name="qty"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.qty}
-                          type="number"
-                          size="large"
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row gutter={16} style={{ marginTop: "1rem" }}>
-                    <Col className="gutter-row" span={16}>
-                      <Checkbox
-                        name="item_taxable"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        checked={values.item_taxable}
-                      >
-                        Item is taxable
+                          checked={values.item_taxable}
+                        >
+                          Item is taxable
                       </Checkbox>
-                    </Col>
-                  </Row>
-                  <Row gutter={16} style={{ marginTop: "1rem" }}>
-                    <Col className="gutter-row" span={16}>
-                      <Checkbox
-                        name="item_shipping"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        checked={values.item_shipping}
-                      >
-                        Item requires shipping
+                      </Col>
+                    </Row>
+                    <Row gutter={16} style={{ marginTop: "1rem" }}>
+                      <Col className="gutter-row" span={16}>
+                        <Checkbox
+                          name="item_shipping"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          checked={values.item_shipping}
+                        >
+                          Item requires shipping
                       </Checkbox>
-                    </Col>
-                  </Row>
-                  {values.item_shipping ? (
-                    <StyledAlert
-                      message={
-                        <>
-                          <Link href="#">
-                            <a>Create a product</a>
-                          </Link>{" "}
+                      </Col>
+                    </Row>
+                    {values.item_shipping ? (
+                      <StyledAlert
+                        message={
+                          <>
+                            <Link href="#">
+                              <a>Create a product</a>
+                            </Link>{" "}
                           with weight specified to calculate shipping rates
                           accurately
-                        </>
-                      }
-                      type="warning"
-                    />
-                  ) : null}
-                  <Divider />
-                  <ItemAction>
-                    <Button size="large">Cancel</Button>
-                    <Button
-                      form="myForm"
-                      key="submit"
-                      size="large"
-                      htmlType="submit"
-                      type="primary"
-                      disabled={isSubmitting}
-                    >
-                      Save line item
+                          </>
+                        }
+                        type="warning"
+                      />
+                    ) : null}
+                    <Divider />
+                    <ItemAction>
+                      <Button size="large">Cancel</Button>
+                      <Button
+                        form="myForm"
+                        key="submit"
+                        size="large"
+                        htmlType="submit"
+                        type="primary"
+                        disabled={isSubmitting}
+                      >
+                        Save line item
                     </Button>
-                  </ItemAction>
-                </form>
-              )}
+                    </ItemAction>
+                  </form>
+                )}
             </Formik>
           </CardViews>
         </Wraper>
@@ -713,19 +769,21 @@ const newForm = () => {
       <ShippingAddress
         open={openShippingPopup.status}
         close={handleCloseShippingPopup}
-        values={selectedCustomer && selectedCustomer.email}
+        handleChange={handleShippingEditValues}
+        values={openShippingPopup.data}
         name={openShippingPopup.name}
+        onSave={saveShiipingDetails}
       />
       <EditEmail
         open={openEmailPopup}
         close={handleCloseEmailPopup}
-        values={selectedCustomer && selectedCustomer.email}
+        values={ShippingAddress.email}
       />
       <ViewTags
         open={openViewTagsPopup}
         close={handleCloseViewTagsPopup}
         closeTag={handleClose}
-        values={tags}
+        values={Tags}
       />
     </Form>
   );
@@ -990,5 +1048,15 @@ const CardViews = styled(Card)`
   .ant-card-body {
   }
 `;
+const mapStateToProps = (store) => {
+  return {
+    customerData: store.customerReducer.customerData,
+    productLists: store.productReducer.merchantProductLists
+  };
+};
+const mapDispatchToProps = {
+  getCustomers,
+  getUserProductLists
+};
 
-export default newForm;
+export default connect(mapStateToProps, mapDispatchToProps)(newForm);
