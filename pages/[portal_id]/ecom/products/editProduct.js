@@ -70,7 +70,7 @@ let productInfo = {
         variantValues: "",
     }],
     productThumbnailImage: null,
-     productImages: [],
+    productImages: [],
     productSEO: {
         title: "",
         description: "",
@@ -81,7 +81,7 @@ let productInfo = {
     productTotalQuantity: "",
     productStartDate: "",
     productEndDate: "",
-    productFeaturedImage: "",
+    productFeaturedImage: null,
     productAttributes: [{
         attributeName: "productWeight",
         attributeValues: []
@@ -91,8 +91,44 @@ let productInfo = {
 
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const ProductSEOInfo = ["title", "description", "cronicalUrl"]
+const clearData = {
+    productMerchantID: "",
+    productMerchantName: "",
+    productSKU: "",
+    productTitle: "",
+    productDescription: "",
+    productSlug: "",
+    productMRP: 0,
+    productSalePrice: 0,
+    productCostPerItem: 0,
+    isPublish: "false",
+    productTags: [],
+    productStock: 0,
+    productVariants: [{
+        variantName: "",
+        variantValues: "",
+    }],
+    productThumbnailImage: null,
+    productImages: [],
+    productSEO: {
+        title: "",
+        description: "",
+        cronicalUrl: "",
+    },
+    productCategory: null,
+    productSubcategory: null,
+    productTotalQuantity: "",
+    productStartDate: "",
+    productEndDate: "",
+    productFeaturedImage: null,
+    productAttributes: [{
+        attributeName: "productWeight",
+        attributeValues: []
+    }],
+    productExistingImages: []
+}
 
-const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID, UpdateMerchantProduct }) => {
+const ProductDetail = ({ productName, submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists, getMerchantProductByID, UpdateMerchantProduct }) => {
     const [visiable, setVisible] = useState(false);
     const [getFlag, setGetFlag] = useState(false);
     const [tags, setTags] = useState([]);
@@ -122,6 +158,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     const { productId } = router.query
     const merchantProductDetails = useSelector(state => state.productReducer.productById)
     const [oldImagesData, setOldImagesData] = useState([]);
+    const apiResponse = useSelector(state => state.productReducer.status)
     //console.log('loading', loading)
     //console.log('merchantProductDetails', merchantProductDetails)
     //console.log('subCategories', subCategories)
@@ -139,105 +176,132 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     //console.log('productInfo', productInfo)
     useEffect(() => {
         getMerchantProductByID((productId * 1))
-    }, [getFlag])
-    useEffect(()=>{
-      let image  = []
-      let data = {...productDetails}  
-      data.productImages.length > 0 ? (
-          console.log('inside'),
-        data.productImages.map((data1,index)=>{
-            console.log('data1', data1)
-            if(data1 === undefined || data1 === "undefined"){
-               
-            }else{
-                image.push(data1)
-            }
-        }),
-        data.productImages = image,
-        data.productThumbnailImage = image[0],
-        data.productFeaturedImage = image[0],
-        console.log('data', data),
-        console.log('image', image),
-        setProductDetails(data),
-        setDummyData([dummyData + 1])
-      ) : ("")  
-    },[imagesFileList])
+    }, [getFlag || productId])
+    useEffect(() => {
+        handleProfitAndMargin()
+    }, [productDetails])
+    // useEffect(() => {
+    //    if(apiResponse === "updated"){
+    //     productInfo = clearData
+    //     setProductDetails(clearData)
+    //    }
+    // }, [apiResponse])
+    useEffect(() => {
+       if(apiResponse === "start"){
+        setLoadingFlag(true)
+   }else{
+    setLoadingFlag(false)
+       }
+    }, [apiResponse])
+    useEffect(() => {
+        let image = []
+        let data = { ...productDetails }
+        data.productImages.length > 0 ? (
+            // console.log('inside'),
+            data.productImages.map((data1, index) => {
+                // console.log('data1', data1)
+                if (data1 === undefined || data1 === "undefined") {
+
+                } else {
+                    image.push(data1)
+                }
+            }),
+            //  console.log('image', image),
+            data.productImages = image,
+            // data.productThumbnailImage = data.productExistingImages.length > 0 ? (delete data.productThumbnailImage) : (image[0]),
+            // data.productFeaturedImage = data.productExistingImages.length > 0 ? ("") : (image[0]),
+            //  console.log('data', data),
+            //  console.log('image', image),
+            setProductDetails(data),
+            setDummyData([dummyData + 1])
+        ) : ("")
+    }, [imagesFileList])
     useEffect(() => {
         if (merchantProductDetails && merchantProductDetails !== undefined && merchantProductDetails.length > 0) {
             let cloneData = productDetails
             let cloneDataProduct = merchantProductDetails[0]
             cloneData.productTitle = cloneDataProduct.title
+            productName(cloneDataProduct.title)
             cloneData.productDescription = cloneDataProduct.description
-          //  cloneData.productImages = cloneDataProduct.images
+            //  cloneData.productImages = cloneDataProduct.images
             cloneData.productExistingImages = cloneDataProduct.images
-           
+
             setOldImagesData(cloneDataProduct.images)
-           // cloneData.productFeaturedImage = cloneDataProduct.featuredImage
-            cloneData.productSalePrice = cloneDataProduct.salePrice || 0
-            cloneData.productMRP = cloneDataProduct.mrp || 0
-            cloneData.productCostPerItem = cloneDataProduct.productCost || 0
-            cloneData.productSKU = cloneDataProduct.sku || 0
-            cloneData.productTotalQuantity = cloneDataProduct.totalQuantity || 0
-            cloneData.productEndDate = cloneDataProduct.endDate || ""
-            cloneData.productStartDate = cloneDataProduct.startDate || ""
-            cloneData.isPublish = cloneDataProduct.isPublish || "false"
-           // cloneData.productVariants =  cloneDataProduct.variants
-            cloneData.productAttributes[0].attributeName = cloneDataProduct.attributes.length > 0  ? cloneDataProduct.attributes[0].attributeName : ""
-            cloneData.productAttributes[0].attributeValues = cloneDataProduct.attributes.length > 0 ? cloneDataProduct.attributes[0].attributeValues : 0
-            cloneData.productSEO.title = cloneDataProduct.seo.title || ""
-            cloneData.productSEO.description = cloneDataProduct.seo.description || ""
-            cloneData.productSEO.cronicalUrl = cloneDataProduct.seo.cronicalUrl || "" 
-            cloneData.productSlug = cloneDataProduct.slug || "" 
-            cloneData.productTags = cloneDataProduct.tags || []
-            cloneData.productMerchantID = cloneDataProduct.merchantID || ""
-            cloneData.productMerchantName = cloneDataProduct.merchantName || ""
-            cloneData.productStock = cloneDataProduct.stock || 0
-          //  cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
-            cloneData.productCategory = cloneDataProduct.category.length > 0  ? cloneDataProduct.category[0].ID : null
-            cloneData.productSubcategory = cloneDataProduct.subCategory.length > 0  ? cloneDataProduct.subCategory[0].ID : null 
+
+            cloneDataProduct.featuredImage !== "" && cloneDataProduct.featuredImage !== undefined && cloneDataProduct.featuredImage !== null ? (
+                setProductFeaturedImageList([{
+                    uid: 1,
+                    name: `${cloneDataProduct.featuredImage}`,
+                    status: 'done',
+                    url: `${cloneDataProduct.featuredImage}`
+                }])
+            ) : (setProductFeaturedImageList([]))
+
+            cloneData.productSalePrice = cloneDataProduct?.salePrice || 0
+            cloneData.productMRP = cloneDataProduct?.mrp || 0
+            cloneData.productCostPerItem = cloneDataProduct?.productCost || 0
+            cloneData.productSKU = cloneDataProduct?.sku || 0
+            cloneData.productTotalQuantity = cloneDataProduct?.totalQuantity || 0
+            cloneData.productEndDate = cloneDataProduct?.endDate || ""
+            cloneData.productStartDate = cloneDataProduct?.startDate || ""
+            cloneData.isPublish = cloneDataProduct?.isPublish || "false"
+            // cloneData.productVariants =  cloneDataProduct.variants
+            cloneData.productAttributes[0].attributeName = cloneDataProduct?.attributes.length > 0 ? cloneDataProduct.attributes[0].attributeName : ""
+            cloneData.productAttributes[0].attributeValues = cloneDataProduct?.attributes.length > 0 ? cloneDataProduct.attributes[0].attributeValues : 0
+            cloneData.productSEO.title = cloneDataProduct?.seo.title || ""
+            cloneData.productSEO.description = cloneDataProduct?.seo.description || ""
+            cloneData.productSEO.cronicalUrl = cloneDataProduct?.seo.cronicalUrl || ""
+            cloneData.productSlug = cloneDataProduct?.slug || ""
+            cloneData.productTags = cloneDataProduct?.tags || []
+            cloneData.productMerchantID = cloneDataProduct?.merchantID || ""
+            cloneData.productMerchantName = cloneDataProduct?.merchantName || ""
+            cloneData.productStock = cloneDataProduct?.stock || 0
+            //  cloneData.productThumbnailImage = cloneDataProduct.thumbnailImage
+             cloneData.productCategory = cloneDataProduct?.category || null
+             cloneData.productSubcategory = cloneDataProduct?.subCategory || null
+            // cloneData.productCategory = cloneDataProduct?.category.length > 0 ? cloneDataProduct.category[0].ID : null
+            // cloneData.productSubcategory = cloneDataProduct?.subCategory.length > 0 ? cloneDataProduct.subCategory[0].ID : null
             cloneData.ID = cloneDataProduct.ID || ""
             cloneData._id = cloneDataProduct._id || ""
-            
+
             setDummyData([dummyData + 1])
             setTags(cloneDataProduct.tags)
-             let cloneVariant = []
+            let cloneVariant = []
             if (cloneDataProduct.variants && cloneDataProduct.variants.length > 0) {
                 if (cloneDataProduct.variants[0].variantName !== null || cloneDataProduct.variants[0].variantValues !== null || cloneDataProduct.variants[0].variantValues !== "" || cloneDataProduct.variants[0].variantName !== "") {
-                   
-                    cloneDataProduct.variants.map((data,index)=>{
+
+                    cloneDataProduct.variants.map((data, index) => {
                         cloneVariant.push({
                             variantName: data.variantName,
                             variantValues: data.variantValues,
                         })
                     })
-                  cloneData.productVariants = cloneVariant
-                //    console.log('cloneVariant', cloneVariant)
+                    cloneData.productVariants = cloneVariant
+                    //    console.log('cloneVariant', cloneVariant)
                     setVariants(cloneVariant)
                     setVariantsFlag(true)
                 } else {
                     setVariantsFlag(false)
                 }
             }
-           
+
             setProductDetails(cloneData)
 
         }
     }, [merchantProductDetails])
-    console.log('productDetails', productDetails)
-    useEffect(() => {
-        // productInfo = cleanData
-        // setProductDetails(cleanData)
-        setErrors({})
 
+    useEffect(() => {
+        setErrors({})
     }, [clearFlag])
+    useEffect(() => {
+        productName(productDetails.productTitle)
+    }, [dummyData])
     useEffect(() => {
         if (loading === "start") {
             setLoadingFlag(true)
         } else {
             setLoadingFlag(false)
-
         }
-
     }, [loading])
     useEffect(() => {
         if (flag !== "" && flag !== undefined) {
@@ -291,12 +355,12 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
 
     const handleProductsImages = (value) => {
         setImagesFileList(value)
-        let cloneProduct = productDetails
+        let cloneProduct = { ...productDetails }
         cloneProduct.productImages = value
         if (value.length > 0) {
             cloneProduct.productThumbnailImage = value[0]
         } else {
-            cloneProduct.productThumbnailImage = null
+            delete cloneProduct.productThumbnailImage
         }
         let cloneError = errors
         delete cloneError.productImages
@@ -313,7 +377,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     };
 
     const onChangeDate = (date, name) => {
-       // console.log(date?._d);
+        // console.log(date?._d);
         let UTCDate = date?._d
         // let dateFormate
         // if (date !== null) {
@@ -330,62 +394,38 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         setIsDatePicker(!isDatePicker);
     };
 
-    // const base64 = (file, names, fileData) => {
-    //     return new Promise((resolve, reject) => {
-    //         const fileReader = new FileReader()
-    //         fileReader.onloadend = () => {
-    //             let b64 = fileReader.result
-    //             if (names === "featureProducts") {
-    //                 let cloneProductDetails = productDetails
-    //                 let cloneProductDetails1 = productDetails.productFeaturedImage
-    //                 let cloneError = { ...errors }
-    //                 cloneProductDetails1 = b64
-    //                 cloneProductDetails.productFeaturedImage = cloneProductDetails1
-    //                 setProductDetails(cloneProductDetails)
-    //                 setProductFeaturedImageList([fileData.file])
-    //                 delete cloneError.productFeaturedImage
-    //                 delete cloneError.productImages
-    //                 setErrors(cloneError)
-    //                 setDummyData([dummyData + 1])
-    //             }
-    //             resolve(b64);
-    //         };
-    //         fileReader.onerror = (error) => {
-    //             reject(error)
-    //         }
-    //         fileReader.readAsDataURL(file);
-    //     });
-    // }
+
     const base64 = (file, names, fileData) => {
         return new Promise((resolve, reject) => {
-          const fileReader = new FileReader()
-          fileReader.onloadend = () => {
-            let b64 = fileReader.result
-            if (names === "featureProducts") {
-              let cloneProductDetails = {
-                ...productDetails
-              }
-              // let cloneProductDetails1 = productDetails.productFeaturedImage
-              let cloneError = {
-                ...errors
-              };
-              // cloneProductDetails1 = b64
-              cloneProductDetails.productFeaturedImage = file;
-              setProductDetails(cloneProductDetails)
-              setProductFeaturedImageList([fileData.file])
-              delete cloneError.productFeaturedImage
-              delete cloneError.productImages
-              setErrors(cloneError)
-              setDummyData([dummyData + 1])
+            const fileReader = new FileReader()
+            fileReader.onloadend = () => {
+                let b64 = fileReader.result
+                if (names === "featureProducts") {
+                    let cloneProductDetails = {
+                        ...productDetails
+                    }
+                    // let cloneProductDetails1 = productDetails.productFeaturedImage
+                    let cloneError = {
+                        ...errors
+                    };
+                    // cloneProductDetails1 = b64
+                    //  console.log('file inside base 64', file)
+                    cloneProductDetails.productFeaturedImage = file;
+                    setProductDetails(cloneProductDetails)
+                    setProductFeaturedImageList([fileData.file])
+                    delete cloneError.productFeaturedImage
+                    delete cloneError.productImages
+                    setErrors(cloneError)
+                    setDummyData([dummyData + 1])
+                }
+                resolve(b64);
+            };
+            fileReader.onerror = (error) => {
+                reject(error)
             }
-            resolve(b64);
-          };
-          fileReader.onerror = (error) => {
-            reject(error)
-          }
-          fileReader.readAsDataURL(file);
+            fileReader.readAsDataURL(file);
         });
-      }
+    }
 
     const onChangeFileCSV = async (info, name) => {
         const { status } = info.file;
@@ -432,7 +472,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
 
 
         if (found !== undefined) {
-            console.log('data available')
+            // console.log('data available')
             if (found === "productTitle") {
                 var b = value.toLowerCase().replace(/ /g, '-')
                     .replace(/[^\w-]+/g, '');
@@ -497,14 +537,13 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         }
         setDummyData([dummyData + 1])
     }
-    console.log('productDetails', productDetails)
-    // Tags group actions
+
     const handleClose = (removedTag) => {
         const removeTags = tags.filter((tag) => tag !== removedTag);
         setTags(removeTags);
     };
     const handleValidation = (name) => {
-        console.log('name validatiojn', name)
+        //console.log('name validatiojn', name)
         let error
         let errorData = errors
 
@@ -570,7 +609,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
 
 
     const handleSubmit = (info) => {
-        console.log('info', info)
+        //  console.log('info', info)
         let validationErrors = {};
 
         Object.keys(productDetails).forEach((name) => {
@@ -617,7 +656,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         }
         setDummyData([dummyData + 1])
     }
-    console.log('errors', errors)
+    //console.log('errors', errors)
     const tagChild = tags?.length > 0 && tags.map(forMap);
     const handleDropDown = (event, names) => {
 
@@ -645,7 +684,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
     }
     const handleRemove = (event) => {
         setProductFeaturedImageList([])
-        console.log('event', event)
+        //  console.log('event', event)
         let cloneProductDetails = productDetails
         cloneProductDetails.productFeaturedImage = ""
         setProductDetails(cloneProductDetails)
@@ -684,24 +723,24 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
 
     const handleCheckBox = (event) => {
         const values = event.target.checked
-        console.log('values', values)
+        //  console.log('values', values)
 
         setVariantsFlag(values)
         setDummyData([dummyData + 1])
         handleProductInventoryTotal()
     }
     const handleChangeVariants = (event, index, names) => {
-        console.log('event', event)
+        //  console.log('event', event)
         let cloneProductDetails = productDetails
         let cloneVariant = variants
         if (names !== undefined) {
             let cloneProductDetails = productDetails
             let cloneVariant = variants
 
-            cloneVariant[index][names] = event.toString()
+            cloneVariant[index][names] = event === null ? ("") : (event.toString())
         } else {
             const { name, value } = event.target
-            console.log('name , value', name, value)
+            //   console.log('name , value', name, value)
             cloneVariant[index][name] = value
         }
         setVariants(cloneVariant)
@@ -723,13 +762,13 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         console.log('InventoryTotal', inventoryTotal)
     }
     const handleProductCompareAtPrice = () => {
-        console.log('method called')
+        // console.log('method called')
         let cloneProduct = productDetails
         let actualPrice = cloneProduct.productSalePrice * 1
         let MrpValue = actualPrice * 80 / 100
         let productMrpValues = actualPrice + MrpValue
-        console.log('MrpValue', MrpValue)
-        console.log('productMrpValues', productMrpValues)
+        // console.log('MrpValue', MrpValue)
+        //  console.log('productMrpValues', productMrpValues)
         cloneProduct.productMRP = productMrpValues
         setProductDetails(cloneProduct)
         setDummyData([dummyData + 1])
@@ -789,13 +828,13 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
             if (value !== undefined && value !== "") {
                 let cloneProduct = { ...productDetails }
                 let catId = cloneProduct.productSubcategory !== null ? cloneProduct.productSubcategory : null
-                console.log('catId', catId)
+
                 if (catId !== null && catId !== "") {
                     cateName = subCategories.find(({ ID }) => ID == catId)
                 }
             }
             let name = cateName?.name
-            console.log('name', name)
+
             if (cateName !== undefined) {
                 return name
             } else {
@@ -804,6 +843,17 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
         } else {
             return categoryValue
         }
+    }
+    const handleDeletedImages = (value) => {
+
+        let cloneProduct = { ...productDetails }
+        let index
+        cloneProduct.productExistingImages.length > 0 ? (
+            index = cloneProduct.productExistingImages.findIndex((name) => name === value.name),
+            index !== -1 ? (cloneProduct.productExistingImages.splice(index, 1)) : (""),
+            setProductDetails(cloneProduct)
+
+        ) : ("")
     }
     return (
 
@@ -831,10 +881,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                             </DescriptionContent>
                         </ContentBox>
                         <ContentBox marginTop="20px">
-                            {
-                                console.log('oldImagesData', oldImagesData)
-                            }
-                            <EditProductsImages imageData={(value) => handleProductsImages(value)} existImages={oldImagesData}/>
+                            <EditProductsImages imageData={(value) => handleProductsImages(value)} existImages={oldImagesData} deletedImage={(value) => handleDeletedImages(value)} />
                             {/* <AlignItem className="margin-bottom">
                 <TitleBox>Product Images</TitleBox>
                 <Dropdown
@@ -1215,16 +1262,40 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                                         <TextStyle>Publish product on</TextStyle>
                                         <SelectContent>
                                             <div style={{ display: "flex" }}>
-                                                <DatePicker
-                                                    className="date-picker"
-                                                    onChange={(date) => onChangeDate(date, "productStartDate")}
-                                                    defaultValue={moment(dateFormat(productDetails.productStartDate || ""))}
-                                                />
-                                                <DatePicker
-                                                    className="date-picker"
-                                                    onChange={(date) => onChangeDate(date, "productEndDate")}
-                                                    defaultValue={moment(dateFormat(productDetails.productEndDate || ""))}
-                                                />
+
+                                                {
+                                                    productDetails.productStartDate === "" || productDetails.productStartDate === null ? (
+                                                        <DatePicker
+                                                            className="date-picker"
+                                                            onChange={(date) => onChangeDate(date, "productStartDate")}
+
+                                                        />
+                                                    ) : (
+                                                            <DatePicker
+                                                                className="date-picker"
+                                                                onChange={(date) => onChangeDate(date, "productStartDate")}
+                                                                defaultValue={moment(dateFormat(productDetails.productStartDate || ""))}
+                                                            />
+                                                        )
+                                                }
+
+                                                {
+
+                                                    productDetails.productEndDate === "" || productDetails.productEndDate === null ? (
+                                                        <DatePicker
+                                                            className="date-picker"
+                                                            onChange={(date) => onChangeDate(date, "productEndDate")}
+
+                                                        />
+                                                    ) : (
+                                                            <DatePicker
+                                                                className="date-picker"
+                                                                onChange={(date) => onChangeDate(date, "productEndDate")}
+                                                                defaultValue={moment(dateFormat(productDetails.productEndDate || ""))}
+                                                            />
+                                                        )
+                                                }
+
 
                                                 <Tooltip
                                                     placement="bottom"
@@ -1291,7 +1362,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                     onChange={(event)=>handleChange(event)}
                   /> */}
                                     {/* <Form.Item > */}
-                                    <Form.Item>
+                                    <Form.Item shouldUpdate>
                                         <Select value={handleCategory(productDetails.productCategory) || ""} onChange={(event) => handleDropDown(event, "productCategory")}>
                                             <Option value="Select" disabled>Select</Option>
                                             {
@@ -1313,7 +1384,7 @@ const ProductDetail = ({ submit, flag, getProductCategoryLists, saveSubmit, save
                     onChange={(event)=>handleChange(event)}
                     
                   /> */}
-                                    <Form.Item>
+                                    <Form.Item shouldUpdate>
                                         <Select value={handleSubCategory(productDetails.productSubcategory || "")} onChange={(event) => handleDropDown(event, "productSubcategory")}>
                                             <Option value="Select" disabled>Select</Option>
                                             {

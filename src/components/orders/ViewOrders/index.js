@@ -34,15 +34,14 @@ import { getUserData } from "../../../utils";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
-const customerData = fakeData;
+// const orderData = fakeData;
 
-const dataNew = customerData.filter((el) => {
-  return el.isNew === true;
-});
+
 
 
 
 const ViewOrders = (props) => {
+  const orderData =props.orderData === undefined ? [] : props.orderData
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -55,22 +54,25 @@ const ViewOrders = (props) => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
+  const dataNew = orderData.filter((el) => {
+    return el.isNew === true;
+  });
   let userData = getUserData()
   useEffect(() => {
     getOrdersCall();
   }, [props]);
   
   const getOrdersCall = async () => {
-    await props.getOrders(100, 1);
+    await props.getOrders();
   };
   const columns = [
     {
       title: "Order",
       dataIndex: "order_id",
-      render: (order_id) => {
+      render: (value, item) => {
         return (
-          <Link href="/orders/123" as={`/orders/123`}>
-          <FullName href="">#{order_id}</FullName>
+          <Link href={`/orders/${item._id}`} >
+          <FullName href="">#{item._id}</FullName>
         </Link>
         );
       },
@@ -82,33 +84,35 @@ const ViewOrders = (props) => {
     {
       title: "Customer",
       dataIndex: "customer",
-      render: (customer) => (
+      render: (value, item) => (
+
         <Dropdown
           trigger={["click"]}
           overlay={
             <PopupDetailTB>
+              {console.log('11111111111111111', value, item)}
               <h3>
-                {customer.first_name} {customer.last_name}
+                {item.ShippingAddress.BasicDetailsFirstName} {item.ShippingAddress.BasicDetailsLastName}
               </h3>
-              <p>{customer.address}</p>
-              <p>
-                {customer.order} order{customer.order > 1 ? "s" : ""}
-              </p>
-              <TextPhone>{customer.phone}</TextPhone>
+              <p>{item.ShippingAddress.AddressDetailsApartment}</p>
+              {/* <p>
+                {item.ShippingAddress.order} order{item.ShippingAddress.order > 1 ? "s" : ""}
+              </p> */}
+              <TextPhone>{item.ShippingAddress.AddressDetailsMobile}</TextPhone>
               <div>
 
-                <Button block type="default">
+                {/* <Button block type="default">
                   <Link href="/[portal_id]/ecom/customers/123" as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
                     <a>View customer</a>
                   </Link>
-                </Button>
+                </Button> */}
               </div>
             </PopupDetailTB>
           }
           placement="bottomCenter"
         >
           <ButtonCustomer type="text">
-            {customer.first_name} {customer.last_name} <DownOutlined />
+            {item.ShippingAddress.BasicDetailsFirstName} {item.ShippingAddress.BasicDetailsLastName} <DownOutlined />
           </ButtonCustomer>
         </Dropdown>
       ),
@@ -117,40 +121,40 @@ const ViewOrders = (props) => {
     {
       title: "Total",
       dataIndex: "total",
-      render: (val) => `$${val}`,
+      render: (value, item) => `$${item.OrderAmount}`,
     },
     {
       title: "Payment",
       dataIndex: "status_payment",
-      render: (val) => {
-        if (val === "paid") {
-          return <TagDark>{val}</TagDark>;
+      render: (value, item) => {
+        if (item.PaymentMethod !== null) {
+          return <TagDark>Paid</TagDark>;
         } else {
-          return <TagOrang>{val}</TagOrang>;
+          return <TagOrang>Pending</TagOrang>;
         }
       },
     },
     {
       title: "Fulfillment",
       dataIndex: "fulfillment",
-      render: (val) => {
-        if (val === "Unfulfilled") {
-          return <TagYellow>{val}</TagYellow>;
+      render: (value, item) => {
+        if (item.status === 1) {
+          return <TagYellow>Unfullfilled</TagYellow>;
         } else {
-          return <TagGreen>{val}</TagGreen>;
+          return <TagGreen>Fullfilled</TagGreen>;
         }
       },
     },
     {
       title: "Items",
       dataIndex: "items",
-      render: (items) => {
+      render: (value, items) => {
         let data = [];
-        for (let i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.Products.length; i++) {
           const item = items[i];
           data.push(
             <Dropdown
-              key={i}
+              // key={i}
               trigger={["click"]}
               overlay={
                 <PopupDetailTB>
@@ -167,12 +171,12 @@ const ViewOrders = (props) => {
               }
               placement="bottomRight"
             >
-              <ButtonCustomer type="text">
+              {/* <ButtonCustomer type="text">
                 {items && items.length > 1
                   ? `${items.length} items`
                   : `${items.length} item`}{" "}
                 <DownOutlined />
-              </ButtonCustomer>
+              </ButtonCustomer> */}
             </Dropdown>
           );
 
@@ -188,12 +192,12 @@ const ViewOrders = (props) => {
       title: "Tags",
       dataIndex: "tags",
       width: "10%",
-      render: (tags) => {
+      render: (value,iteem) => {
         let data = [];
-        for (let i = 0; i < tags.length; i++) {
-          const tag = tags[i];
-          data.push(<Tag key={i}>{tag}</Tag>);
-        }
+        // for (let i = 0; i < tags.length; i++) {
+          // const tag = tags[i];
+          // data.push(<Tag key={i}>{JSON.parse(tag)}</Tag>);
+        // }
         return data;
       },
     },
@@ -330,8 +334,8 @@ const ViewOrders = (props) => {
               ...rowSelection,
             }}
             columns={columns}
-            dataSource={customerData}
-            pagination={customerData.length > 10}
+            dataSource={orderData}
+            pagination={orderData.length > 10}
           />
         )}
         {tabIndex === 2 && (
@@ -342,7 +346,7 @@ const ViewOrders = (props) => {
             }}
             columns={columns}
             dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
-            pagination={customerData.length > 10}
+            pagination={orderData.length > 10}
           />
         )}
         {tabIndex === 3 && (
@@ -353,7 +357,7 @@ const ViewOrders = (props) => {
             }}
             columns={columns}
             dataSource={[]}
-            pagination={customerData.length > 10}
+            pagination={orderData.length > 10}
           />
         )}
         {tabIndex === 4 && (
@@ -364,7 +368,7 @@ const ViewOrders = (props) => {
             }}
             columns={columns}
             dataSource={[]}
-            pagination={customerData.length > 10}
+            pagination={orderData.length > 10}
           />
         )}
         {tabIndex === 5 && (
@@ -375,7 +379,7 @@ const ViewOrders = (props) => {
             }}
             columns={columns}
             dataSource={[]}
-            pagination={customerData.length > 10}
+            pagination={orderData.length > 10}
           />
         )}
       </ContentTab>
@@ -810,7 +814,7 @@ const ActionsTable = styled.div`
 
 const mapStateToProps = (store) => {
   return {
-    articlesData: store.ordersReducer,
+    orderData: store.orderReducer.orderData,
   };
 };
 const mapDispatchToProps = {

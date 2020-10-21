@@ -64,6 +64,8 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		attributeName
 		attributeValues
 		}
+		createdDate
+		createdAt
 		stock
 		endDate
 		tags
@@ -74,12 +76,8 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		cronicalUrl
 		description
 		}
-		subCategory{
-			ID
-		}
-		category{
-			ID
-		}
+		subCategory
+		category
 			sku
 		title
 		productCost
@@ -218,13 +216,7 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			totalQuantity
 			productCost
 			category
-            {
-             ID
-             }
             subCategory
-           {
-            ID
-             }
 			mrp
 			stock
 			thumbnailImage

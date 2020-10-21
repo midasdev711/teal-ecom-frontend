@@ -66,7 +66,7 @@ export function getOrders(limit, page) {
         if (res.data) {
           dispatch({
             type: ACTION_GET_ORDERS,
-            data: res.data.articles,
+            data: res.data.orders,
           });
         }
       })

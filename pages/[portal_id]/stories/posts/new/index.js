@@ -165,6 +165,7 @@ const NewPost = (props) => {
           </ActionTopLayout>
           <ContentPage>
             <NewForm
+              flag={true}
               onTitleChange={onChangeTitle}
               onChangeEditor={onChangeEditor}
               setImage={setImage}

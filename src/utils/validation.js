@@ -141,18 +141,18 @@ export default (name, value) => {
       } else{
         return false;
       }
-    // case 'productCategory':
-    //   if (!isEmptyString) {
-    //     return "Product category is required";
-    //   } else {
-    //     return false;
-    //   }
-    // case 'productSubcategory':
-    //   if (!isEmptyString) {
-    //     return "Product sub category is required";
-    //   } else {
-    //     return false;
-    //   }
+    case 'productCategory':
+      if (!isEmptyString) {
+        return "Product category is required";
+      } else {
+        return false;
+      }
+    case 'productSubcategory':
+      if (!isEmptyString) {
+        return "Product sub category is required";
+      } else {
+        return false;
+      }
     // case 'productStartDate':
     //   if (!isEmptyString) {
     //     return "Product start date is required";

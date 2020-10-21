@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export const GET_ORDERS = gql`
   query orders($filters: OrderFilters) {
     orders(filters: $filters) {
+		_id
         Status
 		UserId
 		OrderAmount

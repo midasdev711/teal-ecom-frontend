@@ -15,20 +15,20 @@ console.log('dataFiles', dataFiles)
   const handleCancel = () => {
     setPreviewVisible(false);
   };
-  let cloneDataFile = dataFiles.slice()
-  useEffect(() => {
-    if(existImages && existImages.length > 0){
-      existImages && existImages.map((data,index)=>{
-        cloneDataFile.push({
-          uid: `${index + 1}`,
-          name: data,
-          status: 'done',
-          url: `${data}`,
-        })
-      }) 
-     setDataFiles(cloneDataFile) 
-    }
-  },[existImages])
+  // let cloneDataFile = dataFiles.slice()
+  // useEffect(() => {
+  //   if(existImages.length > 0){
+  //     existImages.map((data,index)=>{
+  //       cloneDataFile.push({
+  //         uid: `${index + 1}`,
+  //         name: data,
+  //         status: 'done',
+  //         url: `${data}`,
+  //       })
+  //     }) 
+  //    setDataFiles(cloneDataFile) 
+  //   }
+  // },[existImages])
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {

@@ -4,7 +4,7 @@ import { TweenOneGroup } from "rc-tween-one";
 // icons
 import { StarOutlined, DownOutlined, SortAscendingOutlined } from "@ant-design/icons";
 // ui
-import { Row, Col, Input, Button, Dropdown, Radio ,Tag } from "antd";
+import { Row, Col, Input, Button, Dropdown, Radio, Tag } from "antd";
 
 const { Search } = Input;
 
@@ -21,137 +21,150 @@ const Filters = (props) => {
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
-  const forMap = (tag) => {
-    const tagElem = (
-      <TagContent
-        closable
-        onClose={(e) => {
-          e.preventDefault();
-          handleClose(tag);
-        }}
-      >
-        {tag}
-      </TagContent>
-    );
-    return (
-      <span key={tag} style={{ display: "inline-block" }}>
-        {tagElem}
-      </span>
-    );
-  };
-  const tagChild = tags.map(forMap);
+  // const forMap = (tag) => {
+  //   const tagElem = (
+  //     <TagContent
+  //       closable
+  //       onClose={(e) => {
+  //         e.preventDefault();
+  //         handleClose(tag);
+  //       }}
+  //     >
+  //       {tag}
+  //     </TagContent>
+  //   );
+  //   return (
+  //     <span key={tag} style={{ display: "inline-block" }}>
+  //       {tagElem}
+  //     </span>
+  //   );
+  // };
+  // const tagChild = tags.map(forMap);
   useEffect(() => {
     if (productLists !== undefined) {
       setOriginalProductLists(productLists)
-         }
+    }
   }, [props])
-  
+
   useEffect(() => {
     if (originalProductLists?.length > 0) {
       setFilterProductLists(productLists)
-         }
+    }
   }, [originalProductLists])
   useEffect(() => {
     props.getFilterData(filterProductLists)
   }, [filterProductLists])
 
 
-  const handleSearch =(event) =>{
-      const {name , value } = event.target
-      let cloneProductData = originalProductLists.slice()
-      let productNameFilter  
-      if (cloneProductData?.length > 0) {
-        productNameFilter = cloneProductData.filter(data => {
-          return (
-            (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
-          )
-        })
-      }
-      if(productNameFilter === undefined){
-        setFilterProductLists(originalProductLists)
-      }else{
-        setFilterProductLists(productNameFilter)
-      }
-     
-  }
-  const handleClose = (removedTag) => {
-    const removeTags = tags.filter((tag) => tag !== removedTag);
-    setTags(removeTags);
-  };
-  const saveInputRef = (input) => {
-    input = input;
-  };
-  const handleTagsFilters = (event) =>{
-    const {name , value } = event.target
-    // let cloneProductData = originalProductLists.slice()
-    // let productNameFilter  
-    // if (cloneProductData?.length > 0) {
-    //   productNameFilter = cloneProductData.filter(data => {
-    //     return (
-    //       (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
-    //     )
-    //   })
-    // }
-    // if(productNameFilter === undefined){
-    //   setFilterProductLists(originalProductLists)
-    // }else{
-    //   setFilterProductLists(productNameFilter)
-    // }
-  }
-  const handleTagsDropDown = () =>{
-    setTagsDropDown(!tagsDropDown)
-  }
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-   
-  };
-
-  const handleInputConfirm = () => {
-    let tag = tags;
-    if (inputValue && tag.indexOf(inputValue) === -1) {
-      tag = [...tag, inputValue];
+  const handleSearch = (event) => {
+    const { name, value } = event.target
+    let cloneProductData = originalProductLists.slice()
+    let productNameFilter
+    if (cloneProductData?.length > 0) {
+      productNameFilter = cloneProductData.filter(data => {
+        return (
+          (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
+        )
+      })
     }
-    setTags(tag);
-    //setInputVisible(false);
-    setInputValue("");
-  
-  };
-  const handleSearchTagsData = () =>{
-     
-      let cloneProductData = originalProductLists.slice()
-      let productNameFilter  
-      if (cloneProductData?.length > 0) {
-        productNameFilter = cloneProductData.filter(data => {
-          return (
-            (data && data.tags?.length > 0 && data.tags?.map(t => t === tags.length > 0 && tags.map(d => d))
-          ))
-        })
-      }
-      console.log('productNameFilter', productNameFilter)
-      if(productNameFilter === undefined){
-        setFilterProductLists(originalProductLists)
-      }else{
-        setFilterProductLists(productNameFilter)
-      }
-  }
-  const handleClearTags = () =>{
-      setTags([])
-  }
-  // const handleShortHighToLowPrice = () =>{
+    if (productNameFilter === undefined) {
+      setFilterProductLists(originalProductLists)
+    } else {
+      setFilterProductLists(productNameFilter)
+    }
 
+  }
+  // const handleClose = (removedTag) => {
+  //   const removeTags = tags.filter((tag) => tag !== removedTag);
+  //   setTags(removeTags);
+  // };
+  // const saveInputRef = (input) => {
+  //   input = input;
+  // };
+  // const handleTagsFilters = (event) => {
+  //   const { name, value } = event.target
+  //   // let cloneProductData = originalProductLists.slice()
+  //   // let productNameFilter  
+  //   // if (cloneProductData?.length > 0) {
+  //   //   productNameFilter = cloneProductData.filter(data => {
+  //   //     return (
+  //   //       (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
+  //   //     )
+  //   //   })
+  //   // }
+  //   // if(productNameFilter === undefined){
+  //   //   setFilterProductLists(originalProductLists)
+  //   // }else{
+  //   //   setFilterProductLists(productNameFilter)
+  //   // }
   // }
-  // const handleShortLowToHighPrice = () =>{
-    
+  // const handleTagsDropDown = () => {
+  //   setTagsDropDown(!tagsDropDown)
   // }
-  // const handleLatestData = () =>{
-    
+  // const handleInputChange = (e) => {
+  //   setInputValue(e.target.value);
+
+  // };
+
+  // const handleInputConfirm = () => {
+  //   let tag = tags;
+  //   if (inputValue && tag.indexOf(inputValue) === -1) {
+  //     tag = [...tag, inputValue];
+  //   }
+  //   setTags(tag);
+  //   //setInputVisible(false);
+  //   setInputValue("");
+
+  // };
+  // const handleSearchTagsData = () => {
+
+  //   let cloneProductData = originalProductLists.slice()
+  //   let productNameFilter
+  //   if (cloneProductData?.length > 0) {
+  //     productNameFilter = cloneProductData.filter(data => {
+  //       return (
+  //         (data && data.tags?.length > 0 && data.tags?.map(t => t === tags.length > 0 && tags.map(d => d))
+  //         ))
+  //     })
+  //   }
+  //   console.log('productNameFilter', productNameFilter)
+  //   if (productNameFilter === undefined) {
+  //     setFilterProductLists(originalProductLists)
+  //   } else {
+  //     setFilterProductLists(productNameFilter)
+  //   }
   // }
-  // const handleOldData = () =>{
-    
+  // const handleClearTags = () => {
+  //   setTags([])
   // }
-  //console.log('inside filters')
- // console.log('originalProductLists', originalProductLists)
- // console.log('filterProductLists', filterProductLists)
+  const handleShortHighToLowPrice = () =>{
+    let data = originalProductLists.slice()
+    let info = data.sort(function (a, b) {
+      return (b.salePrice * 1) - (a.salePrice * 1);
+    });
+    setFilterProductLists(info)
+  }
+  const handleShortLowToHighPrice = () =>{
+    let data = originalProductLists.slice()
+    let info = data.sort(function (a, b) {
+      return (a.salePrice * 1) - (b.salePrice * 1);
+    });
+    setFilterProductLists(info)
+  }
+  const handleLatestData = () => {
+    let data = originalProductLists.slice()
+    let info = data.sort(function (a, b) {
+      return (b.createdAt * 1) - (a.createdAt * 1);
+    });
+    setFilterProductLists(info)
+  }
+  const handleOldData = () => {
+    let data = originalProductLists.slice()
+    let info = data.sort(function (a, b) {
+      return (a.createdAt * 1) - (b.createdAt * 1);
+    });
+    setFilterProductLists(info)
+  }
   return (
     <ContentFilters>
       <Row gutter={0}>
@@ -159,8 +172,8 @@ const Filters = (props) => {
           <SearchBox
             placeholder="Filter products"
             name="title"
-           // onSearch={(value) => console.log(value)}
-            onChange={(event)=>handleSearch(event)}
+            // onSearch={(value) => console.log(value)}
+            onChange={(event) => handleSearch(event)}
           />
         </Col>
         {/* <Col md={3}>
@@ -274,16 +287,17 @@ const Filters = (props) => {
                 >
                   {/* <RadioStyle value={1}>Order number (ascending)</RadioStyle>
                   <RadioStyle value={2}>Order number (descending)</RadioStyle> */}
-                  <RadioStyle value={3}>Date (oldest first)</RadioStyle>
-                  <RadioStyle value={4}>Date (newest first)</RadioStyle>
+                  <RadioStyle value={3} onClick={() => handleOldData()}>Date (oldest first)</RadioStyle>
+                  <RadioStyle value={4} onClick={() => handleLatestData()}>Date (newest first)</RadioStyle>
                   {/* <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
                   <RadioStyle value={6}>Customer name (Z-A)</RadioStyle> */}
                   {/* <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
                   <RadioStyle value={8}>Payment status (Z-A)</RadioStyle>
                   <RadioStyle value={9}>Fulfillment status (A-Z)</RadioStyle>
                   <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle> */}
-                  <RadioStyle value={11}>Total price (low to high)</RadioStyle>
-                  <RadioStyle value={12}>Total price (high to low)</RadioStyle>
+                 
+                  <RadioStyle value={11} onClick={() => handleShortLowToHighPrice()}>Total price (low to high)</RadioStyle>
+                  <RadioStyle value={12} onClick={() => handleShortHighToLowPrice()}>Total price (high to low)</RadioStyle>
                 </RadioGroupStyle>
               </DropdownBox>
             }

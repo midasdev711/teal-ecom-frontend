@@ -48,17 +48,16 @@ const MDSelectProducts = (props) => {
   };
 
   useEffect(() => {
-    console.log('************', props.products)
+    let listProduct = []
     props.products.map(data => {
-      console.log('sdssdsssssssssssdsd', data)
       data.isChecked = false
       data.variants.map(item => {
         item.isChecked = false
         item.total_value = 1
       })
-      listProducts.push(data)
+      listProduct.push(data)
     })
-
+    setListProducts(listProduct);
   }, [props.products]);
 
   const handleSelectItem = (index) => {
@@ -81,48 +80,35 @@ const MDSelectProducts = (props) => {
   };
 
   const onCheckAllChange = (e, pro) => {
-    if (e.target.checked) {
-      pro.isChecked = true
-      let data = listProducts;
-      
-      pro.variants && pro.variants.map(item=>{
-        item.isChecked=true
-      })
-      let index = data.findIndex(item => item.ID === pro.ID)
-      data[index] = pro
-     
-      setListProducts(data);
-    } else {
-      pro.isChecked = false
-      let data = listProducts;
-      pro.variants && pro.variants.map(item=>{
-        item.isChecked=false
-      })
-      let index = data.findIndex(item => item.ID === pro.ID)
-      data[index] = pro
-     
-      setListProducts(data);
-    }
+    pro.isChecked = e.target.checked
+    let data = listProducts;
+
+    pro.variants && pro.variants.map(item => {
+      item.isChecked = e.target.checked
+    })
+    let index = data.findIndex(item => item.ID === pro.ID)
+    data[index] = pro
+
+    setListProducts(data);
+
 
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
 
   const changeValuesCheckbox = (e, pro, vari) => {
-    if (e.target.checked) {
-   
-      pro.variants[vari].isChecked = true
-      let data = listProducts;
-      let index = data.findIndex(item => item.ID === pro.ID)
-      data[index] = pro
-      setListProducts(data);
-    }else{
-      pro.variants[vari].isChecked = false
-      let data = listProducts;
-      let index = data.findIndex(item => item.ID === pro.ID)
-      data[index] = pro
-      setListProducts(data);
+    pro.variants[vari].isChecked = e.target.checked
+    let checked = pro.variants.find(data => data.isChecked !== true)
+    if (checked === undefined) {
+      pro.isChecked = true
+    } else {
+      pro.isChecked = false
     }
+    let data = listProducts;
+    let index = data.findIndex(item => item.ID === pro.ID)
+    data[index] = pro
+    setListProducts(data);
+
     setIndeterminate(false);
     setCheckAll(e.target.checked);
     // if (values.length < data.length) {
@@ -130,7 +116,7 @@ const MDSelectProducts = (props) => {
     // } else {
     //   setCheckAll(true);
     // }
-   
+
   };
 
   const handleSelectSubItem = (index) => {
@@ -208,17 +194,16 @@ const MDSelectProducts = (props) => {
 
       {(indexMenu === 0 || indexMenu === 1 || indexMenu === 99) && (
         <div>
-          {console.log('##########c######', listProducts)}
           {listProducts &&
             listProducts.length > 0 &&
             listProducts.map((prod, i) => (
               <div key={i}>
                 <ProductItemStyle>
                   <Checkbox
-                    indeterminate={indeterminate}
                     onChange={(e) => onCheckAllChange(e, prod)}
                     checked={prod.isChecked}
-                  ></Checkbox>
+                    value={prod.isChecked}
+                  />
                   <InfoProduct>
                     <ImgProduct src={prod.images && prod.images[0]} alt="" />
                     <ProductName>{prod.title}</ProductName>
@@ -234,14 +219,15 @@ const MDSelectProducts = (props) => {
                       prod.variants.length > 0 &&
                       prod.variants.map((item, k) => (
                         <div>
-                          <Checkbox
-                            indeterminate={indeterminate}
-                            onChange={(e) => changeValuesCheckbox(e, prod, k)}
-                            checked={item.isChecked}
-                          ></Checkbox>
+                          {console.log('1111111111111111111222222222222222', item, item.isChecked, typeof (item.isChecked))}
 
                           <CheckboxItem key={k}>
-                            {/* <CheckboxStyle key={k} value={k}></CheckboxStyle> */}
+                            {/* <CheckboxStyle key={k} value={item.isChecked}></CheckboxStyle> */}
+                            <Checkbox
+                              id={k}
+                              onChange={(e) => changeValuesCheckbox(e, prod, k)}
+                              checked={item.isChecked}
+                            />
                             <ContentItem>
                               <ContentItemLeft>
                                 <TextColor>{item.color}</TextColor>
