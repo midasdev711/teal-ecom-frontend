@@ -204,7 +204,7 @@ const ViewData = () => {
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
-    console.log("value: ", value);
+   // console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
 

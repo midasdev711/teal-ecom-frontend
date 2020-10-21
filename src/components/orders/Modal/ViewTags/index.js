@@ -29,7 +29,7 @@ const ViewTags = ({ open, close, closeTag, values }) => {
     );
   };
 
-  const tagChild = values.map(forMap);
+  const tagChild = values && values.map(forMap);
 
   return (
     <Modals
@@ -50,13 +50,13 @@ const ViewTags = ({ open, close, closeTag, values }) => {
         <CardViews bordered={false} title="Tags">
           <Tagsection>
             <Hediangtext>APPLIED TAGS</Hediangtext>
-            {values.length === 0 && (
+            {values && values.length === 0 && (
               <Selecttext>
                 Select previously used tags from the list below to add them to
                 this order.
               </Selecttext>
             )}
-            {values.length != 0 && <Nexttoken>{tagChild} </Nexttoken>}
+            {values && values.length != 0 && <Nexttoken>{tagChild} </Nexttoken>}
           </Tagsection>
           <Alltage>
             <Alltagetext>All Tage</Alltagetext>

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 // data
-import { productsTree } from "../fakeData";
+// import { productsTree } from "../fakeData";
 // icons
 import { AudioOutlined, RightOutlined, LeftOutlined } from "@ant-design/icons";
 // ui
@@ -31,9 +31,10 @@ const data = [
 ];
 
 const MDSelectProducts = (props) => {
+  console.log('props', props.products)
   const [title, setTitle] = useState("Select products");
   const [indexMenu, setIndexMenu] = useState(null);
-  const [listProducts, setListProducts] = useState(productsTree);
+  const [listProducts, setListProducts] = useState([]);
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
@@ -45,6 +46,20 @@ const MDSelectProducts = (props) => {
     setIndexMenu(null);
     setTitle("Select products");
   };
+
+  useEffect(() => {
+    console.log('************', props.products)
+    props.products.map(data => {
+      console.log('sdssdsssssssssssdsd', data)
+      data.isChecked = false
+      data.variants.map(item => {
+        item.isChecked = false
+        item.total_value = 1
+      })
+      listProducts.push(data)
+    })
+
+  }, [props.products]);
 
   const handleSelectItem = (index) => {
     let node = (
@@ -65,30 +80,57 @@ const MDSelectProducts = (props) => {
     }
   };
 
-  const onCheckAllChange = (e) => {
+  const onCheckAllChange = (e, pro) => {
     if (e.target.checked) {
-      let data = listProducts[0].list;
-      let newData = [];
-      for (let i = 0; i < data.length; i++) {
-        newData.push(i);
-      }
-      setCheckedList(newData);
+      pro.isChecked = true
+      let data = listProducts;
+      
+      pro.variants && pro.variants.map(item=>{
+        item.isChecked=true
+      })
+      let index = data.findIndex(item => item.ID === pro.ID)
+      data[index] = pro
+     
+      setListProducts(data);
     } else {
-      setCheckedList([]);
+      pro.isChecked = false
+      let data = listProducts;
+      pro.variants && pro.variants.map(item=>{
+        item.isChecked=false
+      })
+      let index = data.findIndex(item => item.ID === pro.ID)
+      data[index] = pro
+     
+      setListProducts(data);
     }
 
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
 
-  const changeValuesCheckbox = (values) => {
-    let data = listProducts[0].list;
-    if (values.length < data.length) {
-      setCheckAll(false);
-    } else {
-      setCheckAll(true);
+  const changeValuesCheckbox = (e, pro, vari) => {
+    if (e.target.checked) {
+   
+      pro.variants[vari].isChecked = true
+      let data = listProducts;
+      let index = data.findIndex(item => item.ID === pro.ID)
+      data[index] = pro
+      setListProducts(data);
+    }else{
+      pro.variants[vari].isChecked = false
+      let data = listProducts;
+      let index = data.findIndex(item => item.ID === pro.ID)
+      data[index] = pro
+      setListProducts(data);
     }
-    setCheckedList(values);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+    // if (values.length < data.length) {
+    //   setCheckAll(false);
+    // } else {
+    //   setCheckAll(true);
+    // }
+   
   };
 
   const handleSelectSubItem = (index) => {
@@ -105,7 +147,7 @@ const MDSelectProducts = (props) => {
 
     setTitle(node);
   };
-
+  console.log('listProducts', listProducts)
   return (
     <ModalStyle
       visible={isOpen}
@@ -134,7 +176,7 @@ const MDSelectProducts = (props) => {
             </Col>
             <Col md={12}>
               <Button onClick={onCancel}>Cancel</Button>
-              <Button type="primary" onClick={() => onAdd(checkedList.length)}>
+              <Button type="primary" onClick={() => onAdd(listProducts)}>
                 Add order
               </Button>
             </Col>
@@ -166,6 +208,7 @@ const MDSelectProducts = (props) => {
 
       {(indexMenu === 0 || indexMenu === 1 || indexMenu === 99) && (
         <div>
+          {console.log('##########c######', listProducts)}
           {listProducts &&
             listProducts.length > 0 &&
             listProducts.map((prod, i) => (
@@ -173,42 +216,50 @@ const MDSelectProducts = (props) => {
                 <ProductItemStyle>
                   <Checkbox
                     indeterminate={indeterminate}
-                    onChange={onCheckAllChange}
-                    checked={checkAll}
+                    onChange={(e) => onCheckAllChange(e, prod)}
+                    checked={prod.isChecked}
                   ></Checkbox>
                   <InfoProduct>
-                    <ImgProduct src={prod.image} alt="" />
-                    <ProductName>{prod.name}</ProductName>
+                    <ImgProduct src={prod.images && prod.images[0]} alt="" />
+                    <ProductName>{prod.title}</ProductName>
                   </InfoProduct>
                 </ProductItemStyle>
 
                 <div>
-                  <CheckboxGroupStyle
-                    onChange={changeValuesCheckbox}
-                    value={checkedList}
+                  <div
+                  // onChange={changeValuesCheckbox}
+                  // value={checkedList}
                   >
-                    {prod.list &&
-                      prod.list.length > 0 &&
-                      prod.list.map((item, k) => (
-                        <CheckboxItem key={k}>
-                          <CheckboxStyle key={k} value={k}></CheckboxStyle>
-                          <ContentItem>
-                            <ContentItemLeft>
-                              <TextColor>{item.color}</TextColor>
-                              <TextSize>{item.size}</TextSize>
-                              <TextSize>
-                                {item.isChecked ? "true" : "false"}
-                              </TextSize>
-                            </ContentItemLeft>
+                    {prod.variants &&
+                      prod.variants.length > 0 &&
+                      prod.variants.map((item, k) => (
+                        <div>
+                          <Checkbox
+                            indeterminate={indeterminate}
+                            onChange={(e) => changeValuesCheckbox(e, prod, k)}
+                            checked={item.isChecked}
+                          ></Checkbox>
 
-                            <ContentItemRight>
-                              <TextSpan>{item.stock} in stock</TextSpan>
-                              <TextSpan>${item.price}</TextSpan>
-                            </ContentItemRight>
-                          </ContentItem>
-                        </CheckboxItem>
+                          <CheckboxItem key={k}>
+                            {/* <CheckboxStyle key={k} value={k}></CheckboxStyle> */}
+                            <ContentItem>
+                              <ContentItemLeft>
+                                <TextColor>{item.color}</TextColor>
+                                <TextSize>{item.variantName}</TextSize>
+                                {/* <TextSize>
+                                {item.isChecked ? "true" : "false"}
+                              </TextSize> */}
+                              </ContentItemLeft>
+
+                              <ContentItemRight>
+                                <TextSpan>{item.variantValues} in stock</TextSpan>
+                                <TextSpan>${item.price}</TextSpan>
+                              </ContentItemRight>
+                            </ContentItem>
+                          </CheckboxItem>
+                        </div>
                       ))}
-                  </CheckboxGroupStyle>
+                  </div>
                 </div>
               </div>
             ))}

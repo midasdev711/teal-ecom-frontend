@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { Form, Input, Button, Modal, Card, Col, Row, Select } from "antd";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
-
+import PhoneInput from "react-phone-input-2";
 const layout = {
   labelCol: {
     span: 8,
@@ -15,24 +15,21 @@ const layout = {
 
 const { Option } = Select;
 
-const ShippingModal = ({ open, close, values, name }) => {
+const ShippingModal = ({ open, close, values, name, handleChange, onSave }) => {
   const [openCustumItem, setopenCustumItem] = useState(open);
-  const [state, setState] = useState("XS");
-  const [country, setCountry] = useState("United States");
   const [form] = Form.useForm();
-
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
+ 
   useEffect(() => {
     setopenCustumItem(open);
     form.setFieldsValue({
-      email: values,
+      BasicDetailsFirstName: values.BasicDetailsFirstName,
+      BasicDetailsLastName: values.BasicDetailsLastName,
+      AddressDetailsCompany: values.AddressDetailsCompany,
+      AddressDetailsMobile: values.AddressDetailsMobile,
+      AddressDetailsApartment: values.AddressDetailsApartment,
+      AddressDetailsCity: values.AddressDetailsCity,
+      AddressDetailsCountry: values.AddressDetailsCountry,
+      AddressDetailsPostalCode: values.AddressDetailsPostalCode,
     });
   }, [open, values]);
 
@@ -46,33 +43,32 @@ const ShippingModal = ({ open, close, values, name }) => {
         <Button key="back" size="large" onClick={close}>
           Cancel
         </Button>,
-        <Button key="submit" type="primary" size="large" onClick={close}>
+        <Button key="submit" type="primary" size="large" onClick={()=> onSave(form.getFieldsValue(), 'customer', name)}>
           Apply
         </Button>,
       ]}
     >
       <Wraper className="site-card-border-less-wrapper">
         <CardViews bordered={false} title={`Edit ${name || ''} address`}>
-          <Select placeholder="Select another address" style={{ width: 200 }}>
+          {/* <Select placeholder="Select another address" style={{ width: 200 }}>
             <Option value="jack">
               Armando Salmeron <br />
               1310 Tamara Court <br />
               Waukegan IL 60085 <br />
               United States
             </Option>
-          </Select>
+          </Select> */}
           <Form
-            {...layout}
             name="basic"
-            onFinish={onFinish}
+            onFinish={()=> onSave(values, 'customer')}
             form={form}
-            onFinishFailed={onFinishFailed}
           >
             <Rows gutter={24}>
               <Col md={12}>
                 <Label
-                  name="firstName"
+                  name="BasicDetailsFirstName"
                   size="large"
+                  
                   rules={[
                     {
                       required: true,
@@ -80,13 +76,14 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="First name" />
+                  <Input size="large" placeholder="First name"  onChange={(e)=> handleChange(e, 'BasicDetailsFirstName')} />
                 </Label>
               </Col>
               <Col md={12}>
                 <Label
-                  name="lastName"
+                  name="BasicDetailsLastName"
                   size="large"
+                  
                   rules={[
                     {
                       required: true,
@@ -94,14 +91,14 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="Last name" />
+                  <Input size="large" placeholder="Last name"  onChange={(e)=> handleChange(e, 'BasicDetailsLastName')} />
                 </Label>
               </Col>
             </Rows>
             <Rows gutter={24}>
               <Col md={12}>
                 <Label
-                  name="company"
+                  name="AddressDetailsCompany"
                   size="large"
                   rules={[
                     {
@@ -110,13 +107,14 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="Company" />
+                  <Input size="large" placeholder="Company"  onChange={(e)=> handleChange(e, 'AddressDetailsCompany')} />
                 </Label>
               </Col>
               <Col md={12}>
                 <Label
-                  name="phoneNumber"
+                  name="AddressDetailsMobile"
                   size="large"
+                  
                   rules={[
                     {
                       required: true,
@@ -124,15 +122,23 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="Phone number" />
+                  <PhoneInput
+                      className="phone-input"
+                      placeholder="Phone number"
+                      country={"us"}
+                      onChange={(e) => handleChange(e, 'AddressDetailsMobile')} name='AddressDetailsMobile'
+                      
+                    />
+                  {/* <Input size="large" placeholder="Phone number" onChange={(e)=> handleChange(e, 'AddressDetailsMobile')} /> */}
                 </Label>
               </Col>
             </Rows>
             <Rows gutter={24}>
-              <Col md={12}>
+              {/* <Col md={12}>
                 <Label
                   name="addressOne"
                   size="large"
+                 
                   rules={[
                     {
                       required: true,
@@ -140,13 +146,14 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="Address" />
+                  <Input size="large" placeholder="Address"  value={values.AddressDetailsCompany} onChange={(e)=> handleChange(e, 'AddressDetailsCompany')} />
                 </Label>
-              </Col>
+              </Col> */}
               <Col md={12}>
                 <Label
-                  name="addressTwo"
+                  name="AddressDetailsApartment"
                   size="large"
+                 
                   rules={[
                     {
                       required: true,
@@ -156,16 +163,32 @@ const ShippingModal = ({ open, close, values, name }) => {
                 >
                   <Input
                     size="large"
+                    onChange={(e)=> handleChange(e, 'AddressDetailsApartment')}
                     placeholder="Apartment, suite, etc. (optional)"
                   />
+                </Label>
+              </Col>
+              <Col md={12}>
+                <Label
+                  name="AddressDetailsPostalCode"
+                  size="large"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your ZIP/Postal code!",
+                    },
+                  ]}
+                >
+                  <Input size="large" placeholder="ZIP/Postal code"  onChange={(e)=> handleChange(e, 'AddressDetailsCountry')} />
                 </Label>
               </Col>
             </Rows>
             <Rows gutter={24}>
               <Col md={12}>
                 <Label
-                  name="city"
+                  name="AddressDetailsCity"
                   size="large"
+                  
                   rules={[
                     {
                       required: true,
@@ -173,13 +196,14 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <Input size="large" placeholder="City" />
+                  <Input size="large" placeholder="City" onChange={(e)=> handleChange(e, 'AddressDetailsCity')} />
                 </Label>
               </Col>
               <Col md={12}>
                 <Label
-                  name="country"
+                  name="AddressDetailsCountry"
                   size="large"
+                  
                   rules={[
                     {
                       required: true,
@@ -187,23 +211,22 @@ const ShippingModal = ({ open, close, values, name }) => {
                     },
                   ]}
                 >
-                  <div>
-                    <CountryDropdown
+                  <CountryDropdown
                       defaultOptionLabel="Select a country."
-                      value={country}
-                      onChange={(val) => setCountry(val)}
+                      onChange={(e) => handleChange(e, 'AddressDetailsCountry')} name='AddressDetailsCountry'
+                      value={values.AddressDetailsCountry}
                       blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
-                      className="dropDown"
+                      className="country-region"
                     />
-                  </div>
                 </Label>
               </Col>
             </Rows>
             <Rows gutter={24}>
-              <Col md={12}>
+              {/* <Col md={12}>
                 <Label
                   name="state"
                   size="large"
+                  value={values.AddressDetailsCountry}
                   rules={[
                     {
                       required: true,
@@ -220,21 +243,8 @@ const ShippingModal = ({ open, close, values, name }) => {
                     className="dropDown"
                   />
                 </Label>
-              </Col>
-              <Col md={12}>
-                <Label
-                  name="zipcode"
-                  size="large"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your ZIP/Postal code!",
-                    },
-                  ]}
-                >
-                  <Input size="large" placeholder="ZIP/Postal code" />
-                </Label>
-              </Col>
+              </Col> */}
+              
             </Rows>
           </Form>
         </CardViews>

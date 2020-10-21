@@ -24,15 +24,15 @@ import {
   Menu,
   Input,
   message,
+  Form,
 } from "antd";
 import { getUserData } from "../../../utils";
-import { getUserProductLists } from "../../../redux/actions/product";
+import { getUserProductLists , getProductCategoryLists} from "../../../redux/actions/product";
 import { connect , useSelector } from "react-redux";
-
-
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Search } = Input;
+const { Option } = Select;
 
 const customerData = [
   {
@@ -59,9 +59,8 @@ const customerData = [
 
 const ViewCustomers = (props) => {
   // const { productList } = props
-  const productList = useSelector(state =>state.productReducer.merchantProductLists)
-
-   console.log(`productList`, productList)
+  const productLists = useSelector(state =>state.productReducer.merchantProductLists)
+   //console.log(`productList`, productLists)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -77,24 +76,35 @@ const ViewCustomers = (props) => {
   const [isOpenAddTags, setMDAddTags] = useState(false);
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
+  const [productList, setProductList] = useState([]);
+  const [apiCallFlag, setApiCallFlag] = useState("start");
   let userData = getUserData()
+  const categoryLists = useSelector(state => state.productReducer.categoriesLists)
 
   useEffect(() => {
-    
     let userId = userData?.ID
     props.getUserProductLists(userId)
-  }, [productList])
+  }, [apiCallFlag])
+  useEffect(() => {
+        props.getProductCategoryLists()
+  }, [])
+  useEffect(() => {
+    if(productLists?.length > 0){
+         setProductList(productLists)
+    }
+     }, [productLists])
 
   const columns = [
     {
       title: "Product",
       dataIndex: "title",
+      key:"title",
       render: (title, productListsData ) => {
       
-        console.log('productListsData', productListsData)
-        console.log('title', title)
+     //   console.log('productListsData', productListsData)
+      //  console.log('title', title)
         return (
-          <div>
+          <div key={productListsData.ID}>
             <ProductImage src={productListsData.thumbnailImage}></ProductImage>
             <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/${productListsData.ID}`} shallow={true}>
               <a> {title || ""}</a>
@@ -106,17 +116,20 @@ const ViewCustomers = (props) => {
     {
       title: "Stock",
       dataIndex: "stock",
-      render: (stock) => <div>{stock || ""}</div>,
+      key:"stock",
+      render: (stock) => <div key={stock}>{stock || ""}</div>,
     },
     {
       title: "Price",
       dataIndex: "salePrice",
-      render: (salePrice) => <div>{`$ ${salePrice}` || ""}</div>,
+      key:"price",
+      render: (salePrice) => <div key={salePrice}>{`$ ${salePrice}` || ""}</div>,
     },
     {
       title: "Quantity",
       dataIndex: "totalQuantity",
-      render: (totalQuantity) => <div>{totalQuantity || ""}</div>,
+      key:"Qty",
+      render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || ""}</div>,
       align: "center",
     },
   ];
@@ -201,7 +214,7 @@ const ViewCustomers = (props) => {
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
-    console.log("value: ", value);
+  //  console.log("value: ", value);
     setShowMDDeleteSelected(value);
   };
 
@@ -210,13 +223,17 @@ const ViewCustomers = (props) => {
     setShowMDDeleteSelected(false);
   };
 
+  const handleFilterData = (value) =>{
+    //  console.log('value filters Data', value)
+      setProductList(value)
+  }
   return (
     <ViewContent>
       <Tabs defaultActiveKey={tabIndex}>
         <TabPane tab="All" key="1" />
       </Tabs>
 
-      <Filters onOpen={setOpenMoreFilters} />
+      <Filters onOpen={setOpenMoreFilters} productLists={productLists} getFilterData={(value)=>handleFilterData(value)} />
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>
@@ -295,7 +312,7 @@ const ViewCustomers = (props) => {
           onChange={(values) => setShowCollapse(values)}
           expandIconPosition="right"
         >
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Product vendor</PanelTitle>
@@ -310,9 +327,9 @@ const ViewCustomers = (props) => {
               <RadioStyle value={1}>mysolidshoes</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
 
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Availability</PanelTitle>
@@ -328,7 +345,7 @@ const ViewCustomers = (props) => {
               <RadioStyle value={2}>Unavailable on Online Store</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
           <PanelStyle
             header={
               <div>
@@ -350,9 +367,22 @@ const ViewCustomers = (props) => {
             }
             key="4"
           >
+            <Form.Item>
+            {/* onChange={(event) => handleDropDown(event, "productCategory")} */}
+                    <Select defaultValue="Select" >
+                      <Option value="Select" disabled>Select</Option>
+                      {
+                        categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
+                          return <Option key={index} value={data?.ID}>{data?.name}</Option>
+                        })
+                      }
+                    </Select>
+                 
+
+                  </Form.Item>
             <ButtonLink type="text">Clear</ButtonLink>
           </PanelStyle>
-          <PanelStyle
+          {/* <PanelStyle
             header={
               <div>
                 <PanelTitle>Collection</PanelTitle>
@@ -379,7 +409,7 @@ const ViewCustomers = (props) => {
               <RadioStyle value={1}>Online Store</RadioStyle>
             </RadioGroupStyle>
             <ButtonLink type="text">Clear</ButtonLink>
-          </PanelStyle>
+          </PanelStyle> */}
         </CollapseStyle>
       </DrawerStyle>
     </ViewContent>
@@ -505,7 +535,8 @@ const mapStateToProps = (store) => {
 };
 
 const mapDispatchToProps = {
-  getUserProductLists
+  getUserProductLists,
+  getProductCategoryLists,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomers);

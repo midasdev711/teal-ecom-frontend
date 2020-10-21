@@ -9,76 +9,140 @@ import { PageLayout } from "../../../../../../src/components/views";
 import { NewForm } from "../../../../../../src/components/orders";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
-import { AddOrders  , resetOrderStatus } from "../../../../../../src/redux/actions/orders";
+import { AddOrders, resetOrderStatus } from "../../../../../../src/redux/actions/orders";
+import { getUserData } from "../../../../../../src/utils";
+const NewOrder = (props) => {
+  let userData = getUserData()
+  const apiStatus = useSelector((state) => state.orderReducer.status)
+  const [Products, setProducts] = useState([]);
+  const [OrderAmount, setOrderAmount] = useState(null);
+  const [ShippingAddress, setShippingAddress] = useState({});
+  const [DeliveryAddress, setDeliveryAddress] = useState({});
+  const [PaymentMethod, setPaymentMethod] = useState(null);
+  const [TransactionID, setTransactionID] = useState(null);
+  const [Notes, setNotes] = useState('');
+  const [Tags, setTags] = useState(['test']);
 
-const NewOrder = () => {
-  const apiStatus = useSelector((state)=>state.orderReducer.status)
-  const [saveFlag, setSaveFlag] = useState("")
-  let userData
-  if (process.browser) {
-    userData = JSON.parse(localStorage.getItem("userData"))
-     }
+  const saveData = () => {
+    console.log('qqqqqqqqqqqqqqqqqq', Products)
+    let pro_data = []
+    Products.map(data => {
+      let dat = {
+        productID: data._id,
+        productMerchantID: data.merchantID,
+        productSKU: data.sku,
+        productTitle: data.title,
+        productSalePrice: data.salePrice,
+        productTotalQuantity: data.totalQuantity,
+        productVariantObject: {
+          variantName: data.variants.variantName,
+          variantValues: data.variants.variantName
+        }
+      }
+      pro_data.push(dat)
+    })
+
+    let userId = userData?.ID
+    let _variables = {
+      UserId: userId,
+      Status: 1,
+      Products:pro_data,
+      OrderAmount: OrderAmount,
+      ShippingAddress:
+      {
+        BasicDetailsFirstName: ShippingAddress.BasicDetailsFirstName,
+        BasicDetailsLastName: ShippingAddress.BasicDetailsLastName,
+        AddressDetailsCompany: ShippingAddress.AddressDetailsCompany,
+        AddressDetailsMobile: ShippingAddress.AddressDetailsMobile,
+        AddressDetailsApartment: ShippingAddress.AddressDetailsApartment,
+        AddressDetailsCity: ShippingAddress.AddressDetailsCity,
+        AddressDetailsCountry: ShippingAddress.AddressDetailsCountry,
+        AddressDetailsPostalCode: ShippingAddress.AddressDetailsPostalCode
+      },
+      DeliveryAddress: {
+        BasicDetailsFirstName: DeliveryAddress.BasicDetailsFirstName,
+        BasicDetailsLastName: DeliveryAddress.BasicDetailsLastName,
+        AddressDetailsCompany: DeliveryAddress.AddressDetailsCompany,
+        AddressDetailsMobile: DeliveryAddress.AddressDetailsMobile,
+        AddressDetailsApartment: DeliveryAddress.AddressDetailsApartment,
+        AddressDetailsCity: DeliveryAddress.AddressDetailsCity,
+        AddressDetailsCountry: DeliveryAddress.AddressDetailsCountry,
+        AddressDetailsPostalCode: DeliveryAddress.AddressDetailsPostalCode
+      },
+      PaymentMethod: PaymentMethod,
+      TransactionID,
+      Notes,
+      Tags: JSON.stringify(Tags)
+    };
+    props.AddOrders(_variables)
+  }
+
+
+  useEffect(() => {
+
+    if (apiStatus === "success") {
+
+      props.resetOrderStatus(),
+        Router.router.push("/[portal_id]/ecom/orders", { pathname: `/${userData?.uniqueID}/ecom/orders` }, { shallow: true });
+    }
+  }, [apiStatus])
+
+  const handleChangeValue = (e, module, element) => {
+    if (module === 'customer') {
+      if (element === 'shipping') {
+        setShippingAddress(e)
+      } else if (module === 'billing') {
+        setDeliveryAddress(e)
+      } else {
+        setShippingAddress(e)
+        setDeliveryAddress(e)
+      }
+    } else if (module === 'product') {
+      setProducts(e)
+    } else if (module === 'Notes') {
+      setNotes(e.target.value)
+    } else if (module === 'Tags') {
+      setTags(e)
+    }
+
+  }
+
+
   const newActions = () => {
-    let userData
-    if (process.browser) {
-      userData = JSON.parse(localStorage.getItem("userData"))
-       }
     return (
       <ActionTopLayout>
-        <ActionContent> 
+        <ActionContent>
           <span>Unsaved changes</span>
           <NewOrderAction>
             <Button className="cancel" size="large">
-            <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
-            <a>Discard</a>
-              
+              <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+                <a>Discard</a>
+
               </Link>
             </Button>
-            <Button size="large" type="primary" onClick={() => handleSubmit()}>
-                Save
+            <Button size="large" type="primary" onClick={() => saveData()}>
+              Save
               </Button>
           </NewOrderAction>
         </ActionContent>
       </ActionTopLayout>
     );
   };
-  
- 
-  useEffect(() =>{
-  
-    if(apiStatus === "success"){
-    
-      props.resetOrderStatus(),
-      Router.router.push("/[portal_id]/ecom/orders" ,{ pathname: `/${userData?.uniqueID}/ecom/orders`}, { shallow: true });
-    }
-  },[apiStatus])
 
-  const handleSubmit = (values) => {
-    values === undefined ? setSaveFlag({ name: "demo" }) : ""
-    if (values !== undefined) {
-      let cloneValues = values
-      console.log('cloneValues', cloneValues)
-      // cloneValues.productMerchantID = (userData?.ID * 1)
-
-      // props.AddOrders(cloneValues)
-    }
-
-  }
- 
   return (
     <PageLayout>
       <NewContent>
         {newActions()}
         <ContentPage>
           <ContentHeader>
-          <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
-                         <LinkBack>
+            <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+              <LinkBack>
                 <LeftOutlined /> Orders
               </LinkBack>
             </Link>
             <TittleHeader>Create order</TittleHeader>
           </ContentHeader>
-          <NewForm saveSubmit={(values) => handleSubmit(values)} saveFlag={saveFlag} />
+          <NewForm Products={Products} OrderAmount={OrderAmount} ShippingAddresss={ShippingAddress} DeliveryAddress={DeliveryAddress} PaymentMethod={PaymentMethod} TransactionID={TransactionID} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} />
         </ContentPage>
       </NewContent>
     </PageLayout>

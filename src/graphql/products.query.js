@@ -44,6 +44,11 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 	getProductByMerchant(ID:$ID)  {
 		_id
 		ID
+		variants {
+			variantName
+		  variantValues
+		  
+		  }
 		merchantID
 		merchantName
 		totalQuantity
@@ -93,9 +98,9 @@ mutation products(
 	$productMRP: Int
 	$productCostPerItem:Int
 	$productSalePrice: Int
-	$productThumbnailImage: String
-	$productFeaturedImage: String
-	$productImages : [String]
+	$productThumbnailImage: Upload
+	$productFeaturedImage: Upload!
+	$productImages : [Upload]!
 	$productCategory: Int
 	$productSubcategory: Int
 	$productSEO: ProductSEOInput
@@ -158,14 +163,18 @@ mutation products(
 						attributes
 						{
 						attributeName
+						attributeValues
+						}
+						seo
+						{
+							title		
+						description
+						cronicalUrl
 						}
 						variants
 						{
 						variantName
-						}
-						seo
-						{
-						cronicalUrl
+						variantValues
 						}
 						slug
 						tags
@@ -174,7 +183,7 @@ mutation products(
 `;
 
 export const GET_PRODUCT_CATEGORY_LISTS_QUERY = gql`
-      query{ getAllCategories{
+      query{ getParentCategories{
 		id
         ID
         name
@@ -209,13 +218,13 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			totalQuantity
 			productCost
 			category
-    {
-      ID
-    }
-    subCategory
-    {
-      ID
-    }
+            {
+             ID
+             }
+            subCategory
+           {
+            ID
+             }
 			mrp
 			stock
 			thumbnailImage
@@ -231,22 +240,127 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			attributeValues
 			}
 			seo
-    {
-		title		
-      description
-      cronicalUrl
-    }
-    variants
-    {
-      variantName
-      variantsValues
-    }
+			{
+				title		
+			description
+			cronicalUrl
+			}
+			variants
+			{
+			variantName
+			variantValues
+			}
 			slug
 			tags
 			}
  }
 			`;
-
+export const DELETE_MERCHANT_PRODUCT_MUTATION = gql`
+				mutation removeProduct($ID:Int) {
+					removeProduct(ID:$ID) {
+						message
+						ID
+						title
+				}
+				}
+			`;
+export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
+			mutation products(
+				$productId:Int
+				$productMerchantID: Int
+				$productMerchantName: String
+				$productSKU: String
+				$productTitle: String
+				$productSlug: String
+				$productDescription: String
+				$productMRP: Int
+				$productCostPerItem:Int
+				$productSalePrice: Int
+				$productExistingImages:[String]
+				$productThumbnailImage: Upload
+	            $productFeaturedImage: Upload
+             	$productImages : [Upload]
+				$productCategory: Int
+				$productSubcategory: Int
+				$productSEO: ProductSEOInput
+				$productTotalQuantity: Int
+				$productTags: [String]
+				$productStock: Int
+				$productVariants: [ProductVariantInput]
+				$productAttributes: [ProductAttributeInput]
+				$productStartDate: String
+				$productEndDate: String
+				$isPublish:String
+			  ) {
+				updateProduct(
+				 product:{
+									
+					                productId: $productId
+					                productMerchantID: $productMerchantID
+									productMerchantName: $productMerchantName 
+									productSKU: $productSKU
+									productTitle: $productTitle
+									productSlug: $productSlug
+									productDescription: $productDescription
+									productMRP: $productMRP
+									productSalePrice: $productSalePrice
+									productExistingImages:$productExistingImages
+									productImages :$productImages 
+									productThumbnailImage:$productThumbnailImage
+	                                productFeaturedImage:$productFeaturedImage
+									productCategory: $productCategory
+									productSubcategory: $productSubcategory
+									productSEO: $productSEO
+									productTotalQuantity: $productTotalQuantity
+									productTags: $productTags
+									productStock: $productStock
+									productVariants: $productVariants
+									productAttributes:$productAttributes
+									productStartDate: $productStartDate
+									productEndDate: $productEndDate
+									productCostPerItem:$productCostPerItem
+									isPublish:$isPublish
+													})                 
+							  {
+									_id
+									ID
+								    merchantID
+									merchantName
+									sku
+									title
+									description
+									salePrice
+								
+									totalQuantity
+									productCost
+									mrp
+									stock
+								
+									isPublish
+									endDate
+									startDate
+									totalQuantity
+									attributes
+									{
+									attributeName
+									attributeValues
+									}
+									seo
+									{
+										title		
+									description
+									cronicalUrl
+									}
+									variants
+									{
+									variantName
+									variantValues
+									}
+									slug
+									tags
+								   }
+			  }
+			`;
 
 export default {
 	GET_MY_PRODUCT_LISTS_QUERY,
@@ -254,4 +368,6 @@ export default {
 	GET_PRODUCT_CATEGORY_LISTS_QUERY,
 	GET_PRODUCT_SUB_CATEGORY_LISTS_QUERY,
 	GET_MERCHANT_PRODUCT_BY_ID_QUERY,
+	DELETE_MERCHANT_PRODUCT_MUTATION,
+	UPDATE_MERCHANT_PRODUCT_MUTATION
 };

@@ -19,9 +19,6 @@ import {
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-
-
-
 // ui
 import { RemirorEditor, TEPageLoader } from "../../atoms";
 import {
@@ -46,7 +43,7 @@ import { validate } from "graphql";
 import { resolve } from "url";
 import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
-import product, { getProductCategoryLists , getProductSubCategoryLists } from "../../../redux/actions/product";
+import product, { getProductCategoryLists, getProductSubCategoryLists } from "../../../redux/actions/product";
 import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/ProductImages";
 
 const { Search } = Input;
@@ -69,7 +66,7 @@ let productInfo = {
     variantName: "",
     variantValues: "",
   }],
-  productThumbnailImage: "",
+  productThumbnailImage: null,
   productImages:[],
   productSEO: {
     title: "",
@@ -109,7 +106,7 @@ let cleanData = {
     variantName: "",
     variantValues: "",
   }],
-  productThumbnailImage: "",
+  productThumbnailImage: null,
   productImages:[],
   productSEO: {
     title: "",
@@ -159,9 +156,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const categoryLists = useSelector(state => state.productReducer.categoriesLists)
   const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
   const loading = useSelector(state => state.productReducer.status)
-  console.log('loading', loading)
-  console.log('subCategories', subCategories)
-  console.log('categoryLists', categoryLists)
+ 
+ 
   // useEffect(()=>{
   //   let cloneProduct = productDetails
   //   let cloneproductAttributes1 = productDetails?.productAttributes[0]
@@ -172,7 +168,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   //   setProductDetails(cloneProduct)
   //   setDummyData([dummyData + 1])
   //     },[country])
-  console.log('productInfo', productInfo)
+ 
   useEffect(()=>{
     productInfo = cleanData
     setProductDetails(cleanData)
@@ -215,7 +211,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   useEffect(() => {
     getProductCategoryLists()
   }, [])
- 
+
   useEffect(() => {
     let cloneProduct = productDetails
     cloneProduct.productTags = tags
@@ -230,7 +226,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       handleProductInventoryTotal()
     } else {
       cloneProduct.productVariants = [{ variantName: "", variantValues: "" }]
-      cloneProduct.productStock = ""
+      cloneProduct.productStock = 0
     }
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
@@ -244,7 +240,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     if (value.length > 0) {
       cloneProduct.productThumbnailImage = value[0]
     } else {
-      cloneProduct.productThumbnailImage = ""
+      cloneProduct.productThumbnailImage = null
     }
     let cloneError = errors
     delete cloneError.productImages
@@ -252,6 +248,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setErrors(cloneError)
     setDummyData([dummyData + 1])
   }
+
   const onFinish = (values) => {
     console.log("Success:", values);
   };
@@ -261,7 +258,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   };
 
   const onChangeDate = (date, name) => {
-    console.log(date?._d);
+    
     let UTCDate = date?._d
     // let dateFormate
     // if (date !== null) {
@@ -284,11 +281,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       fileReader.onloadend = () => {
         let b64 = fileReader.result
         if (names === "featureProducts") {
-          let cloneProductDetails = productDetails
-          let cloneProductDetails1 = productDetails.productFeaturedImage
-          let cloneError = errors
-          cloneProductDetails1 = b64
-          cloneProductDetails.productFeaturedImage = cloneProductDetails1
+          let cloneProductDetails = {
+            ...productDetails
+          }
+          // let cloneProductDetails1 = productDetails.productFeaturedImage
+          let cloneError = {
+            ...errors
+          };
+          // cloneProductDetails1 = b64
+          cloneProductDetails.productFeaturedImage = file;
           setProductDetails(cloneProductDetails)
           setProductFeaturedImageList([fileData.file])
           delete cloneError.productFeaturedImage
@@ -351,7 +352,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
 
     if (found !== undefined) {
-      console.log('data available')
+   
       if (found === "productTitle") {
         var b = value.toLowerCase().replace(/ /g, '-')
           .replace(/[^\w-]+/g, '');
@@ -423,7 +424,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setTags(removeTags);
   };
   const handleValidation = (name) => {
-    console.log('name validatiojn', name)
+  
     let error
     let errorData = errors
 
@@ -489,7 +490,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
 
   const handleSubmit = (info) => {
-    console.log('info', info)
+    
     let validationErrors = {};
 
     Object.keys(productDetails).forEach((name) => {
@@ -536,15 +537,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     }
     setDummyData([dummyData + 1])
   }
-  console.log('errors', errors)
+  //console.log('errors', errors)
   const tagChild = tags.map(forMap);
   const handleDropDown = (event, names) => {
-   
-    if(names === "attributeValues"){
+
+    if (names === "attributeValues") {
       setUnit(event)
     }
-   
-    if(names === "productCategory"){
+
+    if (names === "productCategory") {
       getProductSubCategoryLists(event)
     }
     let cloneProduct = productDetails
@@ -564,7 +565,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
   const handleRemove = (event) => {
     setProductFeaturedImageList([])
-    console.log('event', event)
+  
     let cloneProductDetails = productDetails
     cloneProductDetails.productFeaturedImage = ""
     setProductDetails(cloneProductDetails)
@@ -603,25 +604,25 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const handleCheckBox = (event) => {
     const values = event.target.checked
-    console.log('values', values)
+   
 
     setVariantsFlag(values)
     setDummyData([dummyData + 1])
     handleProductInventoryTotal()
   }
   const handleChangeVariants = (event, index, names) => {
-    console.log('event', event)
+  
     let cloneProductDetails = productDetails
     let cloneVariant = variants
     if (names !== undefined) {
       let cloneProductDetails = productDetails
       let cloneVariant = variants
-      
+
       cloneVariant[index][names] = event.toString()
     } else {
       const { name, value } = event.target
-      console.log('name , value', name , value)
-      cloneVariant[index][name] = value 
+   
+      cloneVariant[index][name] = value
     }
     setVariants(cloneVariant)
     cloneProductDetails.productVariants = cloneVariant
@@ -639,16 +640,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     cloneProduct.productStock = inventoryTotal === NaN && inventoryTotal === undefined ? (0) : (inventoryTotal)
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
-    console.log('InventoryTotal', inventoryTotal)
+  
   }
   const handleProductCompareAtPrice = () => {
-    console.log('method called')
+   
     let cloneProduct = productDetails
     let actualPrice = cloneProduct.productSalePrice * 1
     let MrpValue = actualPrice * 80 / 100
     let productMrpValues = actualPrice + MrpValue
-    console.log('MrpValue', MrpValue)
-    console.log('productMrpValues', productMrpValues)
+  
     cloneProduct.productMRP = productMrpValues
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
@@ -957,16 +957,17 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               </Checkbox> <br></br>
               {
                 VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
-                  return <Row gutter={0} keys={index}>
+                  return <Row gutter={0} key={index}>
                     <Col md={9}>
-                      <Form.Item label="Variant Name" >
-                        <TextInput name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
+                      <Form.Item label="Variant Name" key={index}>
+                        <TextInput keys={index} name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
                         {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
                       </Form.Item>
                     </Col>
                     <Col md={9} style={{ marginLeft: "25px" }}>
-                      <Form.Item label="Variant Value" >
+                      <Form.Item label="Variant Value" key={index}>
                         <InputNumberStyle
+                          key={index}
                           min={0}
                           onChange={(event) => handleChangeVariants(event, index, "variantValues")}
                           value={variants[index]?.variantValues || ""}
@@ -1456,5 +1457,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);
+
 
 

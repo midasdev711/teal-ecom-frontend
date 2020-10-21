@@ -1,29 +1,169 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { TweenOneGroup } from "rc-tween-one";
 // icons
 import { StarOutlined, DownOutlined, SortAscendingOutlined } from "@ant-design/icons";
 // ui
-import { Row, Col, Input, Button, Dropdown, Radio } from "antd";
+import { Row, Col, Input, Button, Dropdown, Radio ,Tag } from "antd";
 
 const { Search } = Input;
 
 const Filters = (props) => {
+  //console.log('props filters', props)
+  const { productLists } = props
   const [valueSubscription, setValueSubscription] = useState(0);
+  const [originalProductLists, setOriginalProductLists] = useState([]);
+  const [filterProductLists, setFilterProductLists] = useState([]);
+  const [tagsDropDown, setTagsDropDown] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
   const onChangeSubscription = (e) => {
     setValueSubscription(e.target.value);
   };
+  const forMap = (tag) => {
+    const tagElem = (
+      <TagContent
+        closable
+        onClose={(e) => {
+          e.preventDefault();
+          handleClose(tag);
+        }}
+      >
+        {tag}
+      </TagContent>
+    );
+    return (
+      <span key={tag} style={{ display: "inline-block" }}>
+        {tagElem}
+      </span>
+    );
+  };
+  const tagChild = tags.map(forMap);
+  useEffect(() => {
+    if (productLists !== undefined) {
+      setOriginalProductLists(productLists)
+         }
+  }, [props])
+  
+  useEffect(() => {
+    if (originalProductLists?.length > 0) {
+      setFilterProductLists(productLists)
+         }
+  }, [originalProductLists])
+  useEffect(() => {
+    props.getFilterData(filterProductLists)
+  }, [filterProductLists])
 
+
+  const handleSearch =(event) =>{
+      const {name , value } = event.target
+      let cloneProductData = originalProductLists.slice()
+      let productNameFilter  
+      if (cloneProductData?.length > 0) {
+        productNameFilter = cloneProductData.filter(data => {
+          return (
+            (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
+          )
+        })
+      }
+      if(productNameFilter === undefined){
+        setFilterProductLists(originalProductLists)
+      }else{
+        setFilterProductLists(productNameFilter)
+      }
+     
+  }
+  const handleClose = (removedTag) => {
+    const removeTags = tags.filter((tag) => tag !== removedTag);
+    setTags(removeTags);
+  };
+  const saveInputRef = (input) => {
+    input = input;
+  };
+  const handleTagsFilters = (event) =>{
+    const {name , value } = event.target
+    // let cloneProductData = originalProductLists.slice()
+    // let productNameFilter  
+    // if (cloneProductData?.length > 0) {
+    //   productNameFilter = cloneProductData.filter(data => {
+    //     return (
+    //       (data && data.title.toLowerCase().search(value.toLowerCase()) !== -1)
+    //     )
+    //   })
+    // }
+    // if(productNameFilter === undefined){
+    //   setFilterProductLists(originalProductLists)
+    // }else{
+    //   setFilterProductLists(productNameFilter)
+    // }
+  }
+  const handleTagsDropDown = () =>{
+    setTagsDropDown(!tagsDropDown)
+  }
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+   
+  };
+
+  const handleInputConfirm = () => {
+    let tag = tags;
+    if (inputValue && tag.indexOf(inputValue) === -1) {
+      tag = [...tag, inputValue];
+    }
+    setTags(tag);
+    //setInputVisible(false);
+    setInputValue("");
+  
+  };
+  const handleSearchTagsData = () =>{
+     
+      let cloneProductData = originalProductLists.slice()
+      let productNameFilter  
+      if (cloneProductData?.length > 0) {
+        productNameFilter = cloneProductData.filter(data => {
+          return (
+            (data && data.tags?.length > 0 && data.tags?.map(t => t === tags.length > 0 && tags.map(d => d))
+          ))
+        })
+      }
+      console.log('productNameFilter', productNameFilter)
+      if(productNameFilter === undefined){
+        setFilterProductLists(originalProductLists)
+      }else{
+        setFilterProductLists(productNameFilter)
+      }
+  }
+  const handleClearTags = () =>{
+      setTags([])
+  }
+  // const handleShortHighToLowPrice = () =>{
+
+  // }
+  // const handleShortLowToHighPrice = () =>{
+    
+  // }
+  // const handleLatestData = () =>{
+    
+  // }
+  // const handleOldData = () =>{
+    
+  // }
+  //console.log('inside filters')
+ // console.log('originalProductLists', originalProductLists)
+ // console.log('filterProductLists', filterProductLists)
   return (
     <ContentFilters>
       <Row gutter={0}>
         <Col md={10}>
           <SearchBox
             placeholder="Filter products"
-            onSearch={(value) => console.log(value)}
+            name="title"
+           // onSearch={(value) => console.log(value)}
+            onChange={(event)=>handleSearch(event)}
           />
         </Col>
-        <Col md={3}>
+        {/* <Col md={3}>
           <Dropdown
             overlay={
               <DropdownBox>
@@ -42,8 +182,8 @@ const Filters = (props) => {
               Product vendor <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
-        <Col md={3}>
+        </Col> */}
+        {/* <Col md={3}>
           <Dropdown
             overlay={
               <DropdownBox>
@@ -60,35 +200,69 @@ const Filters = (props) => {
             trigger={["click"]}
           >
             <ButtonBox block type="default">
-            Availability <DownOutlined />
+              Availability <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
-        <Col md={2}>
+        </Col> */}
+        {/* <Col md={2}>
           <Dropdown
+            onClick={handleTagsDropDown}
             overlay={
               <DropdownBox>
-                <Input />
-                <ButtonLink type="link">Clear</ButtonLink>
+                <Input
+                  ref={saveInputRef}
+                  type="text"
+                  size="large"
+                  placeholder="Vintage, cotton, summer"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onBlur={handleInputConfirm}
+                  onPressEnter={handleInputConfirm}
+                />
+                <TweenOneGroup
+                  className="tag-content"
+                  enter={{
+                    scale: 0.8,
+                    opacity: 0,
+                    type: "from",
+                    duration: 100,
+                    with: 10,
+                    onComplete: (e) => {
+                      e.target.style = "";
+                    },
+                  }}
+                  leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                  appear={false}
+                >
+                  {tagChild}
+                </TweenOneGroup>
+                <TagsConformButtons>
+                <ButtonLink type="link" onClick={()=>handleClearTags()}>Clear</ButtonLink>
+                <SearchTags>
+                <ButtonLink type="link" onClick={()=>handleSearchTagsData()}>Search</ButtonLink>
+                </SearchTags>
+              
+                </TagsConformButtons>
               </DropdownBox>
             }
             trigger={["click"]}
+            visible={tagsDropDown}
           >
             <ButtonBox block type="default">
               Tagged with <DownOutlined />
             </ButtonBox>
           </Dropdown>
-        </Col>
+        </Col> */}
         <Col md={2}>
           <ButtonLast block type="default" onClick={() => props.onOpen(true)}>
             More filters
           </ButtonLast>
         </Col>
-        <Col md={2}>
+        {/* <Col md={2}>
           <ButtonSaved block type="default" disabled icon={<StarOutlined />}>
             Saved
           </ButtonSaved>
-        </Col>
+        </Col> */}
         <Col md={2}>
           <Dropdown
             overlay={
@@ -98,16 +272,16 @@ const Filters = (props) => {
                   onChange={onChangeSubscription}
                   value={valueSubscription}
                 >
-                  <RadioStyle value={1}>Order number (ascending)</RadioStyle>
-                  <RadioStyle value={2}>Order number (descending)</RadioStyle>
+                  {/* <RadioStyle value={1}>Order number (ascending)</RadioStyle>
+                  <RadioStyle value={2}>Order number (descending)</RadioStyle> */}
                   <RadioStyle value={3}>Date (oldest first)</RadioStyle>
                   <RadioStyle value={4}>Date (newest first)</RadioStyle>
-                  <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
-                  <RadioStyle value={6}>Customer name (Z-A)</RadioStyle>
-                  <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
+                  {/* <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
+                  <RadioStyle value={6}>Customer name (Z-A)</RadioStyle> */}
+                  {/* <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
                   <RadioStyle value={8}>Payment status (Z-A)</RadioStyle>
                   <RadioStyle value={9}>Fulfillment status (A-Z)</RadioStyle>
-                  <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle>
+                  <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle> */}
                   <RadioStyle value={11}>Total price (low to high)</RadioStyle>
                   <RadioStyle value={12}>Total price (high to low)</RadioStyle>
                 </RadioGroupStyle>
@@ -188,6 +362,16 @@ const ButtonLast = styled(Button)`
   height: auto;
   border-radius: 0 4px 4px 0;
   border-left: 0;
+`;
+const TagContent = styled(Tag)`
+  padding: 5px 10px;
+  marginbottom: 10px;
+`;
+const TagsConformButtons = styled.div`
+  display:flex,
+`;
+const SearchTags = styled.div`
+margin-left: 54%;
 `;
 
 export default Filters;

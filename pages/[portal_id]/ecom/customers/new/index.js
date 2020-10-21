@@ -39,7 +39,6 @@ const NewCustomer = (props) => {
   const apiStatus = useSelector((state)=>state.customerReducer.status)
 
   const newActions = () => {
-    let userData = getUserData()
     return (
       <ActionTopLayout>
         <ActionContent>

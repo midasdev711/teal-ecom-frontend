@@ -3,111 +3,143 @@ import gql from 'graphql-tag';
 export const GET_ORDERS = gql`
   query orders($filters: OrderFilters) {
     orders(filters: $filters) {
-        status: Int
-        userID: Int
-        orderAmount : String
-        deliveryAddress: String
-        shippingAddress : String
-        products: OrderProductType
-        paymentMethod: String
-        tokenID: String
-    }
+        Status
+		UserId
+		OrderAmount
+		createdAt
+		DeliveryAddress{
+			BasicDetailsFirstName
+			BasicDetailsLastName
+			AddressDetailsCompany
+			AddressDetailsMobile
+			AddressDetailsApartment
+			AddressDetailsCity
+			AddressDetailsCountry
+			AddressDetailsPostalCode
+			}
+		ShippingAddress{
+			BasicDetailsFirstName
+			BasicDetailsLastName
+			AddressDetailsCompany
+			AddressDetailsMobile
+			AddressDetailsApartment
+			AddressDetailsCity
+			AddressDetailsCountry
+			AddressDetailsPostalCode
+			}
+			Products {
+			_id
+			status
+			productID
+			productMerchantID
+			productSKU
+			productTitle
+			productSalePrice
+			productTotalQuantity
+			productTotalPrice
+			productVariantID
+			productVariantObject {
+				ID 
+		productID  
+		merchantID 
+		costPrice  
+		sellingPrice  
+		variantStock  
+		variantSKU 
+		variantImage 
+
+		status 
+		productVariants {
+		_id
+		name 
+		value 
+}
+			}
+			
+	}
+		PaymentMethod
+		Notes
+		Tags
+		tokenID
+	}
   }
 `;
 
 export const CREATE_ORDER_MUTATION = gql`
-mutation products(
-	$productMerchantID: Int
-	$productMerchantName: String
-	$productSKU: String
-	$productTitle: String
-	$productSlug: String
-	$productDescription: String
-	$productMRP: Int
-	$productCostPerItem:Int
-	$productSalePrice: Int
-	$productThumbnailImage: String
-	$productFeaturedImage: String
-	$productImages : [String]
-	$productCategory: Int
-	$productSubcategory: Int
-	$productSEO: ProductSEOInput
-	$productTotalQuantity: Int
-	$productTags: [String]
-	$productStock: Int
-	$productVariants: [ProductVariantInput]
-	$productAttributes: [ProductAttributeInput]
-	$productStartDate: String
-	$productEndDate: String
-	$isPublish:String
+mutation createOrder(
+	$Status: Int
+	$UserId: Int
+	$OrderAmount: String
+	$PaymentMethod: String
+	$tokenID:String
+	$DeliveryAddress: DeliveryAddressInput
+	$ShippingAddress: ShippingAddressInput
+	$Products: [OrderProductInput]
+	$Notes: String
+	$Tags: String
+	
   ) {
-    upsertProduct(
-     product:{
-		                productMerchantID: $productMerchantID
-						productMerchantName: $productMerchantName 
-						productSKU: $productSKU
-						productTitle: $productTitle
-						productSlug: $productSlug
-						productDescription: $productDescription
-						productMRP: $productMRP
-						productSalePrice: $productSalePrice
-						productThumbnailImage: $productThumbnailImage
-						productFeaturedImage: $productFeaturedImage
-						productImages : $productImages
-						productCategory: $productCategory
-						productSubcategory: $productSubcategory
-						productSEO: $productSEO
-						productTotalQuantity: $productTotalQuantity
-						productTags: $productTags
-						productStock: $productStock
-						productVariants: $productVariants
-						productAttributes:$productAttributes
-						productStartDate: $productStartDate
-						productEndDate: $productEndDate
-						productCostPerItem:$productCostPerItem
-						isPublish:$isPublish
+    upsertOrder(
+     order:{
+		                Status: $Status
+						UserId: $UserId 
+						OrderAmount: $OrderAmount
+						DeliveryAddress: $DeliveryAddress
+						ShippingAddress: $ShippingAddress
+						Products: $Products
+						PaymentMethod: $PaymentMethod
+						Notes: $Notes
+						Tags: $Tags
+						tokenID: $tokenID
+						
 										})                 
 				  {
 						_id
-						ID
-				   	    merchantID
-						merchantName
-						sku
-						title
-						description
-						salePrice
-						featuredImage
-						totalQuantity
-						productCost
-						mrp
-						stock
-					    thumbnailImage
-						featuredImage
-						images
-						isPublish
-						endDate
-                        startDate
-                        totalQuantity
-						attributes
-						{
-						attributeName
+						Status
+				   	    UserId
+						OrderAmount
+						DeliveryAddress{
+							BasicDetailsFirstName
+							BasicDetailsLastName
+							AddressDetailsCompany
+							AddressDetailsMobile
+							AddressDetailsApartment
+							AddressDetailsCity
+							AddressDetailsCountry
+							AddressDetailsPostalCode
+						  }
+						ShippingAddress{
+							BasicDetailsFirstName
+							BasicDetailsLastName
+							AddressDetailsCompany
+							AddressDetailsMobile
+							AddressDetailsApartment
+							AddressDetailsCity
+							AddressDetailsCountry
+							AddressDetailsPostalCode
+						  }
+						  Products {
+							_id
+							productID
+							productMerchantID
+							productSKU
+							productTitle
+							productSalePrice
+							productTotalQuantity
+						
+							
+						
 						}
-						variants
-						{
-						variantName
-						}
-						seo
-						{
-						cronicalUrl
-						}
-						slug
-						tags
-				       }
+						PaymentMethod
+						Notes
+						Tags
+						tokenID
+				  }
   }
 `;
 
 export default {
-    GET_ORDERS,
-    CREATE_ORDER_MUTATION
+	GET_ORDERS,
+	CREATE_ORDER_MUTATION
 };
 

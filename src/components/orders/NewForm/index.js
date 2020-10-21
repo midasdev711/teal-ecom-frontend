@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { TweenOneGroup } from "rc-tween-one";
 import { connect } from "react-redux";
 import Link from "next/link";
+import { getUserData } from "../../../utils";
 // icon
 import {
   SearchOutlined,
@@ -41,56 +42,51 @@ import {
   ShippingAddress,
 } from "../Modal";
 import { getCustomers } from "../../../redux/actions/customers";
+import { getUserProductLists } from "../../../redux/actions/product";
 // import { customer } from "../fakeData";
 
 const { Search } = Input;
 const newForm = (props) => {
-  let orderInfo = {
-    listOrders: [],
-    selectedCustomer: null,
-    subTotal: 0.0,
-    tags: ['test']
+  const { Products, OrderAmount, ShippingAddresss, DeliveryAddress, PaymentMethod, TransactionID, Notes, Tags, handleChangeValue } = props
 
-  
-  }
-  const [orderDetails, setOrderDetails] = useState(orderInfo);
+
   const [visiable, setVisible] = useState(false);
   const [openCustumItem, setopenCustumItem] = useState(false);
   const [searchCustomner, setSearchcustomer] = useState("");
-  // const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isOpenSelectProduct, setShowSelectProduct] = useState(false);
   const [listOrders, setListOrders] = useState([]);
   const [subTotal, setSubTotal] = useState(0.0);
-  const [tags, setTags] = useState(["test"]);
+  // const [tags, setTags] = useState(["test"]);
   const [inputValue, setInputValue] = useState("");
   const [inputVisible, setInputVisible] = useState(false);
   const [openEmailPopup, setOpenEmailPopup] = useState(false);
   const [openShippingPopup, setOpenShippingPopup] = useState({
     status: false,
-    name: "",
+    data: {},
+    name: null
   });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
+
   useEffect(() => {
     getCustomersCall();
-  }, [props]);
-
+  }, [props.customerData]);
   useEffect(() => {
-    if (props.saveFlag !== "") {
-      handleSubmit()
-    }
-  }, [props.saveFlag])
-
-  const handleSubmit = () => {
-
-      props.saveSubmit(productDetails)
-  }
+    getProductsCall();
+  }, []);
 
   const getCustomersCall = async () => {
     await props.getCustomers();
   };
+  const getProductsCall = async () => {
+    let userData = getUserData()
+    let userId = userData?.ID
+    await props.getUserProductLists(userId)
+  };
 
-  const content = (data, change) => {
-    
+
+  const content = (data) => {
+
     const customer = props.customerData === undefined ? [] : props.customerData
     const [customerdata, setCustomerData] = useState([]);
     const UpdateData = () => {
@@ -101,7 +97,6 @@ const newForm = (props) => {
       UpdateData();
     }, [data]);
 
-    
 
     return (
       <div>
@@ -111,7 +106,7 @@ const newForm = (props) => {
         </PopoverHeader>
         {customerdata.map((res, index) => {
           return (
-            <PopoverContent key={index} onClick={() => change(res)}>
+            <PopoverContent key={index} onClick={() => handleChangeValue(res, 'customer')}>
               <StyledAvatar src={res.profile_url} alt="profile image" />
               <div className="customer-infor">
                 <p>{res.BasicDetailsFirstName}</p>
@@ -139,14 +134,6 @@ const newForm = (props) => {
     setVisible(!visiable);
   };
 
-  const data = (res) => {
-    let cloneCustomer = orderDetails
-    cloneCustomer.selectedCustomer=res
-    console.log('dsfdfdfdfdf',cloneCustomer )
-    setOrderDetails(cloneCustomer);
-  };
-
-  useEffect(() => { }, [searchCustomner, orderInfo.selectedCustomer]);
 
   const showModal = () => {
     setopenCustumItem(!openCustumItem);
@@ -163,11 +150,11 @@ const newForm = (props) => {
   };
 
   const handleInputConfirm = () => {
-    let tag = tags;
+    let tag = Tags;
     if (inputValue && tag.indexOf(inputValue) === -1) {
       tag = [...tag, inputValue];
     }
-    setTags(tag);
+    handleChangeValue(tag, 'Tags');
     setInputVisible(false);
     setInputValue("");
   };
@@ -195,7 +182,7 @@ const newForm = (props) => {
     );
   };
 
-  const tagChild = tags.map(forMap);
+  const tagChild = Tags && Tags.map(forMap);
 
   // Tags modal
   const handleOpenViewTagsPopup = () => {
@@ -212,9 +199,7 @@ const newForm = (props) => {
   };
 
   const handleColsecontact = (e) => {
-    let cloneCustomer = orderDetails
-    cloneCustomer.selectedCustomer=null
-    setOrderDetails(cloneCustomer);
+    handleChangeValue(null, 'customer');
   };
 
   // Edit email
@@ -227,66 +212,98 @@ const newForm = (props) => {
   };
 
   // Edit address
-  const handleShippingEditModal = (value) => {
-    setOpenShippingPopup({ status: !openShippingPopup.status, name: value });
+  const handleShippingEditModal = (value, data) => {
+    setOpenShippingPopup({ status: !openShippingPopup.status, data: data, name: value });
+  };
+
+  const handleShippingEditValues = (e, data) => {
+
+    let val = openShippingPopup.data
+    if (data === 'AddressDetailsMobile' || data === 'AddressDetailsCountry') {
+      setOpenShippingPopup({ ...openShippingPopup, ...val, [data]: e })
+    } else {
+      setOpenShippingPopup({ ...openShippingPopup, ...val, [data]: e.target.value });
+    }
   };
 
   const handleCloseShippingPopup = () => {
-    setOpenShippingPopup({ status: false, name: openShippingPopup.name });
+    setOpenShippingPopup({ status: false, data: {}, name: null });
+  };
+  const saveShiipingDetails = (value, flag, element) => {
+    handleChangeValue(value, flag, element)
+    handleCloseShippingPopup();
   };
 
   const onChangeTotal = (e, index) => {
     let data = [];
     let subTotal = 0;
-    for (let i = 0; i < listOrders.length; i++) {
-      const item = listOrders[i];
+    // if (e >= 1) {
+    //   Products[index].variants.total_value = e
+    //   let _price = Products[index].variants.variantValues * Products[index].variants.total_value
+    //   subtotal += _price;
+    //   console.log('sssssssssssssssssssssssssssssssssssssss', _price)
+    //   handleChangeValue(Products, 'product')
+    // setSubTotal(subtotal);
+    // }
+    if (e >= 1) {
+      for (let i = 0; i < Products.length; i++) {
+        const item = Products[i];
 
-      if (i === index) {
-        item.total = e;
-        data.push(item);
-      } else {
-        data.push(item);
+        if (i === index) {
+          item.variants.total_value = e;
+          data.push(item);
+        } else {
+          data.push(item);
+        }
+
+        let _price = item.variants.variantValues * item.variants.total_value;
+        subTotal += _price;
       }
 
-      let _price = item.price * item.total;
-      subTotal += _price;
+      handleChangeValue(Products, 'product')
+      setSubTotal(subTotal);
     }
-
-    setListOrders(data);
-    setSubTotal(subTotal);
   };
 
   const onAddProductsSearch = (num) => {
     let data = [];
     let subTotal = 0;
-    for (let i = 0; i < num; i++) {
-      data.push({
-        id: i + 1,
-        image:
-          "https://cdn.shopify.com/s/files/1/0451/1472/0419/products/0_Ryder-Shoes-Men-And-Women-Dropship-Indestructible-Steel-Toe-Air-Safety-Boots-Puncture-Proof-Work-Sneakers_1_300x300_cc63d031-a9b3-4a95-8fb4-e12f8cf7e49d_small.jpg?v=1596714418",
-        name: "Indestructible Shoes " + i,
-        style: "Black / US 9 - 9.5 | EU 43 • 112",
-        sku: 101,
-        price: 59.99,
-        total: 1,
-      });
-      subTotal += 59.99;
-    }
-    setListOrders(data);
+    num.map(item => {
+      //  let value={...item}
+
+      item.variants.map((val) => {
+        let value = { ...item }
+        value.variants = {}
+        if (val.isChecked) {
+          value.variants = val
+          subTotal += parseFloat(val.variantValues)
+          data.push(value)
+        }
+
+      })
+
+    })
+
+    // subTotal += 59.99;
+
+    console.log('****************', data)
+    handleChangeValue(data, 'product')
+    // setListOrders(data);
     setShowSelectProduct(false);
     setSubTotal(subTotal);
   };
 
   const onRemoveOrderItem = async (index) => {
     let subTotal = 0;
-    let data = await listOrders.filter((item, i) => {
+    let data = await Products.filter((item, i) => {
       if (index !== i) {
-        let _price = item.price * item.total;
+        let _price = item.variants.variantValues * item.variants.total_value;
         subTotal += _price;
         return item;
       }
     });
-    await setListOrders(data);
+    await handleChangeValue(data, 'product');
+    // await setListOrders(data);
     await setSubTotal(subTotal);
   };
 
@@ -325,17 +342,17 @@ const newForm = (props) => {
                     prefix={<SearchOutlined />}
                   />
 
-                  {listOrders && listOrders.length > 0 && (
+                  {Products && Products.length > 0 && (
                     <List
-                      dataSource={listOrders}
+                      dataSource={Products}
                       renderItem={(item, i) => (
                         <List.Item>
                           <ProductDetail>
                             <ProductView>
-                              <ImageView src={item.image} alt="" />
+                              <ImageView src={item.thumbnailImage} alt="" />
                               <div>
                                 <Link href={`/products/[productId]`} as="/products/123456789">
-                                  <a href="#">{item.name}</a>
+                                  <a href="#">{item.variants.variantName}</a>
                                 </Link>
                                 <TextStyle>{item.style}</TextStyle>
                                 <TextStyle>SKU: {item.sku}</TextStyle>
@@ -355,17 +372,18 @@ const newForm = (props) => {
                                     </Card>
                                   }
                                 >
-                                  <a href="#">${item.price}</a>
+                                  <a href="#">${item.variants.variantValues}</a>
                                 </Dropdown>
                               </LabelPriceStyle>
                               <InputNumberStyle
                                 onChange={(e) => onChangeTotal(e, i)}
-                                value={item.total}
+                                value={item.variants.total_value}
                                 min={0}
                                 max={10}
                               />
+                              {console.log('1111111111111', item.variants)}
                               <LabelStyle>
-                                ${item.total * item.price}
+                                ${item.variants.total_value * parseFloat(item.variants.variantValues)}
                               </LabelStyle>
                             </InputTotal>
 
@@ -381,7 +399,7 @@ const newForm = (props) => {
                   <Row className="price-content" gutter={24}>
                     <Col md={12}>
                       <Form.Item label="Notes" name="notes">
-                        <TextInput placeholder="Add a note..." />
+                        <TextInput placeholder="Add a note..." value={Notes} onChange={(e) => handleChangeValue(e, 'Notes')} />
                       </Form.Item>
                     </Col>
                     <Col className="title" md={6}>
@@ -459,11 +477,12 @@ const newForm = (props) => {
             </Row>
           </Col>
           <Col md={8}>
-            {orderInfo.selectedCustomer === null && (
+            {console.log('sdsdsdsdsd', ShippingAddresss.length)}
+            {Object.keys(ShippingAddresss).length === 0 && (
               <ContentBox>
                 <TitleBox>Find and Create customer </TitleBox>
                 <Popover
-                  content={() => content(searchCustomner, data)}
+                  content={() => content(searchCustomner)}
                   placement="bottom"
                   trigger="click"
                   visible={visiable}
@@ -479,7 +498,7 @@ const newForm = (props) => {
                 </Popover>
               </ContentBox>
             )}
-            {orderInfo.selectedCustomer !== null && (
+            {Object.keys(ShippingAddresss).length !== 0 && (
               <>
                 <ContentBox>
                   <AlignItem>
@@ -489,14 +508,14 @@ const newForm = (props) => {
                   <StyledAvatar
                     width="55"
                     height="55"
-                    src={orderInfo.selectedCustomer.profile_url}
+                    src={ShippingAddresss.profile_url}
                     alt="avatar"
                   />
                   <ContentTitle align="left">
-                    {orderInfo.selectedCustomer.BasicDetailsFirstName}
+                    {ShippingAddresss.BasicDetailsFirstName}
                   </ContentTitle>
                   <AlignItem>
-                    <ContentTitle>{orderInfo.selectedCustomer.BasicDetailsEmail}</ContentTitle>
+                    <ContentTitle>{ShippingAddresss.BasicDetailsEmail}</ContentTitle>
                     <ContentTitle onClick={handleEmailEditModal}>
                       Edit
                     </ContentTitle>
@@ -506,37 +525,37 @@ const newForm = (props) => {
                   <AlignItem>
                     <TitleBoxAddress>SHIPPING ADDRESS</TitleBoxAddress>
                     <ContentTitle
-                      onClick={() => handleShippingEditModal("shipping")}
+                      onClick={() => handleShippingEditModal("shipping", ShippingAddresss)}
                     >
                       Edit
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {orderInfo.selectedCustomer.AddressDetailsApartment}
-                    {orderInfo.selectedCustomer.AddressDetailsCompany}
+                    {ShippingAddresss.AddressDetailsApartment}
+                    {ShippingAddresss.AddressDetailsCompany}
                   </p>
                   <p>
-                    {orderInfo.selectedCustomer.AddressDetailsCity}
+                    {ShippingAddresss.AddressDetailsCity}
                   </p>
-                  <p>{orderInfo.selectedCustomer.AddressDetailsCountry}</p>
+                  <p>{ShippingAddresss.AddressDetailsCountry}</p>
                 </ContentBox>
                 <ContentBox>
                   <AlignItem>
                     <TitleBoxAddress>BILLING ADDRESS</TitleBoxAddress>
                     <ContentTitle
-                      onClick={() => handleShippingEditModal("billing")}
+                      onClick={() => handleShippingEditModal("billing", DeliveryAddress)}
                     >
                       Edit
                     </ContentTitle>
                   </AlignItem>
                   <p>
-                    {orderInfo.selectedCustomer.AddressDetailsApartment}
-                    {orderInfo.selectedCustomer.AddressDetailsCompany}
+                    {DeliveryAddress.AddressDetailsApartment}
+                    {DeliveryAddress.AddressDetailsCompany}
                   </p>
                   <p>
-                    {orderInfo.selectedCustomer.AddressDetailsCity}
+                    {DeliveryAddress.AddressDetailsCity}
                   </p>
-                  <p>{orderInfo.selectedCustomer.AddressDetailsCountry}</p>
+                  <p>{DeliveryAddress.AddressDetailsCountry}</p>
                 </ContentBox>
               </>
             )}
@@ -588,6 +607,7 @@ const newForm = (props) => {
         isOpen={isOpenSelectProduct}
         onCancel={() => setShowSelectProduct(false)}
         onAdd={onAddProductsSearch}
+        products={props.productLists}
       />
 
       {/*  add customer item modal */}
@@ -749,19 +769,21 @@ const newForm = (props) => {
       <ShippingAddress
         open={openShippingPopup.status}
         close={handleCloseShippingPopup}
-        values={orderInfo.selectedCustomer && orderInfo.selectedCustomer.email}
+        handleChange={handleShippingEditValues}
+        values={openShippingPopup.data}
         name={openShippingPopup.name}
+        onSave={saveShiipingDetails}
       />
       <EditEmail
         open={openEmailPopup}
         close={handleCloseEmailPopup}
-        values={orderInfo.selectedCustomer && orderInfo.selectedCustomer.email}
+        values={ShippingAddress.email}
       />
       <ViewTags
         open={openViewTagsPopup}
         close={handleCloseViewTagsPopup}
         closeTag={handleClose}
-        values={tags}
+        values={Tags}
       />
     </Form>
   );
@@ -1029,10 +1051,12 @@ const CardViews = styled(Card)`
 const mapStateToProps = (store) => {
   return {
     customerData: store.customerReducer.customerData,
+    productLists: store.productReducer.merchantProductLists
   };
 };
 const mapDispatchToProps = {
   getCustomers,
+  getUserProductLists
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);

@@ -35,9 +35,6 @@ const PageHeader = ({ ...props }) => {
         <Button type="primary" size="large">
           {/* <Link href={props.path}> */}
           {
-            console.log('props.path', props.path)
-          }
-          {
             props.path === "/products" ? (<Link href={`/[portal_id]/ecom/${props.path}`} as={`/${userData?.uniqueID}/ecom/${props.path}`} shallow={true}>
               <a>{props.CreateButtonName}</a>
             </Link>) : (<Link href={`/[portal_id]/ecom/${props.path}`} as={`/${userData?.uniqueID}/ecom/${props.path}`} shallow={true}>

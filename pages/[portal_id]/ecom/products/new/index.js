@@ -15,7 +15,7 @@ import { AddMerchantProduct  , resetProductStatus } from "../../../../../src/red
 const NewCustomer = (props) => {
   let userData = getUserData()
   let token = GetToken()
-  console.log('token', token)
+  //console.log('token', token)
   const apiStatus = useSelector((state)=>state.productReducer.status)
   const [flag, setFlag] = useState("")
   const [saveFlag, setSaveFlag] = useState("")
@@ -61,7 +61,7 @@ const NewCustomer = (props) => {
     }
 
   }
-  console.log('apiStatus', apiStatus)
+  //console.log('apiStatus', apiStatus)
   useEffect(() =>{
   
     if(apiStatus === "success"){
@@ -71,7 +71,7 @@ const NewCustomer = (props) => {
     }
   },[apiStatus])
 
-  console.log('productDetails updates', productDetails)
+  //console.log('productDetails updates', productDetails)
   return (
     <PageLayout>
       <NewContent>
