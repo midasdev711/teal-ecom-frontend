@@ -103,7 +103,7 @@ const InputPasswordForm = props => {
 				</AppLinkButton>
 			</CenteredRow>
 			<CenteredRow>
-				By continuing, you agree to Teal’s{' '}
+				By continuing, you agree to Juicy Pie’s{' '}
 				<Link href="/terms">
 					<LinkText>Terms & Privacy</LinkText>
 				</Link>

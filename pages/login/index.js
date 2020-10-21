@@ -46,7 +46,7 @@ const InputEmailForm = props => {
       >
         <TLogo />
         <AdjustRow>
-          <LoginTitle>Access Teal</LoginTitle>
+          <LoginTitle>Access Juicy Pie</LoginTitle>
           <Link href='/recover'>
             <LinkText fontSize={13}>Log in issues?</LinkText>
           </Link>
@@ -90,7 +90,7 @@ const InputEmailForm = props => {
         </AppLinkButton>
       </CenteredRow>
       <CenteredRow>
-        By continuing, you agree to Teal’s{' '}
+        By continuing, you agree to Juicy Pie’s{' '}
         <Link href='/terms'>
           <LinkText>Terms & Privacy</LinkText>
         </Link>

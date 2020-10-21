@@ -48,7 +48,7 @@ function TealApp({ Component, pageProps, apollo }) {
   return (
     <div>
       <Head>
-        <title>Teal Ecommerce</title>
+        <title>Juicy Pie Ecommerce</title>
         <link rel="icon" href="/favicon.svg" />
         <link
           href="https://fonts.googleapis.com/css?family=Proxima+Nova:300,300i,400,400i,700,700i,900,900i"

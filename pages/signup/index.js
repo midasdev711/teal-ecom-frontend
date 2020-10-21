@@ -53,7 +53,7 @@ const SignupForm = props => {
 			<Form name="normal_login" className="login-form" initialValues={{ remember: true }} onFinish={onFinish}>
 				<TELogo />
 				<AdjustRow>
-					<FormTitle>Create your Teal account</FormTitle>
+					<FormTitle>Create your Juicy Pie account</FormTitle>
 				</AdjustRow>
 				<Form.Item name="name" rules={[{ required: true, message: 'Please input your Full Name!' }]}>
 					<InputText placeholder="Full Name" />
@@ -110,7 +110,7 @@ const SignupForm = props => {
 				</AppLinkButton>
 			</CenteredRow>
 			<CenteredRow>
-				By continuing, you agree to Teal’s{' '}
+				By continuing, you agree to Juicy Pie’s{' '}
 				<Link href="/terms">
 					<LinkText>Terms & Privacy</LinkText>
 				</Link>
