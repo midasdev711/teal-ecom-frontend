@@ -2,14 +2,16 @@ import { ApolloClient,createHttpLink, InMemoryCache, ApolloLink } from '@apollo/
 import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
 import { GetToken } from '../utils';
+import { SERVER } from '../config';
+
 let token = GetToken()
 const httpLink = createHttpLink({
  //uri: "http://198.168.1.48:9200/graphql",
- uri: "http://3.132.13.45:9200/graphql",
+ uri: SERVER,
  // uri: "http://localhost:9200/graphql",
 });
 
-const uploadLink = createUploadLink({ uri: "http://192.168.1.49:5600/graphql"})
+const uploadLink = createUploadLink({ uri: SERVER})
 
 const authLink = setContext((_, { headers }) => {
   return {

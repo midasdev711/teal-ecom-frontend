@@ -44,7 +44,7 @@ import { resolve } from "url";
 import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
 import product, { getProductCategoryLists, getProductSubCategoryLists } from "../../../redux/actions/product";
-import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/productImages";
+import ProductsImages from "../../../../pages/[portal_id]/ecom/products/new/ProductImages";
 
 const { Search } = Input;
 const { Option } = Select;
