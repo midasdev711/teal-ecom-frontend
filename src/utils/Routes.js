@@ -101,12 +101,16 @@ const StoriesRoutes = [
     title: "Insights",
     path: "/insights",
   },
+  {
+    title: "Splitter",
+    path: "/[portal_id]/stories/campaign",
+  },
 ];
 
 const MainRoutes = {
-  "Ecommerce": "ecom",
-  "Stories": "stories"
-}
+  Ecommerce: "ecom",
+  Stories: "stories",
+};
 
 export { Routes, StoriesRoutes, MainRoutes };
 

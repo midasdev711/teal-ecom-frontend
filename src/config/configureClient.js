@@ -75,7 +75,7 @@ const link = process.browser
   : httpLink;
 
 
-const uploadLink = createUploadLink({ uri: "http://localhost:9200/graphql" })
+const uploadLink = createUploadLink({ uri: "http://3.135.208.27:9200/graphql" })
 
 export default withApollo(
   ({ initialState }) => {
