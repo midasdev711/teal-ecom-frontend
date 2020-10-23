@@ -103,7 +103,8 @@ const StoriesRoutes = [
   },
   {
     title: "Splitter",
-    path: "/splitter/stories/campaign",
+    path: "/[portal_id]/stories/campaign",
+    as: "/[portal_id]/stories/campaign",
   },
 ];
 
