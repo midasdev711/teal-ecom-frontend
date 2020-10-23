@@ -1,5 +1,4 @@
 import * as React from 'react';
-import dynamic from 'next/dynamic';
 import 'smartblock/css/smartblock.css';
 import {
     Strong,
@@ -17,9 +16,9 @@ import {
     Table,
     Image,
     Code,
+    SmartBlock,
 } from 'smartblock';
 import Base from 'smartblock/lib/extensions/base';
-import { SmartBlock , Extensions} from 'smartblock';
 
 const extensions = [
     ...Base,
