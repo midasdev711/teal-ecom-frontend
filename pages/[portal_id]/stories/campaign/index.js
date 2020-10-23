@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { PageLayout } from "../../../../src/components/views";
 const axios = require("axios");
 import { connect } from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
 import { TEIcon } from "../../../../src/components/atoms";
-import copy from 'copy-to-clipboard';
+import copy from "copy-to-clipboard";
 import { apolloClient } from "../../../../src/graphql";
 import { CREATE_CAMPAIGN_MUTATION } from "../../../../src/graphql/campaign";
 import {
@@ -30,17 +30,17 @@ import {
   Popconfirm,
   Select,
   Modal,
-  Tooltip
+  Tooltip,
 } from "antd";
 import {
   CaretDownOutlined,
   PlusOutlined,
   CloseOutlined,
-  CopyOutlined 
+  CopyOutlined,
 } from "@ant-design/icons";
-import TextArea from "antd/lib/input/TextArea";
+import Router from "next/router";
 
-const GRAPH_QL_URL=`http://3.132.13.45:9200/graphql`
+const GRAPH_QL_URL = `http://3.135.208.27:9200/graphql`;
 
 function Campaign(props) {
   const [visible, toggleModal] = React.useState(false);
@@ -53,77 +53,88 @@ function Campaign(props) {
   const [camapignList, setCamapignList] = React.useState([]);
   const [articleId2, setArticleId2] = React.useState("0");
   const [editing, setEditing] = React.useState(false);
-  const [item, selectItem]=React.useState({});
-
+  const [item, selectItem] = React.useState({});
 
   //Columns for table
 
   const columns = [
     {
-      title: 'SplitId',
-      dataIndex: 'SplitId',
-      key: 'SplitId',
+      title: "SplitId",
+      dataIndex: "SplitId",
+      key: "SplitId",
       render: (title, item) =>
-          true ? (
-            <Dropdown
-          overlay={
-            <Menu>
-              <Menu.Item>
-                {true ? (
-                  <span onClick={() => copy(`https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${title}`)}>
-                    Copy Url
-                  </span>
-                ) : (
-                    <span>Copy Url</span>
-                  )}
-              </Menu.Item>
-            </Menu>
-          }
-          placement="bottomRight"
-          arrow
-        >   
-            <FullName>
-              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-            </FullName>
-        </Dropdown>
-          ) : (
-              <span>
-                {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-              </span>
-            ),
-    },
-    {
-      title: 'Name',
-      dataIndex: 'CampaignName',
-      key: 'CampaignName',
-      render: (title, item) =>
-          true ? (
-            <Dropdown
+        true ? (
+          <Dropdown
             overlay={
               <Menu>
                 <Menu.Item>
                   {true ? (
-                    <span onClick={() => copy(`https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${item.SplitId}`)}>
+                    <span
+                      onClick={() =>
+                        copy(
+                          `https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${title}`
+                        )
+                      }
+                    >
                       Copy Url
                     </span>
                   ) : (
-                      <span>Copy Url</span>
-                    )}
+                    <span>Copy Url</span>
+                  )}
                 </Menu.Item>
               </Menu>
             }
             placement="bottomRight"
             arrow
-          >   
+          >
             <FullName>
               {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
             </FullName>
-            </Dropdown>
-          ) : (
-              <span>
-                {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-              </span>
-            ),
+          </Dropdown>
+        ) : (
+          <span>
+            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+          </span>
+        ),
+    },
+    {
+      title: "Name",
+      dataIndex: "CampaignName",
+      key: "CampaignName",
+      render: (title, item) =>
+        true ? (
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item>
+                  {true ? (
+                    <span
+                      onClick={() =>
+                        copy(
+                          `https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${item.SplitId}`
+                        )
+                      }
+                    >
+                      Copy Url
+                    </span>
+                  ) : (
+                    <span>Copy Url</span>
+                  )}
+                </Menu.Item>
+              </Menu>
+            }
+            placement="bottomRight"
+            arrow
+          >
+            <FullName>
+              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+            </FullName>
+          </Dropdown>
+        ) : (
+          <span>
+            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+          </span>
+        ),
     },
     {
       title: "Date",
@@ -170,12 +181,10 @@ function Campaign(props) {
             <Menu>
               <Menu.Item>
                 {true ? (
-                  <span onClick={() => handleEditButton(item)}>
-                    Edit
-                  </span>
+                  <span onClick={() => handleEditButton(item)}>Edit</span>
                 ) : (
-                    <span>Edit</span>
-                  )}
+                  <span>Edit</span>
+                )}
               </Menu.Item>
               <Menu.Item>Stats</Menu.Item>
             </Menu>
@@ -189,11 +198,8 @@ function Campaign(props) {
         </Dropdown>
       ),
     },
-  ]
-  
+  ];
 
-
-  
   const showModal = () => {
     toggleModal(true);
   };
@@ -205,7 +211,7 @@ function Campaign(props) {
     setCopied(false);
     setEditing(false);
     setArticleId1(0);
-    setArticleId2(0)
+    setArticleId2(0);
     selectItem({});
   };
   function handleChange(event) {
@@ -214,53 +220,56 @@ function Campaign(props) {
   }
   // Adding campaign
   const handleSave = () => {
-    if(successCampaign){
+    if (successCampaign) {
       closeModal();
       return;
     }
-  const authorID= Number(localStorage.getItem("userID"));
-    setConfirmLoading(true)
-    const CampaignName=campaignName;
-    const ArticleId1=parseInt(articleId1);
-    const ArticleId2=parseInt(articleId2);
+    const authorID = Number(localStorage.getItem("userID"));
+    setConfirmLoading(true);
+    const CampaignName = campaignName;
+    const ArticleId1 = parseInt(articleId1);
+    const ArticleId2 = parseInt(articleId2);
     apolloClient
-    .mutate({
-      mutation: CREATE_CAMPAIGN_MUTATION,
+      .mutate({
+        mutation: CREATE_CAMPAIGN_MUTATION,
         variables: {
           CampaignName,
           ArticleId1,
           ArticleId2,
-          authorID
-        }
-    })
-    .then((result) => {
-      console.log(result.data)
-      let SplitId=result.data.upsertCampaign.SplitId;
-      setConfirmLoading(false)
-      setSuccessCampaign(true)
-      setCurrentURL(`https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${SplitId}`)
-      getCampaignData()
-    }).catch(err=>{
-      console.log(err)
-    })
+          authorID,
+        },
+      })
+      .then((result) => {
+        console.log(result.data);
+        let SplitId = result.data.upsertCampaign.SplitId;
+        setConfirmLoading(false);
+        setSuccessCampaign(true);
+        setCurrentURL(
+          `https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${SplitId}`
+        );
+        getCampaignData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const textAreaRef = React.useRef(null);
   const [copied, setCopied] = React.useState(false);
 
-  const copyToClipboard=()=>{
+  const copyToClipboard = () => {
     copy(currentURL);
     setCopied(true);
-  }
+  };
   //On Edit Click
-  const handleEditButton=(item)=>{
-    console.log("Selected", item)
+  const handleEditButton = (item) => {
+    console.log("Selected", item);
     showModal();
     selectItem(item);
-    setEditing(true)
-    setCampaignName(item.CampaignName)
-    setArticleId1(item.ArticleId1.ID)
-    setArticleId2(item.ArticleId2.ID)
-  }
+    setEditing(true);
+    setCampaignName(item.CampaignName);
+    setArticleId1(item.ArticleId1.ID);
+    setArticleId2(item.ArticleId2.ID);
+  };
   //Edit campaign
   const handleEdit = () => {
     axios({
@@ -273,25 +282,28 @@ function Campaign(props) {
                 CampaignName
               }
             }
-          `
-      }
-      
-    }).then((result) => {
-      let SplitId=item.SplitId;
-      setConfirmLoading(false)
-      setSuccessCampaign(true)
-      setCurrentURL(`https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${SplitId}`)
-      getCampaignData()
-    }).catch(err=>{
-      console.log(err)
+          `,
+      },
     })
+      .then((result) => {
+        let SplitId = item.SplitId;
+        setConfirmLoading(false);
+        setSuccessCampaign(true);
+        setCurrentURL(
+          `https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${SplitId}`
+        );
+        getCampaignData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const getCampaignData=()=>{
-    const userID= Number(localStorage.getItem("userID"));
+  const getCampaignData = () => {
+    const userID = Number(localStorage.getItem("userID"));
     axios({
       url: GRAPH_QL_URL,
-      method: 'post',
+      method: "post",
       data: {
         query: `query {
                 campaign(filters: {userId: ${userID}}) {
@@ -318,24 +330,26 @@ function Campaign(props) {
                 SplitId
               }
             }
-          `
-      }
-    }).then((result) => {
-      console.log("result.data",result.data)
-      result.data.data.campaign.map(value=>{
-        value.ArticleId1Name=value.ArticleId1.title
+          `,
+      },
+    })
+      .then((result) => {
+        console.log("result.data", result.data);
+        result.data.data.campaign.map((value) => {
+          value.ArticleId1Name = value.ArticleId1.title;
+        });
+        setCamapignList(result.data.data.campaign);
       })
-      setCamapignList(result.data.data.campaign);
-    }).catch(err=>{
-      console.log(err)
-    }) 
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleDelete = () => {
-    const IdArray=[]
-    checkedList.map(data=>{
-      IdArray.push(data.ID)
-    })
+    const IdArray = [];
+    checkedList.map((data) => {
+      IdArray.push(data.ID);
+    });
     axios({
       url: GRAPH_QL_URL,
       method: "post",
@@ -346,149 +360,165 @@ function Campaign(props) {
                 CampaignName
               }
             }
-          `
-      }
-      
-    }).then((result) => {
-      getCampaignData()
-    }).catch(err=>{
-      console.log(err)
+          `,
+      },
     })
+      .then((result) => {
+        getCampaignData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const [checkedList, setCheckedList] = useState([]);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log("selected",selectedRows)
+      console.log("selected", selectedRows);
       setCheckedList(selectedRows);
     },
   };
 
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
-    props.getListArticles(userID, 100, 1).then(data=>{
-      getCampaignData()
-    }).catch(err=>{
-      console.log(err)
-    })
-       
+
+    // Router.router.push(`/${userID}/stories/campaign`, { shallow: true });
+
+    props
+      .getListArticles(userID, 100, 1)
+      .then((data) => {
+        getCampaignData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
     <div>
       <PageLayout>
         <CustomerContent>
-        <TitleDropdown>Splitter</TitleDropdown>
+          <TitleDropdown>Splitter</TitleDropdown>
 
-      <ActionsTable>
-        <AlignItem>
-        <div className="actions-left">
-          <a>
-            <Button
-              onClick={showModal}
-              type="primary"
-              icon={<PlusOutlined />}
-              size="middle"
-            >
-              Create
-            </Button>
-          </a>
-          {checkedList.length > 0 && (
-              <>
-                <TEIcon path="/images/posts/download.svg" />
-                {false ? (
-                  <TEIcon path="/images/posts/delete.svg" />
-                ) : (
-                    <Popconfirm
-                      className="popupDelete"
-                      placement="bottomLeft"
-                      title="Are you sure delete this post？"
-                      okText="Yes"
-                      cancelText="No"
-                      onConfirm={() => handleDelete()}
-                    >
-                      <BTNDelete>
-                        <TEIcon path="/images/posts/delete.svg" />
-                      </BTNDelete>
-                    </Popconfirm>
-                  )}
-              </>
-            )}
-            </div>
-            <div className="actions-right">
-            <span onClick={() => setOpenMoreFilters(true)}>
-              <TEIcon path="/images/posts/filter.svg" />
-            </span>
-            <TEIcon path="/images/posts/search.svg" />
-          </div> 
-          </AlignItem>
-        </ActionsTable>
+          <ActionsTable>
+            <AlignItem>
+              <div className="actions-left">
+                <a>
+                  <Button
+                    onClick={showModal}
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="middle"
+                  >
+                    Create
+                  </Button>
+                </a>
+                {checkedList.length > 0 && (
+                  <>
+                    <TEIcon path="/images/posts/download.svg" />
+                    {false ? (
+                      <TEIcon path="/images/posts/delete.svg" />
+                    ) : (
+                      <Popconfirm
+                        className="popupDelete"
+                        placement="bottomLeft"
+                        title="Are you sure delete this post？"
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={() => handleDelete()}
+                      >
+                        <BTNDelete>
+                          <TEIcon path="/images/posts/delete.svg" />
+                        </BTNDelete>
+                      </Popconfirm>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="actions-right">
+                <span onClick={() => setOpenMoreFilters(true)}>
+                  <TEIcon path="/images/posts/filter.svg" />
+                </span>
+                <TEIcon path="/images/posts/search.svg" />
+              </div>
+            </AlignItem>
+          </ActionsTable>
         </CustomerContent>
         <Modal
-          title={successCampaign ? "Campaign": editing ? "Edit Campaign": "Add Campaign" } 
+          title={
+            successCampaign
+              ? "Campaign"
+              : editing
+              ? "Edit Campaign"
+              : "Add Campaign"
+          }
           visible={visible}
-          okText= {successCampaign ? "Ok": editing ? "Edit" : "Save"} 
-          onOk={successCampaign ? closeModal : editing ? handleEdit: handleSave}
+          okText={successCampaign ? "Ok" : editing ? "Edit" : "Save"}
+          onOk={
+            successCampaign ? closeModal : editing ? handleEdit : handleSave
+          }
           confirmLoading={confirmLoading}
           onCancel={closeModal}
         >
-          { successCampaign==false ? (
-          <>
-          <p>Campaign Title</p>
-          <Input value={campaignName} onChange={handleChange} />
-          <p style={{ marginTop: "5%" }}>Article 1</p>
-          <Select
-            onChange={(data) => {
-              console.log("article1", data);
-              setArticleId1(data);
-            }}
-            value={articleId1}
-            style={{ width: "100%" }}
-          >
-            {props.articlesData.map((data) => {
-              return (
-                <Select.Option value={data.ID}>{data.title}</Select.Option>
-              );
-            })}
-          </Select>
-          <p style={{ marginTop: "5%" }}>Article 2</p>
-          <Select
-            onChange={(data) => {
-              console.log("article2", data);
-              setArticleId2(data);
-            }}
-            value={articleId2}
-            style={{ width: "100%" }}
-          >
-            {props.articlesData.map((data) => {
-              return (
-                <Select.Option value={data.ID}>{data.title}</Select.Option>
-              );
-            })}
-          </Select>
-          </>
-          ):(
+          {successCampaign == false ? (
             <>
-              <h3 style={{color: "green"}}>Successfully {editing? "edited": "added"} the campaign</h3>
-                <p>{currentURL}</p>
-                <BTNDelete onClick={copyToClipboard}>
-                    <CopyOutlined/>
-                    {copied ? "Copied" : "Copy" }
-                </BTNDelete>
+              <p>Campaign Title</p>
+              <Input value={campaignName} onChange={handleChange} />
+              <p style={{ marginTop: "5%" }}>Article 1</p>
+              <Select
+                onChange={(data) => {
+                  console.log("article1", data);
+                  setArticleId1(data);
+                }}
+                value={articleId1}
+                style={{ width: "100%" }}
+              >
+                {props.articlesData.map((data) => {
+                  return (
+                    <Select.Option value={data.ID}>{data.title}</Select.Option>
+                  );
+                })}
+              </Select>
+              <p style={{ marginTop: "5%" }}>Article 2</p>
+              <Select
+                onChange={(data) => {
+                  console.log("article2", data);
+                  setArticleId2(data);
+                }}
+                value={articleId2}
+                style={{ width: "100%" }}
+              >
+                {props.articlesData.map((data) => {
+                  return (
+                    <Select.Option value={data.ID}>{data.title}</Select.Option>
+                  );
+                })}
+              </Select>
+            </>
+          ) : (
+            <>
+              <h3 style={{ color: "green" }}>
+                Successfully {editing ? "edited" : "added"} the campaign
+              </h3>
+              <p>{currentURL}</p>
+              <BTNDelete onClick={copyToClipboard}>
+                <CopyOutlined />
+                {copied ? "Copied" : "Copy"}
+              </BTNDelete>
             </>
           )}
         </Modal>
         <ViewContent>
-          <Table 
-          rowSelection={{
-            type: "checkbox",
-            ...rowSelection,
-          }}
-          className="table-content"  
-          dataSource={camapignList} 
-          columns={columns} 
-          rowKey="ID"
+          <Table
+            rowSelection={{
+              type: "checkbox",
+              ...rowSelection,
+            }}
+            className="table-content"
+            dataSource={camapignList}
+            columns={columns}
+            rowKey="ID"
           />
         </ViewContent>
       </PageLayout>
@@ -512,8 +542,7 @@ const ViewContent = styled.div`
 `;
 const CustomerContent = styled.div`
   padding: 50px;
-  padding-bottom: initial
-
+  padding-bottom: initial;
 `;
 const BTNDelete = styled.a`
   cursor: pointer;
@@ -605,7 +634,6 @@ const CheckboxGroupStyle = styled(Checkbox.Group)`
   width: 100%;
 `;
 
-
 const CheckboxStyle = styled(Checkbox)`
   width: 100%;
   margin: 0 0 7px !important;
@@ -642,7 +670,7 @@ const ActionsTable = styled.div`
 
 const mapStateToProps = (store) => {
   return {
-    articlesData: store.articlesReducer.articlesData
+    articlesData: store.articlesReducer.articlesData,
   };
 };
 
