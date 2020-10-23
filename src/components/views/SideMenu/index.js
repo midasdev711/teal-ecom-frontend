@@ -21,38 +21,40 @@ const SideMenu = () => {
   const { pathname } = useRouter();
   const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
 
-  const MenuList = RoutesName.map((route, index) => {
-    const mainDynamicRoute = buildDynamicRoute(route.as, userData);
-         return (
-      <div key={index}>
-        <Link href={route.path} as={mainDynamicRoute} >
-          <LinkButton active={!route.components && pathname === route.as}>
-            {route.title}
-          </LinkButton>
-        </Link>
-        {/* {console.log('pathname.split("/", 2)[1]', pathname.split("/", 4)[3], route.path.split("/", 4)[3])} */}
-        {pathname.split("/", 4)[3] === route.path.split("/", 4)[3] &&
-          route.components &&
-          route.components.map((res, indexKey) => {
+  const getMenuList = () => {
+    return RoutesName.map((route, index) => {
+      const mainDynamicRoute = buildDynamicRoute(route.as, userData);
+      return (
+        <div key={index}>
+          <Link href={route.path} as={mainDynamicRoute} >
+            <LinkButton active={!route.components && pathname === route.as}>
+              {route.title}
+            </LinkButton>
+          </Link>
+          {/* {console.log('pathname.split("/", 2)[1]', pathname.split("/", 4)[3], route.path.split("/", 4)[3])} */}
+          {pathname.split("/", 4)[3] === route.path.split("/", 4)[3] &&
+            route.components &&
+            route.components.map((res, indexKey) => {
 
 
-            const dynamicRoute = buildDynamicRoute(res.as, userData);
+              const dynamicRoute = buildDynamicRoute(res.as, userData);
 
-            return (
-              <Link key={indexKey} href={res.path} as={dynamicRoute}>
+              return (
+                <Link key={indexKey} href={res.path} as={dynamicRoute}>
 
-                <LinkButton
-                  active={pathname === res.as}
-                  style={{ paddingLeft: "30px" }}
-                >
-                  {res.title}
-                </LinkButton>
-              </Link>
-            );
-          })}
-      </div>
-    );
-  });
+                  <LinkButton
+                    active={pathname === res.as}
+                    style={{ paddingLeft: "30px" }}
+                  >
+                    {res.title}
+                  </LinkButton>
+                </Link>
+              );
+            })}
+        </div>
+      );
+    });
+  }
 
   return (
     <StyledSider theme="light">
@@ -61,7 +63,7 @@ const SideMenu = () => {
       <TESelector value="teal">
         <Select.Option value="teal">Juicy Pie</Select.Option>
       </TESelector>
-      <MainMenu>{MenuList}</MainMenu>
+      <MainMenu>{getMenuList()}</MainMenu>
     </StyledSider>
   );
 };
