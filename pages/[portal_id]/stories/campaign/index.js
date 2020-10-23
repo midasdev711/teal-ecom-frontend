@@ -6,6 +6,8 @@ import styled from "styled-components";
 import moment from "moment";
 import { TEIcon } from "../../../../src/components/atoms";
 import copy from 'copy-to-clipboard';
+import { apolloClient } from "../../../../src/graphql";
+import { CREATE_CAMPAIGN_MUTATION } from "../../../../src/graphql/campaign";
 import {
   deleteArticleWithID,
   getListArticles,
@@ -38,6 +40,7 @@ import {
 } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 
+const GRAPH_QL_URL=`http://3.132.13.45:9200/graphql`
 
 function Campaign(props) {
   const [visible, toggleModal] = React.useState(false);
@@ -67,7 +70,7 @@ function Campaign(props) {
             <Menu>
               <Menu.Item>
                 {true ? (
-                  <span onClick={() => copy(`https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${title}`)}>
+                  <span onClick={() => copy(`https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${title}`)}>
                     Copy Url
                   </span>
                 ) : (
@@ -100,7 +103,7 @@ function Campaign(props) {
               <Menu>
                 <Menu.Item>
                   {true ? (
-                    <span onClick={() => copy(`https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${item.SplitId}`)}>
+                    <span onClick={() => copy(`https://juicypie.com?utm_source=facebook&utm_medium=ppc&split_id=${item.SplitId}`)}>
                       Copy Url
                     </span>
                   ) : (
@@ -209,31 +212,30 @@ function Campaign(props) {
     console.log(event.target.value);
     setCampaignName(event.target.value);
   }
-
   // Adding campaign
   const handleSave = () => {
     if(successCampaign){
       closeModal();
       return;
     }
+  const authorID= Number(localStorage.getItem("userID"));
     setConfirmLoading(true)
-    axios({
-      url: "http://3.135.208.27:9200/graphql",
-      method: "post",
-      data: {
-        query: `mutation {
-              upsertCampaign(campaign: {CampaignName: "${campaignName}", ArticleId1: ${articleId1}, ArticleId2: ${articleId2}}) {
-                ID
-                CampaignName
-                SplitId
-              }
-            }
-          `
-      }
-      
-    }).then((result) => {
+    const CampaignName=campaignName;
+    const ArticleId1=parseInt(articleId1);
+    const ArticleId2=parseInt(articleId2);
+    apolloClient
+    .mutate({
+      mutation: CREATE_CAMPAIGN_MUTATION,
+        variables: {
+          CampaignName,
+          ArticleId1,
+          ArticleId2,
+          authorID
+        }
+    })
+    .then((result) => {
       console.log(result.data)
-      let SplitId=result.data.data.upsertCampaign.SplitId;
+      let SplitId=result.data.upsertCampaign.SplitId;
       setConfirmLoading(false)
       setSuccessCampaign(true)
       setCurrentURL(`https://juicyfy.com?utm_source=facebook&utm_medium=ppc&split_id=${SplitId}`)
@@ -262,7 +264,7 @@ function Campaign(props) {
   //Edit campaign
   const handleEdit = () => {
     axios({
-      url: "http://localhost:9200/graphql",
+      url: GRAPH_QL_URL,
       method: "post",
       data: {
         query: `mutation {
@@ -286,18 +288,22 @@ function Campaign(props) {
   };
 
   const getCampaignData=()=>{
+    const userID= Number(localStorage.getItem("userID"));
     axios({
-      url: 'http://3.135.208.27:9200/graphql',
+      url: GRAPH_QL_URL,
       method: 'post',
       data: {
         query: `query {
-                campaign(filters: {}) {
+                campaign(filters: {userId: ${userID}}) {
                 ID
                 CampaignName
                 ArticleId1 {
                   ID
                   title
                   description
+                }
+                author{
+                  ID
                 }
                 ArticleId2 {
                   ID
@@ -330,9 +336,8 @@ function Campaign(props) {
     checkedList.map(data=>{
       IdArray.push(data.ID)
     })
-    console.log("IdArray", IdArray)
     axios({
-      url: "http://localhost:9200/graphql",
+      url: GRAPH_QL_URL,
       method: "post",
       data: {
         query: `mutation {
