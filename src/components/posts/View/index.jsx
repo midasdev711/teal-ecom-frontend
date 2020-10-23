@@ -39,7 +39,7 @@ const ListTabs = [
 
 const ViewPosts = (props) => {
   const [tabActive, setTabActive] = useState("1");
-  const [dataTable, setDataTable] = useState([])
+  const [dataTable, setDataTable] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
 
   const router = useRouter();
@@ -48,46 +48,46 @@ const ViewPosts = (props) => {
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticlesDraft(userID, true, 100, 1);
-  }, [])
+  }, []);
 
   useEffect(() => {
     switch (tabActive) {
-      case '1':
-        setDataTable(props.articlesDraft)
+      case "1":
+        setDataTable(props.articlesDraft);
         break;
-      case '2':
-        setDataTable(props.articlesData)
-        break
-      case '3':
-        setDataTable(props.articlesData)
-        break
-      case '4':
-        setDataTable(props.articlesDeleted)
-        break
+      case "2":
+        setDataTable(props.articlesData);
+        break;
+      case "3":
+        setDataTable(props.articlesData);
+        break;
+      case "4":
+        setDataTable(props.articlesDeleted);
+        break;
       default:
         break;
     }
-  }, [props.articlesDraft, props.articlesData, props.articlesDeleted])
+  }, [props.articlesDraft, props.articlesData, props.articlesDeleted]);
 
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     switch (tabActive) {
-      case '1':
+      case "1":
         props.getListArticlesDraft(userID, true, 100, 1);
         break;
-      case '2':
+      case "2":
         props.getListArticles(userID, 100, 1);
-        break
-      case '3':
+        break;
+      case "3":
         props.getListArticles(userID, 100, 1);
-        break
-      case '4':
+        break;
+      case "4":
         props.getListArticlesDeleted(userID, userID, 100, 1);
-        break
+        break;
       default:
         break;
     }
-  }, [tabActive])
+  }, [tabActive]);
 
   const handleChangeTabs = (tabIndex) => {
     setTabActive(tabIndex);
@@ -95,11 +95,14 @@ const ViewPosts = (props) => {
 
   const getArticleDetail = (item) => {
     const url =
-      tabActive === '1'
+      tabActive === "1"
         ? `/${userData && userData.uniqueID}/stories/${item.slug}/draft`
         : `/${userData && userData.uniqueID}/stories/${item.slug}`;
 
-    const route = tabActive === '1' ? `/${userData.uniqueID}/stories/[slug]/draft` : `/${userData.uniqueID}/stories/[slug]`;
+    const route =
+      tabActive === "1"
+        ? `/${userData.uniqueID}/stories/[slug]/draft`
+        : `/${userData.uniqueID}/stories/[slug]`;
     url && router.push(route, { pathname: url }, { shallow: true });
   };
 
@@ -117,15 +120,15 @@ const ViewPosts = (props) => {
       showSorterTooltip: false,
       width: "30%",
       render: (title, item) =>
-        tabActive !== '4' ? (
+        tabActive !== "4" ? (
           <FullName onClick={() => getArticleDetail(item)}>
             {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
           </FullName>
         ) : (
-            <span>
-              {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
-            </span>
-          ),
+          <span>
+            {title && title.length > 40 ? `${title.slice(0, 40)}...` : title}
+          </span>
+        ),
     },
     {
       title: "Date",
@@ -171,13 +174,11 @@ const ViewPosts = (props) => {
           overlay={
             <Menu>
               <Menu.Item>
-                {tabActive !== '4' ? (
-                  <span onClick={() => getArticleDetail(item)}>
-                    Edit
-                  </span>
+                {tabActive !== "4" ? (
+                  <span onClick={() => getArticleDetail(item)}>Edit</span>
                 ) : (
-                    <span>Edit</span>
-                  )}
+                  <span>Edit</span>
+                )}
               </Menu.Item>
               <Menu.Item>Stats</Menu.Item>
             </Menu>
@@ -200,14 +201,19 @@ const ViewPosts = (props) => {
         <Tabs
           tabBarExtraContent={
             <>
-              <Button
-                type="text"
-                icon={<img src="/images/down.svg" alt="" />}
-              />
-              <Button
-                type="text"
-                icon={<img src="/images/delete.svg" alt="" />}
-              />
+              {checkedList.length > 0 && (
+                <>
+                  <Button
+                    type="text"
+                    icon={<img src="/images/down.svg" alt="" />}
+                  />
+                  <Button
+                    type="text"
+                    icon={<img src="/images/delete.svg" alt="" />}
+                  />
+                </>
+              )}
+
               <Button
                 type="text"
                 icon={<img src="/images/slider.svg" alt="" />}
@@ -232,9 +238,7 @@ const ViewPosts = (props) => {
             ...rowSelection,
           }}
           columns={columns}
-          dataSource={
-            dataTable
-          }
+          dataSource={dataTable}
           pagination={dataTable.length > 10}
           rowKey="ID"
           className="table-content"
@@ -251,7 +255,7 @@ const FullName = styled.a`
 
 const TableStyle = styled(Table)`
   margin-top: 20px;
-`
+`;
 const WrapperContent = styled.div``;
 
 const Wrapper = styled.div``;
@@ -266,7 +270,6 @@ const TitlePage = styled.h1`
   margin: 0;
   margin-bottom: 30px;
 `;
-
 
 const mapStateToProps = (store) => {
   return {

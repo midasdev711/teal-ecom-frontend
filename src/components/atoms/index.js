@@ -12,6 +12,7 @@ import MDImportCSV from "./MDImportCSV";
 import RemirorEditor from "./RemirorEditor";
 import InputText from "./InputText";
 import TLogo from "./TLogo";
+import TEStatistic from "./TEStatistic";
 
 export {
   TELogo,
@@ -28,4 +29,5 @@ export {
   RemirorEditor,
   InputText,
   TLogo,
+  TEStatistic,
 };

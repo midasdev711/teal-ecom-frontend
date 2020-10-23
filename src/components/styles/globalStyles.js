@@ -137,4 +137,8 @@ export default createGlobalStyle`
       padding: 1px 0;
     }
   }
+  .ant-badge-status-dot{
+    width: 10px;
+    height: 10px;
+  }
 `;
