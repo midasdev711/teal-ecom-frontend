@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 // components
-import { PageLayout } from "../../src/components/views";
-import { OrderData } from "../../src/components/orders";
+import { PageLayout } from "../../../../src/components/views";
+import { OrderData } from "../../../../src/components/orders";
 // icons
 import {
   LeftOutlined,

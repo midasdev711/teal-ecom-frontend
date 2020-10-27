@@ -31,8 +31,10 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
-  let userData = getUserData()
+  const [saveFlag, setSaveFlag] = useState(false);
+  const [count, setCount] = useState([]);
 
+  let userData = getUserData()
   const getDetailArticle = async () => {
     const {
       query: { slug },
@@ -41,7 +43,7 @@ const EditPost = (props) => {
     await props.getDetailArticle(slug, true);
   };
 
-  const { updateArticleDetail, articleDetail, saveState } = props;
+  const { updateArticleDetail, articleDetail, saveState , saveData} = props;
   const prevProps = usePrevious({ updateArticleDetail });
 
   const onValuesChangePost = async () => {
@@ -78,7 +80,6 @@ const EditPost = (props) => {
     if (!articleDetail) {
       getDetailArticle();
     }
-    
     if (articleDetail) {
       const { title, subTitle, description } = articleDetail;
       // let { title, subTitle } = handleTitle()
@@ -118,23 +119,32 @@ const EditPost = (props) => {
   }, [props.msgErr]);
 
   useEffect(() => {
-    let timer = null;
+    if(saveFlag){
+      let timer = null;
     if (!timer) {
       // console.log('set timer');
       timer = setInterval(async () => {
-        console.log('called on every 5 seconds!', articleDetail)
+       // console.log('called on every 5 seconds!', articleDetail)
         await handleSaveData();
       }, 5000);
     }
-
     return () => {
       if (timer) {
-        // console.log('clear interval');
         clearInterval(timer);
       }
     }
+    }
   }, [articleDetail, editorHtml, form])
-
+  useEffect(()=>{
+  },[form])
+  useEffect(()=>{
+    saveFlag ? (setSaveFlag(false)) : null
+  },[])
+  useEffect(() => {
+    if(count.length > 0){
+      !saveFlag ? setSaveFlag(true) : null
+    }
+  }, [articleDetail, editorHtml, form])
   const onFinish = async (values) => {
     setSubmit(true);
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
@@ -156,12 +166,16 @@ const EditPost = (props) => {
 
     await props.updateArticle(_variables);
   };
-
   const onChangeEditor = (value) => {
-    console.log('change description', value)
+    let data = count
+    data.push({name:"test"})
+    setCount(data)
     setContentEditorHtml(value);
     setIsStory(false);
   };
+  const handleFormData = () =>{
+    onChangeEditor()
+  }
 
   const newActions = () => {
     return (
@@ -195,6 +209,7 @@ const EditPost = (props) => {
       <Form
         form={form}
         layout="vertical"
+        onChange={()=>handleFormData()}
       >
         <NewContent>
           {newActions()}
