@@ -75,4 +75,57 @@ export default createGlobalStyle`
   .ant-popover-inner-content{
     ${'' /* padding: 0; */}
   }
+  .ProseMirror {
+    font-family: Proxima Nova;
+    padding-bottom: 50px;
+    .selected {
+      background-color: transparent;
+    }
+  }
+  .smartblock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+  }
+  .smartblock-menu {
+    // left: -35px!important;
+  }
+  .smartblock-inline-menu-arrow {
+    left: 40px!important;
+  }
+  .smartblock-edit-menu {
+    width: 135px;
+    height: 45px;
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: 0 3px 40px 8px rgba(116, 116, 116, 0.2);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .smartblock-inline-menu-inner {
+    width: 205px;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .smartblock-menu-top {
+    display: flex;
+    .smartblock-btn {
+      background-color: transparent;
+    }
+  }
+  .smartblock-menu:before {
+    display: none;
+  }
+  .smartblock-menu {
+    background-color: transparent;
+    box-shadow: none;
+  }
+  .smartblock-container {
+    width: 750px;
+  }
 `;
