@@ -37,7 +37,7 @@ import {
   CloseOutlined,
   CopyOutlined,
 } from "@ant-design/icons";
-import TextArea from "antd/lib/input/TextArea";
+import Router from "next/router";
 
 const GRAPH_QL_URL = `http://3.135.208.27:9200/graphql`;
 
