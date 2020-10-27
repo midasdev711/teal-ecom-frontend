@@ -5,13 +5,15 @@ import { usersReducer } from './users';
 import { orderReducer } from './orders';
 import { customerReducer } from './customers';
 import { productReducer } from './product';
+import {campaignReducer} from './campaign';
 
 export const reducers = combineReducers({
 	articlesReducer,
 	usersReducer,
 	productReducer,
 	orderReducer,
-	customerReducer
+	customerReducer,
+	campaignReducer
 });
 
 export default reducers;

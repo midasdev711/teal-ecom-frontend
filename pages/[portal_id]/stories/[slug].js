@@ -30,7 +30,9 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
-
+  const [saveFlag, setSaveFlag] = useState(false);
+  const [count, setCount] = useState([]);
+  
   const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
   let userData = getUserData()
@@ -52,6 +54,7 @@ const EditPost = (props) => {
     }
   }, []);
   useEffect(() => {
+    if(saveFlag){
     let timer = null;
     if (!timer) {
       timer = setInterval(async () => {
@@ -64,6 +67,7 @@ const EditPost = (props) => {
         clearInterval(timer);
       }
     }
+  }
   }, [articleDetail, editorHtml, form])
 
   useEffect(() => {
@@ -98,6 +102,14 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
+  useEffect(()=>{
+    saveFlag ? (setSaveFlag(false)) : null
+  },[])
+  useEffect(() => {
+    if(count.length > 0){
+      !saveFlag ? setSaveFlag(true) : null
+    }
+  }, [articleDetail, editorHtml, form])
 
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
@@ -144,10 +156,15 @@ const EditPost = (props) => {
   };
 
   const onChangeEditor = (value) => {
+    let data = count
+    data.push({name:"test"})
+    setCount(data)
     setContentEditorHtml(value);
     setIsStory(false);
   };
-
+  const handleFormData = () =>{
+    onChangeEditor()
+  }
   const newActions = () => {
     let userData = getUserData()
     return (
@@ -174,10 +191,10 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
-
+ 
   return (
     <NewPageLayout>
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" onChange={()=>handleFormData()}>
         <NewContent>
           {newActions()}
           <ContentPage>

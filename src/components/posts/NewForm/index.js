@@ -24,14 +24,13 @@ const NewForm = (props) => {
       });
     }
   };
-
   return (
     <ContentBox>
       <Form.Item
         name="title"
         rules={[{ required: true, message: "Title is required!" }]}
       >
-        <Input onBlur={onTitleChange} bordered={false} size="large" placeholder="Title" />
+        <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
       </Form.Item>
       <Form.Item
         name="subTitle"

@@ -86,9 +86,14 @@ const StoriesRoutes = [
   },
   {
     title: "Posts",
-    path: "/[portal_id]/stories/posts/[post_status]",
-    as: "/[portal_id]/stories/posts/live",
+    path: "/posts",
+    as: "/posts",
   },
+  // {
+  //   title: "Posts",
+  //   path: "/[portal_id]/stories/posts/[post_status]",
+  //   as: "/[portal_id]/stories/posts/live",
+  // },
   {
     title: "Categories",
     path: "/categories",
@@ -104,6 +109,7 @@ const StoriesRoutes = [
   {
     title: "Splitter",
     path: "/[portal_id]/stories/campaign",
+    as: "/[portal_id]/stories/campaign",
   },
 ];
 

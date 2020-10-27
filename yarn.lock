@@ -1317,11 +1317,19 @@
   integrity sha512-ch/16u3OVy/aIXJROwqXZjGw/tFMyG7qy2IGDA2RFjvQMtPyJJrklmwX2EcfH4+4spRI2MZKes2soI+0w2/MDQ==
 
 "@tanem/svg-injector@^8.0.35":
+<<<<<<< HEAD
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-8.1.0.tgz#f04c65903c4cded31d6f3c23d3986458307ad827"
   integrity sha512-AqV81eHF4qxXjT5KceY1AP7Fvnd0LmmQsHMFlH2yvzfNj7Y6tJyUY+nNvE5wpLyU28DDX4aWsKgMdmPaRMBBRQ==
   dependencies:
     "@babel/runtime" "^7.12.1"
+=======
+  version "8.0.72"
+  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-8.0.72.tgz#d9ca8a6950492253c7ed4623ff20c59bc4743730"
+  integrity sha512-xBGrX4JyuboQsP1bbTIaEF1w0I8KlpXHIWfIkg2JXCgsKjrdf8QdI/9MGYeepiHbPL5I8em8hZm/kUcLREeopQ==
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+>>>>>>> d50d0109505c509cdf1c3fbe9353e4988eaa6c7e
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
@@ -2465,9 +2473,15 @@ clone@^2.1.1:
   integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
 
 codemirror@^5.48.0:
+<<<<<<< HEAD
   version "5.58.2"
   resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.58.2.tgz#ed54a1796de1498688bea1cdd4e9eeb187565d1b"
   integrity sha512-K/hOh24cCwRutd1Mk3uLtjWzNISOkm4fvXiMO7LucCrqbh6aJDdtqUziim3MZUI6wOY0rvY1SlL1Ork01uMy6w==
+=======
+  version "5.58.1"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.58.1.tgz#ec6bf38ad2a17f74c61bd00cc6dc5a69bd167854"
+  integrity sha512-UGb/ueu20U4xqWk8hZB3xIfV2/SFqnSLYONiM3wTMDqko0bsYrsAkGGhqUzbRkYm89aBKPyHtuNEbVWF9FTFzw==
+>>>>>>> d50d0109505c509cdf1c3fbe9353e4988eaa6c7e
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -5331,11 +5345,14 @@ prosemirror-utils@^0.7.7:
   resolved "https://registry.yarnpkg.com/prosemirror-utils/-/prosemirror-utils-0.7.7.tgz#a9bda2468113d34f3721ba15eaa2fd04b81d7dc8"
   integrity sha512-0cSWive9oCOr4nnTlEQ9scr8g8kj126glAigb6cKLB4sq/eSyumVu8Ogqus6KEoLInBy6WONXJbgm/2xJ8MShw==
 
+<<<<<<< HEAD
 prosemirror-utils@^0.9.6:
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/prosemirror-utils/-/prosemirror-utils-0.9.6.tgz#3d97bd85897e3b535555867dc95a51399116a973"
   integrity sha512-UC+j9hQQ1POYfMc5p7UFxBTptRiGPR7Kkmbl3jVvU8VgQbkI89tR/GK+3QYC8n+VvBZrtAoCrJItNhWSxX3slA==
 
+=======
+>>>>>>> d50d0109505c509cdf1c3fbe9353e4988eaa6c7e
 prosemirror-view@^1.0.0, prosemirror-view@^1.1.0:
   version "1.15.4"
   resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.15.4.tgz#69a6217e3557dd1eb34a6d45caed1c3ee8e05b12"
@@ -5346,9 +5363,15 @@ prosemirror-view@^1.0.0, prosemirror-view@^1.1.0:
     prosemirror-transform "^1.1.0"
 
 prosemirror-view@^1.8.9:
+<<<<<<< HEAD
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.16.1.tgz#375794a253151205394bb1ece07bcc2a647c85da"
   integrity sha512-7iDdRf2PAIgOnstcxqUxzf8IbHGfxygQs5covfxOHLWKyx7SSLRnBIlwVda54Hr6N26F4t5Kj2jfK7uIBcAKAw==
+=======
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.16.0.tgz#024440a8e9acbbb5826572eef58c21c11cd1e454"
+  integrity sha512-iFtStCw2byF0yLc3mm1ezGdFSd6SWM4pnJod+ZaJiU5ju36QdYM4Xwa+qNm/AaI2/MgxpJqi8jsGWOJNkeBQ/Q==
+>>>>>>> d50d0109505c509cdf1c3fbe9353e4988eaa6c7e
   dependencies:
     prosemirror-model "^1.1.0"
     prosemirror-state "^1.0.0"
