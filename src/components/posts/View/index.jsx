@@ -41,15 +41,17 @@ const ViewPosts = (props) => {
   const [tabActive, setTabActive] = useState("1");
   const [dataTable, setDataTable] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
-
   const router = useRouter();
   const { userData } = props;
-
+  const { post_status } = router.query
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticlesDraft(userID, true, 100, 1);
   }, []);
-
+  useEffect(()=>{
+    let selectedName = ListTabs.find(({name})=> name.toLocaleLowerCase() === post_status)
+    setTabActive(selectedName?.key)
+  },[post_status])
   useEffect(() => {
     switch (tabActive) {
       case "1":
@@ -87,12 +89,12 @@ const ViewPosts = (props) => {
       default:
         break;
     }
-  }, [tabActive]);
+  }, [post_status]);
 
   const handleChangeTabs = (tabIndex) => {
-    setTabActive(tabIndex);
+    let selectedName = ListTabs.find(({key})=> key === tabIndex)
+    router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/` + selectedName?.name.toLocaleLowerCase() }, { shallow: true });
   };
-
   const getArticleDetail = (item) => {
     const url =
       tabActive === "1"
@@ -225,6 +227,7 @@ const ViewPosts = (props) => {
             </>
           }
           defaultActiveKey={tabActive}
+          activeKey={tabActive}
           onChange={handleChangeTabs}
         >
           {ListTabs.map((tab) => (
