@@ -20,9 +20,10 @@ const Posts = (props) => {
   const { articlesData } = props;
   const prevProps = usePrevious({ articlesData });
 
+  
   useEffect(() => {
     getDataArticles();
-  }, [props]);
+  }, []);
 
   const getDataArticles = async () => {
     const userData = JSON.parse(localStorage.getItem("userData"));

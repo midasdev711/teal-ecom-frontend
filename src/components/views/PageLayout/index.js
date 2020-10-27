@@ -1,13 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
 import SideMenu from '../SideMenu';
+import SiderBar from '../SiderBar';
 
 const { Content } = Layout;
 const PageLayout = ({ children }) => {
   return (
     <StyledLayout>
-      <SideMenu />
+      {/* <SideMenu /> */}
+      <SiderBar />
       <StyledPageLayout>
         <Content>{children}</Content>
       </StyledPageLayout>
