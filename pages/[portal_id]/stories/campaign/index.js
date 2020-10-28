@@ -39,7 +39,7 @@ import {
 } from "@ant-design/icons";
 import Router from "next/router";
 
-const GRAPH_QL_URL = `http://3.138.138.105:9200/graphql`;
+const GRAPH_QL_URL = `http://52.14.32.114:9200/graphql`;
 
 function Campaign(props) {
   const [visible, toggleModal] = React.useState(false);

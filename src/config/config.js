@@ -1,1 +1,1 @@
-export const SERVER = 'http://3.138.138.105:9200/graphql';
+export const SERVER = 'http://52.14.32.114:9200/graphql';

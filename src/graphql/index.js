@@ -24,7 +24,7 @@ const authLink = setContext((_, { headers }) => {
 export const apolloClient = new ApolloClient({
   // uri: 'https://api.juicypie.com/graphQL',
   // uri: 'https://teal-creative-ecom-backend.now.sh/',
-  uri: "http://3.135.208.27:9200/graphql",
+  uri: "http://52.14.32.114:9200/graphql",
   link: authLink.concat(uploadLink, httpLink),
   cache: new InMemoryCache({
     typePolicies: {
