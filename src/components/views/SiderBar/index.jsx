@@ -12,23 +12,53 @@ import { buildDynamicRoute } from "../../../utils";
 const SiderBar = () => {
   const [channelName, setChannelName] = useState("Ecommerce");
   const [userData, setUserData] = useState("");
+  const [activeTabForCreate, setActiveTabForCreate] = useState('');
+  const [isNewPage, setIsNewPage] = useState(false);
+
+  const router = useRouter();
+  const { pathname } = router;
+  const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
+
   useEffect(() => {
-    setChannelName(localStorage.getItem("channelName") || "Ecommerce");
+    setChannelName(localStorage.getItem("channelName") || "Ecommerce");   
+    console.log('router', router)
   });
 
   useEffect(() => {
     setUserData(JSON.parse(localStorage.getItem("userData")));
+   
   }, []);
 
-  const { pathname } = useRouter();
-  const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
+  useEffect(() => {
+    const pathContainer = pathname.split('/');
+    const newPath = pathname.split('/', 4)[3];
+    // console.log('pathContainer', pathContainer);
+    const isNew = (pathContainer.includes('new') || pathContainer?.includes('[pid]')) ? true : false;
+    setActiveTabForCreate(newPath);
+    setIsNewPage(isNew);
+  }, [router])
+
+  const handleBackButton = () => {
+    router.back();
+  }
+
+  const handleCreate = () => {
+    const url = `${(router.asPath.split('/', 4).join('/'))}/new`
+    router.push(`${router.pathname.split('/', 4).join('/')}/new`, { pathname: `${url}` }, { shallow: true })    
+  }
 
   const MenuList = RoutesName.map((route, index) => {
     const mainDynamicRoute = buildDynamicRoute(route.as, userData);
+    const mainRouteChildren = route.as && route.as.split('/');
+    const newMatch = router.asPath.split('/').slice(2).join('/');
+    const childRoute = route.as?.split('/').slice(2).join('/'); 
+    const isActive = (activeTabForCreate === 'posts' && activeTabForCreate === route.title.toLowerCase()) ? true : (!route.components && newMatch === childRoute) || (isNewPage && mainRouteChildren?.includes(activeTabForCreate) || activeTabForCreate === route.title.toLowerCase()); 
+    // console.log('newMatch', newMatch)
+    // console.log('childRoute', childRoute)
     return (
-      <div key={index}>
+      <div key={`main_${index}`}>
         <Link href={route.path} as={mainDynamicRoute}>
-          <LinkButton active={!route.components && pathname === route.as}>
+          <LinkButton active={isActive}>
             {route.title}
           </LinkButton>
         </Link>
@@ -37,7 +67,6 @@ const SiderBar = () => {
           route.components &&
           route.components.map((res, indexKey) => {
             const dynamicRoute = buildDynamicRoute(res.as, userData);
-
             return (
               <Link key={indexKey} href={res.path} as={dynamicRoute}>
                 <LinkButton
@@ -66,6 +95,7 @@ const SiderBar = () => {
 
         <SubBarStyle>
           <ButtonBack
+            onClick={handleBackButton}
             type="text"
             icon={<img src="/images/back.svg" alt="" />}
           />
@@ -75,7 +105,13 @@ const SiderBar = () => {
             <BlogTitle>My blog name</BlogTitle>
           </MyBlog>
 
-          <ButtonCreate block icon={<PlusOutlined />} type="primary">
+          <ButtonCreate 
+            block 
+            icon={<PlusOutlined />} 
+            type="primary"
+            onClick={handleCreate}
+            disabled={!activeTabForCreate ? true : false}
+          >
             Create
           </ButtonCreate>
 
