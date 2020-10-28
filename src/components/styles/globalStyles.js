@@ -80,6 +80,7 @@ export default createGlobalStyle`
     padding-bottom: 50px;
     padding-left: 0;
     padding-right: 0;
+    padding-top: 0;
     .selected {
       background-color: transparent;
     }
@@ -139,7 +140,7 @@ export default createGlobalStyle`
   .smartblock-container {
     padding-left: 100px;
     padding-right: 100px;
-    padding-top: 150px;
+    padding-top: 0;
     background: white;
     border-radius: 10px;
   }

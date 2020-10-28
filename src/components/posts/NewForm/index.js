@@ -5,6 +5,8 @@ import RemirorEditorNew from "../../atoms/RemirorEditorNew";
 // ui
 import { Form, Input } from "antd";
 
+const { TextArea } = Input;
+
 const NewForm = (props) => {
   const { onChangeEditor, isStory, onTitleChange } = props;
 
@@ -29,20 +31,41 @@ const NewForm = (props) => {
       <TitleInput>
         <Form.Item
           name="title"
-          class="title-input"
+          className="title-input"
           rules={[{ required: true, message: "Title is required!" }]}
         >
-          <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
+          <TextArea
+            bordered={false}
+            onChange={onTitleChange}
+            size="large"
+            placeholder="Title"
+            autoSize={{ maxRows: 4 }}
+            maxLength="200"
+            style={{
+              fontSize: "26px"
+            }}
+          />
+          {/* <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" /> */}
         </Form.Item>
-      </TitleInput>
-      <SubTitleInput>
+      {/* </TitleInput>
+      <SubTitleInput> */}
         <Form.Item
           name="subTitle"
+          className="subtitle-input"
           rules={[{ required: true, message: "Subtitle is required!" }]}
         >
-          <Input bordered={false} placeholder="Add a brief subtitle" />
+          <TextArea
+            bordered={false}
+            placeholder="Add a brief subtitle"
+            autoSize={{ maxRows: 3 }}
+            maxLength="200"
+            style={{
+              fontSize: "18px"
+            }}
+          />
+          {/* <Input bordered={false} placeholder="Add a brief subtitle" /> */}
         </Form.Item>
-      </SubTitleInput>
+      </TitleInput>
       {/* <Form.Item name="featureImage">
         <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item> */}
@@ -57,19 +80,14 @@ const NewForm = (props) => {
 };
 
 const ContentBox = styled.div`
-  padding: 24px 0;
+  padding: 0 0 24px 0;
   width: 100%;
   background: #f6f8f9;
   border-radius: 3px;
   outline: 0.1rem solid transparent;
   position: relative;
-  .ant-input-lg {
-    font-family: Proxima Nova;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 26px;
-    line-height: 26px;
-  }
+  background-color: white;
+  border-radius: 10px;
 `;
 
 const TitleBox = styled.h3`
@@ -80,17 +98,20 @@ const TitleBox = styled.h3`
 `;
 
 const TitleInput = styled.div`
-  position: absolute;
-  top: 100px;
-  left: 100px;
-  width: 100%;
-`;
-
-const SubTitleInput = styled.div`
-  position: absolute;
-  top: 150px;
-  left: 100px;
-  width: 100%;
+  margin: 0 auto;
+  padding-top: 100px;
+  width: calc(100% - 200px);
+  .title-input .ant-input {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 26px;
+  }
+  .subtitle-input .ant-input {
+    font-family: Proxima Nova;
+    font-style: normal;
+  }
 `;
 
 export default NewForm;
