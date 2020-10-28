@@ -34,7 +34,7 @@ const InputPasswordForm = props => {
 			setLoading(false)
 			let userPortalId = JSON.parse(localStorage.getItem("userData"))
 			console.log('userPortalId', userPortalId?.uniqueID)
-			router.push("/[portal_id]/ecom", { pathname: `/${userPortalId?.uniqueID}/ecom` }, { shallow: true });
+			router.push("/[portal_id]", { pathname: `/${userPortalId?.uniqueID}` }, { shallow: true });
 		}
 	}, [props.isLogin]);
 
