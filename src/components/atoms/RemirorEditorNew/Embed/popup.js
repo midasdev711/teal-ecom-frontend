@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { createPortal } from 'react-dom'
-import { CheckIcon } from 'smartblock'
+import CheckIcon from '../Icons/check'
 
 const { useState, useEffect, useRef } = React
 
@@ -71,9 +71,9 @@ export default props => {
                 }
               }}
             >
-              {/* <CheckIcon
+              <CheckIcon
                 style={{ width: '24px', height: '24px', overflow: 'hidden' }}
-              /> */}
+              />
             </button>
           </div>
         </div>

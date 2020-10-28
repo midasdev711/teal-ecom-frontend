@@ -26,19 +26,23 @@ const NewForm = (props) => {
   };
   return (
     <ContentBox>
-      <Form.Item
-        name="title"
-        rules={[{ required: true, message: "Title is required!" }]}
-      >
-        <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
-      </Form.Item>
-      <Form.Item
-        name="subTitle"
-        rules={[{ required: true, message: "Subtitle is required!" }]}
-      >
-        <Input bordered={false} placeholder="Add a brief subtitle" />
-      </Form.Item>
-
+      <TitleInput>
+        <Form.Item
+          name="title"
+          class="title-input"
+          rules={[{ required: true, message: "Title is required!" }]}
+        >
+          <Input onChange={onTitleChange} bordered={false} size="large" placeholder="Title" />
+        </Form.Item>
+      </TitleInput>
+      <SubTitleInput>
+        <Form.Item
+          name="subTitle"
+          rules={[{ required: true, message: "Subtitle is required!" }]}
+        >
+          <Input bordered={false} placeholder="Add a brief subtitle" />
+        </Form.Item>
+      </SubTitleInput>
       {/* <Form.Item name="featureImage">
         <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
       </Form.Item> */}
@@ -58,6 +62,7 @@ const ContentBox = styled.div`
   background: #f6f8f9;
   border-radius: 3px;
   outline: 0.1rem solid transparent;
+  position: relative;
   .ant-input-lg {
     font-family: Proxima Nova;
     font-style: normal;
@@ -72,6 +77,20 @@ const TitleBox = styled.h3`
   font-size: 16px;
   color: #000;
   opacity: 0.9;
+`;
+
+const TitleInput = styled.div`
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 100%;
+`;
+
+const SubTitleInput = styled.div`
+  position: absolute;
+  top: 150px;
+  left: 100px;
+  width: 100%;
 `;
 
 export default NewForm;

@@ -3,7 +3,7 @@ import { EditorView } from 'prosemirror-view';
 import { Plugin } from 'prosemirror-state';
 import { render, unmountComponentAtNode } from 'react-dom';
 import TooltipReact from './tooltip-react';
-import { getScrollTop } from 'smartblock';
+import { getScrollTop } from '../utils';
 
 const { useRef } = React
 const ARROWOFFSET = 50

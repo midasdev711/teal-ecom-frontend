@@ -1,4 +1,5 @@
 import { findChildren } from 'prosemirror-utils';
+import { getParentNodeWithPosFromState } from 'smartblock'
 
 export const getRootNodeWithPosByIndex = (
     state,
@@ -30,4 +31,33 @@ export const getParentNodeIndexFromState = (state) => {
     const resolvedPos = state.doc.resolve($anchor.pos);
     const rowNumber = resolvedPos.path[1];
     return rowNumber;
+}
+
+export const getMarkInSelection = (markName, state) => {
+    const { selection } = state;
+    const { $anchor } = selection;
+    const { nodeAfter } = $anchor;
+    if (nodeAfter) {
+        return nodeAfter.marks.find(mark => {
+            if (mark.type.name === markName) {
+                return true;
+            }
+        })
+    }
+    return null;
+}
+
+export const getScrollTop = () => {
+    return (
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+    );
+}
+
+export const getParentNodeFromState = (state) => {
+    const firstNode = getParentNodeWithPosFromState(state);
+    const { node } = firstNode;
+    return node;
 }

@@ -2,8 +2,9 @@ import * as React from 'react'
 import { toggleMark } from 'prosemirror-commands'
 // import LinkIcon from 'smartblock'
 import { Extension } from 'smartblock'
-import { markActive, getMarkInSelection } from 'smartblock'
+import { markActive } from 'smartblock'
 import tooltip from './tooltip'
+import { getMarkInSelection } from '../utils'
 
 export default class Link extends Extension {
   constructor(props) {
@@ -54,7 +55,7 @@ export default class Link extends Extension {
   }
 
   get icon() {
-    return <img src={'/images/posts/link.svg'} style={{ width: '15px', height: '15px' }} />
+    return <img src={'/images/posts/link.svg'} />
   }
 
   get plugins() {

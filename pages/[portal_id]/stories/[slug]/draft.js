@@ -253,7 +253,7 @@ const NewContent = styled.div`
 
 const ContentPage = styled.div`
   width: 100%;
-  max-width: 850px;
+  max-width: 950px;
   margin: 0 auto;
   padding: 80px 0;
 `;

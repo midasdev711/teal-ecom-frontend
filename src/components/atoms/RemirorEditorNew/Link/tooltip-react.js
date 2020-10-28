@@ -1,11 +1,5 @@
 import * as React from 'react'
-import CheckIcon from 'smartblock'
-
-// type TooltipReactProps = {
-//   url: string;
-//   onClick(url: string): void;
-//   editing: boolean;
-// }
+import CheckIcon from '../Icons/check'
 
 export default (props) => {
   const [url, setUrl] = React.useState('');

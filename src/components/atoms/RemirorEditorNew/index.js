@@ -3,7 +3,6 @@ import 'smartblock/css/smartblock.css';
 import Base from './base';
 import {
     SmartBlock,
-    // Paragraph
 } from 'smartblock';
 import Strong from './strong';
 import Emphasis from './emphasis';

@@ -78,8 +78,18 @@ export default createGlobalStyle`
   .ProseMirror {
     font-family: Proxima Nova;
     padding-bottom: 50px;
+    padding-left: 0;
+    padding-right: 0;
     .selected {
       background-color: transparent;
+    }
+    p {
+      font-size: 18px;
+      color: #313649;
+    }
+    h1 {
+      font-size: 26px;
+      color: #404950;
     }
   }
   .smartblock-btn {
@@ -106,7 +116,7 @@ export default createGlobalStyle`
     align-items: center;
   }
   .smartblock-inline-menu-inner {
-    width: 205px;
+    width: 135px;
     height: 45px;
     display: flex;
     justify-content: space-around;
@@ -115,18 +125,23 @@ export default createGlobalStyle`
   .smartblock-menu-top {
     display: flex;
     .smartblock-btn {
-      background-color: transparent;
+      // background-color: #f0f0f0;
+      // border-radius: 50%;
     }
   }
   .smartblock-menu:before {
-    display: none;
+    // display: none;
   }
   .smartblock-menu {
-    background-color: transparent;
-    box-shadow: none;
+    // background-color: transparent;
+    // box-shadow: none;
   }
   .smartblock-container {
-    width: 750px;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 150px;
+    background: white;
+    border-radius: 10px;
   }
   .ant-tabs{
     .ant-tabs-nav{

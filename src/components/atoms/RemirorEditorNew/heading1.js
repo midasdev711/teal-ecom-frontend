@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { setBlockType, toggleMark } from 'prosemirror-commands';
+import { setBlockType } from 'prosemirror-commands';
 import * as uuid from 'uuid/v4'
-import { Extension } from 'smartblock';
-import { markActive, blockActive } from 'smartblock';
-import { Button } from 'smartblock';
-import { getParentNodeWithPosFromState } from './embed/plugin';
+import { Extension, blockActive } from 'smartblock';
 
 export default class Heading1 extends Extension {
   constructor(props) {
@@ -75,48 +72,4 @@ export default class Heading1 extends Extension {
   onClick(state, dispatch) {
     setBlockType(state.schema.nodes.heading1)(state, dispatch);
   }
-
-//   customMenu(state, dispatch) {
-//     const firstNode = getParentNodeWithPosFromState(state);
-//     const { node } = firstNode;
-
-//     return (
-//       <>
-//         <Button
-//           active={node && node.attrs.align === 'left'}
-//           type="button"
-//           onClick={() => {
-//             setBlockType(state.schema.nodes.heading1, {
-//               align: 'left'
-//             })(state, dispatch)
-//           }}
-//         >
-//           <AlignLeftIcon style={{ width: '24px', height: '24px' }} />
-//         </Button>
-//         <Button
-//           type="button"
-//           active={node && node.attrs.align === 'center'}
-//           onClick={() => {
-//             setBlockType(state.schema.nodes.heading1, {
-//               align: 'center'
-//             })(state, dispatch);
-//           }}
-//         >
-//           <AlignCenterIcon style={{ width: '24px', height: '24px' }} />
-//         </Button>
-//         <Button
-//           type="button"
-//           active={node && node.attrs.align === 'right'}
-//           onClick={() => {
-//             setBlockType(state.schema.nodes.heading1, {
-//               align: 'right'
-//             })(state, dispatch);
-//           }}
-//         >
-//           <AlignRightIcon style={{ width: '24px', height: '24px' }} />
-//         </Button>
-//       </>
-//     )
-//   }
-
 }
