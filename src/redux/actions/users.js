@@ -1,5 +1,5 @@
 import { apolloClient } from '../../graphql';
-import { LOGIN_USER_QUERY, CREATE_NEW_USER, GET_USER_ID_QUERY } from '../../graphql/users.query';
+import { LOGIN_USER_QUERY, CREATE_NEW_USER, GET_USER_ID_QUERY, INVITE_USER_MUTATION } from '../../graphql/users.query';
 
 import {
 	SET_USER_EMAIL,
@@ -9,6 +9,10 @@ import {
 	SIGNUP_FAILED,
 	GET_USER_WITH_ID_FAILED,
 	GET_USER_WITH_ID_SUCCESS,
+	SEND_USER_INVITATION_ERROR,
+	SEND_USER_INVITATION_START,
+	SEND_USER_INVITATION_SUCCESS,
+	ClEAR_STATUS
 } from './actionTypes';
 
 export const getUserWithID = userId => {
@@ -79,8 +83,8 @@ export const login = (email, password) => {
 	};
 };
 
-export const signup = (email, password, name , mobileNo) => {
-	console.log(email, password, name , mobileNo);
+export const signup = (email, password, name, mobileNo) => {
+	console.log(email, password, name, mobileNo);
 	return dispatch => {
 		return apolloClient
 			.mutate({
@@ -108,10 +112,47 @@ export const signup = (email, password, name , mobileNo) => {
 			});
 	};
 };
+export const userInvitation = (email, merchantId) => {
+	return dispatch => {
+		dispatch({
+			type: SEND_USER_INVITATION_START,
+		});
+		return apolloClient
+			.mutate({
+				mutation: INVITE_USER_MUTATION,
+				variables: {
+					merchantId,
+					email,
+				},
+			})
+			.then(res => {
+				dispatch({
+					type: SEND_USER_INVITATION_SUCCESS,
+					data: res.data,
+				});
+			})
+			.catch(err => {
+				console.log(err.message);
+				dispatch({
+					type: SEND_USER_INVITATION_ERROR,
+					errorMsg: err.message,
+				});
+			});
+	};
+};
+export const clearStatus = userId => {
+	return dispatch => {
+		dispatch({
+			type: ClEAR_STATUS,
+		});
+	};
+};
 
 export default {
 	setUserEmail,
 	login,
 	signup,
 	getUserWithID,
+	userInvitation,
+	clearStatus,
 };

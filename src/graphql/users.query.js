@@ -134,3 +134,18 @@ export const CREATE_NEW_USER = gql`
 		}
 	}
 `;
+export const INVITE_USER_MUTATION = gql`
+	mutation sendInvite(
+		$merchantId:Int
+		$email: String) {
+			sendUserInvite (invite:{
+				merchantId: $merchantId
+				email: $email
+			}
+		) {
+			message
+			email
+		}
+	}
+`;
+

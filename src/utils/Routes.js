@@ -96,15 +96,18 @@ const StoriesRoutes = [
   },
   {
     title: "Categories",
-    path: "/categories",
+    path: "/[portal_id]/stories/categories",
+    as: "/[portal_id]/stories/categories",
   },
   {
     title: "Authors",
-    path: "/authors",
+    path: "/[portal_id]/stories/authors",
+    as: "/[portal_id]/stories/authors",
   },
   {
     title: "Insights",
-    path: "/insights",
+    path: "/[portal_id]/stories/insights",
+    as: "/[portal_id]/stories/insights",
   },
   {
     title: "Splitter",
