@@ -32,7 +32,7 @@ const EditPost = (props) => {
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
   const [saveFlag, setSaveFlag] = useState(false);
   const [count, setCount] = useState([]);
-  
+  const [postData, setPostData] = useState({});
   const { updateArticleDetail, saveState, articleDetail } = props;
   const prevProps = usePrevious({ updateArticleDetail });
   let userData = getUserData()
@@ -68,7 +68,7 @@ const EditPost = (props) => {
       }
     }
   }
-  }, [articleDetail, editorHtml, form])
+  }, [articleDetail, editorHtml, form , postData])
 
   useEffect(() => {
     if (articleDetail) {
@@ -118,13 +118,48 @@ const EditPost = (props) => {
       return;
     }
     const { title, subTitle } = values;
-    let _variables = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      articleId: Number(articleDetail.ID),
-      featureImage: imageData ? imageData : "",
-    };
+    // let _variables = {
+    //   title: title,
+    //   subTitle: subTitle,
+    //   description: editorHtml,
+    //   articleId: Number(articleDetail.ID),
+    //   featureImage: imageData ? imageData : "",
+    // };
+    let _obj
+    if(postData?.featureImage !== ""){
+      _obj = {
+       title: title,
+       subTitle: subTitle,
+       description: editorHtml,
+       articleId: Number(articleDetail.ID),
+       featureImage: postData?.featureImage || "",
+       tags:postData?.tags ? postData?.tags : [],
+       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+       article_SEO:[{
+           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+           keyPhrases: postData?.keyPhrases || "" 
+       }],
+       internalArticle:postData?.internalArticle || false
+     };
+   }else{
+      _obj = {
+       title: title,
+       subTitle: subTitle,
+       description: editorHtml,
+       articleId: Number(articleDetail.ID),
+       tags:postData?.tags ? postData?.tags : [],
+       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+       article_SEO:[{
+           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+           keyPhrases: postData?.keyPhrases || "" 
+       }],
+       internalArticle:postData?.internalArticle || false
+     };
+   }
     setHandlePageRefresh(true);
 
     await props.updateArticle(_variables);
@@ -145,13 +180,48 @@ const EditPost = (props) => {
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
-    const _obj = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      articleId: Number(articleDetail.ID),
-      featureImage: imageData ? imageData : "",
-    };
+    // const _obj = {
+    //   title: title,
+    //   subTitle: subTitle,
+    //   description: editorHtml,
+    //   articleId: Number(articleDetail.ID),
+    //   featureImage: imageData ? imageData : "",
+    // };
+    let _obj
+    if(postData?.featureImage !== ""){
+      _obj = {
+       title: title,
+       subTitle: subTitle,
+       description: editorHtml,
+       articleId: Number(articleDetail.ID),
+       featureImage: postData?.featureImage || "",
+       tags:postData?.tags ? postData?.tags : [],
+       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+       article_SEO:[{
+           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+           keyPhrases: postData?.keyPhrases || "" 
+       }],
+       internalArticle:postData?.internalArticle || false
+     };
+   }else{
+      _obj = {
+       title: title,
+       subTitle: subTitle,
+       description: editorHtml,
+       articleId: Number(articleDetail.ID),
+       tags:postData?.tags ? postData?.tags : [],
+       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+       article_SEO:[{
+           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+           keyPhrases: postData?.keyPhrases || "" 
+       }],
+       internalArticle:postData?.internalArticle || false
+     };
+   }
     await props.updateArticle(_obj);
   };
 
@@ -191,7 +261,9 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
- 
+  const handlePostData = (value) =>{
+    setPostData({...value})
+  }
   return (
     <NewPageLayout>
       <Form form={form} layout="vertical" onChange={()=>handleFormData()}>
@@ -199,10 +271,15 @@ const EditPost = (props) => {
           {newActions()}
           <ContentPage>
             <NewForm
+              flag={true}
               onChangeEditor={onChangeEditor}
+              postInformation={(value)=>handlePostData(value)}
               setImage={setImage}
               isStory={isStory}
               description={articleDetail && articleDetail.description || ""}
+              postInfo={
+                updateArticleDetail === null ? (articleDetail) : (updateArticleDetail)
+              }
             />
           </ContentPage>
         </NewContent>

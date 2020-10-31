@@ -24,7 +24,7 @@ const SiderBar = () => {
 
   useEffect(() => {
     setChannelName(localStorage.getItem("channelName") || "Ecommerce");
-    console.log('router', router)
+   // console.log('router', router)
   });
 
   useEffect(() => {

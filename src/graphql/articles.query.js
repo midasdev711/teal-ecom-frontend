@@ -14,6 +14,13 @@ export const GET_ARTICLES_QUERY = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       isPublish
       ampSlug
       featureImage
@@ -22,6 +29,7 @@ export const GET_ARTICLES_QUERY = gql`
       viewCount
       tags
       status
+      internalArticle
       totalClapCount
       totalArticleCount
       acceptDonation
@@ -41,8 +49,12 @@ export const CREATE_ARTICLE_MUTATION = gql`
     $subTitle: String
     $description: String
     $authorID: Int
-    $featureImage: String
+    $featureImage: Upload
     $categories: [ArticleCategoryInput]
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean
   ) {
     upsertArticle(
       article: {
@@ -52,6 +64,10 @@ export const CREATE_ARTICLE_MUTATION = gql`
         authorID: $authorID
         featureImage: $featureImage
         categories: $categories
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
       }
     ) {
       title
@@ -67,6 +83,15 @@ export const CREATE_ARTICLE_MUTATION = gql`
         avatar
         ID
         userName
+      }
+      tags
+      internalArticle
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
       }
       isPublish
       ampSlug
@@ -99,9 +124,13 @@ export const UPDATE_ARTICLE_MUTATION = gql`
     $title: String
     $subTitle: String
     $description: String
-    $featureImage: String
+    $featureImage: Upload
     $isDraft: Boolean
     $isPublish: Boolean
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean
   ) {
     upsertArticle(
       article: {
@@ -112,6 +141,10 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         featureImage: $featureImage
         isDraft: $isDraft
         isPublish: $isPublish
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
       }
     ) {
       title
@@ -119,7 +152,16 @@ export const UPDATE_ARTICLE_MUTATION = gql`
       titleSlug
       description
       slug
+      tags
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       sequence
+      internalArticle
       urls
       createdDate
       author {
@@ -200,6 +242,14 @@ export const GET_DETAIL_ARTICLE_QUERY = gql`
       readMinutes
       viewCount
       tags
+      internalArticle
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       status
       totalClapCount
       totalArticleCount
@@ -222,6 +272,11 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
     $description: String
     $authorID: Int
     $isDraft: Boolean
+    $featureImage: Upload
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean
   ) {
     upsertArticle(
       article: {
@@ -230,6 +285,11 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
         description: $description
         authorID: $authorID
         isDraft: $isDraft
+        featureImage: $featureImage
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
       }
     ) {
       title
@@ -243,6 +303,14 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
+      internalArticle
       isPublish
       ampSlug
       featureImage
@@ -279,7 +347,15 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       isPublish
+      internalArticle
       ampSlug
       featureImage
       thumbnail
