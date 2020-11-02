@@ -161,7 +161,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         keyPhrases
       }
       sequence
-      internalArticle
+      internalArticle 
       urls
       createdDate
       author {

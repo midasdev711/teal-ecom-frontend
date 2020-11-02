@@ -13,13 +13,14 @@ const { Option } = Select;
 
 const postData = {
   tags: [],
+  keyPhrasesTags: [],
   SEOTitle: "",
   SEODescription: "",
   SEOUrl: "",
   metaRobots: "",
   featureImage: "",
-  keyPhrases:"",
-  internalArticle:false
+  keyPhrases: [],
+  internalArticle: false
 }
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -39,10 +40,11 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 const NewForm = (props) => {
-  const { onChangeEditor, isStory, onTitleChange, postInformation , postInfo , flag } = props;
+  const { onChangeEditor, isStory, onTitleChange, postInformation, postInfo, flag } = props;
   const [postDetails, setPostDetails] = useState({ ...postData })
   const [inputVisible, setInputVisible] = useState(false);
   const [tags, setTags] = useState([]);
+  const [keyPhrasesTags, setKeyPhrasesTags] = useState(["1","sdf","fgg"]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState("");
   const [imageUrl, SetImageUrl] = useState("");
@@ -53,8 +55,8 @@ const NewForm = (props) => {
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-  const onChange = (content) => {
-    onChangeEditor(content);
+  const onChange = (content, json) => {
+    onChangeEditor(content, json);
   };
   const onChangeImage = (e) => {
     if (e.target.files.length > 0) {
@@ -63,27 +65,36 @@ const NewForm = (props) => {
       });
     }
   };
-  useEffect(()=>{
-    let cloneData = {...postDetails}
-      if(postInfo !== null){
-         cloneData.SEOTitle = postInfo?.article_SEO[0]?.metaTitle
-         cloneData.SEODescription= postInfo?.article_SEO[0]?.metaDescription
-         cloneData.SEOUrl = postInfo?.article_SEO[0]?.conicalUrl
-         cloneData.keyPhrases = postInfo?.article_SEO[0]?.keyPhrases
-         cloneData.metaRobots = postInfo?.metaRobots
-         cloneData.tags = postInfo?.tags || []
-         cloneData.internalArticle = postInfo?.internalArticle || false
-         setPostDetails(cloneData)
-         setTags(postInfo?.tags || [])
-         setCheck(postInfo?.internalArticle || false)
-      }
-  },[postInfo])
+
+  useEffect(() => {
+    let cloneData = { ...postDetails }
+    if (postInfo !== null) {
+      const keyParas = (postInfo?.article_SEO[0]?.keyPhrases || [])
+      cloneData.SEOTitle = postInfo?.article_SEO[0]?.metaTitle
+      cloneData.SEODescription = postInfo?.article_SEO[0]?.metaDescription
+      cloneData.SEOUrl = postInfo?.article_SEO[0]?.conicalUrl
+      // cloneData.keyPhrasesTags = (postInfo?.article_SEO[0]?.keyPhrases || []);
+      cloneData.metaRobots = postInfo?.metaRobots
+      cloneData.tags = postInfo?.tags || []
+      cloneData.internalArticle = postInfo?.internalArticle || false
+      setPostDetails(cloneData)
+      setTags(postInfo?.tags || [])
+      setKeyPhrasesTags(keyParas)
+      setCheck(postInfo?.internalArticle || false)
+    }
+  }, [postInfo])
 
   useEffect(() => {
     let cloneData = { ...postDetails }
     cloneData.tags = tags
     setPostDetails(cloneData)
   }, [tags])
+
+  useEffect(() => {
+    let cloneData = { ...postDetails }
+    cloneData.keyPhrasesTags = keyPhrasesTags
+    setPostDetails(cloneData)
+  }, [keyPhrasesTags])
 
   useEffect(() => {
     postInformation(postDetails)
@@ -118,9 +129,29 @@ const NewForm = (props) => {
     setInputValue("");
   };
 
-  const handleClose = (removedTag) => {
-    const removeTags = tags.filter((tag) => tag !== removedTag);
-    setTags(removeTags);
+  const handleInputKeyPhrases = () => {
+    let keyTags = keyPhrasesTags;
+    let val = (postDetails && postDetails.keyPhrases) || ""
+    if(val.length > 0){
+      if (val && keyTags.indexOf(val) === -1) {
+        keyTags = [...keyTags, val];
+      }
+      setKeyPhrasesTags(keyTags);
+      setPostDetails(postDetails => ({
+        ...postDetails,
+        keyPhrases: ""
+      }));
+    }
+  }
+
+  const handleClose = (removedTag, type) => {
+    if (type === "tag") {
+      const removeTags = tags.filter((tag) => tag !== removedTag);
+      setTags(removeTags);
+    } else if (type === "keyPhrases") {
+      const removeKeyPhrasesTags = keyPhrasesTags.filter((tag) => tag !== removedTag);
+      setKeyPhrasesTags(removeKeyPhrasesTags);
+    }
   };
 
   const forMap = (tag) => {
@@ -129,7 +160,7 @@ const NewForm = (props) => {
         closable
         onClose={(e) => {
           e.preventDefault();
-          handleClose(tag);
+          handleClose(tag, "tag");
         }}
       >
         {tag}
@@ -142,7 +173,28 @@ const NewForm = (props) => {
     );
   };
 
-   const tagChild = tags.map(forMap);
+  const tagChild = tags.map(forMap);
+
+  const phrasesTagsMap = (tag) => {
+    const tagElem = (
+      <TagContent
+        closable
+        onClose={(e) => {
+          e.preventDefault();
+          handleClose(tag, "keyPhrases");
+        }}
+      >
+        {tag}
+      </TagContent>
+    );
+    return (
+      <span key={tag} style={{ display: "inline-block" }}>
+        {tagElem}
+      </span>
+    );
+  };
+
+  const tagPhrasesTagsChild = keyPhrasesTags.map(phrasesTagsMap);
 
   const handleChangeImage = info => {
     let cloneData = { ...postDetails }
@@ -166,15 +218,16 @@ const NewForm = (props) => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-const handleCheckBox = (event) =>{
-  let cloneData = { ...postDetails }
+  const handleCheckBox = (event) => {
+    let cloneData = { ...postDetails }
     cloneData.internalArticle = event.target.checked
     setPostDetails(cloneData)
     setCheck(event.target.checked)
-}
+  }
   if (postInfo === null || postInfo === undefined && flag !== true) {
     return null;
-}
+  }
+
   return (
     <ContentBox>
       <Container>
@@ -201,9 +254,9 @@ const handleCheckBox = (event) =>{
               beforeUpload={beforeUpload}
               onChange={handleChangeImage}
             >
-              {imageUrl || postInfo?.featureImage  ? <img src={postInfo?.featureImage !== "" && postInfo?.featureImage !== undefined ? (postInfo?.featureImage) : (imageUrl) } alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+              {imageUrl || postInfo?.featureImage ? <img src={postInfo?.featureImage !== "" && postInfo?.featureImage !== undefined ? (postInfo?.featureImage) : (imageUrl)} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
             </Upload>
-           
+
             {/* <Form.Item name="featureImage">
                   <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
                </Form.Item> */}
@@ -218,9 +271,9 @@ const handleCheckBox = (event) =>{
             <Form.Item
               label="SEO Title"
               name="SEOTitle"
-               
+
             >
-              <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO[0]?.metaTitle}   name="SEOTitle" onChange={(event) => handleChange(event)} />
+              <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO[0]?.metaTitle} name="SEOTitle" onChange={(event) => handleChange(event)} />
             </Form.Item>
             <Form.Item
               label="SEO Description"
@@ -232,13 +285,31 @@ const handleCheckBox = (event) =>{
               label="SEO Url"
               name="SEOUrl"
             >
-              <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO[0]?.conicalUrl}  name="SEOUrl" onChange={(event) => handleChange(event)} />
+              <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO[0]?.conicalUrl} name="SEOUrl" onChange={(event) => handleChange(event)} />
             </Form.Item>
-            <Form.Item
-              label="SEO KeyPhrases"
-              name="keyPhrases"
-            >
-              <Input placeholder="SEO keyPhrases" defaultValue={postInfo?.article_SEO[0]?.keyPhrases} name="keyPhrases" onChange={(event) => handleChange(event)} />
+            <Form.Item label="SEO KeyPhrases" name="keyPhrases">
+              <Input
+                placeholder="Tag one, Tag two, Tag three"
+                defaultValue={postInfo?.article_SEO[0]?.keyPhrases}
+                value={postDetails.keyPhrases}
+                name="keyPhrases"
+                onBlur={handleInputKeyPhrases}
+                onPressEnter={handleInputKeyPhrases}
+                onChange={(event) => handleChange(event)} />
+              <TweenOneGroup
+                className="tag-content"
+                enter={{
+                  scale: 0.8,
+                  opacity: 0,
+                  type: "from",
+                  duration: 100,
+                  with: 10,
+                  onComplete: (e) => { e.target.style = "" },
+                }}
+                leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                appear={false}>
+                {tagPhrasesTagsChild}
+              </TweenOneGroup>
             </Form.Item>
             <Form.Item
               label="Tag"
@@ -270,7 +341,6 @@ const handleCheckBox = (event) =>{
               >
                 {tagChild}
               </TweenOneGroup>
-
             </Form.Item>
             <Form.Item
               label="Meta Robots"
@@ -283,7 +353,7 @@ const handleCheckBox = (event) =>{
                 <Option value="noindex,nofollow">NoIndex,NoFollow</Option>
               </Select>
             </Form.Item>
-            <Checkbox checked={check} onChange={(event)=>handleCheckBox(event)}>Internal Article ?</Checkbox>
+            <Checkbox checked={check} onChange={(event) => handleCheckBox(event)}>Internal Article ?</Checkbox>
           </Col>
         </Row>
       </Container>

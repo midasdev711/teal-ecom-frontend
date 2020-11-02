@@ -54,21 +54,21 @@ const EditPost = (props) => {
     }
   }, []);
   useEffect(() => {
-    if(saveFlag){
-    let timer = null;
-    if (!timer) {
-      timer = setInterval(async () => {
-        await handleSaveOnInterval();
-      }, 5000);
-    }
+    if (saveFlag) {
+      let timer = null;
+      if (!timer) {
+        timer = setInterval(async () => {
+          await handleSaveOnInterval();
+        }, 5000);
+      }
 
-    return () => {
-      if (timer) {
-        clearInterval(timer);
+      return () => {
+        if (timer) {
+          clearInterval(timer);
+        }
       }
     }
-  }
-  }, [articleDetail, editorHtml, form , postData])
+  }, [articleDetail, editorHtml, form, postData])
 
   useEffect(() => {
     if (articleDetail) {
@@ -102,11 +102,11 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
-  useEffect(()=>{
-    saveFlag ? (setSaveFlag(false)) : null
-  },[])
   useEffect(() => {
-    if(count.length > 0){
+    saveFlag ? (setSaveFlag(false)) : null
+  }, [])
+  useEffect(() => {
+    if (count.length > 0) {
       !saveFlag ? setSaveFlag(true) : null
     }
   }, [articleDetail, editorHtml, form])
@@ -126,40 +126,40 @@ const EditPost = (props) => {
     //   featureImage: imageData ? imageData : "",
     // };
     let _obj
-    if(postData?.featureImage !== ""){
+    if (postData?.featureImage !== "") {
       _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       featureImage: postData?.featureImage || "",
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }else{
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        articleId: Number(articleDetail.ID),
+        featureImage: postData?.featureImage || "",
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || ""
+        }],
+        internalArticle: postData?.internalArticle || false
+      };
+    } else {
       _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        articleId: Number(articleDetail.ID),
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || ""
+        }],
+        internalArticle: postData?.internalArticle || false
+      };
+    }
     setHandlePageRefresh(true);
 
     await props.updateArticle(_variables);
@@ -188,51 +188,51 @@ const EditPost = (props) => {
     //   featureImage: imageData ? imageData : "",
     // };
     let _obj
-    if(postData?.featureImage !== ""){
+    if (postData?.featureImage !== "") {
       _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       featureImage: postData?.featureImage || "",
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }else{
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        articleId: Number(articleDetail.ID),
+        featureImage: postData?.featureImage || "",
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || ""
+        }],
+        internalArticle: postData?.internalArticle || false
+      };
+    } else {
       _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        articleId: Number(articleDetail.ID),
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || ""
+        }],
+        internalArticle: postData?.internalArticle || false
+      };
+    }
     await props.updateArticle(_obj);
   };
 
   const onChangeEditor = (value) => {
     let data = count
-    data.push({name:"test"})
+    data.push({ name: "test" })
     setCount(data)
     setContentEditorHtml(value);
     setIsStory(false);
   };
-  const handleFormData = () =>{
+  const handleFormData = () => {
     onChangeEditor()
   }
   const newActions = () => {
@@ -261,19 +261,19 @@ const EditPost = (props) => {
       </ActionTopLayout>
     );
   };
-  const handlePostData = (value) =>{
-    setPostData({...value})
+  const handlePostData = (value) => {
+    setPostData({ ...value })
   }
   return (
     <NewPageLayout>
-      <Form form={form} layout="vertical" onChange={()=>handleFormData()}>
+      <Form form={form} layout="vertical" onChange={() => handleFormData()}>
         <NewContent>
           {newActions()}
           <ContentPage>
             <NewForm
               flag={true}
               onChangeEditor={onChangeEditor}
-              postInformation={(value)=>handlePostData(value)}
+              postInformation={(value) => handlePostData(value)}
               setImage={setImage}
               isStory={isStory}
               description={articleDetail && articleDetail.description || ""}
