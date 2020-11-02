@@ -84,27 +84,30 @@ const StoriesRoutes = [
     path: "/[portal_id]/stories",
     as: "/[portal_id]/stories",
   },
-  {
-    title: "Posts",
-    path: "/posts",
-    as: "/posts",
-  },
   // {
   //   title: "Posts",
-  //   path: "/[portal_id]/stories/posts/[post_status]",
-  //   as: "/[portal_id]/stories/posts/live",
+  //   path: "/posts",
+  //   as: "/posts",
   // },
   {
+    title: "Posts",
+    path: "/[portal_id]/stories/posts/[post_status]",
+    as: "/[portal_id]/stories/posts/drafts",
+  },
+  {
     title: "Categories",
-    path: "/categories",
+    path: "/[portal_id]/stories/categories",
+    as: "/[portal_id]/stories/categories",
   },
   {
     title: "Authors",
-    path: "/authors",
+    path: "/[portal_id]/stories/authors",
+    as: "/[portal_id]/stories/authors",
   },
   {
     title: "Insights",
-    path: "/insights",
+    path: "/[portal_id]/stories/insights",
+    as: "/[portal_id]/stories/insights",
   },
   {
     title: "Splitter",

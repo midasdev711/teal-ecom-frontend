@@ -27,9 +27,8 @@ const NewPost = (props) => {
   const [isStory, setIsStory] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [saveValues, setSaveValues] = useState("saved");
+  const [postData, setPostData] = useState({});
   let userData = getUserData()
-
-
   const router = useRouter();
   const { articleDetail } = props;
 
@@ -76,17 +75,52 @@ const NewPost = (props) => {
   const createDraft = async () => {
     setSaveValues("saving...");
     const authorID = Number(localStorage.getItem("userID"));
-
     const { title, subTitle, imageData } = form.getFieldsValue();
-    const _obj = {
-      title: title || "",
-      subTitle: subTitle || "",
+    // const _obj = {
+    //   title: title || "",
+    //   subTitle: subTitle || "",
+    //   description: editorHtml,
+    //   authorID: authorID,
+    //   featureImage: imageData ? imageData : "",
+    //   isDraft: true,
+    // };
+    let _obj
+    if(postData?.featureImage !== ""){
+    _obj = {
+      title: title,
+      subTitle: subTitle,
       description: editorHtml,
       authorID: authorID,
-      featureImage: imageData ? imageData : "",
+      featureImage: postData?.featureImage || "",
+      tags:postData?.tags ? postData?.tags : [],
+      metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO:[{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+          metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || "" 
+      }],
       isDraft: true,
+      internalArticle:postData?.internalArticle
     };
-
+  }else{
+    _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      authorID: authorID,
+      tags:postData?.tags ? postData?.tags : [],
+      metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO:[{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
+          metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrases || "" 
+      }],
+      isDraft: true,
+      internalArticle:postData?.internalArticle
+    };
+  }
     await props.createDraftArticle(_obj);
     // await props.getListArticlesDraft(authorID, true, 100, 1);
   };
@@ -131,12 +165,9 @@ const NewPost = (props) => {
         message.error("Created new post failed!");
       });
   };
-
-  // const newActions = () => {
-  //   return (
-  //     );
-  // };
-
+  const handlePostData = (value) =>{
+    setPostData({...value})
+  }
   return (
     <NewPageLayout>
       <Form onFinish={onFinish} form={form} layout="vertical">
@@ -166,6 +197,7 @@ const NewPost = (props) => {
           <ContentPage>
             <NewForm
               flag={true}
+              postInformation={(value)=>handlePostData(value)}
               onTitleChange={onChangeTitle}
               onChangeEditor={onChangeEditor}
               setImage={setImage}

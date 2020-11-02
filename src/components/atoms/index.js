@@ -13,6 +13,8 @@ import RemirorEditor from "./RemirorEditor";
 import InputText from "./InputText";
 import TLogo from "./TLogo";
 import TEStatistic from "./TEStatistic";
+import Banner from "./Banner";
+import HomeLinkButton from './HomeLinkButton';
 
 export {
   TELogo,
@@ -30,4 +32,6 @@ export {
   InputText,
   TLogo,
   TEStatistic,
+  Banner,
+  HomeLinkButton
 };

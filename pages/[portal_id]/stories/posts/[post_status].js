@@ -42,7 +42,7 @@ const Posts = (props) => {
     }, [router.query]);
 
     useEffect(() => {
-        console.log("selectedStatus", selectedStatus);
+      //  console.log("selectedStatus", selectedStatus);
         getDataArticles();
     }, [selectedStatus])
 
