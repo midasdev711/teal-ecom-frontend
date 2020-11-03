@@ -44,7 +44,7 @@ const NewForm = (props) => {
   const [postDetails, setPostDetails] = useState({ ...postData })
   const [inputVisible, setInputVisible] = useState(false);
   const [tags, setTags] = useState([]);
-  const [keyPhrasesTags, setKeyPhrasesTags] = useState(["1","sdf","fgg"]);
+  const [keyPhrasesTags, setKeyPhrasesTags] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState("");
   const [imageUrl, SetImageUrl] = useState("");
@@ -55,8 +55,8 @@ const NewForm = (props) => {
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-  const onChange = (content, json) => {
-    onChangeEditor(content, json);
+  const onChange = (content , jsonValue) => {
+    onChangeEditor(content , jsonValue);
   };
   const onChangeImage = (e) => {
     if (e.target.files.length > 0) {
@@ -68,8 +68,8 @@ const NewForm = (props) => {
 
   useEffect(() => {
     let cloneData = { ...postDetails }
-    if (postInfo !== null) {
-      const keyParas = (postInfo?.article_SEO[0]?.keyPhrases || [])
+    if (postInfo !== null && postInfo !== undefined && Object.values(postInfo).length > 0) {
+      const keyParas = ( postInfo?.article_SEO[0]?.keyPhrases || [])
       cloneData.SEOTitle = postInfo?.article_SEO[0]?.metaTitle
       cloneData.SEODescription = postInfo?.article_SEO[0]?.metaDescription
       cloneData.SEOUrl = postInfo?.article_SEO[0]?.conicalUrl
@@ -243,7 +243,7 @@ const NewForm = (props) => {
               name="subTitle"
               rules={[{ required: true, message: "Subtitle is required!" }]}
             >
-              <Input bordered={false} placeholder="Add a brief subtitle" />
+              <Input bordered={false} onChange={onTitleChange} placeholder="Add a brief subtitle" />
             </Form.Item>
             <H4>Feature Image</H4>
             <Upload
@@ -254,7 +254,7 @@ const NewForm = (props) => {
               beforeUpload={beforeUpload}
               onChange={handleChangeImage}
             >
-              {imageUrl || postInfo?.featureImage ? <img src={postInfo?.featureImage !== "" && postInfo?.featureImage !== undefined ? (postInfo?.featureImage) : (imageUrl)} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+              {imageUrl || postInfo?.featureImage ? <img src={postInfo?.featureImage !== "" && postInfo?.featureImage !== undefined && postInfo?.featureImage !== null ? (postInfo?.featureImage) : (imageUrl)} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
             </Upload>
 
             {/* <Form.Item name="featureImage">
@@ -273,25 +273,25 @@ const NewForm = (props) => {
               name="SEOTitle"
 
             >
-              <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO[0]?.metaTitle} name="SEOTitle" onChange={(event) => handleChange(event)} />
+              <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaTitle || ""} name="SEOTitle" onChange={(event) => handleChange(event)} />
             </Form.Item>
             <Form.Item
               label="SEO Description"
               name="SEODescription"
             >
-              <Input placeholder="SEO description" defaultValue={postInfo?.article_SEO[0]?.metaDescription} name="SEODescription" onChange={(event) => handleChange(event)} />
+              <Input placeholder="SEO description" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaDescription || ""} name="SEODescription" onChange={(event) => handleChange(event)} />
             </Form.Item>
             <Form.Item
               label="SEO Url"
               name="SEOUrl"
             >
-              <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO[0]?.conicalUrl} name="SEOUrl" onChange={(event) => handleChange(event)} />
+              <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.conicalUrl || ""} name="SEOUrl" onChange={(event) => handleChange(event)} />
             </Form.Item>
             <Form.Item label="SEO KeyPhrases" name="keyPhrases">
               <Input
                 placeholder="Tag one, Tag two, Tag three"
-                defaultValue={postInfo?.article_SEO[0]?.keyPhrases}
-                value={postDetails.keyPhrases}
+                defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.keyPhrases}
+                value={postDetails.keyPhrases || ""}
                 name="keyPhrases"
                 onBlur={handleInputKeyPhrases}
                 onPressEnter={handleInputKeyPhrases}

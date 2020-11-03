@@ -28,6 +28,7 @@ const usePrevious = (value) => {
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
@@ -40,12 +41,10 @@ const EditPost = (props) => {
     const {
       query: { slug },
     } = Router.router;
-
     await props.getDetailArticle(slug, true);
   };
   const { updateArticleDetail, articleDetail, saveState, saveData } = props;
   const prevProps = usePrevious({ updateArticleDetail });
-
   const onValuesChangePost = async () => {
 
     const { title, subTitle, imageData } = form.getFieldsValue();
@@ -62,6 +61,7 @@ const EditPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         featureImage: postData?.featureImage || "",
         tags: postData?.tags ? postData?.tags : [],
@@ -79,6 +79,7 @@ const EditPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         tags: postData?.tags ? postData?.tags : [],
         metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
@@ -106,7 +107,7 @@ const EditPost = (props) => {
       getDetailArticle();
     }
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { title, subTitle, description, descriptionJson } = articleDetail;
       // let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
@@ -115,6 +116,7 @@ const EditPost = (props) => {
 
       if (description && description.trim().length) {
         setContentEditorHtml(description);
+        setContentEditorJson(descriptionJson);
       }
     }
   }, [articleDetail]);
@@ -158,18 +160,13 @@ const EditPost = (props) => {
         }
       }
     }
-  }, [articleDetail, editorHtml, form, postData])
+  }, [articleDetail, editorHtml, form, postData, count])
   useEffect(() => {
+    onChangeEditor()
   }, [form])
   useEffect(() => {
     saveFlag ? (setSaveFlag(false)) : null
   }, [])
-
-  useEffect(() => {
-    if (count.length > 0) {
-      !saveFlag ? setSaveFlag(true) : null
-    }
-  }, [articleDetail, editorHtml, form])
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -189,14 +186,14 @@ const EditPost = (props) => {
     //   isDraft: false,
     //   isPublish: true,
     // };
-  
+
     let _obj
     if (postData?.featureImage !== "") {
       _obj = {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
-
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         featureImage: postData?.featureImage || "",
         tags: postData?.tags ? postData?.tags : [],
@@ -216,7 +213,7 @@ const EditPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
-
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         tags: postData?.tags ? postData?.tags : [],
         metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
@@ -234,15 +231,23 @@ const EditPost = (props) => {
 
     await props.updateArticle(_obj);
   };
-  const onChangeEditor = (value) => {
-    let data = count
+  const onChangeEditor = (value, jsonValue) => {
+    let data = count.slice()
     data.push({ name: "test" })
     setCount(data)
-    setContentEditorHtml(value);
+    if (value !== undefined) {
+      setContentEditorHtml(value);
+      setContentEditorJson(jsonValue)
+    }
     setIsStory(false);
   };
   const handleFormData = () => {
     onChangeEditor()
+  }
+  if (count.length > 2) {
+    !saveFlag ? setSaveFlag(true) : null
+  } else {
+    saveFlag ? setSaveFlag(false) : null
   }
 
   const newActions = () => {
@@ -263,7 +268,7 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
+          <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
             Publish
           </Button>
         </ActionContent>

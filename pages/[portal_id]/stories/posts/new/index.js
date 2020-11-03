@@ -32,7 +32,6 @@ const NewPost = (props) => {
   let userData = getUserData()
   const router = useRouter();
   const { articleDetail } = props;
-
   useEffect(() => {
     // returned function will be called on component unmount
     return () => {
@@ -43,7 +42,12 @@ const NewPost = (props) => {
       props.clearArticleDetails();
     };
   }, []);
-
+  useEffect(() => {
+    let pathname = router.pathname
+    if (pathname === "/[portal_id]/stories/posts/new") {
+      setPostData({})
+    }
+  }, [])
   useEffect(() => {
     if (creatingDraft) {
       createDraft();
@@ -60,10 +64,9 @@ const NewPost = (props) => {
     }
   }, [articleDetail])
 
-  const onChangeEditor = (value, json) => {
-    debugger
+  const onChangeEditor = (value, jsonValue) => {
     setContentEditorHtml(value);
-    setContentEditorJson(json)
+    setContentEditorJson(jsonValue)
     setIsStory(false);
   }
 
@@ -79,23 +82,13 @@ const NewPost = (props) => {
     setSaveValues("saving...");
     const authorID = Number(localStorage.getItem("userID"));
     const { title, subTitle, imageData } = form.getFieldsValue();
-    // const _obj = {
-    //   title: title || "",
-    //   subTitle: subTitle || "",
-    //   description: editorHtml,
-    //   authorID: authorID,
-    //   featureImage: imageData ? imageData : "",
-    //   isDraft: true,
-    // };
-    debugger
-    // create
     let _obj
     if (postData?.featureImage !== "") {
       _obj = {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
-        // descriptionJson: editorJson,
+        descriptionJson: editorJson,
         authorID: authorID,
         featureImage: postData?.featureImage || "",
         tags: postData?.tags ? postData?.tags : [],
@@ -114,7 +107,7 @@ const NewPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
-        // descriptionJson: editorJson,
+        descriptionJson: editorJson,
         authorID: authorID,
         tags: postData?.tags ? postData?.tags : [],
         metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
@@ -141,19 +134,58 @@ const NewPost = (props) => {
       return;
     }
 
-    let _variables = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      authorID: authorID,
-      featureImage: imageData ? imageData : "",
-      categories: [
-        {
-          ID: 21,
-          name: "Media",
-        },
-      ],
-    };
+    // let _variables = {
+    //   title: title,
+    //   subTitle: subTitle,
+    //   description: editorHtml,
+    //   authorID: authorID,
+    //   featureImage: imageData ? imageData : "",
+    //   categories: [
+    //     {
+    //       ID: 21,
+    //       name: "Media",
+    //     },
+    //   ],
+    // };
+    let _variables
+    if (postData?.featureImage !== "") {
+      _variables = {
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        // descriptionJson: editorJson,
+        authorID: authorID,
+        featureImage: postData?.featureImage || "",
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrasesTags || []
+        }],
+        isDraft: true,
+        internalArticle: postData?.internalArticle
+      };
+    } else {
+      _variables = {
+        title: title,
+        subTitle: subTitle,
+        description: editorHtml,
+        descriptionJson: editorJson,
+        authorID: authorID,
+        tags: postData?.tags ? postData?.tags : [],
+        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+        article_SEO: [{
+          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+          keyPhrases: postData?.keyPhrasesTags || []
+        }],
+        isDraft: true,
+        internalArticle: postData?.internalArticle
+      };
+    }
 
     apolloClient
       .mutate({
@@ -196,8 +228,8 @@ const NewPost = (props) => {
                 <StyledText>Draft</StyledText>
                 <StyledText>{saveValues}</StyledText>
               </NewPostAction>
-              <Button size="middle" type="primary" htmlType="submit">
-                Publish 33
+              <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
+                Publish
           </Button>
             </ActionContent>
           </ActionTopLayout>

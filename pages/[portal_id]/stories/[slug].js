@@ -27,6 +27,7 @@ const usePrevious = (value) => {
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
@@ -68,17 +69,18 @@ const EditPost = (props) => {
         }
       }
     }
-  }, [articleDetail, editorHtml, form, postData])
+  }, [articleDetail, editorHtml, form, postData, count])
 
   useEffect(() => {
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { title, subTitle, description, descriptionJson } = articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
       if (description && description.trim().length) {
         setContentEditorHtml(description);
+        setContentEditorJson(descriptionJson);
       }
     }
 
@@ -105,11 +107,6 @@ const EditPost = (props) => {
   useEffect(() => {
     saveFlag ? (setSaveFlag(false)) : null
   }, [])
-  useEffect(() => {
-    if (count.length > 0) {
-      !saveFlag ? setSaveFlag(true) : null
-    }
-  }, [articleDetail, editorHtml, form])
 
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
@@ -118,19 +115,14 @@ const EditPost = (props) => {
       return;
     }
     const { title, subTitle } = values;
-    // let _variables = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    // };
+
     let _obj
     if (postData?.featureImage !== "") {
       _obj = {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         featureImage: postData?.featureImage || "",
         tags: postData?.tags ? postData?.tags : [],
@@ -148,6 +140,7 @@ const EditPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         tags: postData?.tags ? postData?.tags : [],
         metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
@@ -162,7 +155,7 @@ const EditPost = (props) => {
     }
     setHandlePageRefresh(true);
 
-    await props.updateArticle(_variables);
+    await props.updateArticle(_obj);
   };
 
   const handleSaveOnInterval = async () => {
@@ -180,19 +173,13 @@ const EditPost = (props) => {
 
   const updateDraft = async () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
-    // const _obj = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    // };
     let _obj
     if (postData?.featureImage !== "") {
       _obj = {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         featureImage: postData?.featureImage || "",
         tags: postData?.tags ? postData?.tags : [],
@@ -210,6 +197,7 @@ const EditPost = (props) => {
         title: title,
         subTitle: subTitle,
         description: editorHtml,
+        descriptionJson: editorJson,
         articleId: Number(articleDetail.ID),
         tags: postData?.tags ? postData?.tags : [],
         metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
@@ -225,11 +213,14 @@ const EditPost = (props) => {
     await props.updateArticle(_obj);
   };
 
-  const onChangeEditor = (value) => {
-    let data = count
+  const onChangeEditor = (value, jsonValue) => {
+    let data = count.slice()
     data.push({ name: "test" })
     setCount(data)
-    setContentEditorHtml(value);
+    if (value !== undefined) {
+      setContentEditorHtml(value);
+      setContentEditorJson(jsonValue)
+    }
     setIsStory(false);
   };
   const handleFormData = () => {
@@ -254,7 +245,7 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
+          <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
             Save and publish
           </Button>
         </ActionContent>
@@ -263,6 +254,11 @@ const EditPost = (props) => {
   };
   const handlePostData = (value) => {
     setPostData({ ...value })
+  }
+  if (count.length > 1) {
+    !saveFlag ? setSaveFlag(true) : null
+  } else {
+    saveFlag ? setSaveFlag(false) : null
   }
   return (
     <NewPageLayout>

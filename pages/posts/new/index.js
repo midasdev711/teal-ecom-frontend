@@ -61,7 +61,7 @@ const NewPost = (props) => {
     }
   }, [articleDetail])
 
-  const onChangeEditor = (value) => {
+  const onChangeEditor = (value , JsonValue) => {
     setContentEditorHtml(value);
     setIsStory(false);
   }
