@@ -73,7 +73,7 @@ const NewForm = (props) => {
       cloneData.SEOTitle = postInfo?.article_SEO[0]?.metaTitle
       cloneData.SEODescription = postInfo?.article_SEO[0]?.metaDescription
       cloneData.SEOUrl = postInfo?.article_SEO[0]?.conicalUrl
-      // cloneData.keyPhrasesTags = (postInfo?.article_SEO[0]?.keyPhrases || []);
+      cloneData.keyPhrasesTags = (postInfo?.article_SEO[0]?.keyPhrases || []);
       cloneData.metaRobots = postInfo?.metaRobots
       cloneData.tags = postInfo?.tags || []
       cloneData.internalArticle = postInfo?.internalArticle || false

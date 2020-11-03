@@ -131,7 +131,7 @@ const EditPost = (props) => {
           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
           metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || ""
+          keyPhrases: postData?.keyPhrasesTags || []
         }],
         internalArticle: postData?.internalArticle || false
       };
@@ -148,7 +148,7 @@ const EditPost = (props) => {
           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
           metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || ""
+          keyPhrases: postData?.keyPhrasesTags || []
         }],
         internalArticle: postData?.internalArticle || false
       };
@@ -188,7 +188,7 @@ const EditPost = (props) => {
           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
           metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || ""
+          keyPhrases: postData?.keyPhrasesTags || []
         }],
         internalArticle: postData?.internalArticle || false
       };
@@ -205,7 +205,7 @@ const EditPost = (props) => {
           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
           metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || ""
+          keyPhrases: postData?.keyPhrasesTags || []
         }],
         internalArticle: postData?.internalArticle || false
       };
