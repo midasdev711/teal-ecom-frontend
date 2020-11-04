@@ -52,45 +52,36 @@ const EditPost = (props) => {
       await updateDraft();
     }
   };
+  const handleObjectData = (value) => {
+    const { title, subTitle, imageData } = form.getFieldsValue()
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      articleId: Number(articleDetail.ID),
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      internalArticle: postData?.internalArticle || false
+    };
+    if (value === "live") {
+      _obj.isDraft = false,
+        _obj.isPublish = true
+    }
+    return _obj
+  }
 
   const updateDraft = async () => {
-    const { title, subTitle, imageData } = form.getFieldsValue()
-    let _obj
-    if (postData?.featureImage !== "") {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
-    } else {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
     }
     await props.updateArticle(_obj);
   };
@@ -175,62 +166,13 @@ const EditPost = (props) => {
       setSubmit(false);
       return;
     }
-
-    const { title, subTitle } = values;
-    // let _variables = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    //   isDraft: false,
-    //   isPublish: true,
-    // };
-
-    let _obj
-    if (postData?.featureImage !== "") {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || []
-        }],
-        isDraft: false,
-        isPublish: true,
-        internalArticle: postData?.internalArticle || false
-      };
-    } else {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || []
-        }],
-        isDraft: false,
-        isPublish: true,
-        internalArticle: postData?.internalArticle || false
-      };
+    let _obj = handleObjectData("live")
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
     }
-
     await props.updateArticle(_obj);
   };
+
   const onChangeEditor = (value, jsonValue) => {
     let data = count.slice()
     data.push({ name: "test" })

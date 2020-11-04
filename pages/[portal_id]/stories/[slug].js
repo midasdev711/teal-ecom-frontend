@@ -108,53 +108,39 @@ const EditPost = (props) => {
     saveFlag ? (setSaveFlag(false)) : null
   }, [])
 
+  const handleObjectData = () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      articleId: Number(articleDetail.ID),
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      internalArticle: postData?.internalArticle || false
+    };
+
+    return _obj
+  }
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
       setHandlePageRefresh(false);
       return;
     }
-    const { title, subTitle } = values;
-
-    let _obj
-    if (postData?.featureImage !== "") {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
-    } else {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
-    }
+    let _obj = handleObjectData()
     setHandlePageRefresh(true);
-
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
     await props.updateArticle(_obj);
   };
 
@@ -172,43 +158,9 @@ const EditPost = (props) => {
   };
 
   const updateDraft = async () => {
-    const { title, subTitle, imageData } = form.getFieldsValue();
-    let _obj
-    if (postData?.featureImage !== "") {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
-    } else {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        articleId: Number(articleDetail.ID),
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        internalArticle: postData?.internalArticle || false
-      };
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
     }
     await props.updateArticle(_obj);
   };

@@ -345,7 +345,7 @@ const NewForm = (props) => {
             <Form.Item
               label="Meta Robots"
               name="metaRobots">
-              <Select defaultValue={postInfo?.metaRobots !== "" ? (postInfo?.metaRobots) : ("Select")} name="metaRobots" onChange={(event) => handleChange(event, "metaRobots")}>
+              <Select defaultValue={postInfo?.metaRobots !== "" && postInfo?.metaRobots !== undefined ? (postInfo?.metaRobots) : ("Select")} name="metaRobots" onChange={(event) => handleChange(event, "metaRobots")}>
                 <Option value="" disabled>Select</Option>
                 <Option value="index,follow">Index,Follow</Option>
                 <Option value="index,nofollow">Index,NoFollow</Option>

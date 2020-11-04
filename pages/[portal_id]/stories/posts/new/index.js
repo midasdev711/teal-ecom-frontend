@@ -69,6 +69,32 @@ const NewPost = (props) => {
     setContentEditorJson(jsonValue)
     setIsStory(false);
   }
+  const handleObjectData = (value) => {
+    if (value !== "saveValue") {
+      setSaveValues("saving...");
+    }
+    const authorID = Number(localStorage.getItem("userID"));
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      authorID: authorID,
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      isDraft: true,
+      internalArticle: postData?.internalArticle
+    };
+    return _obj
+  }
 
   const onChangeTitle = async (ev) => {
     if (ev.target.value && ev.target.value.trim().length > 3 && !creatingDraft) {
@@ -79,112 +105,25 @@ const NewPost = (props) => {
   }
 
   const createDraft = async () => {
-    setSaveValues("saving...");
-    const authorID = Number(localStorage.getItem("userID"));
-    const { title, subTitle, imageData } = form.getFieldsValue();
-    let _obj
-    if (postData?.featureImage !== "") {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        authorID: authorID,
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        isDraft: true,
-        internalArticle: postData?.internalArticle
-      };
-    } else {
-      _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        authorID: authorID,
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        isDraft: true,
-        internalArticle: postData?.internalArticle
-      };
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
     }
     await props.createDraftArticle(_obj);
     // await props.getListArticlesDraft(authorID, true, 100, 1);
   };
 
   const onFinish = async (values) => {
-    const authorID = Number(localStorage.getItem("userID"));
-    const { title, subTitle } = values;
+    // const authorID = Number(localStorage.getItem("userID"));
+    // const { title, subTitle } = values;
 
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
       return;
     }
-
-    // let _variables = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   authorID: authorID,
-    //   featureImage: imageData ? imageData : "",
-    //   categories: [
-    //     {
-    //       ID: 21,
-    //       name: "Media",
-    //     },
-    //   ],
-    // };
-    let _variables
-    if (postData?.featureImage !== "") {
-      _variables = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        // descriptionJson: editorJson,
-        authorID: authorID,
-        featureImage: postData?.featureImage || "",
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        isDraft: true,
-        internalArticle: postData?.internalArticle
-      };
-    } else {
-      _variables = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        descriptionJson: editorJson,
-        authorID: authorID,
-        tags: postData?.tags ? postData?.tags : [],
-        metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO: [{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
-          metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrasesTags || []
-        }],
-        isDraft: true,
-        internalArticle: postData?.internalArticle
-      };
+    let _variables = handleObjectData("saveValue")
+    if (postData?.featureImage === "") {
+      delete _variables.featureImage
     }
 
     apolloClient
