@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails
+  clearArticleDetails,
 } from "../../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../../src/components/posts/NewForm";
@@ -32,7 +32,7 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
-  const [saveFlag, setSaveFlag] = useState(false);
+  const [saveFlag, setSaveFlag] = useState(true);
   const [count, setCount] = useState([]);
   const [postData, setPostData] = useState({});
 
@@ -152,12 +152,9 @@ const EditPost = (props) => {
       }
     }
   }, [articleDetail, editorHtml, form, postData, count])
-  useEffect(() => {
-    onChangeEditor()
-  }, [form])
-  useEffect(() => {
-    saveFlag ? (setSaveFlag(false)) : null
-  }, [])
+  // useEffect(() => {
+  //   saveFlag ? (setSaveFlag(false)) : null
+  // }, [])
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -174,23 +171,15 @@ const EditPost = (props) => {
   };
 
   const onChangeEditor = (value, jsonValue) => {
-    let data = count.slice()
-    data.push({ name: "test" })
-    setCount(data)
+    if (value && articleDetail.description !== value && !saveFlag) {
+      setSaveFlag(true);
+    }
     if (value !== undefined) {
       setContentEditorHtml(value);
       setContentEditorJson(jsonValue)
     }
     setIsStory(false);
   };
-  const handleFormData = () => {
-    onChangeEditor()
-  }
-  if (count.length > 2) {
-    !saveFlag ? setSaveFlag(true) : null
-  } else {
-    saveFlag ? setSaveFlag(false) : null
-  }
 
   const newActions = () => {
     return (
@@ -227,7 +216,7 @@ const EditPost = (props) => {
       <Form
         form={form}
         layout="vertical"
-        onChange={() => handleFormData()}
+        onChange={() => setSaveFlag(true)}
       >
         <NewContent>
           {newActions()}
@@ -323,7 +312,7 @@ const mapStateToProps = (store) => {
 const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails
+  clearArticleDetails,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);
