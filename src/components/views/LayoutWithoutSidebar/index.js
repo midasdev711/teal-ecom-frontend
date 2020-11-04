@@ -16,7 +16,7 @@ const PageLayout = ({ children, title }) => {
 
 const StyledLayout = styled(Layout)`
   min-height: 100vh;
-  background-color: #E5E5E5;
+  background-color: #f6f8f9;
 `;
 
 export default PageLayout;
