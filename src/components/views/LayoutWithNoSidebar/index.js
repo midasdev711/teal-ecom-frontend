@@ -25,6 +25,11 @@ const StyledPageLayout = styled(Layout)`
   position: relative;
   max-width: 950px;
   margin: 0 auto;
+  overflow-x: visible!important;
+
+  @media (max-width: 700px) {
+    margin: 0 50px;
+  }
 `;
 
 export default PageLayout;

@@ -16,8 +16,9 @@ const Banner = ({title, description, image, backgroundColor}) => {
 
 const BannerContainer = styled.div`
     width: 100%;
-    height: 250px;
+    min-height: 250px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     border-radius: 10px;
     padding-right: 50px;
@@ -26,7 +27,7 @@ const BannerContainer = styled.div`
 `;
 
 const BannerContent = styled.div`
-    width: 50%;
+    width: 45%;
     display: flex;
     flex-direction: column;
     justify-content: center;

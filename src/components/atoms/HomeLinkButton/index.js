@@ -27,6 +27,11 @@ const ButtonContent = styled(Button)`
     height: 100px;
     border-radius: 10px;
     margin-bottom: 10px;
+    &:hover {
+        background-color: ${props => props.backgroundColor || "white"}!important;
+        opacity: 0.8;
+        box-shadow: 0px 0px 25px #989898;
+    }
 `;
 
 const ButtonTitle = styled(Text)`
