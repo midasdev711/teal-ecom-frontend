@@ -13,13 +13,14 @@ import {
   createDraftArticle,
   getListArticlesDraft,
   clearArticleDetails,
+  setImageExtension,
 } from "../../../../../src/redux/actions/articles";
+
 // components
 import NewForm from "../../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
 import { getUserData } from "../../../../../src/utils";
-
 const NewPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
@@ -42,12 +43,14 @@ const NewPost = (props) => {
       props.clearArticleDetails();
     };
   }, []);
+ 
   useEffect(() => {
     let pathname = router.pathname
     if (pathname === "/[portal_id]/stories/posts/new") {
       setPostData({})
     }
   }, [])
+
   useEffect(() => {
     if (creatingDraft) {
       createDraft();
@@ -108,6 +111,8 @@ const NewPost = (props) => {
     let _obj = handleObjectData()
     if (postData?.featureImage === "") {
       delete _obj.featureImage
+    }else{
+      props.setImageExtension(_obj.featureImage)
     }
     await props.createDraftArticle(_obj);
     // await props.getListArticlesDraft(authorID, true, 100, 1);
@@ -257,6 +262,7 @@ const mapDispatchToProps = {
   createDraftArticle,
   clearArticleDetails,
   getListArticlesDraft,
+  setImageExtension,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewPost);

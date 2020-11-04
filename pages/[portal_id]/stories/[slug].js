@@ -9,6 +9,7 @@ import {
   getDetailArticle,
   updateArticle,
   clearArticleDetails,
+  setImageExtension,
 } from "../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../src/components/posts/NewForm";
@@ -23,7 +24,7 @@ const usePrevious = (value) => {
   });
   return ref.current;
 };
-
+//props.setImageExtension()
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
@@ -31,7 +32,7 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
-  const [saveFlag, setSaveFlag] = useState(false);
+  const [saveFlag, setSaveFlag] = useState(true);
   const [count, setCount] = useState([]);
   const [postData, setPostData] = useState({});
   const { updateArticleDetail, saveState, articleDetail } = props;
@@ -104,9 +105,9 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
-  useEffect(() => {
-    saveFlag ? (setSaveFlag(false)) : null
-  }, [])
+//   useEffect(() => {
+//     saveFlag ? (setSaveFlag(false)) : null
+//   }, [])
 
   const handleObjectData = () => {
     const { title, subTitle, imageData } = form.getFieldsValue();
@@ -166,18 +167,15 @@ const EditPost = (props) => {
   };
 
   const onChangeEditor = (value, jsonValue) => {
-    let data = count.slice()
-    data.push({ name: "test" })
-    setCount(data)
+    if (value && articleDetail.description !== value && !saveFlag) {
+        setSaveFlag(true);
+      }
     if (value !== undefined) {
       setContentEditorHtml(value);
       setContentEditorJson(jsonValue)
     }
     setIsStory(false);
   };
-  const handleFormData = () => {
-    onChangeEditor()
-  }
   const newActions = () => {
     let userData = getUserData()
     return (
@@ -207,14 +205,9 @@ const EditPost = (props) => {
   const handlePostData = (value) => {
     setPostData({ ...value })
   }
-  if (count.length > 1) {
-    !saveFlag ? setSaveFlag(true) : null
-  } else {
-    saveFlag ? setSaveFlag(false) : null
-  }
   return (
     <NewPageLayout>
-      <Form form={form} layout="vertical" onChange={() => handleFormData()}>
+      <Form form={form} layout="vertical" onChange={() => onChangeEditor()}>
         <NewContent>
           {newActions()}
           <ContentPage>
@@ -308,6 +301,7 @@ const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
   clearArticleDetails,
+  setImageExtension,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

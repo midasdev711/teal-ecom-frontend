@@ -388,6 +388,20 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
     }
   }
 `;
+export const SET_IMAGE_EXTENSION_MUTATION = gql`
+mutation ArticleImg(
+          $articleImage:Upload
+          ) {
+              uploadArticleImg(
+                       articleImgInput: {
+                           articleImage: $articleImage
+                       } 
+             ) 
+         {
+       imgUrl
+          }
+    }
+`;
 
 export default {
   GET_ARTICLES_QUERY,
@@ -399,4 +413,5 @@ export default {
   GET_LIST_ARTICLES_DELETED_QUERY,
   CREATE_DRAFT_ARTICLE_MUTATION,
   GET_DRAFT_ARTICLES_QUERY,
+  SET_IMAGE_EXTENSION_MUTATION,
 };
