@@ -114,14 +114,17 @@ const FormInput = styled(Input)`
     width: 305px;
     height: 45px;
     filter: drop-shadow(0px 16px 60px rgba(78, 79, 114, 0.08));
+    border: none;
 `;
 
 const FormSelect = styled(Select)`
     width: 305px;
     height: 45px;
+    border: none;
     filter: drop-shadow(0px 16px 60px rgba(78, 79, 114, 0.08));
     .ant-select-selector {
         height: 45px!important;
+        border: none!important;
         .ant-select-selection-search-input {
             height: 45px!important;
         }
@@ -136,6 +139,7 @@ const FormSelectOption = styled(Option)`
 const FormDragger = styled(Dragger)`
     width: 305px;
     height: 163px!important;
+    border: none!important;
 `;
 
 const FormSubmitButton = styled(Button)`
