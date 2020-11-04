@@ -75,6 +75,75 @@ export default createGlobalStyle`
   .ant-popover-inner-content{
     ${'' /* padding: 0; */}
   }
+  .ProseMirror {
+    font-family: Proxima Nova;
+    padding-bottom: 50px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    .selected {
+      background-color: transparent;
+    }
+    p {
+      font-size: 18px;
+      color: #313649;
+    }
+    h1 {
+      font-size: 26px;
+      color: #404950;
+    }
+  }
+  .smartblock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+  }
+  .smartblock-menu {
+    // left: -35px!important;
+  }
+  .smartblock-inline-menu-arrow {
+    left: 40px!important;
+  }
+  .smartblock-edit-menu {
+    width: 135px;
+    height: 45px;
+    border-radius: 3px;
+    background-color: white;
+    box-shadow: 0 3px 40px 8px rgba(116, 116, 116, 0.2);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .smartblock-inline-menu-inner {
+    width: 135px;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .smartblock-menu-top {
+    display: flex;
+    .smartblock-btn {
+      // background-color: #f0f0f0;
+      // border-radius: 50%;
+    }
+  }
+  .smartblock-menu:before {
+    // display: none;
+  }
+  .smartblock-menu {
+    // background-color: transparent;
+    // box-shadow: none;
+  }
+  .smartblock-container {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 0;
+    background: white;
+    border-radius: 10px;
+  }
   .ant-tabs{
     .ant-tabs-nav{
       &::before{
