@@ -28,6 +28,7 @@ const usePrevious = (value) => {
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
@@ -40,56 +41,47 @@ const EditPost = (props) => {
     const {
       query: { slug },
     } = Router.router;
-
     await props.getDetailArticle(slug, true);
   };
-  const { updateArticleDetail, articleDetail, saveState , saveData} = props;
+  const { updateArticleDetail, articleDetail, saveState, saveData } = props;
   const prevProps = usePrevious({ updateArticleDetail });
-
   const onValuesChangePost = async () => {
-   
+
     const { title, subTitle, imageData } = form.getFieldsValue();
     if (title || subTitle) {
       await updateDraft();
     }
   };
+  const handleObjectData = (value) => {
+    const { title, subTitle, imageData } = form.getFieldsValue()
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      articleId: Number(articleDetail.ID),
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      internalArticle: postData?.internalArticle || false
+    };
+    if (value === "live") {
+      _obj.isDraft = false,
+        _obj.isPublish = true
+    }
+    return _obj
+  }
 
   const updateDraft = async () => {
-    const { title, subTitle, imageData} = form.getFieldsValue()
-    let _obj
-    if(postData?.featureImage !== ""){
-       _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        articleId: Number(articleDetail.ID),
-        featureImage: postData?.featureImage || "",
-        tags:postData?.tags ? postData?.tags : [],
-        metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO:[{
-            metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-            metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-            conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-            keyPhrases: postData?.keyPhrases || "" 
-        }],
-        internalArticle:postData?.internalArticle || false
-      };
-    }else{
-       _obj = {
-        title: title,
-        subTitle: subTitle,
-        description: editorHtml,
-        articleId: Number(articleDetail.ID),
-        tags:postData?.tags ? postData?.tags : [],
-        metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-        article_SEO:[{
-            metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-            metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-            conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-            keyPhrases: postData?.keyPhrases || "" 
-        }],
-        internalArticle:postData?.internalArticle || false
-      };
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
     }
     await props.updateArticle(_obj);
   };
@@ -106,7 +98,7 @@ const EditPost = (props) => {
       getDetailArticle();
     }
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { title, subTitle, description, descriptionJson } = articleDetail;
       // let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
@@ -115,6 +107,7 @@ const EditPost = (props) => {
 
       if (description && description.trim().length) {
         setContentEditorHtml(description);
+        setContentEditorJson(descriptionJson);
       }
     }
   }, [articleDetail]);
@@ -143,33 +136,28 @@ const EditPost = (props) => {
   }, [props.msgErr]);
 
   useEffect(() => {
-    if(saveFlag){
+    if (saveFlag) {
       let timer = null;
-    if (!timer) {
-      // console.log('set timer');
-      timer = setInterval(async () => {
-       // console.log('called on every 5 seconds!', articleDetail)
-        await handleSaveData();
-      }, 5000);
-    }
-    return () => {
-      if (timer) {
-        clearInterval(timer);
+      if (!timer) {
+        // console.log('set timer');
+        timer = setInterval(async () => {
+          // console.log('called on every 5 seconds!', articleDetail)
+          await handleSaveData();
+        }, 5000);
+      }
+      return () => {
+        if (timer) {
+          clearInterval(timer);
+        }
       }
     }
-    }
-  }, [articleDetail, editorHtml, form, postData])
-  useEffect(()=>{
-  },[form])
-  useEffect(()=>{
-    saveFlag ? (setSaveFlag(false)) : null
-  },[])
- 
+  }, [articleDetail, editorHtml, form, postData, count])
   useEffect(() => {
-    if(count.length > 0){
-      !saveFlag ? setSaveFlag(true) : null
-    }
-  }, [articleDetail, editorHtml, form])
+    onChangeEditor()
+  }, [form])
+  useEffect(() => {
+    saveFlag ? (setSaveFlag(false)) : null
+  }, [])
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -178,70 +166,30 @@ const EditPost = (props) => {
       setSubmit(false);
       return;
     }
-
-    const { title, subTitle } = values;
-    // let _variables = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    //   isDraft: false,
-    //   isPublish: true,
-    // };
-    let _obj
-    if(postData?.featureImage !== ""){
-    _obj = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-     
-      articleId: Number(articleDetail.ID),
-      featureImage: postData?.featureImage || "",
-      tags:postData?.tags ? postData?.tags : [],
-      metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-      article_SEO:[{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-          metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || "" 
-      }],
-      isDraft: false,
-      isPublish: true,
-      internalArticle:postData?.internalArticle || false
-    };
-  }else{
-    _obj = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-     
-      articleId: Number(articleDetail.ID),
-      tags:postData?.tags ? postData?.tags : [],
-      metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-      article_SEO:[{
-          metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-          metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-          conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-          keyPhrases: postData?.keyPhrases || "" 
-      }],
-      isDraft: false,
-      isPublish: true,
-      internalArticle:postData?.internalArticle || false
-    };
-  }
-
+    let _obj = handleObjectData("live")
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
     await props.updateArticle(_obj);
   };
-  const onChangeEditor = (value) => {
-    let data = count
-    data.push({name:"test"})
+
+  const onChangeEditor = (value, jsonValue) => {
+    let data = count.slice()
+    data.push({ name: "test" })
     setCount(data)
-    setContentEditorHtml(value);
+    if (value !== undefined) {
+      setContentEditorHtml(value);
+      setContentEditorJson(jsonValue)
+    }
     setIsStory(false);
   };
-  const handleFormData = () =>{
+  const handleFormData = () => {
     onChangeEditor()
+  }
+  if (count.length > 2) {
+    !saveFlag ? setSaveFlag(true) : null
+  } else {
+    saveFlag ? setSaveFlag(false) : null
   }
 
   const newActions = () => {
@@ -262,16 +210,16 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
+          <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
             Publish
           </Button>
         </ActionContent>
       </ActionTopLayout>
     );
   };
- 
-  const handlePostData = (value) =>{
-    setPostData({...value})
+
+  const handlePostData = (value) => {
+    setPostData({ ...value })
   }
 
   return (
@@ -279,7 +227,7 @@ const EditPost = (props) => {
       <Form
         form={form}
         layout="vertical"
-        onChange={()=>handleFormData()}
+        onChange={() => handleFormData()}
       >
         <NewContent>
           {newActions()}
@@ -287,7 +235,7 @@ const EditPost = (props) => {
           <ContentPage>
             <NewForm
               onChangeEditor={onChangeEditor}
-              postInformation={(value)=>handlePostData(value)}
+              postInformation={(value) => handlePostData(value)}
               setImage={setImage}
               isStory={isStory}
               description={

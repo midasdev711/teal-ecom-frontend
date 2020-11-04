@@ -27,6 +27,7 @@ const usePrevious = (value) => {
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [handlePageRefresh, setHandlePageRefresh] = useState(false)
@@ -54,31 +55,32 @@ const EditPost = (props) => {
     }
   }, []);
   useEffect(() => {
-    if(saveFlag){
-    let timer = null;
-    if (!timer) {
-      timer = setInterval(async () => {
-        await handleSaveOnInterval();
-      }, 5000);
-    }
+    if (saveFlag) {
+      let timer = null;
+      if (!timer) {
+        timer = setInterval(async () => {
+          await handleSaveOnInterval();
+        }, 5000);
+      }
 
-    return () => {
-      if (timer) {
-        clearInterval(timer);
+      return () => {
+        if (timer) {
+          clearInterval(timer);
+        }
       }
     }
-  }
-  }, [articleDetail, editorHtml, form , postData])
+  }, [articleDetail, editorHtml, form, postData, count])
 
   useEffect(() => {
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { title, subTitle, description, descriptionJson } = articleDetail;
       form.setFieldsValue({
         title,
         subTitle,
       });
       if (description && description.trim().length) {
         setContentEditorHtml(description);
+        setContentEditorJson(descriptionJson);
       }
     }
 
@@ -102,67 +104,44 @@ const EditPost = (props) => {
       });
     }
   }, [props.msgErr]);
-  useEffect(()=>{
-    saveFlag ? (setSaveFlag(false)) : null
-  },[])
   useEffect(() => {
-    if(count.length > 0){
-      !saveFlag ? setSaveFlag(true) : null
-    }
-  }, [articleDetail, editorHtml, form])
+    saveFlag ? (setSaveFlag(false)) : null
+  }, [])
 
+  const handleObjectData = () => {
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      articleId: Number(articleDetail.ID),
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      internalArticle: postData?.internalArticle || false
+    };
+
+    return _obj
+  }
   const onFinish = async (values) => {
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
       setHandlePageRefresh(false);
       return;
     }
-    const { title, subTitle } = values;
-    // let _variables = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    // };
-    let _obj
-    if(postData?.featureImage !== ""){
-      _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       featureImage: postData?.featureImage || "",
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }else{
-      _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }
+    let _obj = handleObjectData()
     setHandlePageRefresh(true);
-
-    await props.updateArticle(_variables);
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
+    await props.updateArticle(_obj);
   };
 
   const handleSaveOnInterval = async () => {
@@ -179,60 +158,24 @@ const EditPost = (props) => {
   };
 
   const updateDraft = async () => {
-    const { title, subTitle, imageData } = form.getFieldsValue();
-    // const _obj = {
-    //   title: title,
-    //   subTitle: subTitle,
-    //   description: editorHtml,
-    //   articleId: Number(articleDetail.ID),
-    //   featureImage: imageData ? imageData : "",
-    // };
-    let _obj
-    if(postData?.featureImage !== ""){
-      _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       featureImage: postData?.featureImage || "",
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }else{
-      _obj = {
-       title: title,
-       subTitle: subTitle,
-       description: editorHtml,
-       articleId: Number(articleDetail.ID),
-       tags:postData?.tags ? postData?.tags : [],
-       metaRobots:postData?.metaRobots ? postData?.metaRobots : "index,follow",
-       article_SEO:[{
-           metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title , 
-           metaDescription: postData?.SEODescription !== ""? postData?.SEODescription : subTitle,
-           conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
-           keyPhrases: postData?.keyPhrases || "" 
-       }],
-       internalArticle:postData?.internalArticle || false
-     };
-   }
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
     await props.updateArticle(_obj);
   };
 
-  const onChangeEditor = (value) => {
-    let data = count
-    data.push({name:"test"})
+  const onChangeEditor = (value, jsonValue) => {
+    let data = count.slice()
+    data.push({ name: "test" })
     setCount(data)
-    setContentEditorHtml(value);
+    if (value !== undefined) {
+      setContentEditorHtml(value);
+      setContentEditorJson(jsonValue)
+    }
     setIsStory(false);
   };
-  const handleFormData = () =>{
+  const handleFormData = () => {
     onChangeEditor()
   }
   const newActions = () => {
@@ -254,26 +197,31 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
+          <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
             Save and publish
           </Button>
         </ActionContent>
       </ActionTopLayout>
     );
   };
-  const handlePostData = (value) =>{
-    setPostData({...value})
+  const handlePostData = (value) => {
+    setPostData({ ...value })
+  }
+  if (count.length > 1) {
+    !saveFlag ? setSaveFlag(true) : null
+  } else {
+    saveFlag ? setSaveFlag(false) : null
   }
   return (
     <NewPageLayout>
-      <Form form={form} layout="vertical" onChange={()=>handleFormData()}>
+      <Form form={form} layout="vertical" onChange={() => handleFormData()}>
         <NewContent>
           {newActions()}
           <ContentPage>
             <NewForm
               flag={true}
               onChangeEditor={onChangeEditor}
-              postInformation={(value)=>handlePostData(value)}
+              postInformation={(value) => handlePostData(value)}
               setImage={setImage}
               isStory={isStory}
               description={articleDetail && articleDetail.description || ""}

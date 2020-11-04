@@ -41,7 +41,7 @@ export default function Editor({ onChangeEditor, description, flag }) {
         <SmartBlock
             extensions={extensions}
             html={description || ""}
-            onChange={({ json, html }) => { onChangeEditor(html) }}
+            onChange={({ json, html }) => { onChangeEditor(html , json) }}
         />
     )
 }

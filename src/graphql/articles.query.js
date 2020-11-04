@@ -21,6 +21,7 @@ export const GET_ARTICLES_QUERY = gql`
         conicalUrl
         keyPhrases
       }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -55,6 +56,7 @@ export const CREATE_ARTICLE_MUTATION = gql`
     $metaRobots:String
     $article_SEO: [ArticleSEOType]
     $internalArticle: Boolean
+    $descriptionJson:descriptionJson
   ) {
     upsertArticle(
       article: {
@@ -68,6 +70,7 @@ export const CREATE_ARTICLE_MUTATION = gql`
         metaRobots:$metaRobots
         article_SEO:$article_SEO
         internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -101,6 +104,7 @@ export const CREATE_ARTICLE_MUTATION = gql`
       viewCount
       tags
       status
+      descriptionJson
       totalClapCount
       totalArticleCount
       acceptDonation
@@ -131,6 +135,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
     $metaRobots:String
     $article_SEO: [ArticleSEOType]
     $internalArticle: Boolean
+    $descriptionJson:JSON
   ) {
     upsertArticle(
       article: {
@@ -145,6 +150,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         metaRobots:$metaRobots
         article_SEO:$article_SEO
         internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -161,12 +167,13 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         keyPhrases
       }
       sequence
-      internalArticle
+      internalArticle 
       urls
       createdDate
       author {
         name
       }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -235,6 +242,7 @@ export const GET_DETAIL_ARTICLE_QUERY = gql`
       author {
         name
       }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -276,7 +284,8 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
     $tags:[String]
     $metaRobots:String
     $article_SEO: [ArticleSEOType]
-    $internalArticle: Boolean
+    $internalArticle: Boolean,
+    $descriptionJson:JSON
   ) {
     upsertArticle(
       article: {
@@ -290,6 +299,7 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
         metaRobots:$metaRobots
         article_SEO:$article_SEO
         internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -310,6 +320,7 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
         conicalUrl
         keyPhrases
       }
+      descriptionJson
       internalArticle
       isPublish
       ampSlug
@@ -354,6 +365,7 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
         conicalUrl
         keyPhrases
       }
+      descriptionJson
       isPublish
       internalArticle
       ampSlug
