@@ -1,12 +1,20 @@
 import React from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
+import { useRouter } from "next/router"
+import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
 import { Banner, BlogGroup } from '../../../src/components/atoms'
 
 const { Title, Text } = Typography;
 
 export default function StoriesDashboard() {
+    const router = useRouter()
+    let userData = getUserData()
+
+    const goToNewBlogPage = (url) => {
+        router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
+    }
     return (
         <LayoutWithNoSidebar>
             <Banner
@@ -32,6 +40,7 @@ export default function StoriesDashboard() {
                     ></BlogGroup>
                     <BlogGroup 
                         isNew={true}
+                        onClick={goToNewBlogPage}
                     ></BlogGroup>
                 </BlogGroupContent>
             </BlogContainer>
