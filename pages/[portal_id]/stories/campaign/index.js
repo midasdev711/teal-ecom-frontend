@@ -37,9 +37,9 @@ import {
   CloseOutlined,
   CopyOutlined,
 } from "@ant-design/icons";
-import Router from "next/router";
+import { SERVER } from "../../../../src/config/config";
 
-const GRAPH_QL_URL = `http://3.135.208.27:9200/graphql`;
+const GRAPH_QL_URL = SERVER;
 
 function Campaign(props) {
   const [visible, toggleModal] = React.useState(false);
@@ -261,13 +261,14 @@ function Campaign(props) {
   };
   //Edit campaign
   const handleEdit = () => {
-    const variables={
+    const variables = {
       ID: parseInt(item.ID),
       CampaignName: campaignName,
-      ArticleId1:  parseInt(articleId1),
-      ArticleId2: parseInt(articleId2)
-    }
-    props.updateCampaign(variables)
+      ArticleId1: parseInt(articleId1),
+      ArticleId2: parseInt(articleId2),
+    };
+    props
+      .updateCampaign(variables)
       .then((result) => {
         let SplitId = item.SplitId;
         setConfirmLoading(false);
@@ -334,7 +335,8 @@ function Campaign(props) {
       IdArray.push(parseInt(data.ID));
     });
 
-    props.deleteMultiCampaign(IdArray)
+    props
+      .deleteMultiCampaign(IdArray)
       .then((result) => {
         const userID = Number(localStorage.getItem("userID"));
         props.getListCampaignDraft(userID);
