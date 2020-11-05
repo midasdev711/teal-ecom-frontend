@@ -363,18 +363,14 @@ const NewForm = (props) => {
 };
 
 const ContentBox = styled.div`
-  padding: 24px 0;
+  padding: 0 0 24px 0;
   width: 100%;
   background: #f6f8f9;
   border-radius: 3px;
   outline: 0.1rem solid transparent;
-  .ant-input-lg {
-    font-family: Proxima Nova;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 26px;
-    line-height: 26px;
-  }
+  position: relative;
+  background-color: white;
+  border-radius: 10px;
 `;
 
 const TitleBox = styled.h3`
@@ -392,6 +388,23 @@ const DIV = styled.div`
 `;
 const H4 = styled.h4`
  
+`;
+
+const TitleInput = styled.div`
+  margin: 0 auto;
+  padding-top: 100px;
+  width: calc(100% - 200px);
+  .title-input .ant-input {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+    line-height: 26px;
+  }
+  .subtitle-input .ant-input {
+    font-family: Proxima Nova;
+    font-style: normal;
+  }
 `;
 
 export default NewForm;
