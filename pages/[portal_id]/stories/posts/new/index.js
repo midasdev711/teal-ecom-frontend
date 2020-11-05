@@ -72,6 +72,7 @@ const NewPost = (props) => {
     setContentEditorJson(jsonValue)
     setIsStory(false);
   }
+
   const handleObjectData = (value) => {
     if (value !== "saveValue") {
       setSaveValues("saving...");
@@ -148,9 +149,11 @@ const NewPost = (props) => {
         message.error("Created new post failed!");
       });
   };
+
   const handlePostData = (value) => {
     setPostData({ ...value })
   }
+  
   return (
     <NewPageLayout>
       <Form onFinish={onFinish} form={form} layout="vertical">

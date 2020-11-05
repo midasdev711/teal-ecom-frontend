@@ -32,7 +32,7 @@ const EditPost = (props) => {
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
-  const [saveFlag, setSaveFlag] = useState(true);
+  const [saveFlag, setSaveFlag] = useState(false);
   const [count, setCount] = useState([]);
   const [postData, setPostData] = useState({});
 
@@ -52,6 +52,7 @@ const EditPost = (props) => {
       await updateDraft();
     }
   };
+  
   const handleObjectData = (value) => {
     const { title, subTitle, imageData } = form.getFieldsValue()
     let _obj = {
@@ -152,9 +153,10 @@ const EditPost = (props) => {
       }
     }
   }, [articleDetail, editorHtml, form, postData, count])
-  // useEffect(() => {
-  //   saveFlag ? (setSaveFlag(false)) : null
-  // }, [])
+
+  useEffect(() => {
+    saveFlag ? (setSaveFlag(false)) : null
+  }, [])
 
   const onFinish = async (values) => {
     setSubmit(true);
@@ -211,12 +213,17 @@ const EditPost = (props) => {
     setPostData({ ...value })
   }
 
+	const handleData = () => {
+		setSaveFlag(true)
+		setCount([1 + count])
+  }
+  
   return (
     <NewPageLayout>
       <Form
         form={form}
         layout="vertical"
-        onChange={() => setSaveFlag(true)}
+        onChange={() => handleData()}
       >
         <NewContent>
           {newActions()}
