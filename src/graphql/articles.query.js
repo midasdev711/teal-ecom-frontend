@@ -14,6 +14,14 @@ export const GET_ARTICLES_QUERY = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -22,6 +30,7 @@ export const GET_ARTICLES_QUERY = gql`
       viewCount
       tags
       status
+      internalArticle
       totalClapCount
       totalArticleCount
       acceptDonation
@@ -41,8 +50,13 @@ export const CREATE_ARTICLE_MUTATION = gql`
     $subTitle: String
     $description: String
     $authorID: Int
-    $featureImage: String
+    $featureImage: Upload
     $categories: [ArticleCategoryInput]
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean
+    $descriptionJson:descriptionJson
   ) {
     upsertArticle(
       article: {
@@ -52,6 +66,11 @@ export const CREATE_ARTICLE_MUTATION = gql`
         authorID: $authorID
         featureImage: $featureImage
         categories: $categories
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -68,6 +87,15 @@ export const CREATE_ARTICLE_MUTATION = gql`
         ID
         userName
       }
+      tags
+      internalArticle
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       isPublish
       ampSlug
       featureImage
@@ -76,6 +104,7 @@ export const CREATE_ARTICLE_MUTATION = gql`
       viewCount
       tags
       status
+      descriptionJson
       totalClapCount
       totalArticleCount
       acceptDonation
@@ -99,9 +128,14 @@ export const UPDATE_ARTICLE_MUTATION = gql`
     $title: String
     $subTitle: String
     $description: String
-    $featureImage: String
+    $featureImage: Upload
     $isDraft: Boolean
     $isPublish: Boolean
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean
+    $descriptionJson:JSON
   ) {
     upsertArticle(
       article: {
@@ -112,6 +146,11 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         featureImage: $featureImage
         isDraft: $isDraft
         isPublish: $isPublish
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -119,12 +158,22 @@ export const UPDATE_ARTICLE_MUTATION = gql`
       titleSlug
       description
       slug
+      tags
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       sequence
+      internalArticle 
       urls
       createdDate
       author {
         name
       }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -193,6 +242,7 @@ export const GET_DETAIL_ARTICLE_QUERY = gql`
       author {
         name
       }
+      descriptionJson
       isPublish
       ampSlug
       featureImage
@@ -200,6 +250,14 @@ export const GET_DETAIL_ARTICLE_QUERY = gql`
       readMinutes
       viewCount
       tags
+      internalArticle
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
       status
       totalClapCount
       totalArticleCount
@@ -222,6 +280,12 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
     $description: String
     $authorID: Int
     $isDraft: Boolean
+    $featureImage: Upload
+    $tags:[String]
+    $metaRobots:String
+    $article_SEO: [ArticleSEOType]
+    $internalArticle: Boolean,
+    $descriptionJson:JSON
   ) {
     upsertArticle(
       article: {
@@ -230,6 +294,12 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
         description: $description
         authorID: $authorID
         isDraft: $isDraft
+        featureImage: $featureImage
+        tags:$tags
+        metaRobots:$metaRobots
+        article_SEO:$article_SEO
+        internalArticle:$internalArticle
+        descriptionJson:$descriptionJson
       }
     ) {
       title
@@ -243,6 +313,15 @@ export const CREATE_DRAFT_ARTICLE_MUTATION = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
+      descriptionJson
+      internalArticle
       isPublish
       ampSlug
       featureImage
@@ -279,7 +358,16 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
       author {
         name
       }
+      metaRobots
+      article_SEO {
+        metaTitle
+        metaDescription
+        conicalUrl
+        keyPhrases
+      }
+      descriptionJson
       isPublish
+      internalArticle
       ampSlug
       featureImage
       thumbnail
@@ -300,6 +388,20 @@ export const GET_DRAFT_ARTICLES_QUERY = gql`
     }
   }
 `;
+export const SET_IMAGE_EXTENSION_MUTATION = gql`
+mutation ArticleImg(
+          $articleImage:Upload
+          ) {
+              uploadArticleImg(
+                       articleImgInput: {
+                           articleImage: $articleImage
+                       } 
+             ) 
+         {
+       imgUrl
+          }
+    }
+`;
 
 export default {
   GET_ARTICLES_QUERY,
@@ -311,4 +413,5 @@ export default {
   GET_LIST_ARTICLES_DELETED_QUERY,
   CREATE_DRAFT_ARTICLE_MUTATION,
   GET_DRAFT_ARTICLES_QUERY,
+  SET_IMAGE_EXTENSION_MUTATION,
 };

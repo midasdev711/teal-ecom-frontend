@@ -8,25 +8,28 @@ import { Layout, Typography, Button } from "antd";
 
 import { Routes, StoriesRoutes } from "../../../utils/Routes";
 import { buildDynamicRoute } from "../../../utils";
+import { Query } from "react-apollo";
+import { clearArticleDetails } from "../../../redux/actions/articles";
+import { useDispatch } from "react-redux";
 
 const SiderBar = () => {
   const [channelName, setChannelName] = useState("Ecommerce");
   const [userData, setUserData] = useState("");
   const [activeTabForCreate, setActiveTabForCreate] = useState('');
   const [isNewPage, setIsNewPage] = useState(false);
-
+  const dispatch = useDispatch()
   const router = useRouter();
   const { pathname } = router;
   const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
 
   useEffect(() => {
-    setChannelName(localStorage.getItem("channelName") || "Ecommerce");   
-    console.log('router', router)
+    setChannelName(localStorage.getItem("channelName") || "Ecommerce");
+   // console.log('router', router)
   });
 
   useEffect(() => {
     setUserData(JSON.parse(localStorage.getItem("userData")));
-   
+
   }, []);
 
   useEffect(() => {
@@ -39,20 +42,22 @@ const SiderBar = () => {
   }, [router])
 
   const handleBackButton = () => {
-    router.back();
+    router.push(`/[portal_id]`, { pathname: `/${userData?.uniqueID}` }, { shallow: true });
   }
 
   const handleCreate = () => {
+    dispatch(clearArticleDetails())
     const url = `${(router.asPath.split('/', 4).join('/'))}/new`
-    router.push(`${router.pathname.split('/', 4).join('/')}/new`, { pathname: `${url}` }, { shallow: true })    
+    console.log('url', url)
+    router.push(`${router.pathname.split('/', 4).join('/')}/new`, { pathname: `${url}` }, { shallow: true })
   }
 
   const MenuList = RoutesName.map((route, index) => {
     const mainDynamicRoute = buildDynamicRoute(route.as, userData);
     const mainRouteChildren = route.as && route.as.split('/');
     const newMatch = router.asPath.split('/').slice(2).join('/');
-    const childRoute = route.as?.split('/').slice(2).join('/'); 
-    const isActive = (activeTabForCreate === 'posts' && activeTabForCreate === route.title.toLowerCase()) ? true : (!route.components && newMatch === childRoute) || (isNewPage && mainRouteChildren?.includes(activeTabForCreate) || activeTabForCreate === route.title.toLowerCase()); 
+    const childRoute = route.as?.split('/').slice(2).join('/');
+    const isActive = (activeTabForCreate === 'posts' && activeTabForCreate === route.title.toLowerCase()) ? true : (!route.components && newMatch === childRoute) || (isNewPage && mainRouteChildren?.includes(activeTabForCreate) || activeTabForCreate === route.title.toLowerCase());
     // console.log('newMatch', newMatch)
     // console.log('childRoute', childRoute)
     return (
@@ -88,7 +93,7 @@ const SiderBar = () => {
         <BarMain>
           <Button
             type="text"
-            href="/"
+            onClick={handleBackButton}
             icon={<img src="/images/logo-new.svg" alt="" />}
           />
         </BarMain>
@@ -105,9 +110,9 @@ const SiderBar = () => {
             <BlogTitle>My blog name</BlogTitle>
           </MyBlog>
 
-          <ButtonCreate 
-            block 
-            icon={<PlusOutlined />} 
+          <ButtonCreate
+            block
+            icon={<PlusOutlined />}
             type="primary"
             onClick={handleCreate}
             disabled={!activeTabForCreate ? true : false}

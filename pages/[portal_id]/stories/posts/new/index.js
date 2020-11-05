@@ -13,26 +13,26 @@ import {
   createDraftArticle,
   getListArticlesDraft,
   clearArticleDetails,
+  setImageExtension,
 } from "../../../../../src/redux/actions/articles";
+
 // components
 import NewForm from "../../../../../src/components/posts/NewForm";
 // ui
 import { message, Form } from "antd";
 import { getUserData } from "../../../../../src/utils";
-
 const NewPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState(null);
   const [isStory, setIsStory] = useState(false);
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [saveValues, setSaveValues] = useState("saved");
+  const [postData, setPostData] = useState({});
   let userData = getUserData()
-
-
   const router = useRouter();
   const { articleDetail } = props;
-
   useEffect(() => {
     // returned function will be called on component unmount
     return () => {
@@ -43,6 +43,13 @@ const NewPost = (props) => {
       props.clearArticleDetails();
     };
   }, []);
+ 
+  useEffect(() => {
+    let pathname = router.pathname
+    if (pathname === "/[portal_id]/stories/posts/new") {
+      setPostData({})
+    }
+  }, [])
 
   useEffect(() => {
     if (creatingDraft) {
@@ -60,9 +67,37 @@ const NewPost = (props) => {
     }
   }, [articleDetail])
 
-  const onChangeEditor = (value) => {
+  const onChangeEditor = (value, jsonValue) => {
     setContentEditorHtml(value);
+    setContentEditorJson(jsonValue)
     setIsStory(false);
+  }
+
+  const handleObjectData = (value) => {
+    if (value !== "saveValue") {
+      setSaveValues("saving...");
+    }
+    const authorID = Number(localStorage.getItem("userID"));
+    const { title, subTitle, imageData } = form.getFieldsValue();
+    let _obj = {
+      title: title,
+      subTitle: subTitle,
+      description: editorHtml,
+      descriptionJson: editorJson,
+      authorID: authorID,
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      isDraft: true,
+      internalArticle: postData?.internalArticle
+    };
+    return _obj
   }
 
   const onChangeTitle = async (ev) => {
@@ -74,45 +109,28 @@ const NewPost = (props) => {
   }
 
   const createDraft = async () => {
-    setSaveValues("saving...");
-    const authorID = Number(localStorage.getItem("userID"));
-
-    const { title, subTitle, imageData } = form.getFieldsValue();
-    const _obj = {
-      title: title || "",
-      subTitle: subTitle || "",
-      description: editorHtml,
-      authorID: authorID,
-      featureImage: imageData ? imageData : "",
-      isDraft: true,
-    };
-
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }else{
+      props.setImageExtension(_obj.featureImage)
+    }
     await props.createDraftArticle(_obj);
     // await props.getListArticlesDraft(authorID, true, 100, 1);
   };
 
   const onFinish = async (values) => {
-    const authorID = Number(localStorage.getItem("userID"));
-    const { title, subTitle } = values;
+    // const authorID = Number(localStorage.getItem("userID"));
+    // const { title, subTitle } = values;
 
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
       setIsStory(true);
       return;
     }
-
-    let _variables = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      authorID: authorID,
-      featureImage: imageData ? imageData : "",
-      categories: [
-        {
-          ID: 21,
-          name: "Media",
-        },
-      ],
-    };
+    let _variables = handleObjectData("saveValue")
+    if (postData?.featureImage === "") {
+      delete _variables.featureImage
+    }
 
     apolloClient
       .mutate({
@@ -132,11 +150,10 @@ const NewPost = (props) => {
       });
   };
 
-  // const newActions = () => {
-  //   return (
-  //     );
-  // };
-
+  const handlePostData = (value) => {
+    setPostData({ ...value })
+  }
+  
   return (
     <NewPageLayout>
       <Form onFinish={onFinish} form={form} layout="vertical">
@@ -158,7 +175,7 @@ const NewPost = (props) => {
                 <StyledText>Draft</StyledText>
                 <StyledText>{saveValues}</StyledText>
               </NewPostAction>
-              <Button size="middle" type="primary" htmlType="submit">
+              <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
                 Publish
           </Button>
             </ActionContent>
@@ -166,6 +183,7 @@ const NewPost = (props) => {
           <ContentPage>
             <NewForm
               flag={true}
+              postInformation={(value) => handlePostData(value)}
               onTitleChange={onChangeTitle}
               onChangeEditor={onChangeEditor}
               setImage={setImage}
@@ -201,7 +219,7 @@ const NewContent = styled.div`
 
 const ContentPage = styled.div`
   width: 100%;
-  max-width: 850px;
+  max-width: 950px;
   margin: 0 auto;
   padding: 80px 0;
 `;
@@ -247,6 +265,7 @@ const mapDispatchToProps = {
   createDraftArticle,
   clearArticleDetails,
   getListArticlesDraft,
+  setImageExtension,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewPost);

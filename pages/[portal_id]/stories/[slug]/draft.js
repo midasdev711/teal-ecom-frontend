@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails
+  clearArticleDetails,
 } from "../../../../src/redux/actions/articles";
 // components
 import NewForm from "../../../../src/components/posts/NewForm";
@@ -28,48 +28,66 @@ const usePrevious = (value) => {
 const EditPost = (props) => {
   const [form] = Form.useForm();
   const [editorHtml, setContentEditorHtml] = useState("");
+  const [editorJson, setContentEditorJson] = useState({});
   const [imageData, setImage] = useState("");
   const [isStory, setIsStory] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [saveFlag, setSaveFlag] = useState(false);
   const [count, setCount] = useState([]);
+  const [postData, setPostData] = useState({});
 
   let userData = getUserData()
   const getDetailArticle = async () => {
     const {
       query: { slug },
     } = Router.router;
-
     await props.getDetailArticle(slug, true);
   };
-
-  const { updateArticleDetail, articleDetail, saveState , saveData} = props;
+  const { updateArticleDetail, articleDetail, saveState, saveData } = props;
   const prevProps = usePrevious({ updateArticleDetail });
-
   const onValuesChangePost = async () => {
-   
+
     const { title, subTitle, imageData } = form.getFieldsValue();
     if (title || subTitle) {
       await updateDraft();
     }
   };
-
-  const updateDraft = async () => {
-    const { title, subTitle, imageData } = form.getFieldsValue();
-    // console.log('editorHtml', editorHtml)
-    const _obj = {
+  
+  const handleObjectData = (value) => {
+    const { title, subTitle, imageData } = form.getFieldsValue()
+    let _obj = {
       title: title,
       subTitle: subTitle,
       description: editorHtml,
+      descriptionJson: editorJson,
       articleId: Number(articleDetail.ID),
-      featureImage: imageData ? imageData : "",
+      featureImage: postData?.featureImage || "",
+      tags: postData?.tags ? postData?.tags : [],
+      metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
+      article_SEO: [{
+        metaTitle: postData?.SEOTitle !== "" ? postData?.SEOTitle : title,
+        metaDescription: postData?.SEODescription !== "" ? postData?.SEODescription : subTitle,
+        conicalUrl: postData?.SEOUrl !== "" ? postData?.SEOUrl : "",
+        keyPhrases: postData?.keyPhrasesTags || []
+      }],
+      internalArticle: postData?.internalArticle || false
     };
-    // console.log('update article')
+    if (value === "live") {
+      _obj.isDraft = false,
+        _obj.isPublish = true
+    }
+    return _obj
+  }
+
+  const updateDraft = async () => {
+    let _obj = handleObjectData()
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
     await props.updateArticle(_obj);
   };
 
   const handleSaveData = async () => {
-    // console.log('articleDetail from interval', articleDetail);
     if (articleDetail) {
       await onValuesChangePost();
     }
@@ -81,7 +99,7 @@ const EditPost = (props) => {
       getDetailArticle();
     }
     if (articleDetail) {
-      const { title, subTitle, description } = articleDetail;
+      const { title, subTitle, description, descriptionJson } = articleDetail;
       // let { title, subTitle } = handleTitle()
       form.setFieldsValue({
         title,
@@ -89,8 +107,8 @@ const EditPost = (props) => {
       });
 
       if (description && description.trim().length) {
-        console.log('set description', description);
         setContentEditorHtml(description);
+        setContentEditorJson(descriptionJson);
       }
     }
   }, [articleDetail]);
@@ -119,32 +137,27 @@ const EditPost = (props) => {
   }, [props.msgErr]);
 
   useEffect(() => {
-    if(saveFlag){
+    if (saveFlag) {
       let timer = null;
-    if (!timer) {
-      // console.log('set timer');
-      timer = setInterval(async () => {
-       // console.log('called on every 5 seconds!', articleDetail)
-        await handleSaveData();
-      }, 5000);
-    }
-    return () => {
-      if (timer) {
-        clearInterval(timer);
+      if (!timer) {
+        // console.log('set timer');
+        timer = setInterval(async () => {
+          // console.log('called on every 5 seconds!', articleDetail)
+          await handleSaveData();
+        }, 5000);
+      }
+      return () => {
+        if (timer) {
+          clearInterval(timer);
+        }
       }
     }
-    }
-  }, [articleDetail, editorHtml, form])
-  useEffect(()=>{
-  },[form])
-  useEffect(()=>{
-    saveFlag ? (setSaveFlag(false)) : null
-  },[])
+  }, [articleDetail, editorHtml, form, postData, count])
+
   useEffect(() => {
-    if(count.length > 0){
-      !saveFlag ? setSaveFlag(true) : null
-    }
-  }, [articleDetail, editorHtml, form])
+    saveFlag ? (setSaveFlag(false)) : null
+  }, [])
+
   const onFinish = async (values) => {
     setSubmit(true);
     if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
@@ -152,30 +165,23 @@ const EditPost = (props) => {
       setSubmit(false);
       return;
     }
-
-    const { title, subTitle } = values;
-    let _variables = {
-      title: title,
-      subTitle: subTitle,
-      description: editorHtml,
-      articleId: Number(articleDetail.ID),
-      featureImage: imageData ? imageData : "",
-      isDraft: false,
-      isPublish: true,
-    };
-
-    await props.updateArticle(_variables);
+    let _obj = handleObjectData("live")
+    if (postData?.featureImage === "") {
+      delete _obj.featureImage
+    }
+    await props.updateArticle(_obj);
   };
-  const onChangeEditor = (value) => {
-    let data = count
-    data.push({name:"test"})
-    setCount(data)
-    setContentEditorHtml(value);
+
+  const onChangeEditor = (value, jsonValue) => {
+    if (value && articleDetail.description !== value && !saveFlag) {
+      setSaveFlag(true);
+    }
+    if (value !== undefined) {
+      setContentEditorHtml(value);
+      setContentEditorJson(jsonValue)
+    }
     setIsStory(false);
   };
-  const handleFormData = () =>{
-    onChangeEditor()
-  }
 
   const newActions = () => {
     return (
@@ -195,21 +201,29 @@ const EditPost = (props) => {
             <StyledText>Draft</StyledText>
             <StyledText>{saveState}</StyledText>
           </NewPostAction>
-          <Button size="middle" type="primary" htmlType="submit" onClick={onFinish}>
+          <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
             Publish
           </Button>
         </ActionContent>
       </ActionTopLayout>
     );
   };
-  
 
+  const handlePostData = (value) => {
+    setPostData({ ...value })
+  }
+
+	const handleData = () => {
+		setSaveFlag(true)
+		setCount([1 + count])
+  }
+  
   return (
     <NewPageLayout>
       <Form
         form={form}
         layout="vertical"
-        onChange={()=>handleFormData()}
+        onChange={() => handleData()}
       >
         <NewContent>
           {newActions()}
@@ -217,10 +231,14 @@ const EditPost = (props) => {
           <ContentPage>
             <NewForm
               onChangeEditor={onChangeEditor}
+              postInformation={(value) => handlePostData(value)}
               setImage={setImage}
               isStory={isStory}
               description={
                 articleDetail && articleDetail.description || ""
+              }
+              postInfo={
+                updateArticleDetail === null ? (articleDetail) : (updateArticleDetail)
               }
             />
           </ContentPage>
@@ -253,7 +271,7 @@ const NewContent = styled.div`
 
 const ContentPage = styled.div`
   width: 100%;
-  max-width: 850px;
+  max-width: 1170px;
   margin: 0 auto;
   padding: 80px 0;
 `;
@@ -277,7 +295,7 @@ const ActionContent = styled.div`
   top: 0;
   right: 0;
   width: 100%;
-  max-width: 950px;
+  max-width: 1170px;
   background: #eef1f2;
   margin: 0 auto;
   display: flex;
@@ -301,7 +319,7 @@ const mapStateToProps = (store) => {
 const mapDispatchToProps = {
   getDetailArticle,
   updateArticle,
-  clearArticleDetails
+  clearArticleDetails,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

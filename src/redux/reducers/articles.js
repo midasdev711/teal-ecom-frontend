@@ -20,6 +20,9 @@ import {
   ERROR_CREATE_DRAFT_ARTICLE,
   ACTION_GET_LIST_DRAFT_ARTICLES,
   ERROR_GET_LST_DRAFT_ARTICLES,
+  SET_POST_IMAGE_EXTENSION_ERROR,
+  SET_POST_IMAGE_EXTENSION_START,
+  SET_POST_IMAGE_EXTENSION_SUCCESS,
 } from "../actions/actionTypes";
 
 const initData = {
@@ -34,6 +37,7 @@ const initData = {
   articlesDeleted: [],
   articlesDraft: [],
   isCreatedDraft: false,
+  UploadImage:null,
 };
 
 export const articlesReducer = (state = initData, action) => {
@@ -97,11 +101,11 @@ export const articlesReducer = (state = initData, action) => {
         msgErr: action.msgErr,
       };
 
-    case UPDATE_ARTICLE: 
-    return {
-      ...state,
-      postSaveState: 'saving...'
-    }
+    case UPDATE_ARTICLE:
+      return {
+        ...state,
+        postSaveState: 'saving...'
+      }
     case ACTION_UPDATED_ARTICLE:
       return {
         ...state,
@@ -168,6 +172,27 @@ export const articlesReducer = (state = initData, action) => {
         ...state,
         isCreatedDraft: false,
         msgErr: action.msgErr,
+      };
+    case SET_POST_IMAGE_EXTENSION_START:
+      return {
+        ...state,
+        status: "start",
+        loading: true,
+
+      };
+    case SET_POST_IMAGE_EXTENSION_SUCCESS:
+      return {
+        ...state,
+        status: "success",
+        UploadImage:action.data,
+        loading: false,
+        errorMsg: null,
+      };
+    case SET_POST_IMAGE_EXTENSION_ERROR:
+      return {
+        ...state,
+        status: "fail",
+        errorMsg: action.errorMsg,
       };
     default:
       return {
