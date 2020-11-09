@@ -2,14 +2,15 @@ import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import RemirorEditorNew from "../../atoms/RemirorEditorNew";
 import { TweenOneGroup } from "rc-tween-one";
-import { Upload, message } from 'antd';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Upload, message, Drawer, Button } from 'antd';
+import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 // ui
 import { Col, Form, Input, Row, Select, Tag } from "antd";
 import { Container } from "next/app";
 import { Checkbox } from 'antd';
 import { useSelector } from "react-redux";
+import { updateArticle } from "../../../redux/actions/articles";
 const { Option } = Select;
 
 const postData = {
@@ -41,7 +42,7 @@ function beforeUpload(file) {
     return isJpgOrPng && isLt2M;
 }
 const NewForm = (props) => {
-    const { onChangeEditor, isStory, onTitleChange, postInformation, postInfo, flag } = props;
+    const { onChangeEditor, isStory, onTitleChange, postInformation, postInfo, flag, model, modelClose, onFinish, live, updateArticle } = props;
     const [postDetails, setPostDetails] = useState({ ...postData })
     const [inputVisible, setInputVisible] = useState(false);
     const [tags, setTags] = useState([]);
@@ -52,6 +53,15 @@ const NewForm = (props) => {
     const [check, setCheck] = useState(false);
     const [dummyFlag, setDummyFlag] = useState([1]);
     const apiCallResponse = useSelector(state => state.articlesReducer.updateArticleDetail)
+    const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
+
+    useEffect(() => {
+        setOpenMoreFilters(model)
+    }, [model])
+
+    useEffect(() => {
+        modelClose(isOpenMoreFilter)
+    }, [isOpenMoreFilter])
 
     useEffect(() => {
         if (apiCallResponse !== null) {
@@ -62,6 +72,7 @@ const NewForm = (props) => {
             setDummyFlag([dummyFlag + 1])
         }
     }, [apiCallResponse])
+
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
         reader.addEventListener("load", () => callback(reader.result));
@@ -70,6 +81,7 @@ const NewForm = (props) => {
     const onChange = (content, jsonValue) => {
         onChangeEditor(content, jsonValue);
     };
+
     const onChangeImage = (e) => {
         if (e.target.files.length > 0) {
             let url = getBase64(e.target.files[0], (imageUrl) => {
@@ -250,7 +262,7 @@ const NewForm = (props) => {
         <ContentBox>
             <Container>
                 <Row gutter={30}>
-                    <Col span={16}>
+                    <Col span={24}>
                         <Form.Item
                             name="title"
                             rules={[{ required: true, message: "Title is required!" }]}
@@ -263,22 +275,7 @@ const NewForm = (props) => {
                         >
                             <Input bordered={false} onChange={onTitleChange} placeholder="Add a brief subtitle" />
                         </Form.Item>
-                        <H4>Feature Image</H4>
-                        <Upload
-                            name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader"
-                            showUploadList={false}
-                            beforeUpload={beforeUpload}
-                            onChange={handleChangeImage}
-                        >
-                            {
-                                imageUrl !== "" ? (<img src={`${imageUrl}`} alt="avatar" style={{ width: '100%' }} />) : (imageData)
-                            }
-                        </Upload>
-                        {/* <Form.Item name="featureImage">
-                  <Input bordered={false} type="file" accept="images/*" onChange={onChangeImage} />
-               </Form.Item> */}
+
                         <RemirorEditorNew
                             flag={props.flag}
                             onChangeEditor={onChange}
@@ -286,94 +283,129 @@ const NewForm = (props) => {
                         />
                         {/* {isStory && <p style={{ color: "#f5222d" }}>Story is required!</p>} */}
                     </Col>
-                    <Col span={8}>
-                        <Form.Item
-                            label="SEO Title"
-                            name="SEOTitle"
 
-                        >
-                            <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaTitle || ""} name="SEOTitle" onChange={(event) => handleChange(event)} />
-                        </Form.Item>
-                        <Form.Item
-                            label="SEO Description"
-                            name="SEODescription"
-                        >
-                            <Input placeholder="SEO description" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaDescription || ""} name="SEODescription" onChange={(event) => handleChange(event)} />
-                        </Form.Item>
-                        <Form.Item
-                            label="SEO Url"
-                            name="SEOUrl"
-                        >
-                            <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.conicalUrl || ""} name="SEOUrl" onChange={(event) => handleChange(event)} />
-                        </Form.Item>
-                        <Form.Item label="SEO KeyPhrases" name="keyPhrases">
-                            <Input
-                                placeholder="Tag one, Tag two, Tag three"
-                                defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.keyPhrases}
-                                value={postDetails.keyPhrases || ""}
-                                name="keyPhrases"
-                                onBlur={handleInputKeyPhrases}
-                                onPressEnter={handleInputKeyPhrases}
-                                onChange={(event) => handleChange(event)} />
-                            <TweenOneGroup
-                                className="tag-content"
-                                enter={{
-                                    scale: 0.8,
-                                    opacity: 0,
-                                    type: "from",
-                                    duration: 100,
-                                    with: 10,
-                                    onComplete: (e) => { e.target.style = "" },
-                                }}
-                                leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-                                appear={false}>
-                                {tagPhrasesTagsChild}
-                            </TweenOneGroup>
-                        </Form.Item>
-                        <Form.Item
-                            label="Tag"
-                            name="Tag"
-                        >
-                            <Input
-                                ref={saveInputRef}
-                                type="text"
-                                placeholder="Vintage, cotton, summer"
-                                value={inputValue}
-                                onChange={handleInputChange}
-                                onBlur={handleInputConfirm}
-                                onPressEnter={handleInputConfirm}
-                            />
-                            <TweenOneGroup
-                                className="tag-content"
-                                enter={{
-                                    scale: 0.8,
-                                    opacity: 0,
-                                    type: "from",
-                                    duration: 100,
-                                    with: 10,
-                                    onComplete: (e) => {
-                                        e.target.style = "";
-                                    },
-                                }}
-                                leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-                                appear={false}
+                    <DrawerStyle
+                        title={
+                            <DrawerTitle>
+                                Post Details
+                                  <TitleIconClose onClick={() => setOpenMoreFilters(false)} />
+                            </DrawerTitle>
+                        }
+                        placement="right"
+                        closable={false}
+                        onClose={() => setOpenMoreFilters(false)}
+                        visible={isOpenMoreFilter}
+                        footer={
+                            <>
+                                <ButtonFooterRight type="primary" onClick={() => onFinish("addAllData")}>{live === "live" ? ("Save and publish") : ("Publish")}</ButtonFooterRight>
+                            </>
+                        }
+                    >
+                        <SidebarDrawer>
+
+                            <H4>Feature Image</H4>
+                            <Upload
+                                name="avatar"
+                                listType="picture-card"
+                                className="avatar-uploader"
+                                showUploadList={false}
+                                beforeUpload={beforeUpload}
+                                onChange={handleChangeImage}
                             >
-                                {tagChild}
-                            </TweenOneGroup>
-                        </Form.Item>
-                        <Form.Item
-                            label="Meta Robots"
-                            name="metaRobots">
-                            <Select defaultValue={postInfo?.metaRobots !== "" && postInfo?.metaRobots !== undefined ? (postInfo?.metaRobots) : ("Select")} name="metaRobots" onChange={(event) => handleChange(event, "metaRobots")}>
-                                <Option value="" disabled>Select</Option>
-                                <Option value="index,follow">Index,Follow</Option>
-                                <Option value="index,nofollow">Index,NoFollow</Option>
-                                <Option value="noindex,follow">NoIndex,Follow</Option>
-                                <Option value="noindex,nofollow">NoIndex,NoFollow</Option>
-                            </Select>
-                        </Form.Item>
-                        <Checkbox checked={check} onChange={(event) => handleCheckBox(event)}>Internal Article ?</Checkbox>
-                    </Col>
+                                {
+                                    imageUrl !== "" ? (<img src={`${imageUrl}`} alt="avatar" style={{ width: '100%' }} />) : (imageData)
+                                }
+                            </Upload>
+                            <Form.Item
+                                label="SEO Title"
+                                name="SEOTitle"
+
+                            >
+                                <Input placeholder="SEO title" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaTitle || ""} name="SEOTitle" onChange={(event) => handleChange(event)} />
+                            </Form.Item>
+                            <Form.Item
+                                label="SEO Description"
+                                name="SEODescription"
+                            >
+                                <Input placeholder="SEO description" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.metaDescription || ""} name="SEODescription" onChange={(event) => handleChange(event)} />
+                            </Form.Item>
+                            <Form.Item
+                                label="SEO Url"
+                                name="SEOUrl"
+                            >
+                                <Input placeholder="SEO url" defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.conicalUrl || ""} name="SEOUrl" onChange={(event) => handleChange(event)} />
+                            </Form.Item>
+                            <Form.Item label="SEO KeyPhrases" name="keyPhrases">
+                                <Input
+                                    placeholder="Tag one, Tag two, Tag three"
+                                    defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.keyPhrases}
+                                    value={postDetails.keyPhrases || ""}
+                                    name="keyPhrases"
+                                    onBlur={handleInputKeyPhrases}
+                                    onPressEnter={handleInputKeyPhrases}
+                                    onChange={(event) => handleChange(event)} />
+                                <TweenOneGroup
+                                    className="tag-content"
+                                    enter={{
+                                        scale: 0.8,
+                                        opacity: 0,
+                                        type: "from",
+                                        duration: 100,
+                                        with: 10,
+                                        onComplete: (e) => { e.target.style = "" },
+                                    }}
+                                    leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                                    appear={false}>
+                                    {tagPhrasesTagsChild}
+                                </TweenOneGroup>
+                            </Form.Item>
+                            <Form.Item
+                                label="Tag"
+                                name="Tag"
+                            >
+                                <Input
+                                    ref={saveInputRef}
+                                    type="text"
+                                    placeholder="Vintage, cotton, summer"
+                                    value={inputValue}
+                                    onChange={handleInputChange}
+                                    onBlur={handleInputConfirm}
+                                    onPressEnter={handleInputConfirm}
+                                />
+                                <TweenOneGroup
+                                    className="tag-content"
+                                    enter={{
+                                        scale: 0.8,
+                                        opacity: 0,
+                                        type: "from",
+                                        duration: 100,
+                                        with: 10,
+                                        onComplete: (e) => {
+                                            e.target.style = "";
+                                        },
+                                    }}
+                                    leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
+                                    appear={false}
+                                >
+                                    {tagChild}
+                                </TweenOneGroup>
+                            </Form.Item>
+                            <Form.Item
+                                label="Meta Robots"
+                                name="metaRobots">
+                                <Select defaultValue={postInfo?.metaRobots !== "" && postInfo?.metaRobots !== undefined ? (postInfo?.metaRobots) : ("Select")} name="metaRobots" onChange={(event) => handleChange(event, "metaRobots")}>
+                                    <Option value="" disabled>Select</Option>
+                                    <Option value="index,follow">Index,Follow</Option>
+                                    <Option value="index,nofollow">Index,NoFollow</Option>
+                                    <Option value="noindex,follow">NoIndex,Follow</Option>
+                                    <Option value="noindex,nofollow">NoIndex,NoFollow</Option>
+                                </Select>
+                            </Form.Item>
+                            <Checkbox checked={check} onChange={(event) => handleCheckBox(event)}>Internal Article ?</Checkbox>
+                        </SidebarDrawer>
+                    </DrawerStyle>
+
+
                 </Row>
             </Container>
 
@@ -425,5 +457,39 @@ const TitleInput = styled.div`
     font-style: normal;
   }
 `;
+const DrawerStyle = styled(Drawer)``;
+const DrawerTitle = styled.h3`
+  margin: 0;
+  font-weight: 500;
+  position: relative;
+  color: #000;
+  font-size: 24px;
+`;
+
+const TitleIconClose = styled(CloseOutlined)`
+  position: absolute;
+  right: 0;
+  font-size: 18px;
+  cursor: pointer;
+`;
+const ButtonFooterLeft = styled(Button)`
+  float: left;
+`;
+
+const ButtonFooterRight = styled(Button)`
+  float: right;
+  margin-right: 10px;
+`;
+const ButtonSave = styled(Button)`
+  float: right;
+  margin-right: 10px
+`;
+
+const SidebarDrawer = styled.div`
+  padding: 0 25px;
+  .ant-row {
+      display: block;
+  }
+`
 
 export default NewForm;
