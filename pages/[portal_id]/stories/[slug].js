@@ -248,6 +248,7 @@ const EditPost = (props) => {
                             postInfo={
                                 updateArticleDetail === null ? (articleDetail) : (updateArticleDetail)
                             }
+                            firstTime = {updateArticleDetail === null ? ("oldData") : null }
                             live={"live"}
                             model={model}
                             modelClose={(value) => handleCloseModel(value)}

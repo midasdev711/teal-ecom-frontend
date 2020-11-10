@@ -42,7 +42,7 @@ function beforeUpload(file) {
     return isJpgOrPng && isLt2M;
 }
 const NewForm = (props) => {
-    const { onChangeEditor, isStory, onTitleChange, postInformation, postInfo, flag, model, modelClose, onFinish, live, updateArticle } = props;
+    const { onChangeEditor, isStory, onTitleChange, postInformation, postInfo, flag, model, modelClose, onFinish, live, updateArticle, firstTime } = props;
     const [postDetails, setPostDetails] = useState({ ...postData })
     const [inputVisible, setInputVisible] = useState(false);
     const [tags, setTags] = useState([]);
@@ -93,19 +93,18 @@ const NewForm = (props) => {
     useEffect(() => {
         let cloneData = { ...postDetails }
         if (postInfo !== null && postInfo !== undefined && Object.values(postInfo).length > 0) {
-            const keyParas = (postInfo?.article_SEO[0]?.keyPhrases || [])
-            cloneData.SEOTitle = postInfo?.article_SEO[0]?.metaTitle
-            cloneData.SEODescription = postInfo?.article_SEO[0]?.metaDescription
-            cloneData.SEOUrl = postInfo?.article_SEO[0]?.conicalUrl
-            cloneData.keyPhrasesTags = (postInfo?.article_SEO[0]?.keyPhrases || []);
-            cloneData.metaRobots = postInfo?.metaRobots
-            cloneData.tags = postInfo?.tags || []
-            cloneData.internalArticle = postInfo?.internalArticle || false
-            cloneData.featureImage = postInfo?.featureImage || ""
+            cloneData.SEOTitle = firstTime === "oldData" ? postInfo?.article_SEO[0]?.metaTitle : cloneData.SEOTitle
+            cloneData.SEODescription = firstTime === "oldData" ? postInfo?.article_SEO[0]?.metaDescription : cloneData.SEODescription
+            cloneData.SEOUrl = firstTime === "oldData" ? postInfo?.article_SEO[0]?.conicalUrl : cloneData.SEOUrl
+            cloneData.keyPhrasesTags = firstTime === "oldData" ? postInfo?.article_SEO[0]?.keyPhrases || [] : cloneData.keyPhrasesTags || []
+            cloneData.metaRobots = firstTime === "oldData" ? postInfo?.metaRobots : cloneData.metaRobots
+            cloneData.tags = firstTime === "oldData" ? postInfo?.tags || [] : cloneData.tags || []
+            cloneData.internalArticle = firstTime === "oldData" ? postInfo?.internalArticle : cloneData.internalArticle || false
+            cloneData.featureImage = firstTime === "oldData" ? postInfo?.featureImage : cloneData.featureImage
             setPostDetails(cloneData)
-            setTags(postInfo?.tags || [])
-            setKeyPhrasesTags(keyParas)
-            setCheck(postInfo?.internalArticle || false)
+            setTags(firstTime === "oldData" ? postInfo?.tags : cloneData.tags || [])
+            setKeyPhrasesTags(firstTime === "oldData" ? postInfo?.article_SEO[0]?.keyPhrases : cloneData.keyPhrasesTags || [])
+            setCheck(firstTime === "oldData" ? postInfo?.internalArticle || false : cloneData.internalArticle || false)
         }
     }, [postInfo])
 
@@ -338,7 +337,7 @@ const NewForm = (props) => {
                             <Form.Item label="SEO KeyPhrases" name="keyPhrases">
                                 <Input
                                     placeholder="Tag one, Tag two, Tag three"
-                                    defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.keyPhrases}
+                                  //  defaultValue={postInfo?.article_SEO && postInfo?.article_SEO[0]?.keyPhrases}
                                     value={postDetails.keyPhrases || ""}
                                     name="keyPhrases"
                                     onBlur={handleInputKeyPhrases}
@@ -367,6 +366,7 @@ const NewForm = (props) => {
                                     ref={saveInputRef}
                                     type="text"
                                     placeholder="Vintage, cotton, summer"
+                                  //  defaultValue={postInfo?.tags && postInfo?.tags}
                                     value={inputValue}
                                     onChange={handleInputChange}
                                     onBlur={handleInputConfirm}
