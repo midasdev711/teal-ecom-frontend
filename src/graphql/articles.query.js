@@ -129,6 +129,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
     $subTitle: String
     $description: String
     $featureImage: Upload
+    $authorID: Int
     $isDraft: Boolean
     $isPublish: Boolean
     $tags:[String]
@@ -146,6 +147,7 @@ export const UPDATE_ARTICLE_MUTATION = gql`
         featureImage: $featureImage
         isDraft: $isDraft
         isPublish: $isPublish
+        authorID: $authorID
         tags:$tags
         metaRobots:$metaRobots
         article_SEO:$article_SEO

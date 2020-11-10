@@ -113,8 +113,6 @@ const NewPost = (props) => {
     let _obj = handleObjectData()
     if (postData?.featureImage === "") {
       delete _obj.featureImage
-    }else{
-      props.setImageExtension(_obj.featureImage)
     }
     await props.createDraftArticle(_obj);
     // await props.getListArticlesDraft(authorID, true, 100, 1);
