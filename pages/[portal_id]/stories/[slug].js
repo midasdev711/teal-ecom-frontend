@@ -116,12 +116,14 @@ const EditPost = (props) => {
 
     const handleObjectData = (value, saveAll) => {
         const { title, subTitle, imageData } = form.getFieldsValue();
+        const authorID = Number(localStorage.getItem("userID"));
         let _obj = {
             title: title,
             subTitle: subTitle,
             description: editorHtml,
             descriptionJson: editorJson,
             articleId: Number(articleDetail.ID),
+            authorID: authorID,
             featureImage: postData?.featureImage || "",
             tags: postData?.tags ? postData?.tags : [],
             metaRobots: postData?.metaRobots ? postData?.metaRobots : "index,follow",
