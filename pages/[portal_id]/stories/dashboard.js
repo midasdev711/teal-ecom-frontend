@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
+import { useRouter } from "next/router"
+import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
 import { Banner, BlogGroup } from '../../../src/components/atoms';
 import { useRouter } from "next/router";
@@ -13,7 +15,7 @@ import { getStores } from "../../../src/redux/actions/stores";
 
 const { Title, Text } = Typography;
 
-const StoriesDashboard = (props) => {
+export default function StoriesDashboard(props) {
     const router = useRouter();
     let userData = getUserData();
 
@@ -40,6 +42,13 @@ const StoriesDashboard = (props) => {
     };
 
     const { blogsData, pagesData, storesData } = props;
+
+    const router = useRouter()
+    let userData = getUserData()
+
+    const goToNewBlogPage = (url) => {
+        router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
+    }
 
     return (
         <LayoutWithNoSidebar>
@@ -73,6 +82,7 @@ const StoriesDashboard = (props) => {
                     )) }    
                     <BlogGroup 
                         isNew={true}
+                        onClick={goToNewBlogPage}
                     ></BlogGroup>
                 </BlogGroupContent>
             </BlogContainer>

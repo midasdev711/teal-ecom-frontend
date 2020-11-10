@@ -6,7 +6,7 @@ const { Text } = Typography;
 const BlogGroup = ({title, onClick, image, count, isNew=false}) => {
     if (isNew) {
         var ButtonContent = (
-            <AddBlog>
+            <AddBlog onClick={onClick}>
                 <img src={'/images/new.svg'} />
                 <NewTitle>Add new</NewTitle>
             </AddBlog>

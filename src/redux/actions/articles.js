@@ -9,6 +9,7 @@ import {
   DELETE_ARTICLES_MULTI_MUTATION,
   GET_DRAFT_ARTICLES_QUERY,
   CREATE_DRAFT_ARTICLE_MUTATION,
+  SET_IMAGE_EXTENSION_MUTATION
 } from "../../graphql/articles.query";
 
 import {
@@ -31,7 +32,11 @@ import {
   ACTION_CREATE_DRAFT_ARTICLE,
   ERROR_CREATE_DRAFT_ARTICLE,
   ACTION_GET_LIST_DRAFT_ARTICLES,
-  ERROR_GET_LST_DRAFT_ARTICLES
+  ERROR_GET_LST_DRAFT_ARTICLES,
+  SET_POST_IMAGE_EXTENSION_ERROR,
+  SET_POST_IMAGE_EXTENSION_START,
+  SET_POST_IMAGE_EXTENSION_SUCCESS,
+  
 } from "./actionTypes";
 
 export function getListArticlesDraft(userId, getDraft, limit, page) {
@@ -289,6 +294,36 @@ export function createNewPost(data) {
       });
   };
 }
+export function setImageExtension(data) {
+  let values = data
+  return (dispatch) => {
+    dispatch({
+      type: SET_POST_IMAGE_EXTENSION_START,
+  });
+    return apolloClient
+      .mutate({
+        mutation: SET_IMAGE_EXTENSION_MUTATION,
+        variables:{
+          articleImage:values
+        }
+      })
+      .then((res) => {
+        if (res.data) {
+          dispatch({
+            type: SET_POST_IMAGE_EXTENSION_SUCCESS,
+            data: res.data,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch({
+          type: SET_POST_IMAGE_EXTENSION_ERROR,
+          msgErr: err.message,
+        });
+      });
+  };
+}
 
 export default {
   getListArticles,
@@ -300,4 +335,5 @@ export default {
   deleteMultiArticles,
   getListArticlesDraft,
   createDraftArticle,
+  setImageExtension,
 };
