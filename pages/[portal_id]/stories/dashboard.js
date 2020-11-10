@@ -5,8 +5,6 @@ import { useRouter } from "next/router"
 import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
 import { Banner, BlogGroup } from '../../../src/components/atoms';
-import { useRouter } from "next/router";
-import { getUserData } from '../../../src/utils';
 import { connect } from "react-redux";
 // actions
 import { getBlogs } from "../../../src/redux/actions/blogs";
@@ -15,7 +13,7 @@ import { getStores } from "../../../src/redux/actions/stores";
 
 const { Title, Text } = Typography;
 
-export default function StoriesDashboard(props) {
+export function StoriesDashboard(props) {
     const router = useRouter();
     let userData = getUserData();
 
@@ -43,9 +41,7 @@ export default function StoriesDashboard(props) {
 
     const { blogsData, pagesData, storesData } = props;
 
-    const router = useRouter()
-    let userData = getUserData()
-
+    console.log(pagesData)
     const goToNewBlogPage = (url) => {
         router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
     }
@@ -69,7 +65,7 @@ export default function StoriesDashboard(props) {
                 </BlogContainerHeader>
                 <BlogGroupContent>
                     {console.log('-----------')}
-                    {console.log(storesData)}
+                    {console.log(pagesData)}
                     {console.log('-----------')}
                     { blogsData && blogsData.map((item) => (
 

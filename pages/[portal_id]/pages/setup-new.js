@@ -3,20 +3,25 @@ import { Form, Button, Typography, Input, Select, Upload, message } from 'antd'
 import { InboxOutlined } from '@ant-design/icons';
 import styled from "styled-components";
 import { LayoutWithoutSidebar } from "../../../src/components/views";
-
+import { connect  } from "react-redux";
+import Router from "next/router";
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { Dragger } = Upload;
 const { TextArea } = Input;
+import { AddPages } from '../../../src/redux/actions/pages';
+import { getUserData } from "../../../src/utils";
 
-export default function SetupNew() {
+let userData = {}
+const NewPage = (props) => {    
     const [form] = Form.useForm();
     const [, forceUpdate] = useState();
-
+   
     // To disable submit button at the beginning.
     useEffect(() => {
         forceUpdate({});
     }, []);
+
 
     const uploadProps = {
         name: 'file',
@@ -34,6 +39,27 @@ export default function SetupNew() {
             }
         },
     };
+
+    const handleSubmit = () => {
+       
+        userData = JSON.parse(localStorage.getItem("userData"));
+
+        let params = form.getFieldValue();
+
+        let setdata = {
+            PageTitle: params['pagename'],
+            PageDescription: params['pageabout'],
+            PageCategory: params['category'],
+            PageUserName: userData.userName,
+            PageEmail: userData.email,
+            PagePhone: userData.mobileNo, 
+            PageWebsite: '',
+            PageLocation: '',
+            PageUserID: userData.ID
+        }
+
+        props.AddPages(setdata);
+    }
 
     return (
         <LayoutWithoutSidebar title="New Page">
@@ -66,7 +92,7 @@ export default function SetupNew() {
                                     <FormSubmitButton type="primary" htmlType="submit" disabled={
                                         !form.isFieldsTouched(true) ||
                                         form.getFieldsError().filter(({ errors }) => errors.length).length
-                                    }>Finish Creation</FormSubmitButton>
+                                    } onClick={() => handleSubmit()}>Finish Creation</FormSubmitButton>
                                 </SubmitButtonArea>
                                 
                             )
@@ -172,3 +198,17 @@ const SubmitButtonArea = styled.div`
     width: 100%;
     text-align: center;
 `
+
+const mapStateToProps = (store) => {
+  return {
+
+  };
+};
+
+const mapDispatchToProps = {
+  AddPages
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewPage);
+
+

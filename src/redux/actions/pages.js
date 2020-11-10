@@ -22,7 +22,6 @@ export const resetPageStatus = () => {
 };
 
 export const AddPages = (datas) => {
-
   return dispatch => {
     dispatch({
       type: ADD_PAGE_START,

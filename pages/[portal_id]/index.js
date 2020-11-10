@@ -50,7 +50,7 @@ const Index = () => {
             <ButtonBlock>
                 <HomeLinkButton title="Stories" backgroundColor="#E84118" onClick={() => handleDefaultAction('stories/dashboard')} image={<img alt="unfulied" src="/images/home-stories.svg"/>}></HomeLinkButton>
                 <HomeLinkButton title="Ecommerce" backgroundColor="#00A8FF" onClick={() => handleDefaultAction('ecom')} image={<img alt="unfulied" src="/images/home-ecommerce.svg"/>}></HomeLinkButton>
-                <HomeLinkButton title="Pages" backgroundColor="#4EEC91" onClick={() => handleDefaultAction('true')} image={<img alt="unfulied" src="/images/home-pages.svg"/>}></HomeLinkButton>
+                <HomeLinkButton title="Pages" backgroundColor="#4EEC91" onClick={() => handleDefaultAction('pages/setup-new')} image={<img alt="unfulied" src="/images/home-pages.svg"/>}></HomeLinkButton>
                 {
                     isOpenDeleteSelected && <InviteUserPopup
                         onCancel={onShowMdDeleteSelected}

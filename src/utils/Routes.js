@@ -30,6 +30,11 @@ const Routes = [
     ],
   },
   {
+    title: "Pages",
+    path: "/[portal_id]/pages/setup-new",
+    as: "/[portal_id]/pages/setup-new"
+  },
+  {
     title: "Products",
     path: "/[portal_id]/ecom/products",
     as: "/[portal_id]/ecom/products",
