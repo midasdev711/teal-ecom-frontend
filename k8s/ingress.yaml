@@ -1,0 +1,17 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: juicypie-frontend-portal-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+  - host: business.juicypie.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: juicypie-frontend-portal-service
+          servicePort: 3000

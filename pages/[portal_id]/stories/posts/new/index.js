@@ -61,7 +61,6 @@ const NewPost = (props) => {
 
   useEffect(() => {
     if (articleDetail) {
-      console.log('articleDetail', articleDetail)
       const userData = JSON.parse(localStorage.getItem("userData"));
       const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
       console.log('url', url);

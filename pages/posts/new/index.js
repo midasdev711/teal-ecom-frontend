@@ -53,8 +53,6 @@ const NewPost = (props) => {
 
   useEffect(() => {
     if (articleDetail) {
-      console.log('articleDetail', articleDetail)
-      
       const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
       console.log('url', url);
       router.replace('/[portal_id]/stories/[slug]/draft', { pathname: url }, { shallow: true });

@@ -258,6 +258,7 @@ const EditPost = (props) => {
                             postInfo={
                                 updateArticleDetail === null ? (articleDetail) : (updateArticleDetail)
                             }
+                            firstTime = {updateArticleDetail === null ? ("oldData") : null }
                             model={model}
                             modelClose={(value) => handleCloseModel(value)}
                             onFinish={(value) => onFinish(value)}
