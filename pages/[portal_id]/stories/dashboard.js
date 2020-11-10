@@ -1,12 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
 import { LayoutWithNoSidebar } from "../../../src/components/views";
-import { Banner, BlogGroup } from '../../../src/components/atoms'
+import { Banner, BlogGroup } from '../../../src/components/atoms';
+import { useRouter } from "next/router";
+import { getUserData } from '../../../src/utils';
+import { connect } from "react-redux";
+// actions
+import { getBlogs } from "../../../src/redux/actions/blogs";
+import { getPages } from "../../../src/redux/actions/pages";
+import { getStores } from "../../../src/redux/actions/stores";
 
 const { Title, Text } = Typography;
 
-export default function StoriesDashboard() {
+const StoriesDashboard = (props) => {
+    const router = useRouter();
+    let userData = getUserData();
+
+    const handleDefaultAction = (url) => {
+        router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}` }, { shallow: true });
+    }
+
+    useEffect(() => {
+        getDataBlogs();
+        getDataPages();
+        getDataStores();
+    }, []);
+
+    const getDataBlogs = async () => {
+        await props.getBlogs;
+    };
+
+    const getDataPages = async () => {
+        await props.getPages;
+    };
+
+     const getDataStores = async () => {
+        await props.getStores;
+    };
+
+    const { blogsData, pagesData, storesData } = props;
+
     return (
         <LayoutWithNoSidebar>
             <Banner
@@ -25,11 +59,18 @@ export default function StoriesDashboard() {
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
-                    <BlogGroup 
-                        title="Default"
-                        count="0"
-                        image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
-                    ></BlogGroup>
+                    {console.log('-----------')}
+                    {console.log(storesData)}
+                    {console.log('-----------')}
+                    { blogsData && blogsData.map((item) => (
+
+                        <BlogGroup 
+                            title="Default"
+                            count="0"
+                            image={<img alt="unfulied" src="/images/blog-thumbnail.png" 
+                            onClick={() => handleDefaultAction('stories')} />}
+                        ></BlogGroup>
+                    )) }    
                     <BlogGroup 
                         isNew={true}
                     ></BlogGroup>
@@ -38,6 +79,7 @@ export default function StoriesDashboard() {
         </LayoutWithNoSidebar>
     );
 }
+
 
 const BlogContainer = styled.div`
     display: flex;
@@ -93,3 +135,19 @@ const AddButton = styled(Button)`
         box-shadow: 0px 0px 25px #989898;
     }
 `;
+
+const mapStateToProps = (store) => {
+    return {
+        blogsData: store.blogReducer.blogData,
+        pagesData: store.pageReducer.pageData,
+        storesData: store.storeReducer.storeData
+    };
+};
+
+const mapDispatchToProps = {
+  getBlogs,
+  getPages,
+  getStores
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoriesDashboard);

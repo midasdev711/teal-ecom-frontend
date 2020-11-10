@@ -81,6 +81,11 @@ const Routes = [
 const StoriesRoutes = [
   {
     title: "Home",
+    path: "/[portal_id]/stories/dashboard",
+    as: "/[portal_id]/stories/dashboard",
+  },
+  {
+    title: "Stories",
     path: "/[portal_id]/stories",
     as: "/[portal_id]/stories",
   },

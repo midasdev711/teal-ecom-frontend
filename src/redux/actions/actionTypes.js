@@ -58,6 +58,32 @@ export const ADD_CUSTOMER_ERROR = "ADD_CUSTOMER_ERROR";
 export const ACTION_GET_CUSTOMERS = "ACTION_GET_CUSTOMERS";
 export const ERROR_GET_CUSTOMERS = "ERROR_GET_CUSTOMERS";
 export const RESET_CUSTOMER_STATUS = "RESET_CUSTOMER_STATUS";
+
+//blog
+export const ADD_BLOG_START = "ADD_BLOG_START";
+export const ADD_BLOG = "ADD_BLOG";
+export const ADD_BLOG_ERROR = "ADD_BLOG_ERROR";
+export const ACTION_GET_BLOGS = "ACTION_GET_BLOGS";
+export const ERROR_GET_BLOGS = "ERROR_GET_BLOGS";
+export const RESET_BLOG_STATUS = "RESET_BLOG_STATUS";
+
+//page
+export const ADD_PAGE_START = "ADD_PAGE_START";
+export const ADD_PAGE = "ADD_PAGE";
+export const ADD_PAGE_ERROR = "ADD_PAGE_ERROR";
+export const ACTION_GET_PAGES = "ACTION_GET_PAGES";
+export const ERROR_GET_PAGES = "ERROR_GET_PAGES";
+export const RESET_PAGE_STATUS = "RESET_PAGE_STATUS";
+
+//store
+export const ADD_STORE_START = "ADD_STORE_START";
+export const ADD_STORE = "ADD_STORE";
+export const ADD_STORE_ERROR = "ADD_STORE_ERROR";
+export const ACTION_GET_STORES = "ACTION_GET_STORES";
+export const ERROR_GET_STORES = "ERROR_GET_STORES";
+export const RESET_STORE_STATUS = "RESET_STORE_STATUS";
+
+
 // products
 
 export const GET_MY_PRODUCT_LISTS = "GET_MY_PRODUCT_LISTS";
