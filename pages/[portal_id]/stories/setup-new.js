@@ -136,15 +136,16 @@ export default function SetupNew() {
                                     <FormDragger {...uploadProps} >
                                         <DropBoxWrapper>
                                             <IconBox className="ant-upload-drag-icon">
-                                                <InboxOutlined />
+                                                <img src="/images/blogs/image_upload.svg" />
                                             </IconBox>
-                                            <UploadText className="ant-upload-text">Page Picture</UploadText>
+                                            {/* <UploadText className="ant-upload-text">Page Picture</UploadText>
                                             <UploadHint className="ant-upload-hint">
                                                 Click or drag an image file here to update your page picture.
-                                        </UploadHint>
+                                            </UploadHint> */}
                                         </DropBoxWrapper>
                                     </FormDragger>
                                 </Form.Item>
+                                <Text1 noUnderline={true}>My new blog name</Text1>
                                 <Form.Item shouldUpdate={true}>
                                     {
                                         () => (
@@ -191,8 +192,6 @@ const Label = styled(Text)`
 
 const NewBlogForm = styled.div`
     width: 600px;
-    max-height: 697px;
-    min-height: 697px;
     height: 100%;
     margin: 0 auto;
     margin-top: 73px;
@@ -226,7 +225,7 @@ const Text1 = styled.p`
     margin-bottom: 15px;
     margin-top: 15px;
     &:hover {
-        text-decoration: underline;
+        text-decoration: ${props => props.noUnderline ? 'none' : 'underline'};
     }
 `;
 
@@ -289,6 +288,9 @@ const FormSelect = styled(Select)`
             height: 45px!important;
         }
     }
+    .ant-select-arrow {
+        display: none;
+    }
 `;
 
 const FormSelectOption = styled(Option)`
@@ -342,13 +344,18 @@ const NoPageBox = styled.div`
 `;
 
 const FormDragger = styled(Dragger)`
-    width: 310px!important;
-    height: 147px!important;
-    border: 5px solid #F6F8F9!important;
+    width: 100px!important;
+    height: 100px!important;
     background-color: white!important;
-    margin: 0 auto;
+    margin: 30px auto;
+    margin-bottom: 0;
+    border: none!important;
+    .ant-form-item .ant-upload.ant-upload-drag {
+        border: none;
+    }
     .ant-upload-drag-container {
         padding: 0;
+        border: none;
     }
     .ant-upload {
         padding: 0!important;
@@ -372,7 +379,6 @@ const UploadText = styled.p`
 `;
 
 const DropBoxWrapper = styled.div`
-    border: 1px dashed #E6E8E9;
     height: 100%;
 `;
 

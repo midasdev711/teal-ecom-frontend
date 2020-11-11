@@ -143,6 +143,9 @@ const FormSelect = styled(Select)`
             height: 45px!important;
         }
     }
+    .ant-select-arrow {
+        display: none;
+    }
 `;
 
 const FormSelectOption = styled(Option)`
