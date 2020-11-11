@@ -30,9 +30,11 @@ const NewPost = (props) => {
   const [creatingDraft, setCreatingDraft] = useState(false);
   const [saveValues, setSaveValues] = useState("saved");
   const [postData, setPostData] = useState({});
+  const [model , setModel] = useState(false)
   let userData = getUserData()
   const router = useRouter();
   const { articleDetail } = props;
+  
   useEffect(() => {
     // returned function will be called on component unmount
     return () => {
@@ -59,7 +61,6 @@ const NewPost = (props) => {
 
   useEffect(() => {
     if (articleDetail) {
-      console.log('articleDetail', articleDetail)
       const userData = JSON.parse(localStorage.getItem("userData"));
       const url = `/${userData && userData.uniqueID}/stories/${articleDetail.slug}/draft`;
       console.log('url', url);
@@ -154,6 +155,11 @@ const NewPost = (props) => {
     setPostData({ ...value })
   }
   
+  const handleCloseModel = (value) =>{
+    if(value !== model){
+        setModel(value)
+    }
+}
   return (
     <NewPageLayout>
       <Form onFinish={onFinish} form={form} layout="vertical">
@@ -175,9 +181,9 @@ const NewPost = (props) => {
                 <StyledText>Draft</StyledText>
                 <StyledText>{saveValues}</StyledText>
               </NewPostAction>
-              <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
-                Publish
-          </Button>
+                     <Button size="middle" type="primary" htmlType="button" onClick={() => setModel(!model)}>
+                        Next
+                     </Button>
             </ActionContent>
           </ActionTopLayout>
           <ContentPage>
@@ -188,6 +194,9 @@ const NewPost = (props) => {
               onChangeEditor={onChangeEditor}
               setImage={setImage}
               isStory={isStory}
+              model={model}
+              modelClose={(value)=>handleCloseModel(value)}
+              onFinish={()=>onFinish()}
             />
           </ContentPage>
         </NewContent>

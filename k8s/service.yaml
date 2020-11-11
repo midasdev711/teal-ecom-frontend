@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: juicypie-frontend-portal-service
+spec:
+  selector:
+    app: juicypie-frontend-portal
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: http

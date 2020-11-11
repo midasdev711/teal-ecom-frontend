@@ -37,6 +37,7 @@ const EditPost = (props) => {
     const [postData, setPostData] = useState({});
     const { updateArticleDetail, saveState, articleDetail } = props;
     const prevProps = usePrevious({ updateArticleDetail });
+    const [model, setModel] = useState(false)
     let userData = getUserData()
 
     //const data = useSelector(state => state.articlesReducer.updateArticleDetail)
@@ -113,7 +114,7 @@ const EditPost = (props) => {
         saveFlag ? (setSaveFlag(false)) : null
     }, [])
 
-    const handleObjectData = () => {
+    const handleObjectData = (value, saveAll) => {
         const { title, subTitle, imageData } = form.getFieldsValue();
         let _obj = {
             title: title,
@@ -135,16 +136,23 @@ const EditPost = (props) => {
         if (typeof (postData.featureImage) === "string") {
             delete _obj.featureImage
         }
+        if (saveAll !== "addAllData") {
+            delete _obj.featureImage,
+                delete _obj.tags,
+                delete _obj.metaRobots,
+                delete _obj.article_SEO,
+                delete _obj.internalArticle
+        }
         return _obj
     }
 
-    const onFinish = async (values) => {
+    const onFinish = async (value) => {
         if (!editorHtml || (editorHtml && editorHtml.length < 1)) {
             setIsStory(true);
             setHandlePageRefresh(false);
             return;
         }
-        let _obj = handleObjectData()
+        let _obj = handleObjectData("data", value)
         setHandlePageRefresh(true);
         if (postData?.featureImage === "") {
             delete _obj.featureImage
@@ -187,33 +195,6 @@ const EditPost = (props) => {
         setIsStory(false);
     };
 
-    const newActions = () => {
-        let userData = getUserData()
-        return (
-            <ActionTopLayout>
-                <ActionContent>
-                    <NewPostAction>
-                        <Link href="/">
-                            <LinkBack>
-                                <LogoImage className="logo" src="/favicon.svg" />
-                            </LinkBack>
-                        </Link>
-                        <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow={true}>
-                            <LinkBack>
-                                <LogoImage className="logo" src="/images/back-icon.svg" />
-                            </LinkBack>
-                        </Link>
-                        <StyledText>Draft</StyledText>
-                        <StyledText>{saveState}</StyledText>
-                    </NewPostAction>
-                    <Button size="middle" type="primary" htmlType="button" onClick={onFinish}>
-                        Save and publish
-          </Button>
-                </ActionContent>
-            </ActionTopLayout>
-        );
-    };
-
     const handlePostData = (value) => {
         setPostData({ ...value })
     }
@@ -222,11 +203,40 @@ const EditPost = (props) => {
         setSaveFlag(true)
         setCount([1 + count])
     }
+
+    const handleCloseModel = (value) => {
+        if (value !== model) {
+            setModel(value)
+        }
+    }
+
+
+
     return (
         <NewPageLayout>
             <Form form={form} layout="vertical" onChange={() => handleData()}>
                 <NewContent>
-                    {newActions()}
+                    <ActionTopLayout>
+                        <ActionContent>
+                            <NewPostAction>
+                                <Link href="/">
+                                    <LinkBack>
+                                        <LogoImage className="logo" src="/favicon.svg" />
+                                    </LinkBack>
+                                </Link>
+                                <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow={true}>
+                                    <LinkBack>
+                                        <LogoImage className="logo" src="/images/back-icon.svg" />
+                                    </LinkBack>
+                                </Link>
+                                <StyledText>Draft</StyledText>
+                                <StyledText>{saveState}</StyledText>
+                            </NewPostAction>
+                            <Button size="middle" type="primary" htmlType="button" onClick={() => setModel(!model)}>
+                                Next
+                              </Button>
+                        </ActionContent>
+                    </ActionTopLayout>
                     <ContentPage>
                         <NewForm
                             flag={true}
@@ -238,6 +248,12 @@ const EditPost = (props) => {
                             postInfo={
                                 updateArticleDetail === null ? (articleDetail) : (updateArticleDetail)
                             }
+                            firstTime = {updateArticleDetail === null ? ("oldData") : null }
+                            live={"live"}
+                            model={model}
+                            modelClose={(value) => handleCloseModel(value)}
+                            onFinish={(value) => onFinish(value)}
+                            updateArticle={() => updateArticle()}
                         />
                     </ContentPage>
                 </NewContent>
