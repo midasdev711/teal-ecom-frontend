@@ -22,22 +22,24 @@ export const resetBlogStatus = () => {
 };
 
 export const AddBlogs = (datas) => {
-
+  console.log("datas", datas)
   return dispatch => {
     dispatch({
       type: ADD_BLOG_START,
     })
     return apolloClient
       .mutate({
-        mutation: CREATE_BLOG_MUTATION,
+        mutation: CREATE_BLOGS_MUTATION,
         variables: datas,
       })
       .then((res) => {
         if (res.data) {
-          dispatch({
-            type: ADD_BLOG,
-            data: res.data,
-          });
+          // dispatch({
+          //   type: ADD_BLOG,
+          //   data: res.data,
+          // });
+
+          window.location.href='/'+window.location.pathname.split("/")[1]+"/stories/dashboard"
         }
       })
       .catch((err) => {

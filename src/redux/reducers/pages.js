@@ -56,6 +56,7 @@ export const pageReducer = (state = initData, action) => {
             };
 
         case ACTION_GET_PAGES:
+        console.log("dasdasdasdasd", action.data === null ? [] : action.data)
             return {
                 ...state,
                 pagesData: action.data === null ? [] : action.data,

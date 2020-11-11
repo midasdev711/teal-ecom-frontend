@@ -9,6 +9,7 @@ export const GET_BLOGS = gql`
       BlogCategory
       BlogPicture
       BlogUserID
+      BlogPageID
     }
   }
 `;
@@ -20,6 +21,7 @@ export const CREATE_BLOGS_MUTATION = gql`
     $BlogCategory: String
     $BlogPicture: String
     $BlogUserID: Int
+    $BlogPageID: String
   ) {
     upsertBlog(
       blog: {
@@ -28,6 +30,7 @@ export const CREATE_BLOGS_MUTATION = gql`
         BlogCategory: $BlogCategory
         BlogPicture: $BlogPicture
         BlogUserID: $BlogUserID
+        BlogPageID: $BlogPageID
       }
     ) {
       _id
@@ -36,6 +39,7 @@ export const CREATE_BLOGS_MUTATION = gql`
       BlogCategory
       BlogPicture
       BlogUserID
+      BlogPageID
     }
   }
 `;

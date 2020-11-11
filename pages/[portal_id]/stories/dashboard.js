@@ -17,8 +17,9 @@ export function StoriesDashboard(props) {
     const router = useRouter();
     let userData = getUserData();
 
-    const handleDefaultAction = (url) => {
-        router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}` }, { shallow: true });
+    const handleDefaultAction = (url, uid) => {
+        // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
+        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
     }
 
     useEffect(() => {
@@ -27,21 +28,22 @@ export function StoriesDashboard(props) {
         getDataStores();
     }, []);
 
-    const getDataBlogs = async () => {
-        await props.getBlogs;
+    const getDataBlogs = () => {
+        props.getBlogs();
     };
 
-    const getDataPages = async () => {
-        await props.getPages;
+    const getDataPages = () => {
+        props.getPages();
     };
 
-     const getDataStores = async () => {
-        await props.getStores;
+     const getDataStores = () => {
+        props.getStores();
     };
 
     const { blogsData, pagesData, storesData } = props;
 
-    console.log(pagesData)
+    console.log("testtttttt", props.blogsData)
+
     const goToNewBlogPage = (url) => {
         router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
     }
@@ -58,22 +60,19 @@ export function StoriesDashboard(props) {
             <BlogContainer>
                 <BlogContainerHeader>
                     <Title1>Blogs</Title1>
-                    <AddButton>
+                    <AddButton onClick={() => handleDefaultAction('stories/setup-new','')}>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
-                    {console.log('-----------')}
-                    {console.log(pagesData)}
-                    {console.log('-----------')}
                     { blogsData && blogsData.map((item) => (
 
                         <BlogGroup 
-                            title="Default"
+                            title={item.BlogTitle}
                             count="0"
                             image={<img alt="unfulied" src="/images/blog-thumbnail.png" 
-                            onClick={() => handleDefaultAction('stories')} />}
+                            onClick={() => handleDefaultAction("stories",item._id)} />}
                         ></BlogGroup>
                     )) }    
                     <BlogGroup 
@@ -143,10 +142,11 @@ const AddButton = styled(Button)`
 `;
 
 const mapStateToProps = (store) => {
+    console.log(store);
     return {
-        blogsData: store.blogReducer.blogData,
-        pagesData: store.pageReducer.pageData,
-        storesData: store.storeReducer.storeData
+        blogsData: store.blogReducer.blogsData,
+        pagesData: store.pageReducer.pagesData,
+        storesData: store.storeReducer.storesData
     };
 };
 

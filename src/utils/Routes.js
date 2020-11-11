@@ -91,14 +91,29 @@ const StoriesRoutes = [
   },
   {
     title: "Stories",
-    path: "/[portal_id]/stories",
-    as: "/[portal_id]/stories",
+    path: "/[portal_id]/stories/:id",
+    as: "/[portal_id]/stories/:id",
+  },
+  {
+    title: "StoriesNew",
+    path: "/[portal_id]/stories/setup-new",
+    as: "/[portal_id]/stories/setup-new",
+  },
+  {
+    title: "EditPost",
+    path: "/[portal_id]/stories/",
+    as: "/[portal_id]/stories/",
   },
   // {
   //   title: "Posts",
   //   path: "/posts",
   //   as: "/posts",
   // },
+  {
+    title: "NewPost",
+    path: "/[portal_id]/stories/posts/new",
+    as: "/[portal_id]/stories/posts/new",
+  },
   {
     title: "Posts",
     path: "/[portal_id]/stories/posts/[post_status]",

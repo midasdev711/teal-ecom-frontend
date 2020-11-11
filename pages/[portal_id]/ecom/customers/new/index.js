@@ -87,7 +87,6 @@ const NewCustomer = (props) => {
   },[apiStatus])
 
   const handleChangeValue = (e, module, element) => {
-    console.log('dfdfdf', e.target, e, module)
     if (module === 'BasicDetails') {
       if (element === 'Mobile') {
         setBasicDetails({ ...BasicDetails, [element]: e })

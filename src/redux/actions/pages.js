@@ -49,6 +49,7 @@ export const AddPages = (datas) => {
 };
 
 export function getPages(limit, page) {
+
   return (dispatch) => {
     return apolloClient.query({
       query: GET_PAGES,
@@ -56,6 +57,7 @@ export function getPages(limit, page) {
       fetchPolicy: "network-only",
     })
       .then((res) => {
+        console.log("responsesssss", res)
         if (res.data) {
           dispatch({
             type: ACTION_GET_PAGES,

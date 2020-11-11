@@ -5,6 +5,10 @@ import { InboxOutlined } from '@ant-design/icons';
 import styled from "styled-components";
 import { LayoutWithoutSidebar } from "../../../src/components/views";
 import { getUserData } from '../../../src/utils'
+// actions
+import { getBlogs, AddBlogs } from "../../../src/redux/actions/blogs";
+import { getPages } from "../../../src/redux/actions/pages";
+import { connect } from "react-redux";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -15,13 +19,13 @@ const options = [
     { label: 'My Pages', value: 'myPages' },
 ];
 
-const pages = [
-    {
-        label: 'page1', value: 'page1'
-    }
-]
+// const pages = [
+//     {
+//         label: 'page1', value: 'page1'
+//     }
+// ]
 
-export default function SetupNew() {
+export function StoriesNew(props) {
     const router = useRouter()
     const [form] = Form.useForm();
     const [publishing, setPublishing] = useState(null);
@@ -33,7 +37,27 @@ export default function SetupNew() {
     // To disable submit button at the beginning.
     useEffect(() => {
         forceUpdate({});
+        getDataBlogs();
+        getDataPages();
     }, []);
+
+
+    const getDataBlogs = () => {
+        props.getBlogs();
+    };
+
+    const getDataPages = () => {
+        props.getPages();
+    };
+
+
+    const { blogsData, pagesData } = props;
+
+    const pages = [
+        {
+            label: 'page1', value: 'page1'
+        }
+    ]
 
     const uploadProps = {
         name: 'file',
@@ -64,6 +88,33 @@ export default function SetupNew() {
     const nextStep = () => {
         setStep(1);
     }
+
+    const handleSubmit = () => {
+       
+        userData = JSON.parse(localStorage.getItem("userData"));
+
+        let params = form.getFieldValue();
+        
+        let urls = []
+        const images = params['coverPicture'].fileList.map((item, i)=>{   
+            if(item.response && item.response.url){
+                 urls.push(item.response.url) 
+            }
+        });   
+
+        let setdata = {
+            BlogTitle: params['blogname'],
+            BlogPublishingPlace: publishing,
+            BlogCategory: params['category'],
+            BlogPicture: urls.join(", "),
+            // BlogPicture: '',
+            BlogUserID: userData.ID,
+            BlogPageID: params['publishLocation']
+        }
+
+        props.AddBlogs(setdata);
+    }
+
 
     return (
         <LayoutWithoutSidebar title="New">
@@ -101,11 +152,11 @@ export default function SetupNew() {
                                 {
                                     publishing == 'myPages' &&
                                     (
-                                        pages.length > 0 ?
+                                        pagesData.length > 0 ?
                                             <Form.Item name="publishLocation" rules={[{ required: true, message: 'Please input this field' }]}>
                                                 <PageSelect placeholder="I am publishing on ..." size="large">
-                                                    {pages.map((page) => (
-                                                        <PageSelectOption value={page.value}>{page.label}</PageSelectOption>
+                                                    {pagesData.map((page) => (
+                                                        <PageSelectOption value={page._id}>{page.PageTitle}</PageSelectOption>
                                                     ))}
 
                                                 </PageSelect>
@@ -152,8 +203,10 @@ export default function SetupNew() {
                                                 <FormSubmitButton type="primary" htmlType="submit" disabled={
                                                     !form.isFieldsTouched(true) ||
                                                     form.getFieldsError().filter(({ errors }) => errors.length).length
-                                                }>Finish</FormSubmitButton>
+                                                } onClick={() => handleSubmit()}>Finish Creation</FormSubmitButton>
                                             </ButtonBlock>
+
+
                                         )
                                     }
 
@@ -382,7 +435,6 @@ const ButtonBlock = styled.div`
 `;
 
 const FormSubmitButton = styled(Button)`
-    width: 100px;
     height: 45px;
     background: #0095F8;
     border-radius: 5px;
@@ -398,3 +450,18 @@ const FormSubmitButton = styled(Button)`
         color: rgba(255, 255, 255, 0.7);
     }
 `;
+
+const mapStateToProps = (store) => {
+    return {
+        blogsData: store.blogReducer.blogsData,
+        pagesData: store.pageReducer.pagesData
+    };
+};
+
+const mapDispatchToProps = {
+  getBlogs,
+  getPages,
+  AddBlogs
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoriesNew);
