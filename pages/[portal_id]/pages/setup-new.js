@@ -37,46 +37,43 @@ export default function SetupNew() {
 
     return (
         <LayoutWithoutSidebar title="New Page">
-            <NewBlogForm>
-                <Title1>Create your Page</Title1>
+            <NewPageForm>
                 <Form
                     form={form}
                     layout="vertical"
                 >
-                    <Form.Item name="pagename" rules={[{ required: true, message: 'Please input this field' }]}>
-                        <FormInput placeholder="Page Name" size="large" />
-                    </Form.Item>
+                    <ImageBox>
+                        <img src="/images/pages/startup.svg" />
+                    </ImageBox>
+                    <Title1>Create your Page</Title1>
+                    <NameInputBlock>
+                        <Form.Item name="pagename" rules={[{ required: true, message: 'Please input this field' }]}>
+                            <FormInput placeholder="Page Name" size="large" />
+                        </Form.Item>
+                        <Form.Item name="category" rules={[{ required: true, message: 'Please input this field' }]}>
+                            <FormSelect placeholder="Select category" size="large">
+                                <FormSelectOption value="demo">Demo</FormSelectOption>
+                            </FormSelect>
+                        </Form.Item>
+                    </NameInputBlock>
                     <Form.Item name="pageabout" rules={[{ required: true, message: 'Please input this field' }]}>
                         <FormTextArea placeholder="What's your page about?" size="large" />
-                    </Form.Item>
-                    <Form.Item name="category" rules={[{ required: true, message: 'Please input this field' }]}>
-                        <FormSelect placeholder="Select category" size="large">
-                            <FormSelectOption value="demo">Demo</FormSelectOption>
-                        </FormSelect>
-                    </Form.Item>
-                    <Form.Item name="pagePicture" >
-                        <FormDragger {...uploadProps} >
-                            <p className="ant-upload-drag-icon">
-                                <InboxOutlined />
-                            </p>
-                            <UploadText className="ant-upload-text">Page Picture</UploadText>
-                            <UploadHint className="ant-upload-hint">
-                                Click or drag an image file here to update your page picture.
-                            </UploadHint>
-                        </FormDragger>
                     </Form.Item>
                     <Form.Item shouldUpdate={true}>
                         {
                             () => (
-                                <FormSubmitButton type="primary" htmlType="submit" disabled={
-                                    !form.isFieldsTouched(true) ||
-                                    form.getFieldsError().filter(({ errors }) => errors.length).length
-                                }>Finish Creation</FormSubmitButton>
+                                <SubmitButtonArea>
+                                    <FormSubmitButton type="primary" htmlType="submit" disabled={
+                                        !form.isFieldsTouched(true) ||
+                                        form.getFieldsError().filter(({ errors }) => errors.length).length
+                                    }>Finish Creation</FormSubmitButton>
+                                </SubmitButtonArea>
+                                
                             )
                         }
                     </Form.Item>
                 </Form>
-            </NewBlogForm>
+            </NewPageForm>
         </LayoutWithoutSidebar>
     );
 }
@@ -85,51 +82,61 @@ const Title1 = styled(Title)`
     font-family: Proxima Nova;
     font-style: normal!important;
     font-weight: bold!important;
-    font-size: 30px!important;
-    line-height: 30px!important;
+    font-size: 22px!important;
+    line-height: 22px!important;
     text-align: center;
     color: #404950!important;
-    margin-bottom: 50px!important;
+    margin-top: 20px!important;
+    margin-bottom: 20px!important;
 `;
 
-const Label = styled(Text)`
-    font-family: Proxima Nova;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 20px;
-    color: #404950;
-    margin-bottom: 15px;
-    display: block;
+const ImageBox = styled.div`
+    text-align: center;
+    width: 100%;
 `;
 
-const NewBlogForm = styled.div`
-    width: 305px;
+const NewPageForm = styled.div`
+    width: 600px;
     margin: 0 auto;
-    padding-top: 83px;
+    margin-top: 83px;
+    padding: 15px 50px;
+    background-color: white;
+`;
+
+const NameInputBlock = styled.div`
+    display: flex;
+    justify-content: space-between;
+    .ant-form-item {
+        max-width: 240px;
+        width: 50%;
+    }
 `;
 
 const FormInput = styled(Input)`
-    width: 305px;
+    max-width: 240px;
+    width: 100%;
     height: 45px;
-    filter: drop-shadow(0px 16px 60px rgba(78, 79, 114, 0.08));
     border: none;
+    background-color: #F6F8F9;
 `;
 
 const FormTextArea = styled(TextArea)`
-    width: 305px;
-    height: 150px!important;
-    filter: drop-shadow(0px 16px 60px rgba(78, 79, 114, 0.08));
+    max-width: 600px;
+    width: 100%;
+    height: 97px!important;
     border: none;
     font-size: 16px;
+    background-color: #F6F8F9;
 `;
 
 const FormSelect = styled(Select)`
-    width: 305px;
+    max-width: 240px;
+    width: 100%;
     height: 45px;
     border: none;
-    filter: drop-shadow(0px 16px 60px rgba(78, 79, 114, 0.08));
+    text-align: left;
     .ant-select-selector {
+        background-color: #F6F8F9!important;
         height: 45px!important;
         border: none!important;
         .ant-select-selection-search-input {
@@ -139,28 +146,14 @@ const FormSelect = styled(Select)`
 `;
 
 const FormSelectOption = styled(Option)`
-    width: 305px;
+    max-width: 240px;
     height: 45px;
-`;
-
-const FormDragger = styled(Dragger)`
-    width: 305px;
-    height: 163px!important;
-`;
-
-const UploadHint = styled.p`
-    font-size: 12px!important;
-`;
-
-const UploadText = styled.p`
-    font-size: 14px!important;
-    color: black!important;
 `;
 
 const FormSubmitButton = styled(Button)`
     width: 305px;
     height: 45px;
-    background: #0095F8;
+    background: #0095F8!important;
     border-radius: 5px;
     font-family: Proxima Nova;
     font-style: normal;
@@ -170,7 +163,12 @@ const FormSubmitButton = styled(Button)`
     text-align: center;
     color: #FFFFFF;
     &[disabled] {
-        background: #80CAFB;
-        color: rgba(255, 255, 255, 0.7);
+        background: #80CAFB!important;
+        color: rgba(255, 255, 255, 0.7)!important;
     }
 `;
+
+const SubmitButtonArea = styled.div`
+    width: 100%;
+    text-align: center;
+`
