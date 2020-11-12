@@ -1,32 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Typography, Button } from "antd";
-import { Chart } from 'react-charts'
+import { Line } from 'react-chartjs-2';
 const { Text } = Typography;
 
 const DashboardCard = ({ title, subtitle, onClick, image, count, view, chartData, type = 'blog', isNew = false }) => {
-    let unit = type == 'blog' ? 'posts' : 'orders';
-    const series = React.useMemo(
-        () => ({
-            showPoints: false,
-        }),
-        []
-    )
+    let unit = type == 'blog' ? 'posts' : type == 'page' ? 'followers' : 'orders';
 
-    const getSeriesStyle = React.useCallback(
-        () => ({
-            color: "#44BA76"
-        }),
-        []
-    )
+    const data = {
+        datasets: [
+            {
+                fill: false,
+                borderColor: '#44BA76',
+                pointBorderWidth: 2,
+                pointRadius: 1,
+                data: chartData,
+            }
+        ]
+    }
 
-    const axes = React.useMemo(
-        () => [
-            { primary: true, type: 'time', position: 'bottom', show: false },
-            { type: 'linear', position: 'left', show: false }
-        ],
-        []
-    )
+    const options = {
+        legend: {
+            display: false,
+        },
+        scales: {
+            yAxes: [{
+                display: false
+            }],
+            xAxes: [{
+                display: false
+            }]
+        },
+        tooltips: {
+            enabled: false
+        }
+    }
     if (isNew) {
         var ButtonContent = (
             <AddBlog onClick={onClick}>
@@ -43,7 +51,11 @@ const DashboardCard = ({ title, subtitle, onClick, image, count, view, chartData
                 <NewTitle paddingTop={15}>{title}</NewTitle>
                 <SubTitle>{subtitle}</SubTitle>
                 <div className="chart-box">
-                    <Chart data={chartData} series={series} axes={axes} getSeriesStyle={getSeriesStyle} />
+                    <Line
+                        data={data}
+                        options={options}
+                        height={50}
+                    />
                 </div>
                 <div className="chart-detail">
                     <DetailText>Try Insights for Free</DetailText>

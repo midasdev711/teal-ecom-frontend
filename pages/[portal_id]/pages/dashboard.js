@@ -8,18 +8,18 @@ import { Banner, DashboardCard } from '../../../src/components/atoms'
 
 const { Title, Text } = Typography;
 
-export default function StoresDashboard() {
+export default function PagesDashboard() {
     const router = useRouter()
     let userData = getUserData()
 
     const goToNewPage = (url) => {
-        router.push(`/[portal_id]/stores/setup-new`, { pathname: `/${userData?.uniqueID}/stores/setup-new` }, { shallow: true });
+        router.push(`/[portal_id]/pages/setup-new`, { pathname: `/${userData?.uniqueID}/pages/setup-new` }, { shallow: true });
     }
     return (
         <LayoutWithNoSidebar>
             <BlogContainer>
                 <BlogContainerHeader>
-                    <Title1>Stores</Title1>
+                    <Title1>Pages</Title1>
                     <AddButton>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
@@ -30,9 +30,9 @@ export default function StoresDashboard() {
                         title="Default"
                         subtitle="@sparqlife"
                         count="150"
-                        view="59k"
+                        view="1.2k"
                         chartData={[65, 59, 80, 81, 56, 55, 40]}
-                        type="store"
+                        type="page"
                         image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
                     ></DashboardCard>
                     <DashboardCard

@@ -38,11 +38,7 @@ export default function StoriesDashboard() {
                         subtitle="@sparqlife"
                         count="15"
                         view="59k"
-                        chartData={[
-                            {
-                                data: [[0, 3], [1, 1], [2, 5], [3, 4], [4, 4]]
-                            }
-                        ]}
+                        chartData={[65, 45, 80, 81, 77, 90, 40]}
                         image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
                     ></DashboardCard>
                     <DashboardCard
