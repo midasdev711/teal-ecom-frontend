@@ -64,6 +64,7 @@ export function getOrders(limit, page) {
     })
       .then((res) => {
         if (res.data) {
+          console.log(res.data)
           dispatch({
             type: ACTION_GET_ORDERS,
             data: res.data.orders,

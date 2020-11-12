@@ -38,6 +38,7 @@ export const GET_ORDERS = gql`
 			productSalePrice
 			productTotalQuantity
 			productTotalPrice
+			productImages
 			productVariantID
 			productVariantObject {
 				ID 

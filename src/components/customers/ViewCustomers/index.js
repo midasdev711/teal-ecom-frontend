@@ -116,6 +116,7 @@ const ViewCustomers = (props) => {
   const [isOpenDeleteTags, setMDDeleteTags] = useState(false);
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [country, setCountry] = useState('United States');
+    let userData = getUserData()
   useEffect(() => {
     getCustomersCall();
   }, [props]);
@@ -130,7 +131,7 @@ const ViewCustomers = (props) => {
       render: (value, item) => {
         return (
           <div>
-            <Link href={`/customers/${item._id}`}>
+            <Link href="/[portal_id]/ecom/customers/[customer_id]" as={`/${userData?.uniqueID}/ecom/customers/${item._id}`}>
               <FullName >
                 {item.BasicDetailsFirstName} {item.BasicDetailsLastName}
               </FullName>
