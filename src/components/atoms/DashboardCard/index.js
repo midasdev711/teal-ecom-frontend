@@ -4,11 +4,18 @@ import { Typography, Button } from "antd";
 import { Chart } from 'react-charts'
 const { Text } = Typography;
 
-const DashboardCard = ({ title, subtitle, onClick, image, count, view, chartData, type='blog', isNew = false }) => {
-    let unit = type == 'blog' ? 'posts': 'orders';
+const DashboardCard = ({ title, subtitle, onClick, image, count, view, chartData, type = 'blog', isNew = false }) => {
+    let unit = type == 'blog' ? 'posts' : 'orders';
     const series = React.useMemo(
         () => ({
-            showPoints: false
+            showPoints: false,
+        }),
+        []
+    )
+
+    const getSeriesStyle = React.useCallback(
+        () => ({
+            color: "#44BA76"
         }),
         []
     )
@@ -35,10 +42,10 @@ const DashboardCard = ({ title, subtitle, onClick, image, count, view, chartData
                 </BlogImage>
                 <NewTitle paddingTop={15}>{title}</NewTitle>
                 <SubTitle>{subtitle}</SubTitle>
-                <div class="chart-box">
-                    <Chart data={chartData} series={series} axes={axes} />
+                <div className="chart-box">
+                    <Chart data={chartData} series={series} axes={axes} getSeriesStyle={getSeriesStyle} />
                 </div>
-                <div class="chart-detail">
+                <div className="chart-detail">
                     <DetailText>Try Insights for Free</DetailText>
                 </div>
                 <BlogInformation>
