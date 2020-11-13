@@ -5,7 +5,7 @@ import { Button, Layout } from "antd";
 import { connect , useSelector } from "react-redux";
 import Router from "next/router";
 // components
-import { PageLayout } from "../../../../../src/components/views";
+import { NewPageLayout } from "../../../../../src/components/views";
 import { NewForm } from "../../../../../src/components/products";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
@@ -73,52 +73,41 @@ const NewCustomer = (props) => {
 
   //console.log('productDetails updates', productDetails)
   return (
-    <PageLayout>
+    <NewPageLayout>
       <NewContent>
         {/* {newActions()} */}
-        <ActionTopLayout>
+        {/* <ActionBottomLayout>
           <ActionContent>
             <span>Unsaved changes</span>
             <NewOrderAction>
               <Button className="cancel" size="large">
                 <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
-                  <a>
-                    Discard
-            </a>
-            
+                  <a> Discard </a>
                 </Link>
               </Button>
               <Button className="save" size="large" type="primary" onClick={() => handleSubmit()}>
-                {/* <Link href="/products"> */}
-                {/* <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}> */}
-
                 <a title="save">Save</a>
-                {/* </Link> */}
               </Button>
               <Button className="save" size="large" type="primary" style={{ marginLeft: "15px" }} onClick={() => handleSubmitSaveAndSubmit()}>
-                {/* <Link href="/products"> */}
-                {/* <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}> */}
-
                 <a title="save">Save And Publish</a>
-                {/* </Link> */}
               </Button>
             </NewOrderAction>
           </ActionContent>
-        </ActionTopLayout>
+        </ActionBottomLayout> */}
         <ContentPage>
           <ContentHeader>
-            <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
+            {/* <Link href={`/[portal_id]/ecom/products`} as={`/${userData?.uniqueID}/ecom/products`} shallow={true}>
 
               <LinkBack>
                 <LeftOutlined /> Products
               </LinkBack>
-            </Link>
-            <TittleHeader>Add product</TittleHeader>
+            </Link> */}
+            <TitleHeader>Add product</TitleHeader>
           </ContentHeader>
           <NewForm submit={(values) => handleSubmit(values)} flag={flag} saveSubmit={(values) => handleSubmitSaveAndSubmit(values)} saveFlag={saveFlag} />
         </ContentPage>
       </NewContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -127,18 +116,18 @@ const NewContent = styled.div`
 `;
 
 const ContentPage = styled.div`
-  max-width: 65rem;
+  max-width: 950px;
   margin: 80px auto;
-  padding: 0 3.2rem;
+  padding: 0;
 `;
 
 const ContentHeader = styled.div`
   padding-bottom: 10px;
 `;
 
-const TittleHeader = styled.h3`
-  font-size: 28px;
-  color: #000;
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
   font-weight: bold;
   margin-bottom: 0;
 `;
@@ -147,24 +136,19 @@ const LinkBack = styled.a`
   color: #333;
 `;
 
-const ActionTopLayout = styled(Layout)`
+const ActionBottomLayout = styled(Layout)`
   width: 100%;
   height: 55px;
   background: #fff;
   position: fixed;
   z-index: 10;
-  top: 0;
+  bottom: 0;
   box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
 `;
 
 const ActionContent = styled.div`
   padding: 10px 50px;
   height: 55px;
-  position: ;
-  top: 0;
-  left: 250px;
-  position: fixed;
-  right: 0;
   max-width: 65rem;
   margin: 0 auto;
   display: flex;
