@@ -40,7 +40,8 @@ import {
   Dropdown,
   Menu,
   Upload,
-  Typography
+  Typography,
+  Radio
 } from "antd";
 import { validate } from "graphql";
 import { resolve } from "url";
@@ -678,6 +679,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setStep('' + e);
   }
 
+  const [showUnitSelection, setShowUnitSelection] = useState(false);
+  const [shippingRate, setShippingRate] = useState(0);
 
   return (
 
@@ -731,7 +734,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                         return <FormSelectOption key={index} value={data?.ID}>{data?.name}</FormSelectOption>
                       })
                     }
-
                   </FormSelect>
                   <label style={{ color: "red" }} >{errors?.productSubcategory}</label>
                 </Form.Item>
@@ -743,42 +745,14 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
           <ContentBox paddingRight={100}>
             <SubFormTitle>Images</SubFormTitle>
             <ImageUpload imageData={(value) => handleImageUpload(value)} />
-            {/* <AlignItem className="margin-bottom">
-                <TitleBox>Product Images</TitleBox>
-                <Dropdown
-                  trigger={["click"]}
-                  overlay={
-                    <Menu>
-                      <Menu.Item key="0">Add image from URL</Menu.Item>
-                      <Menu.Item key="1">Embed Youtube video</Menu.Item>
-                    </Menu>
-                  }
-                >
-                  <Button type="link">
-                    Add media from URL <DownOutlined />
-                  </Button>
-                </Dropdown>
-              </AlignItem>
-              <StyleDragger
-                accept=".jpg, .gif, .png"
-                name="file"
-                multiple={true}
-                onChange={(info) => onChangeFileCSV(info)}
-              >
-                <p className="ant-upload-drag-icon">
-                  <FileTextOutlined />
-                </p>
-                <Button>Add File</Button>
-                <p className="ant-upload-hint">or drop files to upload</p>
-              </StyleDragger> */}
             <label style={{ color: "red" }} >{errors?.productImages}</label>
           </ContentBox>
         </TabPane>
         <TabPane tab="Pricing" key="3">
           <ContentBox>
             <SubFormTitle>Pricing</SubFormTitle>
-            <Row gutter={24}>
-              <Col md={12}>
+            <FormRow>
+              <FormItem>
                 <CustomLabel>Price</CustomLabel>
                 <Form.Item>
                   <FormNumberInput
@@ -790,10 +764,9 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                     }
                   />
                   <label style={{ color: "red" }} >{errors?.productSalePrice}</label>
-
                 </Form.Item>
-              </Col>
-              <Col md={12}>
+              </FormItem>
+              <FormItem>
                 <CustomLabel>Compare Price</CustomLabel>
                 <Form.Item>
                   <FormNumberInput
@@ -806,10 +779,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                     }
                   />
                   <label style={{ color: "red" }} >{errors?.productMRP}</label>
-
                 </Form.Item>
-              </Col>
-              <Col md={12}>
+              </FormItem>
+            </FormRow>
+            <FormRow>
+              <FormItem>
                 <CustomLabel>Cost per item</CustomLabel>
                 <Form.Item>
                   <FormNumberInput
@@ -823,23 +797,34 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                   <label style={{ color: "red" }} >{errors?.productCostPerItem}</label>
                   {/* <span>Customers won’t see this</span> */}
                 </Form.Item>
-              </Col>
-              <Col md={6}>
-                <StoreContent>
-                  <TextStyle>Margin</TextStyle>
-                  <span>: {margin.trim()}</span>
-                </StoreContent>
-              </Col>
-              <Col md={6}>
-                <StoreContent>
-                  <TextStyle>Profit</TextStyle>
-                  <span>: {profit}</span>
-                </StoreContent>
-              </Col>
-              <Col md={24}>
-                <Checkbox>Charge tax on this product</Checkbox>
-              </Col>
-            </Row>
+              </FormItem>
+              <FormItem>
+                <CustomLabel>Your shipping cost</CustomLabel>
+                <Form.Item>
+                  <FormNumberInput
+                    min={0}
+                    onChange={(event) => handleChange(event, "yourShippingCost")}
+                    placeholder="0.00"
+                    formatter={(value) =>
+                      `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                  />
+                  <label style={{ color: "red" }} >{errors?.yourShippingCost}</label>
+                  {/* <span>Customers won’t see this</span> */}
+                </Form.Item>
+              </FormItem>
+            </FormRow>
+            <FormRow marginBottom={11}>
+              <div class="mb-3">
+                <TextStyle>Margin</TextStyle>
+                <span>: {margin.trim()} % | </span>
+                <TextStyle>Profit</TextStyle>
+                <span>: ${profit}</span>
+              </div>
+            </FormRow>
+            <FormRow>
+              <Checkbox>Charge tax on this product</Checkbox>
+            </FormRow>
           </ContentBox>
         </TabPane>
         <TabPane tab="Inventory" key="4">
@@ -870,76 +855,59 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         <TabPane tab="Shipping" key="5">
           <ContentBox>
             <SubFormTitle>Shipping</SubFormTitle>
-            {/* <CheckboxStyle>This is a physical product</CheckboxStyle>
-
-              <LineBorder /> */}
-
-            <TitleSmall>WEIGHT</TitleSmall>
-            <TextStyle>
-              Used to calculate shipping rates at checkout and label prices
-              during fulfillment.
-              </TextStyle>
-            <Row gutter={0}>
-              <Col md={8}>
-                <Form.Item label="Weight">
-                  <FormNumberInput min={0} name="attributeValues" onChange={(event) => handleChange(event, "attributeValues")} />
+            <FormRow>
+              <FormItem>
+                <CustomLabel>WEIGHT</CustomLabel>
+                <Form.Item>
+                  <FormNumberInput min={0} name="attributeValues" onChange={(event) => { setShowUnitSelection(true); handleChange(event, "attributeValues")}} />
                   <label style={{ color: "red" }} >{errors?.attributeValues}</label>
-
                 </Form.Item>
-              </Col>
-              <Col md={3}>
-                <Form.Item label=" " name="" initialValue="kg">
-                  <Select onChange={(event) => handleDropDown(event, "attributeValues")}>
-                    <Option value="lb">lb</Option>
-                    <Option value="oz">oz</Option>
-                    <Option value="kg">kg</Option>
-                    <Option value="g">g</Option>
-                  </Select>
-                </Form.Item>
-
-              </Col>
-            </Row>
-
-            {/*           <LineBorder />
-
-              <TitleSmall>CUSTOMS INFORMATION</TitleSmall>
-              <p>
-                Used by border officers to calculate duties when shipping
-                internationally. Shown on customs forms you print during
-                fulfillment.
-              </p> */}
-
-            {/* <Form.Item label="Country of origin">
-                <CountryDropdownStyle
-                  defaultOptionLabel="Select a country."
-                  value={country}
-                  onChange={(val) => setCountry(val)}
-                  blacklist={["CD", "SH", "KP", "GS", "HM", "VC"]}
-                  className="dropDown"
-                />
-                <span>In most cases, where the product is manufactured.</span>
-              </Form.Item> */}
-
-            {/* <Form.Item label="HS (Harmonized System) code">
-                <SearchStyle
-                  placeholder="Search by product keyword or HS code"
-                  onSearch={(value) => console.log(value)}
-                  onChange={(event) => handleHSCode(event)}
-                />
-                <span>Used by border officers to classify this product.</span>
-              </Form.Item> */}
+              </FormItem>
+              {
+                showUnitSelection && 
+                <FormItem>
+                  <CustomLabel>Unit</CustomLabel>
+                  <Form.Item name="" initialValue="kg">
+                    <FormSelect onChange={(event) => handleDropDown(event, "attributeValues")}>
+                      <FormSelectOption value="lb">lb</FormSelectOption>
+                      <FormSelectOption value="oz">oz</FormSelectOption>
+                      <FormSelectOption value="kg">kg</FormSelectOption>
+                      <FormSelectOption value="g">g</FormSelectOption>
+                    </FormSelect>
+                  </Form.Item>
+                </FormItem>
+              }
+            </FormRow>
+            <SubFormTitle fontSize={17}>Shipping Rates</SubFormTitle>
+            <Form.Item>
+              <Radio.Group onChange={(event) => { setShippingRate(event.target.value); handleDropDown(event, "shippingRate")}} value={shippingRate}>
+                <FormRadio value={1}>
+                  Free
+                </FormRadio>
+                <FormRadio value={2}>
+                  Calculate automatically based on my Shipping Settings
+                </FormRadio>
+                <FormRadio value={3}>
+                  Flat rate <br></br>
+                  <FormRadioInput disabled={shippingRate != 3} min={0} name="flatRate" onChange={(event) => { handleChange(event, "flatRate")}} />
+                  <label style={{ color: "red" }} >{errors?.flatRate}</label>
+                  <FormRadioText>This product will always be charged a flat rate unless otherwise specified in your Shipping Settings.</FormRadioText>
+                </FormRadio>
+              </Radio.Group>
+            </Form.Item>
           </ContentBox>
         </TabPane>
         <TabPane tab="Variants" key="6">
           <ContentBox>
             <SubFormTitle>Variants</SubFormTitle>
-            <Checkbox className="margin-top"
-              onChange={(event) => handleCheckBox(event)}
-              checked={VariantsFlag}
-            >
-              This product has multiple options, like different sizes or
-              colors
-            </Checkbox> <br></br>
+            <CheckboxWrapper>
+              <Checkbox className="margin-top"
+                onChange={(event) => handleCheckBox(event)}
+                checked={VariantsFlag}
+              >
+                This product has multiple options, like different sizes or colors
+              </Checkbox>
+            </CheckboxWrapper>
             {
               VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
                 return <Row gutter={0} key={index}>
@@ -995,52 +963,50 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
           </ContentBox>
         </TabPane>
         <TabPane tab="SEO &amp; Tags" key="7">
-          <ContentBox marginTop="20px">
+          <ContentBox>
             <AlignItem className="margin-bottom">
-              <TitleBox>Search engine listing preview</TitleBox>
+              <SubFormTitle>SEO &amp; Tags</SubFormTitle>
               {!openEditSite && (
                 <ContentTitle onClick={() => setOpenEditSite(!openEditSite)}>
                   Edit website SEO
                 </ContentTitle>
               )}
             </AlignItem>
-            <TextStyle>
-              Add a title and description to see how this product might appear
-              in a search engine listing
-            </TextStyle>
-          </ContentBox>
-          {openEditSite && (
-            <>
-              <Divider />
-              <ContentBox>
-                <TitleStyle>Page title</TitleStyle>
-                <InputStyle name="title" onChange={(event) => handleChange(event)} />
-                <label style={{ color: "red" }} >{errors?.title}</label>
-
-                <TextStyle> 0 of 70 characters used</TextStyle>
-                <TitleStyle className="margin-top">Description</TitleStyle>
-                <TextAreaInput rows={5} name="description" onChange={(event) => handleChange(event)} />
-                <label style={{ color: "red" }} >{errors?.description}</label>
-                <TextStyle> 0 of 320 characters used</TextStyle>
-                <TitleStyle className="margin-top">URL and handle</TitleStyle>
+            <CheckboxWrapper>
+              <Checkbox>Auto optimize for SEO</Checkbox>
+            </CheckboxWrapper>
+            {openEditSite && (
+              <>
+                <FormItem fullWidth={true}>
+                  <Form.Item>
+                    <CustomLabel>Page title</CustomLabel>
+                    <TextInput name="title" onChange={(event) => handleChange(event)} placeholder="Page title"></TextInput>
+                    <label style={{ color: "red" }} >{errors?.title}</label>
+                  </Form.Item>
+                </FormItem>
+                <FormItem fullWidth={true}>
+                  <Form.Item name="description">
+                    <CustomLabel>Description</CustomLabel>
+                    <TextAreaInput rows={2} name="description" placeholder="Add a brief description" onChange={(event) => handleChange(event)} />
+                    <label style={{ color: "red" }} >{errors?.description}</label>
+                  </Form.Item>
+                </FormItem>
+                {/* <TitleStyle className="margin-top">URL and handle</TitleStyle>
                 <InputStyle prefix="https://sale.mysolidshoes.com/products/" name="cronicalUrl" onChange={(event) => handleChange(event)} />
-                <label style={{ color: "red" }} >{errors?.cronicalUrl}</label>
-
-              </ContentBox>
-            </>
-          )}
-          <ItemContentBox>
-            <TitleStyle className="title-box">TAGS</TitleStyle>
-            <Input
+                <label style={{ color: "red" }} >{errors?.cronicalUrl}</label> */}
+              </>
+            )}
+            <CustomLabel>Tags</CustomLabel>
+            <TextInput
               ref={saveInputRef}
               type="text"
               size="large"
-              placeholder="Vintage, cotton, summer"
+              placeholder="Add product tags separated by commas"
               value={inputValue}
               onChange={handleInputChange}
               onBlur={handleInputConfirm}
               onPressEnter={handleInputConfirm}
-            />
+            ></TextInput>
             <label style={{ color: "red" }} >{errors?.productTags}</label>
 
             <TweenOneGroup
@@ -1060,7 +1026,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             >
               {tagChild}
             </TweenOneGroup>
-          </ItemContentBox>
+          </ContentBox>
         </TabPane>
       </InputTabs>
       <ActionBottom>
@@ -1180,8 +1146,12 @@ const TitleStyle = styled.p`
 
 const TextStyle = styled.span`
   margin: 0;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
   font-size: 14px;
-  color: #637381;
+  line-height: 150%;
+  color: #404950;
 `;
 
 const DescriptionContent = styled.div`
@@ -1199,6 +1169,7 @@ const GroupContent = styled.div`
     padding: 8px 12px;
   }
 `;
+
 const Loader = styled.div`
   position: fixed;
   left: 250px;
@@ -1211,41 +1182,6 @@ const Loader = styled.div`
   justify-content: center;
   align-items: center;
   background-color: rgba(255,255,255,0.7);
-`;
-
-const SearchBox = styled(Search)`
-  border-radius: 4px 0 0 4px;
-  padding: 6px 12px 6px 35px !important;
-`;
-
-const StoreContent = styled.div`
-  line-height: 6;
-`;
-const SelectContent = styled.div`
-  position: relative;
-  .delete-date-icon {
-    font-size: 22px;
-    position: absolute;
-       top: 5px;
-    cursor: pointer;
-  }
-`;
-
-const StyleDragger = styled(Dragger)`
-  height: 250px !important;
-`;
-
-const CardStyle = styled(Card)`
-  margin-top: 20px;
-  .ant-select-selector {
-    height: 38px !important;
-  }
-`;
-
-const TitleCardStyle = styled.h3`
-  font-weight: 600;
-  font-size: 16px;
-  color: #000;
 `;
 
 const FormNumberInput = styled(InputNumber)`
@@ -1279,37 +1215,6 @@ const TextAreaInput = styled(Input.TextArea)`
   background: #F6F8F9;
   border: none;
   border-radius: 5px;
-`;
-
-const CheckboxStyle = styled(Checkbox)`
-  margin-left: 0 !important;
-  width: 100%;
-  margin-bottom: 10px;
-`;
-
-const LineBorder = styled.div`
-  width: 100%;
-  height: 1px;
-  border-top: 1px solid #ddd;
-  margin: 15px 0;
-`;
-
-const TitleSmall = styled.h4`
-  color: #212b36;
-  font-weight: 600;
-  font-size: 12px;
-`;
-
-const CountryDropdownStyle = styled(CountryDropdown)`
-  width: 100%;
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: no-repeat;
-`;
-
-const SearchStyle = styled(Search)`
-  width: 100%;
 `;
 
 const ActionBottom = styled.div`
@@ -1377,18 +1282,22 @@ const SubFormTitle = styled.p`
   font-family: Proxima Nova;
   font-style: normal;
   font-weight: bold;
-  font-size: 19px;
-  line-height: 19px;
+  font-size: ${props => props.fontSize ? props.fontSize : '19'}px;
+  line-height: ${props => props.fontSize ? props.fontSize : '19'}px;
   color: #404950;
 `;
 
 const FormRow = styled(Row)`
   justify-content: space-between;
+  margin-bottom: ${props => props.marginBottom ? props.marginBottom : '0'}px;
 `;
 
 const FormItem = styled.div`
-  max-width: 265px;
-  width: 50%;
+  max-width: ${props => props.fullWidth ? '100%' : '265px'};
+  width: 100%;
+  .ant-form-item {
+    margin-bottom: 15px;
+  }
 `;
 
 const NextStepButton = styled(Button)`
@@ -1403,6 +1312,65 @@ const NextStepButton = styled(Button)`
   line-height: 15px;
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
+`;
+
+const FormRadio = styled(Radio)`
+  width: 550px;
+  background: #F6F8F9;
+  border: 1px solid #F6F8F9;
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px!important;
+  line-height: 17px;
+  color: #404950;
+  padding: 15px;
+`;
+
+const FormRadioInput = styled(InputNumber)`
+  max-width: 265px!important;
+  background: #FFFFFF;
+  width: 100%;
+  height: 45px;
+  border: none;
+  border-radius: 5px;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 17px;
+  color: #404950;
+  margin-top: 10px;
+  margin-left: 24px;
+  .ant-input-number-input {
+    height: 45px;
+  }
+`;
+
+const FormRadioText = styled.div`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 150%;
+  color: #404950;
+  margin-left: 24px;
+  margin-top: 10px;
+  max-width: 450px;
+  white-space: break-spaces;
+`;
+
+const CheckboxWrapper = styled.div`
+  width: 100%;
+  max-width: 550px;
+  height: 50px;
+  background: #F6F8F9;
+  border: 1px solid #F6F8F9;
+  border-radius: 5px;
+  padding: 15px;
 `;
 
 const mapStateToProps = (store) => {

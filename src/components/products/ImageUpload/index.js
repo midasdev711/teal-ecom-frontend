@@ -68,7 +68,7 @@ console.log('dataFiles', dataFiles)
   };
   const uploadButton = (
     <div>
-      <PlusOutlined />
+      {/* <PlusOutlined /> */}
       <div className="ant-upload-text">Upload</div>
     </div>
   );
@@ -102,9 +102,19 @@ const GalleryStyle = styled.div`
   .ant-upload {
     width: 128px;
     height: 128px;
+    border: none;
     .ant-upload-list-item {
       width: 125px;
       height: 125px;
+    }
+    .ant-upload-text {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 15px;
+      line-height: 17px;
+      text-align: center;
+      color: #404950;
     }
   }
 `;
