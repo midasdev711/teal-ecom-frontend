@@ -354,21 +354,16 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
     let found = keys.find(data => data === name)
     let SEO = ProductSEOInfo.find(data => data === name)
-
-
     if (found !== undefined) {
-
       if (found === "productTitle") {
         var b = value.toLowerCase().replace(/ /g, '-')
-          .replace(/[^\w-]+/g, '');
+        .replace(/[^\w-]+/g, '');
         cloneProduct.productSlug = b
         setProductDetails(cloneProduct)
       }
       cloneProduct[found] = value
       setProductDetails(cloneProduct)
     } else {
-
-
       if (names === "productSalePrice") {
         cloneProduct.productSalePrice = event === null ? ("") : event
         setProductDetails(cloneProduct)
@@ -394,11 +389,13 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         cloneProduct.productAttributes[0] = cloneproductAttributes
         setProductDetails(cloneProduct)
         handleAttributesValidation(names)
-      } else if (name === SEO) {
+      } else if (names === SEO) {
         cloneProduct.productSEO[name] = value
         setProductDetails(cloneProduct)
+      } else if (names == "productTags") {
+        cloneProduct.productTags = event
+        setProductDetails(cloneProduct)
       } else {
-
         cloneproductAttributes[names] = event
         cloneProduct.productAttributes[0] = cloneproductAttributes
         setProductDetails(cloneProduct)
@@ -443,25 +440,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     }
     setDummyData([dummyData + 1])
   }
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    handleValidation("productTags")
-  };
-
-  const handleInputConfirm = () => {
-    let tag = tags;
-    if (inputValue && tag.indexOf(inputValue) === -1) {
-      tag = [...tag, inputValue];
-    }
-    setTags(tag);
-    setInputVisible(false);
-    setInputValue("");
-    handleValidation("productTags")
-  };
-
-  const saveInputRef = (input) => {
-    input = input;
-  };
 
   const forMap = (tag) => {
     const tagElem = (
@@ -481,18 +459,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       </span>
     );
   };
-  // const handleHSCode = (event) => {
-  //     let value = event.target.value
-  //     let cloneProduct = productDetails
-  //     let cloneproductAttributes1 = productDetails?.productAttributes[0]
-  //     let cloneproductAttributes = productDetails?.productAttributes[0]?.CustomerInformation
-  //     cloneproductAttributes.HarmonizedSystemCode = value
-  //     cloneproductAttributes1.CustomerInformation = cloneproductAttributes
-  //     cloneProduct.productAttributes = cloneproductAttributes1
-  //     setProductDetails(cloneProduct)
-  //     setDummyData([dummyData + 1])
-  // }
-
 
   const handleSubmit = (info) => {
 
@@ -543,7 +509,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setDummyData([dummyData + 1])
   }
   //console.log('errors', errors)
-  const tagChild = tags.map(forMap);
   const handleDropDown = (event, names) => {
 
     if (names === "attributeValues") {
@@ -593,17 +558,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
   const handleAddVariants = () => {
     setVariants([...variants, { variantName: "", variantValues: "" }])
-    handleProductInventoryTotal()
-  }
-  const handleDeleteVariants = (data, index) => {
-
-    let cloneVariant = variants
-    cloneVariant.splice(index, 1)
-    setVariants(cloneVariant)
-    let cloneProductDetails = productDetails
-    cloneProductDetails.productVariants = cloneVariant
-    setProductDetails(cloneProductDetails)
-    setDummyData([dummyData + 1])
     handleProductInventoryTotal()
   }
 
@@ -683,7 +637,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [shippingRate, setShippingRate] = useState(0);
 
   return (
-
     <FormLayout
       name="basic"
       onFinish={onFinish}
@@ -900,66 +853,52 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         <TabPane tab="Variants" key="6">
           <ContentBox>
             <SubFormTitle>Variants</SubFormTitle>
-            <CheckboxWrapper>
-              <Checkbox className="margin-top"
+            <CheckboxWrapper marginBottom={15}>
+              <Checkbox
                 onChange={(event) => handleCheckBox(event)}
                 checked={VariantsFlag}
               >
-                This product has multiple options, like different sizes or colors
+                This product has different options, like different size or color
               </Checkbox>
             </CheckboxWrapper>
             {
               VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
-                return <Row gutter={0} key={index}>
-                  <Col md={9}>
-                    <Form.Item label="Variant Name" key={index}>
-                      <TextInput keys={index} name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant name" />
-                      {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
+                return (
+                <FormRow key={index}>
+                  <FormItem>
+                    <CustomLabel>Variant</CustomLabel>
+                    <Form.Item key={index}>
+                      <FormSelect keys={index} name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index, "variantName")} placeholder="Select">
+                        <FormSelectOption value="size">Size</FormSelectOption>
+                        <FormSelectOption value="color">Color</FormSelectOption>
+                        <FormSelectOption value="material">Material</FormSelectOption>
+                        <FormSelectOption value="style">Style</FormSelectOption>
+                        <FormSelectOption value="title">Title</FormSelectOption>
+                      </FormSelect>
                     </Form.Item>
-                  </Col>
-                  <Col md={9} style={{ marginLeft: "25px" }}>
-                    <Form.Item label="Variant Value" key={index}>
-                      <FormNumberInput
-                        key={index}
-                        min={0}
-                        onChange={(event) => handleChangeVariants(event, index, "variantValues")}
-                        value={variants[index]?.variantValues || ""}
-                        name="variantValues"
-                        placeholder="0.00"
-                        formatter={(value) =>
-                          `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                        }
-                      />
-                      {/* <TextInput name="variantValues" value={variants[index]?.variantValues || ""} onChange={(event) => handleChangeVariants(event, index)} placeholder="Enter variant value" /> */}
-                      {/* <label style={{ color: "red" }} >{errors?.productTitle}</label> */}
+                  </FormItem>
+                  <FormItem>
+                    <CustomLabel>Options</CustomLabel>
+                    <Form.Item key={index}>
+                      <FormSelect mode="tags" style={{ width: '100%' }} onChange={(event) => handleChangeVariants(event, index, "variantValues")} tokenSeparators={[',']}>
+                      </FormSelect>
                     </Form.Item>
-                  </Col>
-                  <Col md={1}>
-                    <Button
-                      style={{ marginLeft: "10px", marginTop: "30px" }}
-                      type="primary"
-                      shape="circle"
-                      icon={variants.length === (index + 1) ? (<PlusOutlined />) : (<MinusOutlined />)}
-                      onClick={variants.length === (index + 1) ? (() => handleAddVariants()) : (() => handleDeleteVariants(data, index))}
-                    >
-                    </Button>
-                  </Col>
-                  {/* <Col md={1}>
-                    <Button
-                      style={{ marginLeft: "30px", marginTop: "30px" }}
-                      type="primary"
-                      shape="circle"
-                      icon={<MinusOutlined />}
-                      onClick={() => handleDeleteVariants()}
-                    >
-                    </Button>
-                  </Col> */}
-                </Row>
+                  </FormItem>
+                </FormRow>
+                )
               })
             }
             <label style={{ color: "red" }} >{errors?.variantName}</label> <br />
             <label style={{ color: "red" }} >{errors?.variantValues}</label>
-
+            {
+              VariantsFlag && 
+              <Button
+                type="primary"
+                onClick={() => handleAddVariants()}
+              >
+                <PlusOutlined /> Add another variant
+              </Button>
+            }
           </ContentBox>
         </TabPane>
         <TabPane tab="SEO &amp; Tags" key="7">
@@ -997,35 +936,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               </>
             )}
             <CustomLabel>Tags</CustomLabel>
-            <TextInput
-              ref={saveInputRef}
-              type="text"
-              size="large"
-              placeholder="Add product tags separated by commas"
-              value={inputValue}
-              onChange={handleInputChange}
-              onBlur={handleInputConfirm}
-              onPressEnter={handleInputConfirm}
-            ></TextInput>
+            <Form.Item>
+              <FormSelect mode="tags" style={{ width: '100%' }} placeholder="Add product tags separated by commas" onChange={(event) => handleChange(event, "productTags")} tokenSeparators={[',']}>
+              </FormSelect>
+            </Form.Item>
             <label style={{ color: "red" }} >{errors?.productTags}</label>
-
-            <TweenOneGroup
-              className="tag-content"
-              enter={{
-                scale: 0.8,
-                opacity: 0,
-                type: "from",
-                duration: 100,
-                with: 10,
-                onComplete: (e) => {
-                  e.target.style = "";
-                },
-              }}
-              leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-              appear={false}
-            >
-              {tagChild}
-            </TweenOneGroup>
           </ContentBox>
         </TabPane>
       </InputTabs>
@@ -1038,45 +953,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   );
 };
 
-const SubForm = styled.div`
-  padding: 15px 0;
-  .ant-divider {
-    margin: 0;
-  }
-  .calendar-icon {
-    font-size: 20px;
-    cursor: pointer;
-  }
-  .title-box {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-  .tag-content {
-    margin-top: 10px;
-  }
-  .date-picker {
-    margin-right: 10px;
-    width: 120px;
-  }
-`;
-
 const ContentBox = styled.div`
   padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
   margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
+ 
 `;
 
 const AlignItem = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-const TitleBox = styled.h3`
-  font-weight: 600;
-  font-size: 16px;
-  color: #000;
-  margin: 0;
-  opacity: 0.9;
 `;
 
 const ContentTitle = styled.h4`
@@ -1123,7 +1008,8 @@ const FormSelect = styled(Select)`
       font-size: 15px;
       line-height: 17px;
       color: #404950;
-      padding-top: 14px;
+      display: flex;
+      align-items: center;
     }
     .ant-select-selection-search-input {
         height: 45px!important;
@@ -1139,11 +1025,6 @@ const FormSelectOption = styled(Option)`
   height: 45px;
 `;
 
-const TitleStyle = styled.p`
-  margin: 0;
-  font-size: 14px;
-`;
-
 const TextStyle = styled.span`
   margin: 0;
   font-family: Proxima Nova;
@@ -1152,22 +1033,6 @@ const TextStyle = styled.span`
   font-size: 14px;
   line-height: 150%;
   color: #404950;
-`;
-
-const DescriptionContent = styled.div`
-  padding: 20px;
-  border: 1px solid #ddd;
-`;
-
-const ItemContentBox = styled.div`
-  padding: 20px;
-`;
-
-const GroupContent = styled.div`
-  margin-top: 15px;
-  input {
-    padding: 8px 12px;
-  }
 `;
 
 const Loader = styled.div`
@@ -1200,11 +1065,6 @@ const FormNumberInput = styled(InputNumber)`
   .ant-input-number-input {
     height: 45px;
   }
-`;
-
-const InputStyle = styled(Input)`
-  width: 100%;
-  padding: 8px 12px;
 `;
 
 const TextAreaInput = styled(Input.TextArea)`
@@ -1371,6 +1231,7 @@ const CheckboxWrapper = styled.div`
   border: 1px solid #F6F8F9;
   border-radius: 5px;
   padding: 15px;
+  margin-bottom: ${(props) => (props.marginBottom ? props.marginBottom : "0")}px;
 `;
 
 const mapStateToProps = (store) => {
