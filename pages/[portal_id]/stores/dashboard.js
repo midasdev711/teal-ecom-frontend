@@ -8,25 +8,18 @@ import { Banner, DashboardCard } from '../../../src/components/atoms'
 
 const { Title, Text } = Typography;
 
-export default function StoriesDashboard() {
+export default function StoresDashboard() {
     const router = useRouter()
     let userData = getUserData()
 
-    const goToNewBlogPage = (url) => {
-        router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
+    const goToNewPage = (url) => {
+        router.push(`/[portal_id]/stores/setup-new`, { pathname: `/${userData?.uniqueID}/stores/setup-new` }, { shallow: true });
     }
     return (
         <LayoutWithNoSidebar>
-            <Banner
-                title="Write more."
-                description="We write to taste life twice, in the moment and in retrospect. ― Anais Nin"
-                image={<img alt="unfulied" src="/images/stories-dashboard-banner.png" />}
-                backgroundColor="#C2FBD7"
-            >
-            </Banner>
             <BlogContainer>
                 <BlogContainerHeader>
-                    <Title1>Blogs</Title1>
+                    <Title1>Stores</Title1>
                     <AddButton>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
@@ -36,14 +29,15 @@ export default function StoriesDashboard() {
                     <DashboardCard
                         title="Default"
                         subtitle="@sparqlife"
-                        count="15"
+                        count="150"
                         view="59k"
-                        chartData={[65, 45, 80, 81, 77, 90, 40]}
+                        chartData={[65, 59, 80, 81, 56, 55, 40]}
+                        type="store"
                         image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
                     ></DashboardCard>
                     <DashboardCard
                         isNew={true}
-                        onClick={goToNewBlogPage}
+                        onClick={goToNewPage}
                     ></DashboardCard>
                 </BlogGroupContent>
             </BlogContainer>
@@ -76,6 +70,7 @@ const Title1 = styled(Title)`
     font-size: 21px!important;
     line-height: 21px!important;
     color: #404950!important;
+    margin-top: 0!important;
 `;
 
 const AddButtonText = styled(Text)`
