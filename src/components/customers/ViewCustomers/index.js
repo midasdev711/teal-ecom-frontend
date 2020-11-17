@@ -239,8 +239,8 @@ const ViewCustomers = (props) => {
       }
     },
     getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      name: record.name,
+      disabled: record && record.name === "Disabled User",
+      name: record && record.name,
     }),
   };
 

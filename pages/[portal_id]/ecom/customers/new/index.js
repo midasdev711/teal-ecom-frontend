@@ -35,7 +35,7 @@ const NewCustomer = (props) => {
   const [TaxFlag, setTaxFlag] = useState(false);
   const [Tax, setTax] = useState(0);
   const [Notes, setNotes] = useState('');
-  const [Tags, setTags] = useState('');
+  const [Tags, setTags] = useState([]);
   const apiStatus = useSelector((state)=>state.customerReducer.status)
 
   const newActions = () => {
@@ -102,12 +102,19 @@ const NewCustomer = (props) => {
         setAddressDetails({ ...AddressDetails, [name]: value })
       }
     } else {
-      let { name, value } = e.target
-      if (name === 'TaxFlag') {
-        setTaxFlag(e.target.checked)
-      } else if (name === 'Notes') {
-        setNotes(e.target.value)
+      console.log('ddddddddddddd', e)
+      if(module === "TAGS"){
+        setTags(e.join(","));
       }
+      else {
+        let { name, value } = e.target
+        if (name === 'TaxFlag') {
+          setTaxFlag(e.target.checked)
+        } else if (name === 'Notes') {
+          setNotes(e.target.value)
+        }
+      }
+      
     }
 
   }
