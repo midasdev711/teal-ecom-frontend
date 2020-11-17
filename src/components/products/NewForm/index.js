@@ -41,7 +41,8 @@ import {
   Menu,
   Upload,
   Typography,
-  Radio
+  Radio,
+  Modal
 } from "antd";
 import { validate } from "graphql";
 import { resolve } from "url";
@@ -161,6 +162,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
   const loading = useSelector(state => state.productReducer.status)
   const [step, setStep] = useState("1");
+  const [variantsData, setVariantsData] = useState([]);
+  const [variantsOption, setVariantsOptions] = useState([]);
 
 
   // useEffect(()=>{
@@ -237,6 +240,44 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setDummyData([dummyData + 1])
   }, [VariantsFlag])
 
+  const variantsOptionChanged = (e, index, key) => {
+    let current = variantsOption;
+    current[index][key] = e;
+    let keys = [];
+    if (current.length > 0) {
+      keys = current[0].values;
+    }
+    if (current.length > 1 && current[1].values.length > 0) {
+      let tmp = Object.assign([], keys);
+      keys = [];
+      for (let j = 0; j < current[0].values.length; j ++) {
+        for (let i = 0; i < current[1].values.length; i ++) {
+          keys.push(`${current[0].values[j]} / ${current[1].values[i]}`);
+        }
+      }
+    }
+    if (current.length > 2 && current[2].values.length > 0) {
+      let tmp = Object.assign([], keys);
+      keys = [];
+      for (let j = 0; j < tmp.length; j ++) {
+        for (let i = 0; i < current[2].values.length; i ++) {
+          keys.push(`${tmp[j]} / ${current[2].values[i]}`);
+        }
+      }
+    }
+    let variantData = [];
+    for (let i = 0; i < keys.length; i ++) {
+      variantData.push({selected: false, variant: keys[i], price: 0, quantity: 0, sku: null})
+    }
+    setVariantsData([...variantData]);
+    setVariantsOptions([...current]);
+  }
+
+  const variantsDataChanged = (e, index, key) => {
+    let current = variantsData;
+    variantsData[index][key] = e.target.value;
+    setVariantsData([...current]);
+  }
 
   const handleImageUpload = (value) => {
     setImagesFileList(value)
@@ -425,6 +466,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     const removeTags = tags.filter((tag) => tag !== removedTag);
     setTags(removeTags);
   };
+
   const handleValidation = (name) => {
 
     let error
@@ -440,25 +482,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     }
     setDummyData([dummyData + 1])
   }
-
-  const forMap = (tag) => {
-    const tagElem = (
-      <TagContent
-        closable
-        onClose={(e) => {
-          e.preventDefault();
-          handleClose(tag);
-        }}
-      >
-        {tag}
-      </TagContent>
-    );
-    return (
-      <span key={tag} style={{ display: "inline-block" }}>
-        {tagElem}
-      </span>
-    );
-  };
 
   const handleSubmit = (info) => {
 
@@ -557,17 +580,20 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setDummyData([dummyData + 1])
   }
   const handleAddVariants = () => {
-    setVariants([...variants, { variantName: "", variantValues: "" }])
-    handleProductInventoryTotal()
+    let current = variantsOption;
+    if (current.length < 3) {
+      current.push({option: "", values: []});
+      setVariantsOptions([...current]);
+    }
+    // handleProductInventoryTotal()
   }
 
   const handleCheckBox = (event) => {
     const values = event.target.checked
-
-
     setVariantsFlag(values)
-    setDummyData([dummyData + 1])
-    handleProductInventoryTotal()
+    setVariantsOptions([{option: '', values: []}])
+    // setDummyData([dummyData + 1])
+    // handleProductInventoryTotal()
   }
   const handleChangeVariants = (event, index, names) => {
 
@@ -629,12 +655,24 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setStep('' + (currentStep + 1));
   }
 
+  const handleOk = () => {
+
+  }
+
+  const handleCancel = () => {
+    setVariantsFlag(false);
+    setVariantsData([]);
+    setVariantsOptions([]);
+  }
+
   const onTabClick = (e) => {
     setStep('' + e);
   }
 
   const [showUnitSelection, setShowUnitSelection] = useState(false);
   const [shippingRate, setShippingRate] = useState(0);
+
+  console.log(variantsOption)
 
   return (
     <FormLayout
@@ -861,44 +899,87 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 This product has different options, like different size or color
               </Checkbox>
             </CheckboxWrapper>
-            {
-              VariantsFlag && variants && variants.length > 0 && variants.map((data, index) => {
-                return (
-                <FormRow key={index}>
-                  <FormItem>
-                    <CustomLabel>Variant</CustomLabel>
-                    <Form.Item key={index}>
-                      <FormSelect keys={index} name="variantName" value={variants[index]?.variantName || ""} onChange={(event) => handleChangeVariants(event, index, "variantName")} placeholder="Select">
-                        <FormSelectOption value="size">Size</FormSelectOption>
-                        <FormSelectOption value="color">Color</FormSelectOption>
-                        <FormSelectOption value="material">Material</FormSelectOption>
-                        <FormSelectOption value="style">Style</FormSelectOption>
-                        <FormSelectOption value="title">Title</FormSelectOption>
-                      </FormSelect>
-                    </Form.Item>
-                  </FormItem>
-                  <FormItem>
-                    <CustomLabel>Options</CustomLabel>
-                    <Form.Item key={index}>
-                      <FormSelect mode="tags" style={{ width: '100%' }} onChange={(event) => handleChangeVariants(event, index, "variantValues")} tokenSeparators={[',']}>
-                      </FormSelect>
-                    </Form.Item>
-                  </FormItem>
-                </FormRow>
-                )
-              })
-            }
-            <label style={{ color: "red" }} >{errors?.variantName}</label> <br />
-            <label style={{ color: "red" }} >{errors?.variantValues}</label>
-            {
-              VariantsFlag && 
-              <Button
-                type="primary"
-                onClick={() => handleAddVariants()}
-              >
-                <PlusOutlined /> Add another variant
-              </Button>
-            }
+            <VariantModal
+              visible={VariantsFlag}
+              footer={[
+                <Button key="back" onClick={() => handleCancel()}>
+                  Cancel
+                </Button>,
+                <Button key="submit" type="primary" loading={loading} onClick={() => handleOk()}>
+                  Next
+                </Button>,
+              ]}
+            >
+              <SubFormTitle>Variants</SubFormTitle>
+              {
+                VariantsFlag && variantsOption && variantsOption.length > 0 && variantsOption.map((data, index) => {
+                  return (
+                  <FormRow key={index}>
+                    <FormItem>
+                      <CustomLabel>Variant</CustomLabel>
+                      <Form.Item key={index}>
+                        <FormSelect keys={index} name="variantName" value={variantsOption[index]["option"]} onChange={(event) => variantsOptionChanged(event, index, "option")} placeholder="Select">
+                          <FormSelectOption value="size">Size</FormSelectOption>
+                          <FormSelectOption value="color">Color</FormSelectOption>
+                          <FormSelectOption value="material">Material</FormSelectOption>
+                          <FormSelectOption value="style">Style</FormSelectOption>
+                          <FormSelectOption value="title">Title</FormSelectOption>
+                        </FormSelect>
+                      </Form.Item>
+                    </FormItem>
+                    <FormItem>
+                      <CustomLabel>Options</CustomLabel>
+                      <Form.Item key={index}>
+                        <FormSelect mode="tags" style={{ width: '100%' }} value={variantsOption[index]?.values || []} onChange={(event) => variantsOptionChanged(event, index, "values")} tokenSeparators={[',']}>
+                        </FormSelect>
+                      </Form.Item>
+                    </FormItem>
+                  </FormRow>
+                  )
+                })
+              }
+              <label style={{ color: "red" }} >{errors?.variantName}</label> <br />
+              <label style={{ color: "red" }} >{errors?.variantValues}</label>
+              {
+                VariantsFlag && variantsOption.length < 3 &&
+                <Button
+                  type="primary"
+                  onClick={() => handleAddVariants()}
+                >
+                  <PlusOutlined /> Add another variant
+                </Button>
+              }
+              <Divider/>
+              <SubFormTitle>Your Variants</SubFormTitle>
+              {VariantsFlag && 
+                <VariantTable>
+                  <thead>
+                    <tr>
+                      <th>
+                        <Checkbox></Checkbox>
+                      </th>
+                      <th><VariantTableText>Variant</VariantTableText></th>
+                      <th className="price-header"><VariantTableText>Price</VariantTableText></th>
+                      <th className="quantity-header"><VariantTableText>Quantity</VariantTableText></th>
+                      <th className="sku-header"><VariantTableText>SKU</VariantTableText></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {variantsData.map((data, index) => {
+                      return (
+                        <tr key={'variant' + index}>
+                          <td><Checkbox></Checkbox></td>
+                          <td><VariantTableText>{data.variant}</VariantTableText></td>
+                          <td className="price"><FormNumberInput maxWidth={135} onChange={(event) => variantsDataChanged(event, index, 'price')}></FormNumberInput></td>
+                          <td className="quantity"><FormNumberInput maxWidth={90} onChange={(event) => variantsDataChanged(event, index, 'quantity')} ></FormNumberInput></td>
+                          <td className="sku"><FormNumberInput maxWidth={80} onChange={(event) => variantsDataChanged(event, index, 'sku')} ></FormNumberInput></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </VariantTable>
+              }
+            </VariantModal>
           </ContentBox>
         </TabPane>
         <TabPane tab="SEO &amp; Tags" key="7">
@@ -956,7 +1037,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 const ContentBox = styled.div`
   padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
   margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
- 
 `;
 
 const AlignItem = styled.div`
@@ -1050,7 +1130,7 @@ const Loader = styled.div`
 `;
 
 const FormNumberInput = styled(InputNumber)`
-  max-width: 550px!important;
+  max-width: ${props => props.maxWidth ? props.maxWidth : '550'}px!important;
   width: 100%;
   height: 45px;
   border: none;
@@ -1232,6 +1312,50 @@ const CheckboxWrapper = styled.div`
   border-radius: 5px;
   padding: 15px;
   margin-bottom: ${(props) => (props.marginBottom ? props.marginBottom : "0")}px;
+`;
+
+const VariantTable = styled.table`
+  width: 100%;
+  thead {
+    th.price-header {
+      max-width: 155px;
+    }
+
+    th.quantity-header {
+      max-width: 110px;
+    }
+
+    th.sku-header {
+      max-width: 80px; 
+    }
+  }
+
+  td, th {
+    padding-top: 17px;
+    padding-bottom: 17px;
+  }
+
+  tr {
+    border-bottom: 1px solid #BAC3C9;
+  }
+`;
+
+const VariantTableText = styled(Text)`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 144.89%;
+  color: #404950;
+`;
+
+const VariantModal = styled(Modal)`
+  width: 600px!important;
+  height: 615px;
+  .ant-modal-body {
+    overflow-y: auto;
+    height: 565px;
+  }
 `;
 
 const mapStateToProps = (store) => {
