@@ -65,6 +65,7 @@ let productInfo = {
   productSalePrice: 0,
   productCostPerItem: 0,
   productYourShippingCost: 0,
+  productShippingRate: 0,
   isPublish: "false",
   productTags: [],
   productStock: 0,
@@ -103,6 +104,7 @@ let cleanData = {
   productSalePrice: 0,
   productCostPerItem: 0,
   productYourShippingCost: 0,
+  productShippingRate: 0,
   isPublish: "false",
   productTags: [],
   productStock: 0,
@@ -149,7 +151,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [imagesButtonDisable, setImagesButtonDisable] = useState(false);
   const [imagesFileList, setImagesFileList] = useState("");
   const [VariantsFlag, setVariantsFlag] = useState(false);
-  const [variants, setVariants] = useState([{ variantName: "", variantValues: "" }]);
+  const [variants, setVariants] = useState([]);
   const [productFeaturedImageList, setProductFeaturedImageList] = useState([]);
   const [profit, setProfit] = useState("");
   const [margin, setMargin] = useState("");
@@ -222,19 +224,19 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setProductDetails(cloneProduct)
     setDummyData([dummyData + 1])
   }, [tags])
-  useEffect(() => {
-    setVariantsFlag
-    let cloneProduct = productDetails
-    if (VariantsFlag) {
-      cloneProduct.productVariants = variants
-      handleProductInventoryTotal()
-    } else {
-      cloneProduct.productVariants = [{ variantName: "", variantValues: "" }]
-      cloneProduct.productStock = 0
-    }
-    setProductDetails(cloneProduct)
-    setDummyData([dummyData + 1])
-  }, [VariantsFlag])
+  // useEffect(() => {
+  //   setVariantsFlag
+  //   let cloneProduct = productDetails
+  //   if (VariantsFlag) {
+  //     cloneProduct.productVariants = variants
+  //     handleProductInventoryTotal()
+  //   } else {
+  //     cloneProduct.productVariants = []
+  //     cloneProduct.productStock = 0
+  //   }
+  //   setProductDetails(cloneProduct)
+  //   setDummyData([dummyData + 1])
+  // }, [VariantsFlag])
 
   const variantsOptionChanged = (e, index, key) => {
     let current = variantsOption;
@@ -427,6 +429,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         setProductDetails(cloneProduct)
         handleValidation(names)
         handleProfitAndMargin()
+      } else if (names == "productShippingRate") {
+        cloneProduct.productShippingRate = event === null ? "" : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
       } else if (names === "attributeValues") {
         cloneproductAttributes[names] = [`${event}`, `${unit}`]
         cloneProduct.productAttributes[0] = cloneproductAttributes
@@ -530,10 +536,12 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       return;
     }
     setErrors({});
+    let payload = Object.assign({}, productDetails);
+    payload['productShippingRate'] = shippingRate == 2 ? payload['productYourShippingRate'] : payload['productShippingRate'];
     if (info === "save") {
-      submit(productDetails)
+      submit(payload)
     } else {
-      saveSubmit(productDetails)
+      saveSubmit(payload)
     }
     setDummyData([dummyData + 1])
   }
@@ -666,17 +674,23 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
 
   const handleOk = () => {
+    // let cloneProduct = Object.assign({}, productDetails)
+    // for (let i = 0; i < variantsData.length; i ++) {
+    //   cloneProduct.productVariants.push(Object.assign({}, variantsData[i]))
+    // }
+    // console.log(variantsData, cloneProduct)
+    setProductDetails(value =>({
+      ...value,
+      productVariants: [...variantsData]
+    }))
     setVariantsFlag(false);
-    let cloneProduct = productDetails
-    cloneProduct['productVariants'] = variantsData
-    setProductDetails(cloneProduct)
     // handleValidation('')
   }
 
   const handleCancel = () => {
-    setVariantsFlag(false);
     setVariantsData([]);
     setVariantsOptions([]);
+    setVariantsFlag(false);
   }
 
   const onTabClick = (e) => {
@@ -685,6 +699,12 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const [showUnitSelection, setShowUnitSelection] = useState(false);
   const [shippingRate, setShippingRate] = useState(0);
+
+  const setShippingRateOption = (e) => {
+    if (e == 1) {
+      handleChange(0, "productShippingRate");
+    }
+  }
 
   const categoryLists = [{
     ID: 1,
@@ -707,6 +727,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     ID: 6,
     name: 'Shopping'
   }]
+
+  useEffect(() => {
+    console.log('productDetails', productDetails)
+  }, [productDetails])
 
   return (
     <FormLayout
@@ -905,7 +929,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             </FormRow>
             <SubFormTitle fontSize={17}>Shipping Rates</SubFormTitle>
             <Form.Item>
-              <Radio.Group onChange={(event) => { setShippingRate(event.target.value); handleDropDown(event, "shippingRate")}} value={shippingRate}>
+              <Radio.Group onChange={(event) => { setShippingRate(event.target.value); setShippingRateOption(event.target.value)}} value={shippingRate}>
                 <FormRadio value={1}>
                   Free
                 </FormRadio>
@@ -914,7 +938,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 </FormRadio>
                 <FormRadio value={3}>
                   Flat rate <br></br>
-                  <FormRadioInput disabled={shippingRate != 3} min={0} name="flatRate" onChange={(event) => { handleChange(event, "flatRate")}} />
+                  <FormRadioInput disabled={shippingRate != 3} min={0} name="productShippingRate" onChange={(event) => { handleChange(event, "productShippingRate")}} />
                   <label style={{ color: "red" }} >{errors?.flatRate}</label>
                   <FormRadioText>This product will always be charged a flat rate unless otherwise specified in your Shipping Settings.</FormRadioText>
                 </FormRadio>
@@ -942,7 +966,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                   <Button key="back" className="cancel-button" onClick={() => handleCancel()}>
                     Cancel
                   </Button>
-                  <Button key="submit" className="save-button" type="primary" loading={loading} onClick={() => handleOk()}>
+                  <Button key="submit" className="save-button" type="primary" onClick={() => handleOk()}>
                     Next
                   </Button>
                 </div>
