@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: staging
+  name: juicypie-frontend-portal-staging-deployment
+  labels:
+    app: juicypie-frontend-portal-staging
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: juicypie-frontend-portal-staging
+  template:
+    metadata:
+      labels:
+        app: juicypie-frontend-portal-staging
+    spec:
+      containers:
+      - name: juicypie-frontend-portal-staging-container
+        image: 638145506484.dkr.ecr.us-east-2.amazonaws.com/juicypie-frontend-portal:staging
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 3000
