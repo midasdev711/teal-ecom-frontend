@@ -275,7 +275,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const variantsDataChanged = (e, index, key) => {
     let current = variantsData;
-    variantsData[index][key] = e.target.value;
+    variantsData[index][key] = e;
     setVariantsData([...current]);
   }
 
@@ -656,7 +656,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
 
   const handleOk = () => {
-
+    setVariantsFlag(false);
   }
 
   const handleCancel = () => {
@@ -902,12 +902,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             <VariantModal
               visible={VariantsFlag}
               footer={[
-                <Button key="back" onClick={() => handleCancel()}>
-                  Cancel
-                </Button>,
-                <Button key="submit" type="primary" loading={loading} onClick={() => handleOk()}>
-                  Next
-                </Button>,
+                <span>{variantsData.length} total variants</span>,
+                <div>
+                  <Button key="back" className="cancel-button" onClick={() => handleCancel()}>
+                    Cancel
+                  </Button>
+                  <Button key="submit" className="save-button" type="primary" loading={loading} onClick={() => handleOk()}>
+                    Next
+                  </Button>
+                </div>
               ]}
             >
               <SubFormTitle>Variants</SubFormTitle>
@@ -951,7 +954,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               }
               <Divider/>
               <SubFormTitle>Your Variants</SubFormTitle>
-              {VariantsFlag && 
+              {VariantsFlag && variantsData.length > 0 &&
                 <VariantTable>
                   <thead>
                     <tr>
@@ -1355,6 +1358,40 @@ const VariantModal = styled(Modal)`
   .ant-modal-body {
     overflow-y: auto;
     height: 565px;
+  }
+  .ant-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px -5px 30px rgba(64, 73, 80, 0.07);
+    >span {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 14px;
+      color: #404950;
+    }
+    button {
+      width: 85px;
+      height: 30px;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 15px;
+      line-height: 15px;
+      text-align: center;
+      &.save-button {
+        background: #80CAFB;
+        border-radius: 5px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      &.cancel-button {
+        color: #FF0000;
+        border: 1px solid #FF0000;
+        border-radius: 5px;
+      }
+    }
   }
 `;
 
