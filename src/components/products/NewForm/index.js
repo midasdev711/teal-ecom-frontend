@@ -64,19 +64,17 @@ let productInfo = {
   productMRP: 0,
   productSalePrice: 0,
   productCostPerItem: 0,
+  productYourShippingCost: 0,
   isPublish: "false",
   productTags: [],
   productStock: 0,
-  productVariants: [{
-    variantName: "",
-    variantValues: "",
-  }],
+  productVariants: [],
   productThumbnailImage: null,
   productImages: [],
   productSEO: {
     title: "",
     description: "",
-    cronicalUrl: "",
+    // cronicalUrl: "",
   },
   productCategory: "",
   // productInventory: "",
@@ -104,19 +102,17 @@ let cleanData = {
   productMRP: 0,
   productSalePrice: 0,
   productCostPerItem: 0,
+  productYourShippingCost: 0,
   isPublish: "false",
   productTags: [],
   productStock: 0,
-  productVariants: [{
-    variantName: "",
-    variantValues: "",
-  }],
+  productVariants: [],
   productThumbnailImage: null,
   productImages: [],
   productSEO: {
     title: "",
     description: "",
-    cronicalUrl: "",
+    // cronicalUrl: "",
   },
   productCategory: "",
   // productInventory: "",
@@ -134,7 +130,7 @@ let cleanData = {
 
 }
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
-const ProductSEOInfo = ["title", "description", "cronicalUrl"]
+const ProductSEOInfo = ["title", "description"]
 
 const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, getProductSubCategoryLists }) => {
   const [visiable, setVisible] = useState(false);
@@ -158,8 +154,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [profit, setProfit] = useState("");
   const [margin, setMargin] = useState("");
   const [unit, setUnit] = useState("kg");
-  const categoryLists = useSelector(state => state.productReducer.categoriesLists)
-  const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
+  // const categoryLists = useSelector(state => state.productReducer.categoriesLists)
+  // const subCategories = useSelector(state => state.productReducer.subCategoriesLists)
   const loading = useSelector(state => state.productReducer.status)
   const [step, setStep] = useState("1");
   const [variantsData, setVariantsData] = useState([]);
@@ -285,8 +281,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     cloneProduct.productImages = value
     if (value.length > 0) {
       cloneProduct.productThumbnailImage = value[0]
+      cloneProduct.productFeaturedImage = value[0]
     } else {
       cloneProduct.productThumbnailImage = null
+      cloneProduct.productFeaturedImage = null
     }
     let cloneError = errors
     delete cloneError.productImages
@@ -424,15 +422,21 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         setProductDetails(cloneProduct)
         handleValidation(names)
         handleProfitAndMargin()
-
+      } else if (names === "yourShippingCost") {
+        cloneProduct.productYourShippingCost = event === null ? "" : event
+        setProductDetails(cloneProduct)
+        handleValidation(names)
+        handleProfitAndMargin()
       } else if (names === "attributeValues") {
         cloneproductAttributes[names] = [`${event}`, `${unit}`]
         cloneProduct.productAttributes[0] = cloneproductAttributes
         setProductDetails(cloneProduct)
         handleAttributesValidation(names)
-      } else if (names === SEO) {
-        cloneProduct.productSEO[name] = value
-        setProductDetails(cloneProduct)
+      } else if (names === 'SEO') {
+        if (name == SEO) {
+          cloneProduct.productSEO[name] = value
+          setProductDetails(cloneProduct)
+        }
       } else if (names == "productTags") {
         cloneProduct.productTags = event
         setProductDetails(cloneProduct)
@@ -444,8 +448,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       }
 
     }
-    if (name === SEO) {
-      error = validation(name, productDetails.productSEO[name]);
+    if (names === 'SEO') {
+      if (name == SEO) {
+        error = validation(name, productDetails.productSEO[name]);
+      }
     } else if (names === "attributeValues") {
       error = validation(names, productDetails?.productAttributes[0][names]);
     } else {
@@ -460,7 +466,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     }
     setDummyData([dummyData + 1])
   }
-  console.log('productDetails', productDetails)
   // Tags group actions
   const handleClose = (removedTag) => {
     const removeTags = tags.filter((tag) => tag !== removedTag);
@@ -519,6 +524,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     //         validationErrors.variantValues = error;
     //     }
     // });
+    console.log(validationErrors);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -652,11 +658,19 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const nextStep = () => {
     let currentStep = parseInt(step);
-    setStep('' + (currentStep + 1));
+    if (currentStep < 7) {
+      setStep('' + (currentStep + 1));
+    } else {
+      handleSubmit('save');
+    }
   }
 
   const handleOk = () => {
     setVariantsFlag(false);
+    let cloneProduct = productDetails
+    cloneProduct['productVariants'] = variantsData
+    setProductDetails(cloneProduct)
+    // handleValidation('')
   }
 
   const handleCancel = () => {
@@ -672,7 +686,27 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const [showUnitSelection, setShowUnitSelection] = useState(false);
   const [shippingRate, setShippingRate] = useState(0);
 
-  console.log(variantsOption)
+  const categoryLists = [{
+    ID: 1,
+    name: 'Consumer Goods'
+  },{
+    ID: 2,
+    name: 'Convenience'
+  },{
+    ID: 3,
+    name: 'Shopping'
+  }]
+
+  const subCategories = [{
+    ID: 4,
+    name: 'Foods'
+  },{
+    ID: 5,
+    name: 'Convenience'
+  },{
+    ID: 6,
+    name: 'Shopping'
+  }]
 
   return (
     <FormLayout
@@ -805,8 +839,8 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 </Form.Item>
               </FormItem>
             </FormRow>
-            <FormRow marginBottom={11}>
-              <div class="mb-3">
+            <FormRow marginbottom={11}>
+              <div className="mb-3">
                 <TextStyle>Margin</TextStyle>
                 <span>: {margin.trim()} % | </span>
                 <TextStyle>Profit</TextStyle>
@@ -891,7 +925,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         <TabPane tab="Variants" key="6">
           <ContentBox>
             <SubFormTitle>Variants</SubFormTitle>
-            <CheckboxWrapper marginBottom={15}>
+            <CheckboxWrapper marginbottom={15}>
               <Checkbox
                 onChange={(event) => handleCheckBox(event)}
                 checked={VariantsFlag}
@@ -901,6 +935,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             </CheckboxWrapper>
             <VariantModal
               visible={VariantsFlag}
+              onCancel={() => handleCancel()}
               footer={[
                 <span>{variantsData.length} total variants</span>,
                 <div>
@@ -946,7 +981,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               {
                 VariantsFlag && variantsOption.length < 3 &&
                 <Button
-                  type="primary"
+                  className="add-variant"
                   onClick={() => handleAddVariants()}
                 >
                   <PlusOutlined /> Add another variant
@@ -995,7 +1030,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 </ContentTitle>
               )}
             </AlignItem>
-            <CheckboxWrapper>
+            <CheckboxWrapper marginbottom={15}>
               <Checkbox>Auto optimize for SEO</Checkbox>
             </CheckboxWrapper>
             {openEditSite && (
@@ -1003,14 +1038,14 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                 <FormItem fullWidth={true}>
                   <Form.Item>
                     <CustomLabel>Page title</CustomLabel>
-                    <TextInput name="title" onChange={(event) => handleChange(event)} placeholder="Page title"></TextInput>
+                    <TextInput name="title" onChange={(event) => handleChange(event, 'SEO')} placeholder="Page title"></TextInput>
                     <label style={{ color: "red" }} >{errors?.title}</label>
                   </Form.Item>
                 </FormItem>
                 <FormItem fullWidth={true}>
                   <Form.Item name="description">
                     <CustomLabel>Description</CustomLabel>
-                    <TextAreaInput rows={2} name="description" placeholder="Add a brief description" onChange={(event) => handleChange(event)} />
+                    <TextAreaInput rows={2} name="description" placeholder="Add a brief description" onChange={(event) => handleChange(event, 'SEO')} />
                     <label style={{ color: "red" }} >{errors?.description}</label>
                   </Form.Item>
                 </FormItem>
@@ -1021,7 +1056,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             )}
             <CustomLabel>Tags</CustomLabel>
             <Form.Item>
-              <FormSelect mode="tags" style={{ width: '100%' }} placeholder="Add product tags separated by commas" onChange={(event) => handleChange(event, "productTags")} tokenSeparators={[',']}>
+              <FormSelect mode="tags" maxWidth={550} placeholder="Add product tags separated by commas" onChange={(event) => handleChange(event, "productTags")} tokenSeparators={[',']}>
               </FormSelect>
             </Form.Item>
             <label style={{ color: "red" }} >{errors?.productTags}</label>
@@ -1030,7 +1065,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       </InputTabs>
       <ActionBottom>
         <NextStepButton type="primary" onClick={() => nextStep()}>
-          Next
+          {step == "7" ? 'Save' : 'Next'}
         </NextStepButton>
       </ActionBottom>
     </FormLayout>
@@ -1054,11 +1089,6 @@ const ContentTitle = styled.h4`
   text-align: ${(props) => (props.align ? props.align : "right")};
   font-weight: 400;
   margin-bottom: 5px;
-`;
-
-const TagContent = styled(Tag)`
-  padding: 5px 10px;
-  marginbottom: 10px;
 `;
 
 const TextInput = styled(Input)`
@@ -1232,7 +1262,7 @@ const SubFormTitle = styled.p`
 
 const FormRow = styled(Row)`
   justify-content: space-between;
-  margin-bottom: ${props => props.marginBottom ? props.marginBottom : '0'}px;
+  margin-bottom: ${props => props.marginbottom ? props.marginbottom : '0'}px;
 `;
 
 const FormItem = styled.div`
@@ -1314,7 +1344,7 @@ const CheckboxWrapper = styled.div`
   border: 1px solid #F6F8F9;
   border-radius: 5px;
   padding: 15px;
-  margin-bottom: ${(props) => (props.marginBottom ? props.marginBottom : "0")}px;
+  margin-bottom: ${(props) => (props.marginbottom ? props.marginbottom : "0")}px;
 `;
 
 const VariantTable = styled.table`
@@ -1358,6 +1388,17 @@ const VariantModal = styled(Modal)`
   .ant-modal-body {
     overflow-y: auto;
     height: 565px;
+    .add-variant {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 150%;
+      color: #0095F8;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+    }
   }
   .ant-modal-footer {
     display: flex;
