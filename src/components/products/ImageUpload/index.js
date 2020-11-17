@@ -54,6 +54,7 @@ console.log('dataFiles', dataFiles)
     if (dataFiles.length) {
       cloneBase = dataFiles.map(fileObj => fileObj.originFileObj);
     }
+    console.log('clone base', cloneBase)
     imageData(cloneBase);
     setBase64Data(cloneBase);
   }, [dataFiles])
