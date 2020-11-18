@@ -33,8 +33,8 @@ export const GET_USER_ID_QUERY = gql`
 `;
 
 export const LOGIN_USER_QUERY = gql`
-	query auth($email: String, $password: String) {
-		auth(email: $email, password: $password) {
+	query auth($uniqueID: String, $password: String) {
+		auth(uniqueID: $uniqueID, password: $password) {
 			ID
 			token
 			refreshToken
@@ -47,7 +47,6 @@ export const LOGIN_USER_QUERY = gql`
 			email
 			name
 			uniqueID
-			password
 			mobileNo
 		}
 	}
