@@ -1,1 +1,1 @@
-export const SERVER = process.env.backend || "http://localhost:9200/graphql";
+export const SERVER = process.env.backend || "https://api-staging.juicypie.com/graphql";
