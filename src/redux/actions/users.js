@@ -57,15 +57,14 @@ export const setUserEmail = email => {
 export const login = (email, password) => {
 	return dispatch => {
 		return apolloClient
-			.mutate({
-				mutation: LOGIN_USER_QUERY,
+			.query({
+				query: LOGIN_USER_QUERY,
 				variables: {
-					email,
+					uniqueID: email,
 					password,
 				},
 			})
 			.then(res => {
-				delete res.data.auth.password;
 				localStorage.setItem('userData', JSON.stringify(res.data.auth));
 				localStorage.setItem('userID', JSON.stringify(res.data.auth.ID));
 				localStorage.setItem('_token_tel', res.data.auth.token);

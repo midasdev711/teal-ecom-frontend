@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: staging
+  name: juicypie-frontend-portal-staging-service
+spec:
+  selector:
+    app: juicypie-frontend-portal-staging
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: http

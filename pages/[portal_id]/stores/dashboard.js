@@ -1,87 +1,49 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
 import { useRouter } from "next/router"
 import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
-
 import { Banner, DashboardCard } from '../../../src/components/atoms'
-
 
 const { Title, Text } = Typography;
 
-export function StoriesDashboard(props) {
-    const router = useRouter();
-    let userData = getUserData();
+export default function StoresDashboard() {
+    const router = useRouter()
+    let userData = getUserData()
 
-    const handleDefaultAction = (url, uid) => {
-        // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
-        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
+    const goToNewPage = (url) => {
+        router.push(`/[portal_id]/stores/setup-new`, { pathname: `/${userData?.uniqueID}/stores/setup-new` }, { shallow: true });
     }
-
-    useEffect(() => {
-        getDataBlogs();
-        getDataPages();
-        getDataStores();
-    }, []);
-
-    const getDataBlogs = () => {
-        props.getBlogs();
-    };
-
-    const getDataPages = () => {
-        props.getPages();
-    };
-
-     const getDataStores = () => {
-        props.getStores();
-    };
-
-    const { blogsData, pagesData, storesData } = props;
-
-    console.log("testtttttt", props.blogsData)
-
-    const goToNewBlogPage = (url) => {
-        router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
-    }
-
     return (
         <LayoutWithNoSidebar>
-            <Banner
-                title="Write more."
-                description="We write to taste life twice, in the moment and in retrospect. ― Anais Nin"
-                image={<img alt="unfulied" src="/images/stories-dashboard-banner.png" />}
-                backgroundColor="#C2FBD7"
-            >
-            </Banner>
             <BlogContainer>
                 <BlogContainerHeader>
-                    <Title1>Blogs</Title1>
-                    <AddButton onClick={() => handleDefaultAction('stories/setup-new','')}>
+                    <Title1>Stores</Title1>
+                    <AddButton>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
-
                     <DashboardCard
                         title="Default"
                         subtitle="@sparqlife"
-                        count="15"
+                        count="150"
                         view="59k"
-                        chartData={[65, 45, 80, 81, 77, 90, 40]}
+                        chartData={[65, 59, 80, 81, 56, 55, 40]}
+                        type="store"
                         image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
                     ></DashboardCard>
                     <DashboardCard
                         isNew={true}
-                        onClick={goToNewBlogPage}
+                        onClick={goToNewPage}
                     ></DashboardCard>
                 </BlogGroupContent>
             </BlogContainer>
         </LayoutWithNoSidebar>
     );
 }
-
 
 const BlogContainer = styled.div`
     display: flex;
@@ -108,6 +70,7 @@ const Title1 = styled(Title)`
     font-size: 21px!important;
     line-height: 21px!important;
     color: #404950!important;
+    margin-top: 0!important;
 `;
 
 const AddButtonText = styled(Text)`
@@ -137,20 +100,3 @@ const AddButton = styled(Button)`
         box-shadow: 0px 0px 25px #989898;
     }
 `;
-
-const mapStateToProps = (store) => {
-    console.log(store);
-    return {
-        blogsData: store.blogReducer.blogsData,
-        pagesData: store.pageReducer.pagesData,
-        storesData: store.storeReducer.storesData
-    };
-};
-
-const mapDispatchToProps = {
-  getBlogs,
-  getPages,
-  getStores
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(StoriesDashboard);

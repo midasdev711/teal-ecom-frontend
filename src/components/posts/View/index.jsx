@@ -44,14 +44,17 @@ const ViewPosts = (props) => {
   const router = useRouter();
   const { userData } = props;
   const { post_status } = router.query
+
   useEffect(() => {
     const userID = Number(localStorage.getItem("userID"));
     props.getListArticlesDraft(userID, true, 100, 1);
   }, []);
+
   useEffect(()=>{
     let selectedName = ListTabs.find(({name})=> name.toLocaleLowerCase() === post_status)
     setTabActive(selectedName?.key)
   },[post_status])
+
   useEffect(() => {
     switch (tabActive) {
       case "1":
@@ -90,6 +93,11 @@ const ViewPosts = (props) => {
         break;
     }
   }, [post_status]);
+
+  useEffect(() => {
+    router.prefetch(`/[portal_id]/stories/[slug]/draft`)
+    router.prefetch(`/[portal_id]/stories/[slug]`)
+  }, [])
 
   const handleChangeTabs = (tabIndex) => {
     let selectedName = ListTabs.find(({key})=> key === tabIndex)

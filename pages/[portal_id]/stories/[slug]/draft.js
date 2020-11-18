@@ -56,13 +56,14 @@ const EditPost = (props) => {
     };
 
     const handleObjectData = (value, saveAll) => {
-
+        const authorID = Number(localStorage.getItem("userID"));
         const { title, subTitle, imageData } = form.getFieldsValue()
         let _obj = {
             title: title,
             subTitle: subTitle,
             description: editorHtml,
             descriptionJson: editorJson,
+            authorID: authorID,
             articleId: Number(articleDetail.ID),
             featureImage: postData?.featureImage || "",
             tags: postData?.tags ? postData?.tags : [],

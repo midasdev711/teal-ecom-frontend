@@ -15,7 +15,7 @@ import TLogo from "./TLogo";
 import TEStatistic from "./TEStatistic";
 import Banner from "./Banner";
 import HomeLinkButton from './HomeLinkButton';
-import BlogGroup from './BlogGroup';
+import DashboardCard from './DashboardCard';
 
 export {
   TELogo,
@@ -35,5 +35,5 @@ export {
   TEStatistic,
   Banner,
   HomeLinkButton,
-  BlogGroup
+  DashboardCard
 };
