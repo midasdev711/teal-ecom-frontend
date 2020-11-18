@@ -45,10 +45,11 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		_id
 		ID
 		variants {
-			variantName
-		  variantValues
-		  
-		  }
+			variant
+			price
+			quantity
+			sku
+		}
 		merchantID
 		merchantName
 		totalQuantity
@@ -171,8 +172,10 @@ mutation products(
 						}
 						variants
 						{
-						variantName
-						variantValues
+						variant
+						quantity
+						price
+						sku
 						}
 						slug
 						tags
@@ -239,8 +242,10 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			}
 			variants
 			{
-			variantName
-			variantValues
+			variant
+			price
+			quantity
+			sku
 			}
 			slug
 			tags
@@ -345,8 +350,10 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									}
 									variants
 									{
-									variantName
-									variantValues
+									variant
+									price
+									quantity
+									sku
 									}
 									slug
 									tags
