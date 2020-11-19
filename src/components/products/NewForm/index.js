@@ -66,7 +66,7 @@ let productInfo = {
   productCostPerItem: 0,
   productYourShippingCost: 0,
   productShippingRate: 0,
-  isPublish: "false",
+  productEditStatus: "published",
   productTags: [],
   productStock: 0,
   productVariants: [],
@@ -105,7 +105,7 @@ let cleanData = {
   productCostPerItem: 0,
   productYourShippingCost: 0,
   productShippingRate: 0,
-  isPublish: "false",
+  productEditStatus: "published",
   productTags: [],
   productStock: 0,
   productVariants: [],
@@ -674,15 +674,17 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
 
   const handleOk = () => {
-    // let cloneProduct = Object.assign({}, productDetails)
-    // for (let i = 0; i < variantsData.length; i ++) {
-    //   cloneProduct.productVariants.push(Object.assign({}, variantsData[i]))
-    // }
-    // console.log(variantsData, cloneProduct)
-    setProductDetails(value =>({
-      ...value,
-      productVariants: [...variantsData]
-    }))
+    let cloneProduct = Object.assign({}, productDetails)
+    for (let i = 0; i < variantsData.length; i ++) {
+      let tmp = Object.assign({}, variantsData[i]);
+      delete tmp['selected'];
+      cloneProduct.productVariants.push(tmp)
+    }
+    console.log(variantsData, cloneProduct)
+    // setProductDetails(value =>({
+    //   ...value,
+    //   productVariants: [...variantsData]
+    // }))
     setVariantsFlag(false);
     // handleValidation('')
   }
@@ -731,6 +733,25 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   useEffect(() => {
     console.log('productDetails', productDetails)
   }, [productDetails])
+
+  const saveAsDraft = () => {
+    handleSubmit("save")
+  }
+
+  const saveAndPublish = () => {
+    handleSubmit("saveAndPublish")
+  }
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" onClick={() => saveAsDraft()}>
+        Save as draft
+      </Menu.Item>
+      <Menu.Item key="2" onClick={() => saveAndPublish()}>
+        Save &amp; Publish
+      </Menu.Item>
+    </Menu>
+  )
 
   return (
     <FormLayout
@@ -866,9 +887,9 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             <FormRow marginbottom={11}>
               <div className="mb-3">
                 <TextStyle>Margin</TextStyle>
-                <span>: {margin.trim()} % | </span>
+                <span>: {margin.trim()} | </span>
                 <TextStyle>Profit</TextStyle>
-                <span>: ${profit}</span>
+                <span>: {profit}</span>
               </div>
             </FormRow>
             <FormRow>
@@ -1088,9 +1109,17 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         </TabPane>
       </InputTabs>
       <ActionBottom>
-        <NextStepButton type="primary" onClick={() => nextStep()}>
-          {step == "7" ? 'Save' : 'Next'}
-        </NextStepButton>
+        {
+          step == "7" ?
+          <Dropdown overlay={menu} trigger={['click']}>
+            <NextStepButton width={100}>
+              Complete
+            </NextStepButton>
+          </Dropdown> :
+          <NextStepButton type="primary" onClick={() => nextStep()}>
+            Next
+          </NextStepButton>
+        }
       </ActionBottom>
     </FormLayout>
   );
@@ -1298,7 +1327,7 @@ const FormItem = styled.div`
 `;
 
 const NextStepButton = styled(Button)`
-  width: 85px;
+  width: ${props => props.width ? props.width: '85'}px;
   height: 30px;
   background: #80CAFB;
   border-radius: 5px;
