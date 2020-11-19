@@ -28,7 +28,7 @@ export const GET_PRODUCTS = gql`
       productAttributes
       productStartDate
       productEndDate
-      isPublish
+      editStatus
       productSearchEngineTitle
       productSearchEngineDescription
       status
@@ -55,7 +55,7 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		totalQuantity
 		images
 		startDate
-		isPublish
+		editStatus
 		featuredImage
 		slug
 		thumbnailImage
@@ -110,7 +110,7 @@ mutation products(
 	$productAttributes: [ProductAttributeInput]
 	$productStartDate: String
 	$productEndDate: String
-	$isPublish:String
+	$editStatus:String
   ) {
     upsertProduct(
      product:{
@@ -136,7 +136,7 @@ mutation products(
 						productStartDate: $productStartDate
 						productEndDate: $productEndDate
 						productCostPerItem:$productCostPerItem
-						isPublish:$isPublish
+						editStatus:$editStatus
 										})                 
 				  {
 						_id
@@ -155,7 +155,7 @@ mutation products(
 					    thumbnailImage
 						featuredImage
 						images
-						isPublish
+						editStatus
 						endDate
                         startDate
                         totalQuantity
@@ -225,7 +225,9 @@ export const GET_MERCHANT_PRODUCT_BY_ID_QUERY = gql`
 			thumbnailImage
 			featuredImage
 			images
-			isPublish
+			editStatus
+			views
+			revenue
 			endDate
 			startDate
 			totalQuantity
@@ -287,7 +289,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 				$productAttributes: [ProductAttributeInput]
 				$productStartDate: String
 				$productEndDate: String
-				$isPublish:String
+				$editStatus:String
 			  ) {
 				updateProduct(
 				 product:{
@@ -316,7 +318,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									productStartDate: $productStartDate
 									productEndDate: $productEndDate
 									productCostPerItem:$productCostPerItem
-									isPublish:$isPublish
+									editStatus:$editStatus
 													})                 
 							  {
 									_id
@@ -333,7 +335,7 @@ export const UPDATE_MERCHANT_PRODUCT_MUTATION = gql`
 									mrp
 									stock
 								
-									isPublish
+									editStatus
 									endDate
 									startDate
 									totalQuantity

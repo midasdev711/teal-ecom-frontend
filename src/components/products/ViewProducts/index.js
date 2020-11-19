@@ -25,6 +25,7 @@ import {
   Input,
   message,
   Form,
+  Typography
 } from "antd";
 import { getUserData } from "../../../utils";
 import { getUserProductLists, getProductCategoryLists } from "../../../redux/actions/product";
@@ -34,6 +35,7 @@ const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const { Search } = Input;
 const { Option } = Select;
+const { Text } = Typography;
 
 const customerData = [
   {
@@ -106,6 +108,10 @@ const ViewCustomers = (props) => {
     }
   }, [productLists])
 
+  const goToNewPage = () => {
+    Router.router.push(`/[portal_id]/ecom/products/new`, { pathname: `/${userData?.uniqueID}/ecom/products/new` }, { shallow: true });
+  }
+
   const columns = [
     {
       title: "Product",
@@ -117,29 +123,38 @@ const ViewCustomers = (props) => {
           <div key={productListsData.ID}>
             <ProductImage src={productListsData.thumbnailImage}></ProductImage>
             <Link href={`/[portal_id]/ecom/products/[productId]`} as={`/${userData?.uniqueID}/ecom/products/${productListsData.ID}`} shallow={true}>
-              <a> {title || ""}</a>
+              <ProductTitle> {title || ""}</ProductTitle>
             </Link>
           </div>
         );
       },
     },
     {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "ID",
-      render: (stock) => <div key={stock}>{stock || "0"}</div>,
-    },
-    {
-      title: "Price",
-      dataIndex: "salePrice",
-      key: "ID",
-      render: (salePrice) => <div key={salePrice}>{`$ ${salePrice}` || ""}</div>,
-    },
-    {
       title: "Quantity",
       dataIndex: "totalQuantity",
       key: "ID",
-      render: (totalQuantity) => <div key={totalQuantity}>{totalQuantity || "0"}</div>,
+      render: (quantity, index) => <div key={index}>{quantity || "0"}</div>,
+      align: "left",
+    },
+    {
+      title: "Views",
+      dataIndex: "views",
+      key: "ID",
+      render: (views, index) => <div key={index}>{views || "0"}</div>,
+      align: "left",
+    },
+    {
+      title: "Revenue",
+      dataIndex: "revenue",
+      key: "ID",
+      render: (revenue, index) => <div key={index}>{revenue || "0"}</div>,
+      align: "left",
+    },
+    {
+      title: "",
+      dataIndex: "",
+      key: "ID",
+      render: (index) => <div key={index}>...</div>,
       align: "center",
     },
   ];
@@ -366,28 +381,21 @@ const ViewCustomers = (props) => {
     setShowCollapse([])
     // setRefreshFlag([refreshFlag + 1])
   }
+
+  const [step, setStep] = useState("1");
+
+  const onTabClick = (e) => {
+    setStep('' + e);
+  }
+
   return (
     <ViewContent>
-      <Tabs defaultActiveKey={tabIndex}>
-        <TabPane tab="All" key="1" />
-      </Tabs>
+      
 
-      <Filters onOpen={setOpenMoreFilters} productLists={productLists} getFilterData={(value) => handleFilterData(value)} />
-
-      {tagsFilter && tagsFilter.length > 0 && (
-        <TagsList>
-          {tagsFilter.map((item, i) => (
-            <Tag key={i} closable>
-              {item}
-            </Tag>
-          ))}
-        </TagsList>
-      )}
-
-      {nodeCheckbox && (
-        <ContentTab>
-          {tabIndex === 1 && (
-            <Table
+      <InputTabs tabPosition={'top'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
+        <TabPane tab="All" key="1">
+          <ContentBox>
+            <DataTable
               rowSelection={{
                 type: "checkbox",
                 ...rowSelection,
@@ -397,8 +405,62 @@ const ViewCustomers = (props) => {
               dataSource={productList}
               pagination={productList.length > 10}
             />
-          )}
-        </ContentTab>
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Drafts" key="2">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              rowKey="ID"
+              columns={columns}
+              dataSource={productList.filter(item => item.editStatus == "draft")}
+              pagination={productList.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Live" key="3">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              rowKey="ID"
+              columns={columns}
+              dataSource={productList.filter(item => item.editStatus == "published")}
+              pagination={productList.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Archived" key="4">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              rowKey="ID"
+              columns={columns}
+              dataSource={productList.filter(item => item.editStatus == "archived")}
+              pagination={productList.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+      </InputTabs>
+
+      <Filters onOpen={setOpenMoreFilters} productLists={productLists} goToNewPage={() => goToNewPage()} getFilterData={(value) => handleFilterData(value)} />
+
+      {tagsFilter && tagsFilter.length > 0 && (
+        <TagsList>
+          {tagsFilter.map((item, i) => (
+            <Tag key={i} closable>
+              {item}
+            </Tag>
+          ))}
+        </TagsList>
       )}
 
       <MDAddTags
@@ -586,24 +648,29 @@ const ViewCustomers = (props) => {
 };
 
 const ViewContent = styled.div`
-  border: 1px solid #ddd;
-  background: #fff;
-  box-shadow: var(
-    --p-card-shadow,
-    0 0 0 1px rgba(63, 63, 68, 0.05),
-    0 1px 3px 0 rgba(63, 63, 68, 0.15)
-  );
-  border-radius: 3px;
+  margin-top: 30px;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 8px rgba(64, 73, 80, 0.15);
+  border-radius: 5px;
+  position: relative;
 `;
 
 const ProductImage = styled.img`
-  width: 60px;
-  height: 60px;
-  margin-right: 10px;
-  border: 1px solid #bbc3c9;
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  margin-right: 20px;
 `;
 
-const ContentTab = styled.div``;
+const ProductTitle = styled.a`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 144.89%;
+  color: #0095F8;
+`;
+
 const DrawerStyle = styled(Drawer)``;
 
 const DrawerTitle = styled.h3`
@@ -703,6 +770,122 @@ const SearchTags = styled.div`
 const TagContent = styled(Tag)`
   padding: 5px 10px;
   marginbottom: 10px;
+`;
+
+const InputTabs = styled(Tabs)`
+  .ant-tabs-nav {
+    height: 50px;
+    margin-left: 25px!important;
+    margin-right: 93px;
+    .ant-tabs-tab {
+      padding-top: 7px!important;
+      padding-bottom: 7px!important;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 144.89%;
+      color: #404950;
+    }
+  }
+  .ant-tabs-content-holder {
+    width: 100%;
+    border-left: none;
+    .ant-tabs-tabpane {
+      padding-left: 0!important;
+    }
+  }
+
+`;
+
+const ContentBox = styled.div`
+  padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
+  margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
+`;
+
+const DataTable = styled(Table)`
+  thead {
+    tr {
+      height: 50px;
+      border-top: 1px solid #EDEDED;
+      th {
+        background: white!important;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 144.89%;
+        color: #404950;
+        &:nth-child(2) {
+          padding-left: 75px;
+        }
+      }
+    }
+  }
+  tbody {
+    tr {
+      height: 80px;
+      td {
+        &:not(:nth-child(1)) {
+          padding-left: 0px;
+        }
+        padding: 15px;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 16px;
+        color: #404950;
+      }
+    }
+  }
+`;
+
+const AddButtonText = styled(Text)`
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 14px;
+    color: #FFFDFD;
+    padding-left: 10px;
+`;
+
+const AddButton = styled(Button)`
+    width: 70px;
+    height: 30px;
+
+    background: #0095F8;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #0095F8;
+        opacity: 0.8;
+        box-shadow: 0px 0px 25px #989898;
+    }
+`;
+
+const ActionItemBlock = styled.div`
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    display: flex;
+    width: 150px;
+    justify-content: space-between;
+    z-index: 10;
+`;
+
+const IconButton = styled(Button)`
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    &:hover {
+      box-shadow: 0px 0px 25px #989898;
+    }
 `;
 
 const mapStateToProps = (store) => {

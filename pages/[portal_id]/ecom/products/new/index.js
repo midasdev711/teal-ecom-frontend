@@ -30,7 +30,7 @@ const NewCustomer = (props) => {
     //  cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
-      cloneValues.isPublish = "false"
+      cloneValues.editStatus = "draft"
       // cloneValues.token = token.toString()
       setProductDetails(cloneValues)
       // props.AddMerchantProduct(JSON.stringify(cloneValues))
@@ -50,7 +50,7 @@ const NewCustomer = (props) => {
      // cloneValues.productMRP = cloneValues.productMRP.toString()
       cloneValues.productCategory = (cloneValues.productCategory * 1)
       cloneValues.productSubcategory = (cloneValues.productSubcategory * 1)
-      cloneValues.isPublish = "true"
+      cloneValues.editStatus = "published"
       // cloneValues.token = token.toString()
 
       setProductDetails(cloneValues)

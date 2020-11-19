@@ -1,16 +1,15 @@
 
 import React from "react";
-import { PageLayout } from "../../../../src/components/views";
-import { TEPageFooter } from "../../../../src/components/atoms";
+import { NewPageLayout } from "../../../../src/components/views";
 import { ViewProducts } from "../../../../src/components/products";
 import PageHeader from "../../../../src/components/PageHeader";
 import styled from "styled-components";
-import { Layout, Empty, Button } from "antd";
+import { Layout } from "antd";
 import Link from "next/link";
 
 const Products = () => {
   return (
-    <PageLayout>
+    <NewPageLayout>
       <ProductContent>
         {/* <EmptyProductContent>
         <PageHeader
@@ -41,24 +40,25 @@ const Products = () => {
           </TEPageFooter>
         </EmptyProductContent> */}
         <ViewsProductContent>
-          <PageHeader
-            PageName="Your Products"
+          {/* <PageHeader
+            PageName="Products"
             ImportButtonName="Import products"
             CreateButtonName="Add product"
             path="products/new"
             isData={true}
             isImport={true}
-          />
+          /> */}
+          <TitleHeader>Products</TitleHeader>
           <ViewProducts />
-          <TEPageFooter>
+          {/* <TEPageFooter>
             Learn more about
             <Link href="#">
               <a> products.</a>
             </Link>
-          </TEPageFooter>
+          </TEPageFooter> */}
         </ViewsProductContent>
       </ProductContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -79,7 +79,9 @@ const StyledSettingFooter = styled.div`
 `;
 
 const ViewsProductContent = styled.div`
-  padding: 20px;
+  max-width: 950px;
+  margin: 80px auto;
+  padding: 0;
 `;
 
 const EmptyDataContent = styled(Layout.Content)`
@@ -99,6 +101,13 @@ const EmptyDataContent = styled(Layout.Content)`
 const Message = styled.p`
   color: #637381;
   font-size: 14px;
+`;
+
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
+  font-weight: bold;
+  margin-bottom: 0;
 `;
 
 export default Products;

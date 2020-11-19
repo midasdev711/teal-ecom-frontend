@@ -166,156 +166,67 @@ const Filters = (props) => {
     setFilterProductLists(info)
   }
   return (
-    <ContentFilters>
-      <Row gutter={0}>
-        <Col md={10}>
-          <SearchBox
-            placeholder="Filter products"
-            name="title"
-            // onSearch={(value) => console.log(value)}
-            onChange={(event) => handleSearch(event)}
-          />
-        </Col>
-        {/* <Col md={3}>
-          <Dropdown
-            overlay={
-              <DropdownBox>
-                <RadioGroupStyle
-                  onChange={onChangeSubscription}
-                  value={valueSubscription}
-                >
-                  <RadioStyle value={1}>mysolidshoes</RadioStyle>
-                </RadioGroupStyle>
-                <ButtonLink type="text">Clear</ButtonLink>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-          >
-            <ButtonBox block type="default">
-              Product vendor <DownOutlined />
-            </ButtonBox>
-          </Dropdown>
-        </Col> */}
-        {/* <Col md={3}>
-          <Dropdown
-            overlay={
-              <DropdownBox>
-                <RadioGroupStyle
-                  onChange={onChangeSubscription}
-                  value={valueSubscription}
-                >
-                  <RadioStyle value={1}>Available on Online Store</RadioStyle>
-                  <RadioStyle value={2}>Unavailable on Online Store</RadioStyle>
-                </RadioGroupStyle>
-                <ButtonLink type="text">Clear</ButtonLink>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-          >
-            <ButtonBox block type="default">
-              Availability <DownOutlined />
-            </ButtonBox>
-          </Dropdown>
-        </Col> */}
-        {/* <Col md={2}>
-          <Dropdown
-            onClick={handleTagsDropDown}
-            overlay={
-              <DropdownBox>
-                <Input
-                  ref={saveInputRef}
-                  type="text"
-                  size="large"
-                  placeholder="Vintage, cotton, summer"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  onBlur={handleInputConfirm}
-                  onPressEnter={handleInputConfirm}
-                />
-                <TweenOneGroup
-                  className="tag-content"
-                  enter={{
-                    scale: 0.8,
-                    opacity: 0,
-                    type: "from",
-                    duration: 100,
-                    with: 10,
-                    onComplete: (e) => {
-                      e.target.style = "";
-                    },
-                  }}
-                  leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
-                  appear={false}
-                >
-                  {tagChild}
-                </TweenOneGroup>
-                <TagsConformButtons>
-                <ButtonLink type="link" onClick={()=>handleClearTags()}>Clear</ButtonLink>
-                <SearchTags>
-                <ButtonLink type="link" onClick={()=>handleSearchTagsData()}>Search</ButtonLink>
-                </SearchTags>
-              
-                </TagsConformButtons>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-            visible={tagsDropDown}
-          >
-            <ButtonBox block type="default">
-              Tagged with <DownOutlined />
-            </ButtonBox>
-          </Dropdown>
-        </Col> */}
-        <Col md={2}>
-          <ButtonLast block type="default" onClick={() => props.onOpen(true)}>
-            More filters
-          </ButtonLast>
-        </Col>
-        {/* <Col md={2}>
-          <ButtonSaved block type="default" disabled icon={<StarOutlined />}>
-            Saved
-          </ButtonSaved>
-        </Col> */}
-        <Col md={2}>
-          <Dropdown
-            overlay={
-              <DropdownBox>
-                <h3>Sort by</h3>
-                <RadioGroupStyle
-                  onChange={onChangeSubscription}
-                  value={valueSubscription}
-                >
-                  {/* <RadioStyle value={1}>Order number (ascending)</RadioStyle>
-                  <RadioStyle value={2}>Order number (descending)</RadioStyle> */}
-                  <RadioStyle value={3} onClick={() => handleOldData()}>Date (oldest first)</RadioStyle>
-                  <RadioStyle value={4} onClick={() => handleLatestData()}>Date (newest first)</RadioStyle>
-                  {/* <RadioStyle value={5}>Customer name (A-Z)</RadioStyle>
-                  <RadioStyle value={6}>Customer name (Z-A)</RadioStyle> */}
-                  {/* <RadioStyle value={7}>Payment status (A-Z)</RadioStyle>
-                  <RadioStyle value={8}>Payment status (Z-A)</RadioStyle>
-                  <RadioStyle value={9}>Fulfillment status (A-Z)</RadioStyle>
-                  <RadioStyle value={10}>Fulfillment status (Z-A)</RadioStyle> */}
+    <ActionItemBlock>
+      <AddButton onClick={() => props.goToNewPage()}>
+        <img src={'/images/new_small.svg'} />
+        <AddButtonText>Add</AddButtonText>
+      </AddButton>
+
+      <IconButton onClick={() => props.onOpen(true)}>
+        <img src={'/images/icon_filter.svg'} />
+      </IconButton>
+
+      <IconButton>
+        <img src={'/images/icon_search.svg'} />
+      </IconButton>
+    </ActionItemBlock>
+    // <ContentFilters>
+    //   <Row gutter={0}>
+    //     <Col md={10}>
+    //       <SearchBox
+    //         placeholder="Filter products"
+    //         name="title"
+    //         // onSearch={(value) => console.log(value)}
+    //         onChange={(event) => handleSearch(event)}
+    //       />
+    //     </Col>
+    //     <Col md={2}>
+    //       <ButtonLast block type="default" onClick={() => props.onOpen(true)}>
+    //         More filters
+    //       </ButtonLast>
+    //     </Col>
+    //     <Col md={2}>
+    //       <Dropdown
+    //         overlay={
+    //           <DropdownBox>
+    //             <h3>Sort by</h3>
+    //             <RadioGroupStyle
+    //               onChange={onChangeSubscription}
+    //               value={valueSubscription}
+    //             >
+    //               <RadioStyle value={3} onClick={() => handleOldData()}>Date (oldest first)</RadioStyle>
+    //               <RadioStyle value={4} onClick={() => handleLatestData()}>Date (newest first)</RadioStyle>
                  
-                  <RadioStyle value={11} onClick={() => handleShortLowToHighPrice()}>Total price (low to high)</RadioStyle>
-                  <RadioStyle value={12} onClick={() => handleShortHighToLowPrice()}>Total price (high to low)</RadioStyle>
-                </RadioGroupStyle>
-              </DropdownBox>
-            }
-            trigger={["click"]}
-          >
-            <ButtonContent>
-              <ButtonSaved
-                block
-                type="default"
-                icon={<SortAscendingOutlined />}
-              >
-                Sort
-              </ButtonSaved>
-            </ButtonContent>
-          </Dropdown>
-        </Col>
-      </Row>
-    </ContentFilters>
+    //               <RadioStyle value={11} onClick={() => handleShortLowToHighPrice()}>Total price (low to high)</RadioStyle>
+    //               <RadioStyle value={12} onClick={() => handleShortHighToLowPrice()}>Total price (high to low)</RadioStyle>
+    //             </RadioGroupStyle>
+    //           </DropdownBox>
+    //         }
+    //         trigger={["click"]}
+    //       >
+    //         <ButtonContent>
+    //           <ButtonSaved
+    //             block
+    //             type="default"
+    //             icon={<SortAscendingOutlined />}
+    //           >
+    //             Sort
+    //           </ButtonSaved>
+    //         </ButtonContent>
+    //       </Dropdown>
+    //     </Col>
+    //   </Row>
+    // </ContentFilters>
   );
 };;
 
@@ -388,4 +299,50 @@ const SearchTags = styled.div`
 margin-left: 54%;
 `;
 
+const AddButton = styled(Button)`
+    width: 70px;
+    height: 30px;
+
+    background: #0095F8;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #0095F8;
+        opacity: 0.8;
+        box-shadow: 0px 0px 25px #989898;
+    }
+`;
+
+const ActionItemBlock = styled.div`
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    display: flex;
+    width: 150px;
+    justify-content: space-between;
+    z-index: 10;
+`;
+
+const IconButton = styled(Button)`
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    &:hover {
+      box-shadow: 0px 0px 25px #989898;
+    }
+`;
+
+const AddButtonText = styled.span`
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 14px;
+    color: #FFFDFD;
+    padding-left: 10px;
+`;
 export default Filters;
