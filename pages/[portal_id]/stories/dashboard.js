@@ -5,6 +5,12 @@ import { useRouter } from "next/router"
 import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
 
+import { connect } from "react-redux";
+// actions
+import { getBlogs } from "../../../src/redux/actions/blogs";
+import { getPages } from "../../../src/redux/actions/pages";
+import { getStores } from "../../../src/redux/actions/stores";
+
 import { Banner, DashboardCard } from '../../../src/components/atoms'
 
 
@@ -64,14 +70,17 @@ export function StoriesDashboard(props) {
                 </BlogContainerHeader>
                 <BlogGroupContent>
 
-                    <DashboardCard
-                        title="Default"
-                        subtitle="@sparqlife"
-                        count="15"
-                        view="59k"
-                        chartData={[65, 45, 80, 81, 77, 90, 40]}
-                        image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
-                    ></DashboardCard>
+                    { blogsData && blogsData.map((item) => (
+                        <DashboardCard
+                            title={item.BlogTitle}
+                            subtitle="@sparqlife"
+                            count="15"
+                            view="59k"
+                            onClick={() => handleDefaultAction("stories", item._id)}
+                            chartData={[65, 45, 80, 81, 77, 90, 40]}
+                            image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
+                        ></DashboardCard>
+                    )) }  
                     <DashboardCard
                         isNew={true}
                         onClick={goToNewBlogPage}
