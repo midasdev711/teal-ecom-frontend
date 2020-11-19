@@ -674,15 +674,17 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   }
 
   const handleOk = () => {
-    // let cloneProduct = Object.assign({}, productDetails)
-    // for (let i = 0; i < variantsData.length; i ++) {
-    //   cloneProduct.productVariants.push(Object.assign({}, variantsData[i]))
-    // }
-    // console.log(variantsData, cloneProduct)
-    setProductDetails(value =>({
-      ...value,
-      productVariants: [...variantsData]
-    }))
+    let cloneProduct = Object.assign({}, productDetails)
+    for (let i = 0; i < variantsData.length; i ++) {
+      let tmp = Object.assign({}, variantsData[i]);
+      delete tmp['selected'];
+      cloneProduct.productVariants.push(tmp)
+    }
+    console.log(variantsData, cloneProduct)
+    // setProductDetails(value =>({
+    //   ...value,
+    //   productVariants: [...variantsData]
+    // }))
     setVariantsFlag(false);
     // handleValidation('')
   }
