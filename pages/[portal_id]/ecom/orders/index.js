@@ -1,5 +1,5 @@
 import React from "react";
-import { PageLayout } from "../../../../src/components/views";
+import { NewPageLayout } from "../../../../src/components/views";
 import { TEPageFooter } from "../../../../src/components/atoms";
 import PageHeader from "../../../../src/components/PageHeader";
 import styled from "styled-components";
@@ -9,7 +9,7 @@ import { ViewOrders } from "../../../../src/components/orders";
 
 const Orders = () => {
   return (
-    <PageLayout>
+    <NewPageLayout>
       <CustomerContent>
         {/* <EmptyCustomerContent>
           <PageHeader
@@ -33,21 +33,24 @@ const Orders = () => {
             </Link>
           </TEPageFooter>
         </EmptyCustomerContent> */}
-        <PageHeader
+        {/* <PageHeader
           PageName="Your Orders"
           CreateButtonName="Create order"
           path="orders/drafts/new"
           isData={true}
-        />
-        <ViewOrders />
-        <TEPageFooter>
+        /> */}
+        <ViewsContent>
+          <TitleHeader>Orders</TitleHeader>
+          <ViewOrders />
+        </ViewsContent>
+        {/* <TEPageFooter>
           Learn more about
           <Link href="#">
             <a> orders.</a>
           </Link>
-        </TEPageFooter>
+        </TEPageFooter> */}
       </CustomerContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -90,6 +93,19 @@ const CreateButton = styled(Button)`
 const Message = styled.p`
   color: #637381;
   font-size: 14px;
+`;
+
+const ViewsContent = styled.div`
+  max-width: 950px;
+  margin: 80px auto;
+  padding: 0;
+`;
+
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
+  font-weight: bold;
+  margin-bottom: 0;
 `;
 
 export default Orders;
