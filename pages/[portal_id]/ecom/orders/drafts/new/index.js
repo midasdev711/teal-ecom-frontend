@@ -24,7 +24,6 @@ const NewOrder = (props) => {
   const [Tags, setTags] = useState(['test']);
 
   const saveData = () => {
-    console.log('qqqqqqqqqqqqqqqqqq', Products)
     let pro_data = []
     Products.map(data => {
       let dat = {
