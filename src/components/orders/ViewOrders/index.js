@@ -26,19 +26,12 @@ import {
   Input,
 } from "antd";
 // fake data
-import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
 import { getOrders } from "../../../redux/actions/orders";
 import { getUserData } from "../../../utils";
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
-
-// const orderData = fakeData;
-
-
-
-
 
 const ViewOrders = (props) => {
   const orderData =props.orderData === undefined ? [] : props.orderData
@@ -320,7 +313,7 @@ const ViewOrders = (props) => {
         </TabPane>
       </InputTabs>
 
-      <Filters onOpen={setOpenMoreFilters} goToNewPage={() => goToNewPage()}/>
+      <Filters top={10} right={30} onOpen={setOpenMoreFilters} goToNewPage={() => goToNewPage()}/>
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>

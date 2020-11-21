@@ -332,7 +332,7 @@ const IconButton = styled(Button)`
     padding: 0;
     box-shadow: none;
     &:hover {
-      box-shadow: 0px 0px 25px #989898;
+      box-shadow: 0px 0px 10px #989898;
     }
 `;
 

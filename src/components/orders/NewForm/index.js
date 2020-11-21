@@ -4,6 +4,7 @@ import { TweenOneGroup } from "rc-tween-one";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { getUserData } from "../../../utils";
+import Filters from "../Filters";
 // icon
 import {
   SearchOutlined,
@@ -30,6 +31,8 @@ import {
   Tooltip,
   Tag,
   Dropdown,
+  Typography,
+  Tabs
 } from "antd";
 import { Formik } from "formik";
 import MDSelectProducts from "../MDSelectProducts";
@@ -46,9 +49,11 @@ import { getUserProductLists } from "../../../redux/actions/product";
 // import { customer } from "../fakeData";
 
 const { Search } = Input;
+const { Text } = Typography;
+const { TabPane } = Tabs;
+
 const newForm = (props) => {
   const { Products, OrderAmount, ShippingAddresss, DeliveryAddress, PaymentMethod, TransactionID, Notes, Tags, handleChangeValue } = props
-
 
   const [visiable, setVisible] = useState(false);
   const [openCustumItem, setopenCustumItem] = useState(false);
@@ -84,7 +89,6 @@ const newForm = (props) => {
     await props.getUserProductLists(userId)
   };
 
-
   const content = (data) => {
 
     const customer = props.customerData === undefined ? [] : props.customerData
@@ -96,7 +100,6 @@ const newForm = (props) => {
     useEffect(() => {
       UpdateData();
     }, [data]);
-
 
     return (
       <div>
@@ -118,9 +121,6 @@ const newForm = (props) => {
       </div>
     );
   };
-
-
-
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -307,14 +307,179 @@ const newForm = (props) => {
     await setSubTotal(subTotal);
   };
 
+  const [step, setStep] = useState('1')
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  const onTabClick = (e) => {
+    setStep('' + e);
+  }
+
+  let products = props.productLists;
+
+  const productsShow = products.map((product, index) => {
+    console.log('variants', product.variants);
+    const onChange = (e, product, variant) => {
+      let tmp = Object.assign([], selectedProducts);
+      if (e.target.checked) {
+        if (variant === true) {
+          tmp.push(product)
+        } else {
+          let tmpProduct = Object.assign({}, product);
+          let tmpVariant = Object.assign({}, variant);
+          delete tmpProduct['variants']
+          if (selectedProducts.filter(item => item._id == product._id).length > 0) {
+            tmpProduct['variants'].push(tmpVariant);
+          } else {
+            tmpProduct['variants'] = [variant]
+          }
+        }
+      } else {
+
+      }
+    }
+    const variantsShow = product.variants.map((variant, variantIndex) => {
+      return (
+        <div key={'variant' + variantIndex}>
+          <VariantCheckbox onChange={(e) => onChange(e, product, variant)}>
+            <div className="info">
+              <span>{variant.variant}</span>
+              <span className="quantity">{variant.quantity} available</span>
+              <span className="price">${variant.price}</span>
+            </div>
+          </VariantCheckbox>
+        </div>
+        )
+    })
+    return (
+      <div key={'product' + product._id}>
+        <div>
+          <ProductCheckbox onChange={(e) => onChange(e, product, true)}>
+            <img src={product.thumbnailImage} width="30px" height="30px" />
+            <span>{product.title}</span>
+          </ProductCheckbox>
+        </div>
+        <div>
+          {variantsShow}
+        </div>
+      </div>
+      )
+  });
+
   return (
-    <Form
+    <FormLayout
       name="basic"
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       className="form-new"
       layout="vertical"
     >
+      <InputTabs tabPosition={'left'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
+        <TabPane tab="Product" key="1">
+          <ContentBox>
+            <SubFormTitle>Select products</SubFormTitle>
+            <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
+            {
+              products && products.length > 0 && 
+                <p>{productsShow}</p>
+            }
+          </ContentBox>
+
+        </TabPane>
+        <TabPane tab="Customer" key="2">
+        <ContentBox>
+          <SubFormTitle>Select a customer or create one</SubFormTitle>
+          <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
+          {Object.keys(ShippingAddresss).length === 0 && (
+              <ContentBox>
+                <TitleBox>Find and Create customer </TitleBox>
+                <Popover
+                  content={() => content(searchCustomner)}
+                  placement="bottom"
+                  trigger="click"
+                  visible={visiable}
+                  onVisibleChange={handleVisibleChange}
+                >
+                  <SearchCustomerInput
+                    placeholder="Search customers"
+                    size="large"
+                    prefix={<SearchOutlined />}
+                    onClick={handleVisibleChange}
+                    onChange={(e) => setSearchcustomer(e.target.value)}
+                  />
+                </Popover>
+              </ContentBox>
+            )}
+            {Object.keys(ShippingAddresss).length !== 0 && (
+              <>
+                <ContentBox>
+                  <AlignItem>
+                    <TitleBox>Customer </TitleBox>
+                    <CloseOutlined onClick={handleColsecontact} />
+                  </AlignItem>
+                  <StyledAvatar
+                    width="55"
+                    height="55"
+                    src={ShippingAddresss.profile_url}
+                    alt="avatar"
+                  />
+                  <ContentTitle align="left">
+                    {ShippingAddresss.BasicDetailsFirstName}
+                  </ContentTitle>
+                  <AlignItem>
+                    <ContentTitle>{ShippingAddresss.BasicDetailsEmail}</ContentTitle>
+                    <ContentTitle onClick={handleEmailEditModal}>
+                      Edit
+                    </ContentTitle>
+                  </AlignItem>
+                </ContentBox>
+                <ContentBox>
+                  <AlignItem>
+                    <TitleBoxAddress>SHIPPING ADDRESS</TitleBoxAddress>
+                    <ContentTitle
+                      onClick={() => handleShippingEditModal("shipping", ShippingAddresss)}
+                    >
+                      Edit
+                    </ContentTitle>
+                  </AlignItem>
+                  <p>
+                    {ShippingAddresss.AddressDetailsApartment}
+                    {ShippingAddresss.AddressDetailsCompany}
+                  </p>
+                  <p>
+                    {ShippingAddresss.AddressDetailsCity}
+                  </p>
+                  <p>{ShippingAddresss.AddressDetailsCountry}</p>
+                </ContentBox>
+                <ContentBox>
+                  <AlignItem>
+                    <TitleBoxAddress>BILLING ADDRESS</TitleBoxAddress>
+                    <ContentTitle
+                      onClick={() => handleShippingEditModal("billing", DeliveryAddress)}
+                    >
+                      Edit
+                    </ContentTitle>
+                  </AlignItem>
+                  <p>
+                    {DeliveryAddress.AddressDetailsApartment}
+                    {DeliveryAddress.AddressDetailsCompany}
+                  </p>
+                  <p>
+                    {DeliveryAddress.AddressDetailsCity}
+                  </p>
+                  <p>{DeliveryAddress.AddressDetailsCountry}</p>
+                </ContentBox>
+              </>
+            )}
+           </ContentBox>
+        </TabPane>
+        <TabPane tab="Summary" key="3">
+          <ContentBox>
+            <SubFormTitle>Order Summary</SubFormTitle>
+
+          </ContentBox>
+        </TabPane>
+      </InputTabs>
+
       <SubForm>
         <Row gutter={24}>
           <Col md={16}>
@@ -327,20 +492,6 @@ const newForm = (props) => {
                       Add custom item
                     </ContentTitle>
                   </AlignItem>
-
-                  <StyledSearch
-                    placeholder="Search products"
-                    enterButton="Browse products"
-                    enterButton={
-                      <Button onClick={() => setShowSelectProduct(true)}>
-                        Browse products
-                      </Button>
-                    }
-                    size="large"
-                    onChange={(e) => setShowSelectProduct(true)}
-                    onClick={() => setShowSelectProduct(true)}
-                    prefix={<SearchOutlined />}
-                  />
 
                   {Products && Products.length > 0 && (
                     <List
@@ -477,88 +628,7 @@ const newForm = (props) => {
             </Row>
           </Col>
           <Col md={8}>
-            {console.log('sdsdsdsdsd', ShippingAddresss.length)}
-            {Object.keys(ShippingAddresss).length === 0 && (
-              <ContentBox>
-                <TitleBox>Find and Create customer </TitleBox>
-                <Popover
-                  content={() => content(searchCustomner)}
-                  placement="bottom"
-                  trigger="click"
-                  visible={visiable}
-                  onVisibleChange={handleVisibleChange}
-                >
-                  <SearchCustomerInput
-                    placeholder="Search customers"
-                    size="large"
-                    prefix={<SearchOutlined />}
-                    onClick={handleVisibleChange}
-                    onChange={(e) => setSearchcustomer(e.target.value)}
-                  />
-                </Popover>
-              </ContentBox>
-            )}
-            {Object.keys(ShippingAddresss).length !== 0 && (
-              <>
-                <ContentBox>
-                  <AlignItem>
-                    <TitleBox>Customer </TitleBox>
-                    <CloseOutlined onClick={handleColsecontact} />
-                  </AlignItem>
-                  <StyledAvatar
-                    width="55"
-                    height="55"
-                    src={ShippingAddresss.profile_url}
-                    alt="avatar"
-                  />
-                  <ContentTitle align="left">
-                    {ShippingAddresss.BasicDetailsFirstName}
-                  </ContentTitle>
-                  <AlignItem>
-                    <ContentTitle>{ShippingAddresss.BasicDetailsEmail}</ContentTitle>
-                    <ContentTitle onClick={handleEmailEditModal}>
-                      Edit
-                    </ContentTitle>
-                  </AlignItem>
-                </ContentBox>
-                <ContentBox>
-                  <AlignItem>
-                    <TitleBoxAddress>SHIPPING ADDRESS</TitleBoxAddress>
-                    <ContentTitle
-                      onClick={() => handleShippingEditModal("shipping", ShippingAddresss)}
-                    >
-                      Edit
-                    </ContentTitle>
-                  </AlignItem>
-                  <p>
-                    {ShippingAddresss.AddressDetailsApartment}
-                    {ShippingAddresss.AddressDetailsCompany}
-                  </p>
-                  <p>
-                    {ShippingAddresss.AddressDetailsCity}
-                  </p>
-                  <p>{ShippingAddresss.AddressDetailsCountry}</p>
-                </ContentBox>
-                <ContentBox>
-                  <AlignItem>
-                    <TitleBoxAddress>BILLING ADDRESS</TitleBoxAddress>
-                    <ContentTitle
-                      onClick={() => handleShippingEditModal("billing", DeliveryAddress)}
-                    >
-                      Edit
-                    </ContentTitle>
-                  </AlignItem>
-                  <p>
-                    {DeliveryAddress.AddressDetailsApartment}
-                    {DeliveryAddress.AddressDetailsCompany}
-                  </p>
-                  <p>
-                    {DeliveryAddress.AddressDetailsCity}
-                  </p>
-                  <p>{DeliveryAddress.AddressDetailsCountry}</p>
-                </ContentBox>
-              </>
-            )}
+            
             <ContentBox marginTop="20px">
               <Tagcontent>
                 <TitleBox>Tags</TitleBox>
@@ -785,7 +855,7 @@ const newForm = (props) => {
         closeTag={handleClose}
         values={Tags}
       />
-    </Form>
+    </FormLayout>
   );
 };
 
@@ -849,25 +919,9 @@ const SubForm = styled.div`
 `;
 
 const ContentBox = styled.div`
-  padding: 20px;
+  position: relative;
+  padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
   margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
-  background: #fff;
-  box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  outline: 0.1rem solid transparent;
-  .price-content {
-    padding-top: 30px;
-    .title {
-      text-align: right;
-      line-height: 2;
-    }
-    .price p {
-      margin-bottom: 12px;
-      line-height: 2;
-      text-align: right;
-    }
-  }
 `;
 
 const TagContent = styled(Tag)`
@@ -1048,6 +1102,153 @@ const CardViews = styled(Card)`
   .ant-card-body {
   }
 `;
+
+const ActionBottom = styled.div`
+  height: 50px;
+  width: 100%;
+  box-shadow: 0px -5px 30px rgba(64, 73, 80, 0.07);
+  border-radius: 0px 0px 5px 5px;
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+`;
+
+const FormLayout = styled(Form)`
+  max-width: 950px;
+  height: 700px;
+  box-shadow: 0px 2px 8px rgba(64, 73, 80, 0.15);
+  background: white;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 30px;
+`;
+
+const CustomLabel = styled(Text)`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 150%;
+  color: #404950;
+`;
+
+const InputTabs = styled(Tabs)`
+  margin-left: 35px;
+  .ant-tabs-nav {
+    width: 141px;
+    margin-right: 93px;
+    .ant-tabs-tab {
+      padding-top: 7px!important;
+      padding-bottom: 7px!important;
+      .ant-tabs-tab-btn {
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #0095F8;
+      }
+    }
+  }
+  .ant-tabs-content-holder {
+    width: 600px;
+    border-left: none;
+    .ant-tabs-tabpane {
+      padding-left: 0!important;
+    }
+  }
+
+`;
+
+const SubFormTitle = styled.p`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: ${props => props.fontSize ? props.fontSize : '19'}px;
+  line-height: ${props => props.fontSize ? props.fontSize : '19'}px;
+  color: #404950;
+`;
+
+const FormRow = styled(Row)`
+  justify-content: space-between;
+  margin-bottom: ${props => props.marginbottom ? props.marginbottom : '0'}px;
+`;
+
+const FormItem = styled.div`
+  max-width: ${props => props.fullWidth ? '100%' : '265px'};
+  width: 100%;
+  .ant-form-item {
+    margin-bottom: 15px;
+  }
+`;
+
+const ProductCheckbox = styled(Checkbox)`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #EDEDED;
+  .ant-checkbox {
+    margin-left: 25px;
+  }
+  .ant-checkbox + span {
+    padding: 0;
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+  }
+  img {
+    border-radius: 5px;
+    margin-left: 23px;
+    margin-right: 10px;
+  }
+`;
+
+const VariantCheckbox = styled(Checkbox)`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  border-bottom: 1px solid #EDEDED;
+  align-items: center;
+  .ant-checkbox {
+    margin-left: 55px;
+  }
+  .ant-checkbox + span {
+    padding: 0;
+    margin-left: 10px;
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+    width: 100%;
+    .info {
+      width: 100%;
+      display: flex;
+      span.quantity {
+        margin-left: auto;
+      }
+      span.price {
+        margin-right: 23px;
+        margin-left: 30px;
+      }
+    }
+  }
+  img {
+    border-radius: 5px;
+    margin-left: 23px;
+    margin-right: 10px;
+  }
+`;
+
 const mapStateToProps = (store) => {
   return {
     customerData: store.customerReducer.customerData,
