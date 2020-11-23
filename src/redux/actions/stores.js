@@ -1,85 +1,78 @@
 import { apolloClient } from "../../graphql";
 import {
-  GET_ORDERS,
-  CREATE_ORDER_MUTATION
-} from "../../graphql/orders.query";
+  GET_STORES,
+  CREATE_STORE_MUTATION
+} from "../../graphql/stores.query";
 
 import {
-  RESET_ORDER_STATUS,
-  ADD_ORDER_START,
-  ADD_ORDER,
-  ADD_ORDER_ERROR,
-  ACTION_GET_ORDERS,
-  ERROR_GET_ORDERS,
+  ADD_STORE_START,
+  ADD_STORE,
+  ADD_STORE_ERROR,
+  ACTION_GET_STORES,
+  ERROR_GET_STORES,
+  RESET_STORE_STATUS
 } from "./actionTypes";
 
-
-export const resetOrderStatus = () => {
+export const resetStoreStatus = () => {
   return dispatch => {
     dispatch({
-      type: RESET_ORDER_STATUS,
+      type: RESET_STORE_STATUS,
     })
   };
 };
 
-export const AddOrders = (datas) => {
+export const AddStores = (datas) => {
 
   return dispatch => {
     dispatch({
-      type: ADD_ORDER_START,
+      type: ADD_STORE_START,
     })
     return apolloClient
       .mutate({
-        mutation: CREATE_ORDER_MUTATION,
+        mutation: CREATE_STORE_MUTATION,
         variables: datas,
       })
       .then((res) => {
         if (res.data) {
           dispatch({
-            type: ADD_ORDER,
+            type: ADD_STORE,
             data: res.data,
           });
         }
       })
       .catch((err) => {
         dispatch({
-          type: ADD_ORDER_ERROR,
+          type: ADD_STORE_ERROR,
           errorMsg: err.message,
         });
       });
   };
 };
 
-export function getOrders(limit, page) {
+export function getStores(limit, store) {
   return (dispatch) => {
     return apolloClient.query({
-      query: GET_ORDERS,
-      variables: {
-        filters: {
-          limit: limit,
-          page: page
-        },
-      },
+      query: GET_STORES,
+
       fetchPolicy: "network-only",
     })
       .then((res) => {
         if (res.data) {
-          console.log(res.data)
           dispatch({
-            type: ACTION_GET_ORDERS,
-            data: res.data.orders,
+            type: ACTION_GET_STORES,
+            data: res.data.stores,
           });
         }
       })
       .catch((err) => {
         console.log(err);
         dispatch({
-          type: ERROR_GET_ORDERS,
+          type: ERROR_GET_STORES,
           msgErr: err.message,
         });
       });
   };
 }
 export default {
-  getOrders
+  getStores
 };

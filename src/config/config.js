@@ -1,1 +1,1 @@
-export const SERVER = process.env.backend || "https://api-staging.juicypie.com/graphql";
+export const SERVER = process.env.backend || "https://api.juicypie.com/graphql";

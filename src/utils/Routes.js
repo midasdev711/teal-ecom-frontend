@@ -30,6 +30,11 @@ const Routes = [
     ],
   },
   {
+    title: "Pages",
+    path: "/[portal_id]/pages/setup-new",
+    as: "/[portal_id]/pages/setup-new"
+  },
+  {
     title: "Products",
     path: "/[portal_id]/ecom/products",
     as: "/[portal_id]/ecom/products",
@@ -81,14 +86,16 @@ const Routes = [
 const StoriesRoutes = [
   {
     title: "Home",
-    path: "/[portal_id]/stories",
-    as: "/[portal_id]/stories",
+    path: "/[portal_id]/stories/dashboard",
+    as: "/[portal_id]/stories/dashboard",
   },
+ 
   // {
   //   title: "Posts",
   //   path: "/posts",
   //   as: "/posts",
   // },
+  
   {
     title: "Posts",
     path: "/[portal_id]/stories/posts/[post_status]",
@@ -116,15 +123,39 @@ const StoriesRoutes = [
   },
 ];
 
+const StoriesInnerRoutes = [
+  {
+    title: "Stories",
+    path: "/[portal_id]/stories/:id",
+    as: "/[portal_id]/stories/:id",
+  },
+  {
+    title: "StoriesNew",
+    path: "/[portal_id]/stories/setup-new",
+    as: "/[portal_id]/stories/setup-new",
+  },
+  {
+    title: "EditPost",
+    path: "/[portal_id]/stories/",
+    as: "/[portal_id]/stories/",
+  },
+  {
+    title: "NewPost",
+    path: "/[portal_id]/stories/posts/new",
+    as: "/[portal_id]/stories/posts/new",
+  },
+];
+
 const MainRoutes = {
   Ecommerce: "ecom",
   Stories: "stories",
 };
 
-export { Routes, StoriesRoutes, MainRoutes };
+export { Routes, StoriesRoutes, MainRoutes, StoriesInnerRoutes };
 
 export default {
   Routes,
   MainRoutes,
   StoriesRoutes,
+  StoriesInnerRoutes,
 };

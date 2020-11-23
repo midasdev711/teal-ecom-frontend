@@ -1,20 +1,56 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
 import { useRouter } from "next/router"
 import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
+
+import { connect } from "react-redux";
+// actions
+import { getBlogs } from "../../../src/redux/actions/blogs";
+import { getPages } from "../../../src/redux/actions/pages";
+import { getStores } from "../../../src/redux/actions/stores";
+
 import { Banner, DashboardCard } from '../../../src/components/atoms'
+
 
 const { Title, Text } = Typography;
 
-export default function StoriesDashboard() {
-    const router = useRouter()
-    let userData = getUserData()
+export function StoriesDashboard(props) {
+    const router = useRouter();
+    let userData = getUserData();
+
+    const handleDefaultAction = (url, uid) => {
+        // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
+        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
+    }
+
+    useEffect(() => {
+        getDataBlogs();
+        getDataPages();
+        getDataStores();
+    }, []);
+
+    const getDataBlogs = () => {
+        props.getBlogs();
+    };
+
+    const getDataPages = () => {
+        props.getPages();
+    };
+
+     const getDataStores = () => {
+        props.getStores();
+    };
+
+    const { blogsData, pagesData, storesData } = props;
+
+    console.log("testtttttt", props.blogsData)
 
     const goToNewBlogPage = (url) => {
         router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
     }
+
     return (
         <LayoutWithNoSidebar>
             <Banner
@@ -27,20 +63,24 @@ export default function StoriesDashboard() {
             <BlogContainer>
                 <BlogContainerHeader>
                     <Title1>Blogs</Title1>
-                    <AddButton>
+                    <AddButton onClick={() => handleDefaultAction('stories/setup-new','')}>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
-                    <DashboardCard
-                        title="Default"
-                        subtitle="@sparqlife"
-                        count="15"
-                        view="59k"
-                        chartData={[65, 45, 80, 81, 77, 90, 40]}
-                        image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
-                    ></DashboardCard>
+
+                    { blogsData && blogsData.map((item) => (
+                        <DashboardCard
+                            title={item.BlogTitle}
+                            subtitle="@sparqlife"
+                            count="15"
+                            view="59k"
+                            onClick={() => handleDefaultAction("stories", item._id)}
+                            chartData={[65, 45, 80, 81, 77, 90, 40]}
+                            image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
+                        ></DashboardCard>
+                    )) }  
                     <DashboardCard
                         isNew={true}
                         onClick={goToNewBlogPage}
@@ -50,6 +90,7 @@ export default function StoriesDashboard() {
         </LayoutWithNoSidebar>
     );
 }
+
 
 const BlogContainer = styled.div`
     display: flex;
@@ -105,3 +146,20 @@ const AddButton = styled(Button)`
         box-shadow: 0px 0px 25px #989898;
     }
 `;
+
+const mapStateToProps = (store) => {
+    console.log(store);
+    return {
+        blogsData: store.blogReducer.blogsData,
+        pagesData: store.pageReducer.pagesData,
+        storesData: store.storeReducer.storesData
+    };
+};
+
+const mapDispatchToProps = {
+  getBlogs,
+  getPages,
+  getStores
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoriesDashboard);

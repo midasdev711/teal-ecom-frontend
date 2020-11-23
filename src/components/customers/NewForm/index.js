@@ -239,7 +239,7 @@ const NewForm = (props) => {
                 <Select
                   placeholder="Tags"
                   mode="tags"
-                  onChange={(e) => handleChangeValue(e)} name='Tags'
+                  onChange={(e) => handleChangeValue(e, 'TAGS')} name='Tags'
                   value={Tags}
                 ></Select>
               </Form.Item>

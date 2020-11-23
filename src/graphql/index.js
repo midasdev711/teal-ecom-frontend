@@ -7,8 +7,8 @@ import { SERVER } from '../config/config';
 let token = GetToken()
 const httpLink = createHttpLink({
   // uri: "http://198.168.1.48:9200/graphql",
-  uri: SERVER,
-  // uri: "http://localhost:9200/graphql",
+  // uri: SERVER,
+  uri: "http://localhost:9200/graphql",
 });
 
 const uploadLink = createUploadLink({ uri: SERVER })

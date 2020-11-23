@@ -1,85 +1,79 @@
 import { apolloClient } from "../../graphql";
 import {
-  GET_ORDERS,
-  CREATE_ORDER_MUTATION
-} from "../../graphql/orders.query";
+  GET_PAGES,
+  CREATE_PAGE_MUTATION
+} from "../../graphql/pages.query";
 
 import {
-  RESET_ORDER_STATUS,
-  ADD_ORDER_START,
-  ADD_ORDER,
-  ADD_ORDER_ERROR,
-  ACTION_GET_ORDERS,
-  ERROR_GET_ORDERS,
+  ADD_PAGE_START,
+  ADD_PAGE,
+  ADD_PAGE_ERROR,
+  ACTION_GET_PAGES,
+  ERROR_GET_PAGES,
+  RESET_PAGE_STATUS
 } from "./actionTypes";
 
-
-export const resetOrderStatus = () => {
+export const resetPageStatus = () => {
   return dispatch => {
     dispatch({
-      type: RESET_ORDER_STATUS,
+      type: RESET_PAGE_STATUS,
     })
   };
 };
 
-export const AddOrders = (datas) => {
-
+export const AddPages = (datas) => {
   return dispatch => {
     dispatch({
-      type: ADD_ORDER_START,
+      type: ADD_PAGE_START,
     })
     return apolloClient
       .mutate({
-        mutation: CREATE_ORDER_MUTATION,
+        mutation: CREATE_PAGE_MUTATION,
         variables: datas,
       })
       .then((res) => {
         if (res.data) {
           dispatch({
-            type: ADD_ORDER,
+            type: ADD_PAGE,
             data: res.data,
           });
         }
       })
       .catch((err) => {
         dispatch({
-          type: ADD_ORDER_ERROR,
+          type: ADD_PAGE_ERROR,
           errorMsg: err.message,
         });
       });
   };
 };
 
-export function getOrders(limit, page) {
+export function getPages(limit, page) {
+
   return (dispatch) => {
     return apolloClient.query({
-      query: GET_ORDERS,
-      variables: {
-        filters: {
-          limit: limit,
-          page: page
-        },
-      },
+      query: GET_PAGES,
+
       fetchPolicy: "network-only",
     })
       .then((res) => {
+        console.log("responsesssss", res)
         if (res.data) {
-          console.log(res.data)
           dispatch({
-            type: ACTION_GET_ORDERS,
-            data: res.data.orders,
+            type: ACTION_GET_PAGES,
+            data: res.data.pages,
           });
         }
       })
       .catch((err) => {
         console.log(err);
         dispatch({
-          type: ERROR_GET_ORDERS,
+          type: ERROR_GET_PAGES,
           msgErr: err.message,
         });
       });
   };
 }
 export default {
-  getOrders
+  getPages
 };

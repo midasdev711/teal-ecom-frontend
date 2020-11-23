@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Router from "next/router";
 import Link from "next/link";
-import { connect } from "react-redux";
 // components
 import Filters from "../Filters";
 import { MDDeleteTags, MDAddTags, MDDeleteSelected } from "../../atoms";
@@ -30,6 +29,11 @@ import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
 import { getOrders } from "../../../redux/actions/orders";
 import { getUserData } from "../../../utils";
+import { connect } from "react-redux";
+import Moment from 'react-moment';
+import 'moment-timezone';
+
+
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
@@ -47,10 +51,13 @@ const ViewOrders = (props) => {
   const [isOpenDeleteSelected, setShowMDDeleteSelected] = useState(false);
   const [isShowCapture, setShowCapture] = useState(false);
   const [isShowFulfill, setShowFulfil] = useState(false);
+
+
   const dataNew = orderData.filter((el) => {
-    return el.isNew === true;
-  });
-  let userData = getUserData()
+  return el && el.isNew === true;
+});
+
+    let userData = getUserData()
   useEffect(() => {
     getOrdersCall();
   }, [props]);
@@ -58,54 +65,56 @@ const ViewOrders = (props) => {
   const getOrdersCall = async () => {
     await props.getOrders();
   };
+
+
   const columns = [
     {
       title: "Order",
-      dataIndex: "order_id",
-      render: (value, item) => {
+      dataIndex: "_id",
+      render: (_id) => {
         return (
-          <Link href={`/orders/${item._id}`} >
-          <FullName href="">#{item._id}</FullName>
-        </Link>
+          <Link href="/orders/123">
+            <FullName href="">#{_id}</FullName>
+          </Link>
         );
       },
     },
     {
       title: "Date",
       dataIndex: "created_date",
+      render: (createdAt) => {
+        return (
+          <Moment>{createdAt}</Moment>
+        )
+      }
     },
     {
       title: "Customer",
-      dataIndex: "customer",
-      render: (value, item) => (
-
+      dataIndex: "DeliveryAddress",
+      render: (DeliveryAddress) => (
         <Dropdown
           trigger={["click"]}
           overlay={
             <PopupDetailTB>
-              {console.log('11111111111111111', value, item)}
               <h3>
-                {item.ShippingAddress.BasicDetailsFirstName} {item.ShippingAddress.BasicDetailsLastName}
+                {DeliveryAddress.BasicDetailsFirstName} {DeliveryAddress.BasicDetailsLastName}
               </h3>
-              <p>{item.ShippingAddress.AddressDetailsApartment}</p>
-              {/* <p>
-                {item.ShippingAddress.order} order{item.ShippingAddress.order > 1 ? "s" : ""}
-              </p> */}
-              <TextPhone>{item.ShippingAddress.AddressDetailsMobile}</TextPhone>
+              <p>{DeliveryAddress.AddressDetailsApartment} {DeliveryAddress.AddressDetailsCity} {DeliveryAddress.AddressDetailsCountry} {DeliveryAddress.AddressDetailsPostalCode}</p>
+              <p>
+                {DeliveryAddress.order} order{DeliveryAddress.order > 1 ? "s" : ""}
+              </p>
+              <TextPhone>{DeliveryAddress.AddressDetailsMobile}</TextPhone>
               <div>
-
-                {/* <Button block type="default">
-                  <Link href="/[portal_id]/ecom/customers/123" as={`/${userData?.uniqueID}/ecom/customers/123`} shallow={true}>
-                    <a>View customer</a>
-                  </Link>
-                </Button> */}
+                <Button block type="default" href="/customers/123">
+                  View customer
+                </Button>
               </div>
             </PopupDetailTB>
           }
           placement="bottomCenter"
         >
           <ButtonCustomer type="text">
-            {item.ShippingAddress.BasicDetailsFirstName} {item.ShippingAddress.BasicDetailsLastName} <DownOutlined />
+            {DeliveryAddress.BasicDetailsFirstName} {DeliveryAddress.BasicDetailsLastName} <DownOutlined />
           </ButtonCustomer>
         </Dropdown>
       ),
@@ -118,58 +127,58 @@ const ViewOrders = (props) => {
     },
     {
       title: "Payment",
-      dataIndex: "status_payment",
-      render: (value, item) => {
-        if (item.PaymentMethod !== null) {
-          return <TagDark>Paid</TagDark>;
+      dataIndex: "Status",
+      render: (Status) => {
+        if (Status === "paid") {
+          return <TagDark>{Status}</TagDark>;
         } else {
-          return <TagOrang>Pending</TagOrang>;
+          return <TagOrang>{Status}</TagOrang>;
         }
       },
     },
     {
       title: "Fulfillment",
       dataIndex: "fulfillment",
-      render: (value, item) => {
-        if (item.status === 1) {
-          return <TagYellow>Unfullfilled</TagYellow>;
+      render: (val) => {
+        if (val === "Unfulfilled") {
+          return <TagYellow>{val}</TagYellow>;
         } else {
-          return <TagGreen>Fullfilled</TagGreen>;
+          return <TagGreen>{val}</TagGreen>;
         }
       },
     },
     {
       title: "Items",
-      dataIndex: "items",
-      render: (value, items) => {
+      dataIndex: "Products",
+      render: (Products) => {
         let data = [];
-        for (let i = 0; i < items.Products.length; i++) {
-          const item = items[i];
+        for (let i = 0; i < Products.length; i++) {
+          const item = Products[i];
           data.push(
             <Dropdown
-              // key={i}
+              key={i}
               trigger={["click"]}
               overlay={
                 <PopupDetailTB>
                   <Tag>{item.status}</Tag>
                   <div>
-                    <img src={item.image} alt="" />
+                    {(item.productImages !== null) ? <img src={item.productImages[0]} alt="" /> : <img src={'/images/shoes.jpg'} width='50' /> }
                     <Link href={`/products/[productId]`} as="/products/123456789">
-                      <a href="">{item.name}</a>
+                      <a href="">{item.productTitle}</a>
                     </Link>
                     <p>{item.style}</p>
-                    <p>SKU {item.sku}</p>
+                    <p>SKU {item.productSKU}</p>
                   </div>
                 </PopupDetailTB>
               }
               placement="bottomRight"
             >
-              {/* <ButtonCustomer type="text">
-                {items && items.length > 1
-                  ? `${items.length} items`
-                  : `${items.length} item`}{" "}
+              <ButtonCustomer type="text">
+                {Products && Products.length > 1
+                  ? `${Products.length} items`
+                  : `${Products.length} item`}{" "}
                 <DownOutlined />
-              </ButtonCustomer> */}
+              </ButtonCustomer>
             </Dropdown>
           );
 
@@ -183,7 +192,7 @@ const ViewOrders = (props) => {
     }
   ];
 
-  const handleMenuClickCheckbox = (e) => { };
+  const handleMenuClickCheckbox = (e) => {};
 
   const onCreateShippingLabels = () => {
     Router.router.push("/orders/shipping-labels");
@@ -194,8 +203,8 @@ const ViewOrders = (props) => {
       setCheckedList(selectedRows);
     },
     getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      name: record.name,
+      disabled: record && record.name === "Disabled User",
+      name: record && record.name,
     }),
   };
 
@@ -222,18 +231,18 @@ const ViewOrders = (props) => {
     setMDAddTags(value);
   };
 
-  const onSaveAddTags = (value) => { };
+  const onSaveAddTags = (value) => {};
 
-  const onFinishAddTags = (value) => { };
+  const onFinishAddTags = (value) => {};
 
   // delete tags
   const onShowMdDeleteTags = (value) => {
     setMDDeleteTags(value);
   };
 
-  const onSaveDeleteTags = (value) => { };
+  const onSaveDeleteTags = (value) => {};
 
-  const onFinishDeleteTags = (value) => { };
+  const onFinishDeleteTags = (value) => {};
 
   // delete customers selected
   const onShowMdDeleteSelected = (value) => {
@@ -365,8 +374,9 @@ const ViewOrders = (props) => {
 
       <MDFulfill
         isOpen={isShowFulfill}
-        title={`Fulfill ${checkedList.length} order${checkedList.length > 1 ? "s" : ""
-          }`}
+        title={`Fulfill ${checkedList.length} order${
+          checkedList.length > 1 ? "s" : ""
+        }`}
         content="This will mark these orders as fulfilled."
         cancelText="Cancel"
         okText="Fulfil"
@@ -851,6 +861,7 @@ const InputStyle = styled(Input)`
 const ActionsTable = styled.div`
   padding: 24px;
 `;
+
 
 const mapStateToProps = (store) => {
   return {
