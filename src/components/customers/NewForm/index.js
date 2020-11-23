@@ -29,12 +29,11 @@ const NewForm = (props) => {
     setExemptions(values);
   };
 
-
-
   const handleChangeTags = (value) => {
     console.log(`selected ${value}`);
   };
-  const { BasicDetails, AddressDetails, Tags, TaxFlag, Tax, Notes, handleChangeValue } = props
+
+  const { BasicDetails, AddressDetails, /* Tags, TaxFlag, Tax, Notes, */ handleChangeValue } = props
   
   return (
     <Form
@@ -47,60 +46,29 @@ const NewForm = (props) => {
       {console.log('BasicDetails', props)}
       <SubForm>
         <Row gutter={24}>
-          <Col md={8}>
-            <TitleBox>Customer overview</TitleBox>
-          </Col>
-          <Col md={16}>
+          <Col md={24}>
             <ContentBox>
+              <SubFormTitle>New customer</SubFormTitle>
               <Row gutter={24}>
                 <Col md={12}>
                   <Form.Item
-                    name="first_name"
+                    name="full_name"
                     rules={[
                       {
                         required: true,
-                        message: "Please input first name!",
+                        message: "Please input full name!",
                       },
                     ]}
                   >
                     <TextInput
                       onChange={(e) => handleChangeValue(e, 'BasicDetails')}
-                      placeholder="First Name"
-                      name='FirstName'
-                      value={BasicDetails.FirstName}
+                      placeholder="Full name"
+                      name='FullName'
+                      value={BasicDetails.FullName}
                     />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
-                  <Form.Item
-                    name="last_name"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input last name!",
-                      },
-                    ]}
-                  >
-                    <TextInput placeholder="Last Name" onChange={(e) => handleChangeValue(e, 'BasicDetails')} name='LastName'
-                      value={BasicDetails.LastName} />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
-                  <Form.Item
-                    name="email"
-                    rules={[
-                      {
-                        required: true,
-                        type: "email",
-                        message: "Please input email!",
-                      },
-                    ]}
-                  >
-                    <TextInput placeholder="Email" onChange={(e) => handleChangeValue(e, 'BasicDetails')} name='Email'
-                      value={BasicDetails.Email} />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
                   <Form.Item
                     name="phone"
                     rules={[
@@ -121,24 +89,17 @@ const NewForm = (props) => {
                 </Col>
                 <Col md={24}>
                   <Form.Item
-                    name="agreement"
-                    valuePropName="checked"
+                    name="email"
                     rules={[
                       {
-                        validator: (_, value) =>
-                          value
-                            ? Promise.resolve()
-                            : Promise.reject("Should accept agreement"),
+                        required: true,
+                        type: "email",
+                        message: "Please input email!",
                       },
                     ]}
                   >
-                    <Checkbox>
-                      Customer agreed to receive marketing emails.
-                      <DesCheckbox>
-                        You should ask your customers for permission before you
-                        subscribe them to your marketing emails.
-                      </DesCheckbox>
-                    </Checkbox>
+                    <TextInput placeholder="Email" onChange={(e) => handleChangeValue(e, 'BasicDetails')} name='Email'
+                      value={BasicDetails.Email} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -149,43 +110,22 @@ const NewForm = (props) => {
 
       <SubForm>
         <Row gutter={24}>
-          <Col md={8}>
-            <TitleBox>Address</TitleBox>
-            <DescriptBox>The primary address of this customer</DescriptBox>
-          </Col>
-          <Col md={16}>
+          <Col md={24}>
             <ContentBox>
+              <SubFormTitle>Shipping Address</SubFormTitle>
               <Row gutter={24}>
                 <Col md={12}>
-                  <Form.Item name="address_first_name">
+                  <Form.Item name="address">
                     <TextInput onChange={(e) => handleChangeValue(e, 'AddressDetails')}
-                      placeholder="First Name"
-                      name='FirstName'
-                      value={AddressDetails.FirstName} />
+                      placeholder="Address"
+                      name='Address'
+                      value={AddressDetails.Address} />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
-                  <Form.Item name="address_last_name">
-                    <TextInput placeholder="Last Name" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='LastName'
-                      value={AddressDetails.LastName} />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
-                  <Form.Item name="address_company">
-                    <TextInput placeholder="Company" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='Company'
-                      value={AddressDetails.Company} />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
                   <Form.Item name="address_suite">
                     <TextInput placeholder="Apartment, suite, etc." onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='Apartment'
                       value={AddressDetails.Apartment} />
-                  </Form.Item>
-                </Col>
-                <Col md={24}>
-                  <Form.Item name="address_city">
-                    <TextInput placeholder="City" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='City'
-                      value={AddressDetails.City} />
                   </Form.Item>
                 </Col>
                 <Col md={12}>
@@ -200,12 +140,24 @@ const NewForm = (props) => {
                   </Form.Item>
                 </Col>
                 <Col md={12}>
+                  <Form.Item name="address_state">
+                    <TextInput placeholder="State" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='State'
+                      value={AddressDetails.State} />
+                  </Form.Item>
+                </Col>
+                <Col md={12}>
+                  <Form.Item name="address_city">
+                    <TextInput placeholder="City" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='City'
+                      value={AddressDetails.City} />
+                  </Form.Item>
+                </Col>
+                <Col md={12}>
                   <Form.Item name="address_postal_code">
                     <TextInput placeholder="Postal code" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='PostalCode'
                       value={AddressDetails.PostalCode} />
                   </Form.Item>
                 </Col>
-                <Col md={24}>
+                {/* <Col md={24}>
                   <Form.Item name="address_phone">
                     <PhoneInput
                       country={"us"}
@@ -214,14 +166,14 @@ const NewForm = (props) => {
                       value={AddressDetails.Mobile}
                     />
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
             </ContentBox>
           </Col>
         </Row>
       </SubForm>
 
-      <SubForm>
+      {/* <SubForm>
         <Row gutter={24}>
           <Col md={8}>
             <TitleBox>Tax exemptions</TitleBox>
@@ -294,14 +246,13 @@ const NewForm = (props) => {
             </ContentBox>
           </Col>
         </Row>
-      </SubForm>
+      </SubForm> */}
     </Form>
   );
 };
 
 const SubForm = styled.div`
   padding: 24px 0;
-  border-top: 1px solid #ddd;
   .react-tel-input input {
     width: 100% !important;
     padding: 18px 50px;
@@ -315,19 +266,6 @@ const SubForm = styled.div`
 `;
 
 const ContentBox = styled.div`
-  padding: 24px 24px 0;
-  background: #fff;
-  box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  outline: 0.1rem solid transparent;
-`;
-
-const TitleBox = styled.h3`
-  font-weight: 600;
-  font-size: 16px;
-  color: #000;
-  opacity: 0.9;
 `;
 
 const DesCheckbox = styled.p`
@@ -339,7 +277,27 @@ const DesCheckbox = styled.p`
 `;
 
 const TextInput = styled(Input)`
-  padding: 8px 12px;
+  max-width: 550px!important;
+  width: 100%;
+  height: 45px;
+  border: none;
+  background-color: #F6F8F9;
+  border-radius: 5px;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 17px;
+  color: #404950;
+`;
+
+const SubFormTitle = styled.p`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: ${props => props.fontSize ? props.fontSize : '19'}px;
+  line-height: ${props => props.fontSize ? props.fontSize : '19'}px;
+  color: #404950;
 `;
 
 const DescriptBox = styled.h4`

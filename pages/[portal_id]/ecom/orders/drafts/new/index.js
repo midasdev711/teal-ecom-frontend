@@ -5,7 +5,7 @@ import { Button, Layout } from "antd";
 import Router from "next/router";
 import { connect, useSelector } from "react-redux";
 // components
-import { PageLayout } from "../../../../../../src/components/views";
+import { NewPageLayout } from "../../../../../../src/components/views";
 import { NewForm } from "../../../../../../src/components/orders";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
@@ -129,22 +129,22 @@ const NewOrder = (props) => {
   };
 
   return (
-    <PageLayout>
+    <NewPageLayout>
       <NewContent>
-        {newActions()}
+        {/* {newActions()} */}
         <ContentPage>
           <ContentHeader>
-            <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
+            {/* <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
               <LinkBack>
                 <LeftOutlined /> Orders
               </LinkBack>
-            </Link>
-            <TittleHeader>Create order</TittleHeader>
+            </Link> */}
+            <TitleHeader>Create order</TitleHeader>
           </ContentHeader>
-          <NewForm Products={Products} OrderAmount={OrderAmount} ShippingAddresss={ShippingAddress} DeliveryAddress={DeliveryAddress} PaymentMethod={PaymentMethod} TransactionID={TransactionID} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} />
+          <NewForm Products={Products} OrderAmount={OrderAmount} ShippingAddresss={ShippingAddress} DeliveryAddress={DeliveryAddress} PaymentMethod={PaymentMethod} TransactionID={TransactionID} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} saveData={() => saveData()} />
         </ContentPage>
       </NewContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -153,18 +153,18 @@ const NewContent = styled.div`
 `;
 
 const ContentPage = styled.div`
-  max-width: 65rem;
+  max-width: 950px;
   margin: 80px auto;
-  padding: 0 3.2rem;
+  padding: 0;
 `;
 
 const ContentHeader = styled.div`
   padding-bottom: 10px;
 `;
 
-const TittleHeader = styled.h3`
-  font-size: 28px;
-  color: #000;
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
   font-weight: bold;
   margin-bottom: 0;
 `;

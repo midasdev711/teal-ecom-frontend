@@ -25,7 +25,6 @@ import {
   Input,
 } from "antd";
 // fake data
-import { fakeData } from "../fakeData";
 import MDMessages from "../../atoms/MDMessages";
 import MDFulfill from "../../atoms/MDFulfill";
 import { getOrders } from "../../../redux/actions/orders";
@@ -38,11 +37,8 @@ import 'moment-timezone';
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
-const customerData = fakeData;
-
-
 const ViewOrders = (props) => {
-    const orderData =props.orderData === undefined ? [] : props.orderData
+  const orderData =props.orderData === undefined ? [] : props.orderData
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -125,9 +121,9 @@ const ViewOrders = (props) => {
       align: "left",
     },
     {
-      title: "Total",
-      dataIndex: "OrderAmount",
-      render: (OrderAmount) => `$${OrderAmount}`,
+      title: "Amount",
+      dataIndex: "total",
+      render: (value, item) => `$${item.OrderAmount}`,
     },
     {
       title: "Payment",
@@ -191,22 +187,9 @@ const ViewOrders = (props) => {
       },
     },
     {
-      title: "Delivery method ",
-      dataIndex: "delivery",
-    },
-    {
-      title: "Tags",
-      dataIndex: "Tags",
-      width: "10%",
-      render: (Tags) => {
-        let data = [];
-        for (let i = 0; i < Tags && Tags.length; i++) {
-          const tag = Tags[i];
-          data.push(<Tag key={i}>{tag}</Tag>);
-        }
-        return data;
-      },
-    },
+      title: "Shipping",
+      dataIndex: "shipping",
+    }
   ];
 
   const handleMenuClickCheckbox = (e) => {};
@@ -272,17 +255,74 @@ const ViewOrders = (props) => {
     setShowMDDeleteSelected(false);
   };
 
+  const [step, setStep] = useState("1");
+
+  const onTabClick = (e) => {
+    setStep('' + e);
+  }
+
+  const goToNewPage = () => {
+    Router.router.push(`/[portal_id]/ecom/orders/drafts/new`, { pathname: `/${userData?.uniqueID}/ecom/orders/drafts/new` }, { shallow: true });
+  }
+
   return (
     <ViewContent>
-      <Tabs defaultActiveKey={tabIndex} onChange={callback}>
-        <TabPane tab="All" key="1" />
-        <TabPane tab="Unfulfilled" key="2" />
-        <TabPane tab="Unpaid" key="3" />
-        <TabPane tab="Open" key="4" />
-        <TabPane tab="Closed" key="5" />
-      </Tabs>
+      <InputTabs tabPosition={'top'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
+        <TabPane tab="All" key="1">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={orderData}
+              pagination={orderData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Drafts" key="2">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={orderData}
+              pagination={orderData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Unfulfilled" key="3">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
+              pagination={orderData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Unpaid" key="4">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={[]}
+              pagination={orderData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+      </InputTabs>
 
-      <Filters onOpen={setOpenMoreFilters} />
+      <Filters top={10} right={30} onOpen={setOpenMoreFilters} goToNewPage={() => goToNewPage()}/>
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>
@@ -331,64 +371,6 @@ const ViewOrders = (props) => {
           </Dropdown>
         </ActionsTable>
       )}
-
-      <ContentTab>
-        {tabIndex === 1 && (
-          <Table
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={orderData}
-            pagination={orderData.length > 10}
-          />
-        )}
-        {tabIndex === 2 && (
-          <Table
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
-            pagination={orderData.length > 10}
-          />
-        )}
-        {tabIndex === 3 && (
-          <Table
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={[]}
-            pagination={orderData.length > 10}
-          />
-        )}
-        {tabIndex === 4 && (
-          <Table
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={[]}
-            pagination={orderData.length > 10}
-          />
-        )}
-        {tabIndex === 5 && (
-          <Table
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
-            columns={columns}
-            dataSource={[]}
-            pagination={orderData.length > 10}
-          />
-        )}
-      </ContentTab>
 
       <MDFulfill
         isOpen={isShowFulfill}
@@ -635,18 +617,79 @@ const ViewOrders = (props) => {
   );
 };
 
-const ViewContent = styled.div`
-  border: 1px solid #ddd;
-  background: #fff;
-  box-shadow: var(
-    --p-card-shadow,
-    0 0 0 1px rgba(63, 63, 68, 0.05),
-    0 1px 3px 0 rgba(63, 63, 68, 0.15)
-  );
-  border-radius: 3px;
+const InputTabs = styled(Tabs)`
+  .ant-tabs-nav {
+    height: 50px;
+    margin-left: 25px!important;
+    margin-right: 93px;
+    .ant-tabs-tab {
+      padding-top: 7px!important;
+      padding-bottom: 7px!important;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 144.89%;
+      color: #404950;
+    }
+  }
+  .ant-tabs-content-holder {
+    width: 100%;
+    border-left: none;
+    .ant-tabs-tabpane {
+      padding-left: 0!important;
+    }
+  }
+
 `;
 
-const ContentTab = styled.div``;
+const DataTable = styled(Table)`
+  thead {
+    tr {
+      height: 50px;
+      border-top: 1px solid #EDEDED;
+      th {
+        background: white!important;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 144.89%;
+        color: #404950;
+      }
+    }
+  }
+  tbody {
+    tr {
+      height: 80px;
+      td {
+        &:not(:nth-child(1)) {
+          padding-left: 0px;
+        }
+        padding: 15px;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 16px;
+        color: #404950;
+      }
+    }
+  }
+`;
+
+const ContentBox = styled.div`
+  padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
+  margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
+`;
+
+const ViewContent = styled.div`
+  margin-top: 30px;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 8px rgba(64, 73, 80, 0.15);
+  border-radius: 5px;
+  position: relative;
+`;
 
 const DrawerTitle = styled.h3`
   margin: 0;

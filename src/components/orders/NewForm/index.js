@@ -4,6 +4,7 @@ import { TweenOneGroup } from "rc-tween-one";
 import { connect } from "react-redux";
 import Link from "next/link";
 import { getUserData } from "../../../utils";
+import Filters from "../Filters";
 // icon
 import {
   SearchOutlined,
@@ -30,6 +31,8 @@ import {
   Tooltip,
   Tag,
   Dropdown,
+  Typography,
+  Tabs
 } from "antd";
 import { Formik } from "formik";
 import MDSelectProducts from "../MDSelectProducts";
@@ -43,12 +46,15 @@ import {
 } from "../Modal";
 import { getCustomers } from "../../../redux/actions/customers";
 import { getUserProductLists } from "../../../redux/actions/product";
+import NewForm from '../../customers/NewForm';
 // import { customer } from "../fakeData";
 
 const { Search } = Input;
+const { Text } = Typography;
+const { TabPane } = Tabs;
+
 const newForm = (props) => {
   const { Products, OrderAmount, ShippingAddresss, DeliveryAddress, PaymentMethod, TransactionID, Notes, Tags, handleChangeValue } = props
-
 
   const [visiable, setVisible] = useState(false);
   const [openCustumItem, setopenCustumItem] = useState(false);
@@ -67,6 +73,7 @@ const newForm = (props) => {
     name: null
   });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
+  const [newCustomerForm, setNewCustomerForm] = useState(false);
 
   useEffect(() => {
     getCustomersCall();
@@ -84,7 +91,6 @@ const newForm = (props) => {
     await props.getUserProductLists(userId)
   };
 
-
   const content = (data) => {
 
     const customer = props.customerData === undefined ? [] : props.customerData
@@ -96,7 +102,6 @@ const newForm = (props) => {
     useEffect(() => {
       UpdateData();
     }, [data]);
-
 
     return (
       <div>
@@ -118,9 +123,6 @@ const newForm = (props) => {
       </div>
     );
   };
-
-
-
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -307,178 +309,239 @@ const newForm = (props) => {
     await setSubTotal(subTotal);
   };
 
+  const [step, setStep] = useState('1')
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  const onTabClick = (e) => {
+    setStep('' + e);
+  }
+
+  const nextStep = () => {
+    let currentStep = parseInt(step);
+    if (currentStep < 4) {
+      setStep('' + (currentStep + 1));
+    } else {
+      props.saveData();
+    }
+  }
+
+  let products = props.productLists;
+
+  const productsShow = products.map((product, index) => {
+    const onChange = (e, product, variant) => {
+      let tmp = Object.assign([], selectedProducts);
+      if (e.target.checked) {
+        if (variant === true) {
+          if (product.variants.length > 0) {
+            for (let i = 0; i < product.variants.length; i ++) {
+              let tmpProduct = Object.assign({}, product);
+              let newId = product._id + product.variants[i].variant;
+              if (selectedProducts.filter(item => item.newId == newId).length == 0) {
+                tmpProduct['subInfo'] = product.variants[i];
+                tmpProduct['newId'] = newId;
+                tmpProduct['count'] = 1;
+                tmp.push(tmpProduct);
+              }
+            }
+          } else {
+            let tmpProduct = Object.assign({}, product);
+            tmpProduct['newId'] = product._id;
+            tmpProduct['count'] = 1;
+            tmp.push(tmpProduct)
+          }
+        } else {
+          let tmpProduct = Object.assign({}, product);
+          let tmpVariant = Object.assign({}, variant);
+          let newId = tmpProduct._id + variant.variant;
+          tmpProduct['subInfo'] = tmpVariant;
+          tmpProduct['newId'] = newId;
+          tmpProduct['count'] = 1;
+          tmp.push(tmpProduct);          
+        }
+      } else {
+        let newId = variant == true ? product._id + variant.variant : product._id;
+        let index = 0;
+        for (let i = 0; i < selectedProducts.length; i ++) {
+          if (newId == selectedProducts[i].newId) {
+            index = i;
+            break;
+          }
+        }
+        tmp.splice(index, 1);
+      }
+      setSelectedProducts(tmp);
+    }
+    const variantsShow = product.variants.map((variant, variantIndex) => {
+      let newId = product._id + variant.variant;
+      let selected = selectedProducts.filter(item => item.newId == newId).length > 0 ? true : false;
+      return (
+        <div key={product._id + 'variant' + variantIndex}>
+          <VariantCheckbox checked={selected} onChange={(e) => onChange(e, product, variant)}>
+            <div className="info">
+              <span>{variant.variant}</span>
+              <span className="quantity">{variant.quantity} available</span>
+              <span className="price">${variant.price}</span>
+            </div>
+          </VariantCheckbox>
+        </div>
+        )
+    })
+    let selected;
+    if (product.variants.length == 0) {
+      selected = selectedProducts.filter(item => item.newId == product._id).length > 0 ? true : false;
+    } else {
+      let allChecked = true;
+      for (let i = 0; i < product.variants.length; i ++) {
+        let newId = product._id + product.variants[i].variant;
+        if (selectedProducts.filter(item => item.newId == newId).length == 0) {
+          allChecked = false;
+          break;
+        }
+      }
+      selected = allChecked;
+    }
+    return (
+      <div key={'product' + product._id + index}>
+        <div>
+          <ProductCheckbox checked={selected} onChange={(e) => onChange(e, product, true)}>
+            <img src={product.thumbnailImage} width="30px" height="30px" />
+            <span>{product.title}</span>
+          </ProductCheckbox>
+        </div>
+        <div>
+          {variantsShow}
+        </div>
+      </div>
+      )
+  });
+
+  const selectedProductsShow = selectedProducts.map((product, index) => {
+    const onProductCountChange = (e) => {
+      let tmp = Object.assign([], selectedProducts);
+      let index;
+      for (let i = 0; i < selectedProducts.length; i ++) {
+        if (product.newId == selectedProducts[i].newId) {
+          index = i;
+          break;
+        }
+      }
+      tmp[index].count = e;
+      setSelectedProducts(tmp);
+    }
+
+    const removeSelectedProduct = () => {
+      let tmp = Object.assign([], selectedProducts);
+      let index;
+      for (let i = 0; i < selectedProducts.length; i ++) {
+        if (product.newId == selectedProducts[i].newId) {
+          index = i;
+          break;
+        }
+      }
+      tmp.splice(index, 1);
+      setSelectedProducts(tmp);
+    }
+    return (
+      <SummaryProductLine key={product.newId}>
+        <div className="product-image">
+          <img src={product.thumbnailImage} width="40px" height="40px" />
+        </div>
+        <div className="product-info">
+          <span className="title price">{product.title}</span>
+          <span className="sub-info">{product.subInfo ? product.subInfo.variant : ''}</span>
+        </div>
+        <div className="product-price price">
+          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+        </div>
+        <div className="number-input price">
+          <span>X</span> &nbsp; <ProductCountInput min={1} defaultValue={1} onChange={(e) => onProductCountChange(e)}></ProductCountInput>
+        </div>
+        <div className="product-price-sum">
+          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+        </div>
+        <CloseOutlined onClick={() => removeSelectedProduct()} />
+      </SummaryProductLine>
+      )
+  });
+
+  const closeNewCustomerForm = () => {
+    setNewCustomerForm(false);
+  }
+
+  const openNewCustomerForm = () => {
+    setNewCustomerForm(true);
+  }
+
+  const [BasicDetails, setBasicDetails] = useState({
+    FullName: '',
+    Email: '',
+    Mobile: '',
+  });
+  const [AddressDetails, setAddressDetails] = useState({
+    Address: '',
+    Apartment: '',
+    City: '',
+    Country: '',
+    State: '',
+    PostalCode: '',
+  });
+  // const [TaxFlag, setTaxFlag] = useState(false);
+  // const [Tax, setTax] = useState(0);
+  // const [Notes, setNotes] = useState('');
+  // const [Tags, setTags] = useState('');
+
+  const handleCustomerFormChangeValue = (e, module, element) => {
+    console.log('dfdfdf', e.target, e, module)
+    if (module === 'BasicDetails') {
+      if (element === 'Mobile') {
+        setBasicDetails({ ...BasicDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setBasicDetails({ ...BasicDetails, [name]: value })
+      }
+    } else if (module === 'AddressDetails') {
+      if (element === 'Mobile' || element === 'Country') {
+        setAddressDetails({ ...AddressDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setAddressDetails({ ...AddressDetails, [name]: value })
+      }
+    } else {
+      let { name, value } = e.target
+      // if (name === 'TaxFlag') {
+      //   setTaxFlag(e.target.checked)
+      // } else if (name === 'Notes') {
+      //   setNotes(e.target.value)
+      // }
+    }
+
+  }
+
   return (
-    <Form
+    <FormLayout
       name="basic"
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       className="form-new"
       layout="vertical"
     >
-      <SubForm>
-        <Row gutter={24}>
-          <Col md={16}>
-            <Row gutter={24}>
-              <Col md={24}>
-                <ContentBox>
-                  <AlignItem>
-                    <TitleBox>Order details</TitleBox>
-                    <ContentTitle className="TextAlign" onClick={showModal}>
-                      Add custom item
-                    </ContentTitle>
-                  </AlignItem>
+      <InputTabs tabPosition={'left'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
+        <TabPane tab="Product" key="1">
+          <ContentBox>
+            <SubFormTitle>Select products</SubFormTitle>
+            <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
+            {
+              products && products.length > 0 && 
+                productsShow
+            }
+          </ContentBox>
 
-                  <StyledSearch
-                    placeholder="Search products"
-                    enterButton="Browse products"
-                    enterButton={
-                      <Button onClick={() => setShowSelectProduct(true)}>
-                        Browse products
-                      </Button>
-                    }
-                    size="large"
-                    onChange={(e) => setShowSelectProduct(true)}
-                    onClick={() => setShowSelectProduct(true)}
-                    prefix={<SearchOutlined />}
-                  />
-
-                  {Products && Products.length > 0 && (
-                    <List
-                      dataSource={Products}
-                      renderItem={(item, i) => (
-                        <List.Item>
-                          <ProductDetail>
-                            <ProductView>
-                              <ImageView src={item.thumbnailImage} alt="" />
-                              <div>
-                                <Link href={`/products/[productId]`} as="/products/123456789">
-                                  <a href="#">{item.variants.variantName}</a>
-                                </Link>
-                                <TextStyle>{item.style}</TextStyle>
-                                <TextStyle>SKU: {item.sku}</TextStyle>
-                              </div>
-                            </ProductView>
-                            <InputTotal>
-                              <LabelPriceStyle title="Add item discount">
-                                <Dropdown
-                                  trigger={["click"]}
-                                  overlay={
-                                    <Card>
-                                      <div>
-                                        <LabelStyle>
-                                          Discount this item by
-                                        </LabelStyle>
-                                      </div>
-                                    </Card>
-                                  }
-                                >
-                                  <a href="#">${item.variants.variantValues}</a>
-                                </Dropdown>
-                              </LabelPriceStyle>
-                              <InputNumberStyle
-                                onChange={(e) => onChangeTotal(e, i)}
-                                value={item.variants.total_value}
-                                min={0}
-                                max={10}
-                              />
-                              {console.log('1111111111111', item.variants)}
-                              <LabelStyle>
-                                ${item.variants.total_value * parseFloat(item.variants.variantValues)}
-                              </LabelStyle>
-                            </InputTotal>
-
-                            <ButtonRemove onClick={() => onRemoveOrderItem(i)}>
-                              <CloseOutlined />
-                            </ButtonRemove>
-                          </ProductDetail>
-                        </List.Item>
-                      )}
-                    />
-                  )}
-
-                  <Row className="price-content" gutter={24}>
-                    <Col md={12}>
-                      <Form.Item label="Notes" name="notes">
-                        <TextInput placeholder="Add a note..." value={Notes} onChange={(e) => handleChangeValue(e, 'Notes')} />
-                      </Form.Item>
-                    </Col>
-                    <Col className="title" md={6}>
-                      <Popover
-                        content={AddDiscount}
-                        placement="bottomRight"
-                        trigger="click"
-                        className="new-order"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Add discount</ContentTitle>
-                      </Popover>
-                      <p>SubTotal</p>
-                      <Popover
-                        content={AddShipment}
-                        placement="bottom"
-                        trigger="click"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Add shipment</ContentTitle>
-                      </Popover>
-                      <Popover
-                        content={Taxes}
-                        placement="bottomRight"
-                        trigger="click"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Taxes</ContentTitle>
-                      </Popover>
-                      <Total>Total</Total>
-                    </Col>
-                    <Col className="price" md={6}>
-                      <p>-</p>
-                      <p>${subTotal}</p>
-                      <p>-</p>
-                      <p>$0.00</p>
-                      <Total>${subTotal}</Total>
-                    </Col>
-                  </Row>
-                </ContentBox>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <Col md={24}>
-                <EmailSection>
-                  <Labelsection>
-                    <Icons>
-                      <FileTextOutlined />
-                    </Icons>
-                    <ContentLabel> EMAIL INVOICE </ContentLabel>
-                  </Labelsection>
-                  <Button disabled>Email invoice</Button>
-                </EmailSection>
-              </Col>
-            </Row>
-            <Row gutter={24}>
-              <Col md={24}>
-                <ContentBox>
-                  <Labelsection>
-                    <Icons>
-                      <CreditCardOutlined />
-                    </Icons>
-                    <ContentLabel> ACCEPT PAYMENT </ContentLabel>
-                  </Labelsection>
-                  <PaymentSection>
-                    <Button disabled>Mark as paid</Button>
-                    <Button disabled>Mark as pending</Button>
-                    <Button disabled>pay with credit card</Button>
-                  </PaymentSection>
-                </ContentBox>
-              </Col>
-            </Row>
-          </Col>
-          <Col md={8}>
-            {console.log('sdsdsdsdsd', ShippingAddresss.length)}
-            {Object.keys(ShippingAddresss).length === 0 && (
+        </TabPane>
+        <TabPane tab="Customer" key="2">
+        <ContentBox>
+          <SubFormTitle>Select a customer or <a onClick={() => openNewCustomerForm()}>create one</a></SubFormTitle>
+          <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
+          {Object.keys(ShippingAddresss).length === 0 && (
               <ContentBox>
                 <TitleBox>Find and Create customer </TitleBox>
                 <Popover
@@ -559,6 +622,195 @@ const newForm = (props) => {
                 </ContentBox>
               </>
             )}
+           </ContentBox>
+        </TabPane>
+        <TabPane tab="Summary" key="3">
+          <ContentBox>
+            <SubFormTitle>Order Summary</SubFormTitle>
+            {
+              selectedProductsShow
+            }
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Payment" key="4">
+          <ContentBox>
+            <SubFormTitle>Payment</SubFormTitle>
+            <PaymentCard>
+              <div>
+                <Popover
+                  content={AddDiscount}
+                  placement="bottomRight"
+                  trigger="click"
+                  className="new-order"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Add discount</ContentTitle>
+                </Popover>
+                <p>SubTotal</p>
+                <Popover
+                  content={AddShipment}
+                  placement="bottom"
+                  trigger="click"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Add shipment</ContentTitle>
+                </Popover>
+                <Popover
+                  content={Taxes}
+                  placement="bottomRight"
+                  trigger="click"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Taxes</ContentTitle>
+                </Popover>
+                <Total>Total</Total>
+              </div>
+              <div className="price">
+                <p>-</p>
+                <p>${subTotal}</p>
+                <p>-</p>
+                <p>$0.00</p>
+                <Total>${subTotal}</Total>
+              </div>
+            </PaymentCard>
+          </ContentBox>
+        </TabPane>
+      </InputTabs>
+
+      <ActionBottom>
+        {
+          step == "4" ?
+          <NextStepButton width={100} type="primary" onClick={() => nextStep()}>
+            Complete
+          </NextStepButton> :
+          <NextStepButton type="primary" onClick={() => nextStep()}>
+            Next
+          </NextStepButton>
+        }
+      </ActionBottom>
+
+      <NewCustomerForm
+        title={null}
+        visible={newCustomerForm}
+        onCancel={() => closeNewCustomerForm()}
+      >
+        <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} /* TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} */ handleChangeValue={handleCustomerFormChangeValue}/>
+      </NewCustomerForm>
+
+      {/* <SubForm>
+        <Row gutter={24}>
+          <Col md={16}>
+            <Row gutter={24}>
+              <Col md={24}>
+                <ContentBox>
+                  <AlignItem>
+                    <TitleBox>Order details</TitleBox>
+                    <ContentTitle className="TextAlign" onClick={showModal}>
+                      Add custom item
+                    </ContentTitle>
+                  </AlignItem>
+
+                  {Products && Products.length > 0 && (
+                    <List
+                      dataSource={Products}
+                      renderItem={(item, i) => (
+                        <List.Item>
+                          <ProductDetail>
+                            <ProductView>
+                              <ImageView src={item.thumbnailImage} alt="" />
+                              <div>
+                                <Link href={`/products/[productId]`} as="/products/123456789">
+                                  <a href="#">{item.variants.variantName}</a>
+                                </Link>
+                                <TextStyle>{item.style}</TextStyle>
+                                <TextStyle>SKU: {item.sku}</TextStyle>
+                              </div>
+                            </ProductView>
+                            <InputTotal>
+                              <LabelPriceStyle title="Add item discount">
+                                <Dropdown
+                                  trigger={["click"]}
+                                  overlay={
+                                    <Card>
+                                      <div>
+                                        <LabelStyle>
+                                          Discount this item by
+                                        </LabelStyle>
+                                      </div>
+                                    </Card>
+                                  }
+                                >
+                                  <a href="#">${item.variants.variantValues}</a>
+                                </Dropdown>
+                              </LabelPriceStyle>
+                              <InputNumberStyle
+                                onChange={(e) => onChangeTotal(e, i)}
+                                value={item.variants.total_value}
+                                min={0}
+                                max={10}
+                              />
+                              {console.log('1111111111111', item.variants)}
+                              <LabelStyle>
+                                ${item.variants.total_value * parseFloat(item.variants.variantValues)}
+                              </LabelStyle>
+                            </InputTotal>
+
+                            <ButtonRemove onClick={() => onRemoveOrderItem(i)}>
+                              <CloseOutlined />
+                            </ButtonRemove>
+                          </ProductDetail>
+                        </List.Item>
+                      )}
+                    />
+                  )}
+
+                  <Row className="price-content" gutter={24}>
+                    <Col md={12}>
+                      <Form.Item label="Notes" name="notes">
+                        <TextInput placeholder="Add a note..." value={Notes} onChange={(e) => handleChangeValue(e, 'Notes')} />
+                      </Form.Item>
+                    </Col>
+                    
+                  </Row>
+                </ContentBox>
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <Col md={24}>
+                <EmailSection>
+                  <Labelsection>
+                    <Icons>
+                      <FileTextOutlined />
+                    </Icons>
+                    <ContentLabel> EMAIL INVOICE </ContentLabel>
+                  </Labelsection>
+                  <Button disabled>Email invoice</Button>
+                </EmailSection>
+              </Col>
+            </Row>
+            <Row gutter={24}>
+              <Col md={24}>
+                <ContentBox>
+                  <Labelsection>
+                    <Icons>
+                      <CreditCardOutlined />
+                    </Icons>
+                    <ContentLabel> ACCEPT PAYMENT </ContentLabel>
+                  </Labelsection>
+                  <PaymentSection>
+                    <Button disabled>Mark as paid</Button>
+                    <Button disabled>Mark as pending</Button>
+                    <Button disabled>pay with credit card</Button>
+                  </PaymentSection>
+                </ContentBox>
+              </Col>
+            </Row>
+          </Col>
+          <Col md={8}>
+            
             <ContentBox marginTop="20px">
               <Tagcontent>
                 <TitleBox>Tags</TitleBox>
@@ -601,7 +853,7 @@ const newForm = (props) => {
             </ContentBox>
           </Col>
         </Row>
-      </SubForm>
+      </SubForm> */}
 
       <MDSelectProducts
         isOpen={isOpenSelectProduct}
@@ -785,7 +1037,7 @@ const newForm = (props) => {
         closeTag={handleClose}
         values={Tags}
       />
-    </Form>
+    </FormLayout>
   );
 };
 
@@ -849,25 +1101,9 @@ const SubForm = styled.div`
 `;
 
 const ContentBox = styled.div`
-  padding: 20px;
+  position: relative;
+  padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
   margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
-  background: #fff;
-  box-shadow: 0px 4px 4px rgba(186, 195, 201, 0.25);
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  outline: 0.1rem solid transparent;
-  .price-content {
-    padding-top: 30px;
-    .title {
-      text-align: right;
-      line-height: 2;
-    }
-    .price p {
-      margin-bottom: 12px;
-      line-height: 2;
-      text-align: right;
-    }
-  }
 `;
 
 const TagContent = styled(Tag)`
@@ -1048,6 +1284,245 @@ const CardViews = styled(Card)`
   .ant-card-body {
   }
 `;
+
+const ActionBottom = styled.div`
+  height: 50px;
+  width: 100%;
+  box-shadow: 0px -5px 30px rgba(64, 73, 80, 0.07);
+  border-radius: 0px 0px 5px 5px;
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+`;
+
+const FormLayout = styled(Form)`
+  max-width: 950px;
+  height: 700px;
+  box-shadow: 0px 2px 8px rgba(64, 73, 80, 0.15);
+  background: white;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 30px;
+`;
+
+const CustomLabel = styled(Text)`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 150%;
+  color: #404950;
+`;
+
+const InputTabs = styled(Tabs)`
+  margin-left: 35px;
+  .ant-tabs-nav {
+    width: 141px;
+    margin-right: 93px;
+    .ant-tabs-tab {
+      padding-top: 7px!important;
+      padding-bottom: 7px!important;
+      .ant-tabs-tab-btn {
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #0095F8;
+      }
+    }
+  }
+  .ant-tabs-content-holder {
+    width: 600px;
+    border-left: none;
+    .ant-tabs-tabpane {
+      padding-left: 0!important;
+    }
+  }
+
+`;
+
+const SubFormTitle = styled.p`
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: ${props => props.fontSize ? props.fontSize : '19'}px;
+  line-height: ${props => props.fontSize ? props.fontSize : '19'}px;
+  color: #404950;
+`;
+
+const FormRow = styled(Row)`
+  justify-content: space-between;
+  margin-bottom: ${props => props.marginbottom ? props.marginbottom : '0'}px;
+`;
+
+const FormItem = styled.div`
+  max-width: ${props => props.fullWidth ? '100%' : '265px'};
+  width: 100%;
+  .ant-form-item {
+    margin-bottom: 15px;
+  }
+`;
+
+const ProductCheckbox = styled(Checkbox)`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #EDEDED;
+  .ant-checkbox {
+    margin-left: 25px;
+  }
+  .ant-checkbox + span {
+    padding: 0;
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+  }
+  img {
+    border-radius: 5px;
+    margin-left: 23px;
+    margin-right: 10px;
+  }
+`;
+
+const VariantCheckbox = styled(Checkbox)`
+  width: 100%;
+  height: 50px;
+  display: flex;
+  border-bottom: 1px solid #EDEDED;
+  align-items: center;
+  .ant-checkbox {
+    margin-left: 55px;
+  }
+  .ant-checkbox + span {
+    padding: 0;
+    margin-left: 10px;
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+    width: 100%;
+    .info {
+      width: 100%;
+      display: flex;
+      span.quantity {
+        margin-left: auto;
+      }
+      span.price {
+        margin-right: 23px;
+        margin-left: 30px;
+      }
+    }
+  }
+  img {
+    border-radius: 5px;
+    margin-left: 23px;
+    margin-right: 10px;
+  }
+`;
+
+const SummaryProductLine = styled.div`
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  background: #F6F8F9;
+  border-radius: 5px;
+  padding: 30px 25px;
+  border-bottom: 1px solid #EDEDED;
+  .price {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+  }
+  .product-image {
+    margin-right: 10px;
+  }
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+  }
+  .number-input {
+    width: 25%;
+    display: flex;
+    align-items: center;
+  }
+  .product-price {
+    width: 20%;
+    display: flex;
+    align-items: center;
+  }
+  .product-price-sum {
+    width: 20%;
+    display: flex;
+    align-items: center;
+  }
+  .sub-info {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 144.89%;
+    color: #83898D;
+  }
+`;
+
+const ProductCountInput = styled(InputNumber)`
+  width: 80px;
+  height: 45px;
+  background: #FFFFFF;
+  border: 1px solid #E4EAEE;
+  border-radius: 5px;
+  margin-right: 20px;
+  .ant-input-number-input {
+    height: 45px;
+  }
+`;
+
+const PaymentCard = styled.div`
+  width: 100%;
+  height: 211px;
+  display: flex;
+  justify-content: space-between;
+  background: #F6F8F9;
+  border-radius: 5px;
+  padding: 22px 20px 15px 25px;
+`;
+
+const NextStepButton = styled(Button)`
+  width: ${props => props.width ? props.width: '85'}px;
+  height: 30px;
+  background: #80CAFB;
+  border-radius: 5px;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 15px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+`;
+
+const NewCustomerForm = styled(Modal)`
+  width: 600px!important;
+  height: 615px;
+
+`;
+
 const mapStateToProps = (store) => {
   return {
     customerData: store.customerReducer.customerData,

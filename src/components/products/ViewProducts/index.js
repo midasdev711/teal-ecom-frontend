@@ -390,8 +390,6 @@ const ViewCustomers = (props) => {
 
   return (
     <ViewContent>
-      
-
       <InputTabs tabPosition={'top'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
         <TabPane tab="All" key="1">
           <ContentBox>
