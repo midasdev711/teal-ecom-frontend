@@ -11,6 +11,10 @@ export const GET_STORES = gql`
       StoreUserName
       StoreEmail
       StorePhone
+      StoreIndustry
+      StoreAlreadySelling
+      StoreCurrentSalesVolumne
+      StoreImages
       StoreWebsite
       StoreLocation
       StorePageID
@@ -27,6 +31,10 @@ export const CREATE_STORE_MUTATION = gql`
     $StoreUserName: String
     $StoreEmail: String
     $StorePhone: String
+    $StoreIndustry: String
+    $StoreAlreadySelling: String
+    $StoreCurrentSalesVolumne: String
+    $StoreImages: String
     $StoreWebsite: String
     $StoreLocation: String
     $StorePageID: String
@@ -39,6 +47,10 @@ export const CREATE_STORE_MUTATION = gql`
         StoreCategory: $StoreCategory
         StoreUserName: $StoreUserName
         StoreEmail: $StoreEmail
+        StoreIndustry: $StoreIndustry
+        StoreAlreadySelling: $StoreAlreadySelling
+        StoreCurrentSalesVolumne: $StoreCurrentSalesVolumne
+        StoreImages: $StoreImages
         StorePhone: $StorePhone
         StoreWebsite: $StoreWebsite
         StoreLocation: $StoreLocation
@@ -52,6 +64,10 @@ export const CREATE_STORE_MUTATION = gql`
       StoreCategory
       StoreUserName
       StoreEmail
+      StoreIndustry
+      StoreAlreadySelling
+      StoreCurrentSalesVolumne
+      StoreImages
       StorePhone
       StoreWebsite
       StoreLocation

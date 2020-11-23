@@ -78,7 +78,7 @@ export function StoriesDashboard(props) {
                             view="59k"
                             onClick={() => handleDefaultAction("stories", item._id)}
                             chartData={[65, 45, 80, 81, 77, 90, 40]}
-                            image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
+                            image={<img alt="unfulied" src={item.BlogPicture.split(', ')[0]} />}
                         ></DashboardCard>
                     )) }  
                     <DashboardCard
