@@ -314,33 +314,67 @@ const newForm = (props) => {
     setStep('' + e);
   }
 
+  const nextStep = () => {
+    let currentStep = parseInt(step);
+    if (currentStep < 4) {
+      setStep('' + (currentStep + 1));
+    } else {
+      props.saveData();
+    }
+  }
+
   let products = props.productLists;
 
   const productsShow = products.map((product, index) => {
-    console.log('variants', product.variants);
     const onChange = (e, product, variant) => {
       let tmp = Object.assign([], selectedProducts);
       if (e.target.checked) {
         if (variant === true) {
-          tmp.push(product)
+          if (product.variants.length > 0) {
+            for (let i = 0; i < product.variants.length; i ++) {
+              let tmpProduct = Object.assign({}, product);
+              let newId = product._id + product.variants[i].variant;
+              if (selectedProducts.filter(item => item.newId == newId).length == 0) {
+                tmpProduct['subInfo'] = product.variants[i];
+                tmpProduct['newId'] = newId;
+                tmpProduct['count'] = 1;
+                tmp.push(tmpProduct);
+              }
+            }
+          } else {
+            let tmpProduct = Object.assign({}, product);
+            tmpProduct['newId'] = product._id;
+            tmpProduct['count'] = 1;
+            tmp.push(tmpProduct)
+          }
         } else {
           let tmpProduct = Object.assign({}, product);
           let tmpVariant = Object.assign({}, variant);
-          delete tmpProduct['variants']
-          if (selectedProducts.filter(item => item._id == product._id).length > 0) {
-            tmpProduct['variants'].push(tmpVariant);
-          } else {
-            tmpProduct['variants'] = [variant]
-          }
+          let newId = tmpProduct._id + variant.variant;
+          tmpProduct['subInfo'] = tmpVariant;
+          tmpProduct['newId'] = newId;
+          tmpProduct['count'] = 1;
+          tmp.push(tmpProduct);          
         }
       } else {
-
+        let newId = variant == true ? product._id + variant.variant : product._id;
+        let index = 0;
+        for (let i = 0; i < selectedProducts.length; i ++) {
+          if (newId == selectedProducts[i].newId) {
+            index = i;
+            break;
+          }
+        }
+        tmp.splice(index, 1);
       }
+      setSelectedProducts(tmp);
     }
     const variantsShow = product.variants.map((variant, variantIndex) => {
+      let newId = product._id + variant.variant;
+      let selected = selectedProducts.filter(item => item.newId == newId).length > 0 ? true : false;
       return (
-        <div key={'variant' + variantIndex}>
-          <VariantCheckbox onChange={(e) => onChange(e, product, variant)}>
+        <div key={product._id + 'variant' + variantIndex}>
+          <VariantCheckbox checked={selected} onChange={(e) => onChange(e, product, variant)}>
             <div className="info">
               <span>{variant.variant}</span>
               <span className="quantity">{variant.quantity} available</span>
@@ -350,10 +384,24 @@ const newForm = (props) => {
         </div>
         )
     })
+    let selected;
+    if (product.variants.length == 0) {
+      selected = selectedProducts.filter(item => item.newId == product._id).length > 0 ? true : false;
+    } else {
+      let allChecked = true;
+      for (let i = 0; i < product.variants.length; i ++) {
+        let newId = product._id + product.variants[i].variant;
+        if (selectedProducts.filter(item => item.newId == newId).length == 0) {
+          allChecked = false;
+          break;
+        }
+      }
+      selected = allChecked;
+    }
     return (
-      <div key={'product' + product._id}>
+      <div key={'product' + product._id + index}>
         <div>
-          <ProductCheckbox onChange={(e) => onChange(e, product, true)}>
+          <ProductCheckbox checked={selected} onChange={(e) => onChange(e, product, true)}>
             <img src={product.thumbnailImage} width="30px" height="30px" />
             <span>{product.title}</span>
           </ProductCheckbox>
@@ -362,6 +410,55 @@ const newForm = (props) => {
           {variantsShow}
         </div>
       </div>
+      )
+  });
+
+  const selectedProductsShow = selectedProducts.map((product, index) => {
+    const onProductCountChange = (e) => {
+      let tmp = Object.assign([], selectedProducts);
+      let index;
+      for (let i = 0; i < selectedProducts.length; i ++) {
+        if (product.newId == selectedProducts[i].newId) {
+          index = i;
+          break;
+        }
+      }
+      tmp[index].count = e;
+      setSelectedProducts(tmp);
+    }
+
+    const removeSelectedProduct = () => {
+      let tmp = Object.assign([], selectedProducts);
+      let index;
+      for (let i = 0; i < selectedProducts.length; i ++) {
+        if (product.newId == selectedProducts[i].newId) {
+          index = i;
+          break;
+        }
+      }
+      tmp.splice(index, 1);
+      setSelectedProducts(tmp);
+    }
+    return (
+      <SummaryProductLine key={product.newId}>
+        <div className="product-image">
+          <img src={product.thumbnailImage} width="40px" height="40px" />
+        </div>
+        <div className="product-info">
+          <span className="title price">{product.title}</span>
+          <span className="sub-info">{product.subInfo ? product.subInfo.variant : ''}</span>
+        </div>
+        <div className="product-price price">
+          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+        </div>
+        <div className="number-input price">
+          <span>X</span> &nbsp; <ProductCountInput min={1} defaultValue={1} onChange={(e) => onProductCountChange(e)}></ProductCountInput>
+        </div>
+        <div className="product-price-sum">
+          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+        </div>
+        <CloseOutlined onClick={() => removeSelectedProduct()} />
+      </SummaryProductLine>
       )
   });
 
@@ -380,7 +477,7 @@ const newForm = (props) => {
             <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
             {
               products && products.length > 0 && 
-                <p>{productsShow}</p>
+                productsShow
             }
           </ContentBox>
 
@@ -475,12 +572,72 @@ const newForm = (props) => {
         <TabPane tab="Summary" key="3">
           <ContentBox>
             <SubFormTitle>Order Summary</SubFormTitle>
-
+            {
+              selectedProductsShow
+            }
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Payment" key="4">
+          <ContentBox>
+            <SubFormTitle>Payment</SubFormTitle>
+            <PaymentCard>
+              <div>
+                <Popover
+                  content={AddDiscount}
+                  placement="bottomRight"
+                  trigger="click"
+                  className="new-order"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Add discount</ContentTitle>
+                </Popover>
+                <p>SubTotal</p>
+                <Popover
+                  content={AddShipment}
+                  placement="bottom"
+                  trigger="click"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Add shipment</ContentTitle>
+                </Popover>
+                <Popover
+                  content={Taxes}
+                  placement="bottomRight"
+                  trigger="click"
+                // visible={true}
+                // onVisibleChange={handleVisibleChange}
+                >
+                  <ContentTitle>Taxes</ContentTitle>
+                </Popover>
+                <Total>Total</Total>
+              </div>
+              <div className="price">
+                <p>-</p>
+                <p>${subTotal}</p>
+                <p>-</p>
+                <p>$0.00</p>
+                <Total>${subTotal}</Total>
+              </div>
+            </PaymentCard>
           </ContentBox>
         </TabPane>
       </InputTabs>
 
-      <SubForm>
+      <ActionBottom>
+        {
+          step == "4" ?
+          <NextStepButton type="primary" onClick={() => nextStep()}>
+            Complete
+          </NextStepButton> :
+          <NextStepButton type="primary" onClick={() => nextStep()}>
+            Next
+          </NextStepButton>
+        }
+      </ActionBottom>
+
+      {/* <SubForm>
         <Row gutter={24}>
           <Col md={16}>
             <Row gutter={24}>
@@ -553,45 +710,7 @@ const newForm = (props) => {
                         <TextInput placeholder="Add a note..." value={Notes} onChange={(e) => handleChangeValue(e, 'Notes')} />
                       </Form.Item>
                     </Col>
-                    <Col className="title" md={6}>
-                      <Popover
-                        content={AddDiscount}
-                        placement="bottomRight"
-                        trigger="click"
-                        className="new-order"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Add discount</ContentTitle>
-                      </Popover>
-                      <p>SubTotal</p>
-                      <Popover
-                        content={AddShipment}
-                        placement="bottom"
-                        trigger="click"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Add shipment</ContentTitle>
-                      </Popover>
-                      <Popover
-                        content={Taxes}
-                        placement="bottomRight"
-                        trigger="click"
-                      // visible={true}
-                      // onVisibleChange={handleVisibleChange}
-                      >
-                        <ContentTitle>Taxes</ContentTitle>
-                      </Popover>
-                      <Total>Total</Total>
-                    </Col>
-                    <Col className="price" md={6}>
-                      <p>-</p>
-                      <p>${subTotal}</p>
-                      <p>-</p>
-                      <p>$0.00</p>
-                      <Total>${subTotal}</Total>
-                    </Col>
+                    
                   </Row>
                 </ContentBox>
               </Col>
@@ -671,7 +790,7 @@ const newForm = (props) => {
             </ContentBox>
           </Col>
         </Row>
-      </SubForm>
+      </SubForm> */}
 
       <MDSelectProducts
         isOpen={isOpenSelectProduct}
@@ -1247,6 +1366,92 @@ const VariantCheckbox = styled(Checkbox)`
     margin-left: 23px;
     margin-right: 10px;
   }
+`;
+
+const SummaryProductLine = styled.div`
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  background: #F6F8F9;
+  border-radius: 5px;
+  padding: 30px 25px;
+  border-bottom: 1px solid #EDEDED;
+  .price {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 144.89%;
+    color: #404950;
+  }
+  .product-image {
+    margin-right: 10px;
+  }
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+  }
+  .number-input {
+    width: 25%;
+    display: flex;
+    align-items: center;
+  }
+  .product-price {
+    width: 20%;
+    display: flex;
+    align-items: center;
+  }
+  .product-price-sum {
+    width: 20%;
+    display: flex;
+    align-items: center;
+  }
+  .sub-info {
+    font-family: Proxima Nova;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 144.89%;
+    color: #83898D;
+  }
+`;
+
+const ProductCountInput = styled(InputNumber)`
+  width: 80px;
+  height: 45px;
+  background: #FFFFFF;
+  border: 1px solid #E4EAEE;
+  border-radius: 5px;
+  margin-right: 20px;
+  .ant-input-number-input {
+    height: 45px;
+  }
+`;
+
+const PaymentCard = styled.div`
+  width: 100%;
+  height: 211px;
+  display: flex;
+  justify-content: space-between;
+  background: #F6F8F9;
+  border-radius: 5px;
+  padding: 22px 20px 15px 25px;
+`;
+
+const NextStepButton = styled(Button)`
+  width: ${props => props.width ? props.width: '85'}px;
+  height: 30px;
+  background: #80CAFB;
+  border-radius: 5px;
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 15px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
 `;
 
 const mapStateToProps = (store) => {

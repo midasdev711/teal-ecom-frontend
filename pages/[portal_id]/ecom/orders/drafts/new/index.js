@@ -142,7 +142,7 @@ const NewOrder = (props) => {
             </Link> */}
             <TitleHeader>Create order</TitleHeader>
           </ContentHeader>
-          <NewForm Products={Products} OrderAmount={OrderAmount} ShippingAddresss={ShippingAddress} DeliveryAddress={DeliveryAddress} PaymentMethod={PaymentMethod} TransactionID={TransactionID} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} />
+          <NewForm Products={Products} OrderAmount={OrderAmount} ShippingAddresss={ShippingAddress} DeliveryAddress={DeliveryAddress} PaymentMethod={PaymentMethod} TransactionID={TransactionID} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} saveData={() => saveData()} />
         </ContentPage>
       </NewContent>
     </NewPageLayout>
