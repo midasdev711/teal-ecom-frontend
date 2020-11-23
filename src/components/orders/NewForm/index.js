@@ -46,6 +46,7 @@ import {
 } from "../Modal";
 import { getCustomers } from "../../../redux/actions/customers";
 import { getUserProductLists } from "../../../redux/actions/product";
+import NewForm from '../../customers/NewForm';
 // import { customer } from "../fakeData";
 
 const { Search } = Input;
@@ -72,6 +73,7 @@ const newForm = (props) => {
     name: null
   });
   const [openViewTagsPopup, setOpenViewTagsPopup] = useState(false);
+  const [newCustomerForm, setNewCustomerForm] = useState(false);
 
   useEffect(() => {
     getCustomersCall();
@@ -462,6 +464,59 @@ const newForm = (props) => {
       )
   });
 
+  const closeNewCustomerForm = () => {
+    setNewCustomerForm(false);
+  }
+
+  const openNewCustomerForm = () => {
+    setNewCustomerForm(true);
+  }
+
+  const [BasicDetails, setBasicDetails] = useState({
+    FullName: '',
+    Email: '',
+    Mobile: '',
+  });
+  const [AddressDetails, setAddressDetails] = useState({
+    Address: '',
+    Apartment: '',
+    City: '',
+    Country: '',
+    State: '',
+    PostalCode: '',
+  });
+  // const [TaxFlag, setTaxFlag] = useState(false);
+  // const [Tax, setTax] = useState(0);
+  // const [Notes, setNotes] = useState('');
+  // const [Tags, setTags] = useState('');
+
+  const handleCustomerFormChangeValue = (e, module, element) => {
+    console.log('dfdfdf', e.target, e, module)
+    if (module === 'BasicDetails') {
+      if (element === 'Mobile') {
+        setBasicDetails({ ...BasicDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setBasicDetails({ ...BasicDetails, [name]: value })
+      }
+    } else if (module === 'AddressDetails') {
+      if (element === 'Mobile' || element === 'Country') {
+        setAddressDetails({ ...AddressDetails, [element]: e })
+      } else {
+        let { name, value } = e.target
+        setAddressDetails({ ...AddressDetails, [name]: value })
+      }
+    } else {
+      let { name, value } = e.target
+      // if (name === 'TaxFlag') {
+      //   setTaxFlag(e.target.checked)
+      // } else if (name === 'Notes') {
+      //   setNotes(e.target.value)
+      // }
+    }
+
+  }
+
   return (
     <FormLayout
       name="basic"
@@ -484,7 +539,7 @@ const newForm = (props) => {
         </TabPane>
         <TabPane tab="Customer" key="2">
         <ContentBox>
-          <SubFormTitle>Select a customer or create one</SubFormTitle>
+          <SubFormTitle>Select a customer or <a onClick={() => openNewCustomerForm()}>create one</a></SubFormTitle>
           <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
           {Object.keys(ShippingAddresss).length === 0 && (
               <ContentBox>
@@ -628,7 +683,7 @@ const newForm = (props) => {
       <ActionBottom>
         {
           step == "4" ?
-          <NextStepButton type="primary" onClick={() => nextStep()}>
+          <NextStepButton width={100} type="primary" onClick={() => nextStep()}>
             Complete
           </NextStepButton> :
           <NextStepButton type="primary" onClick={() => nextStep()}>
@@ -636,6 +691,14 @@ const newForm = (props) => {
           </NextStepButton>
         }
       </ActionBottom>
+
+      <NewCustomerForm
+        title={null}
+        visible={newCustomerForm}
+        onCancel={() => closeNewCustomerForm()}
+      >
+        <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} /* TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} */ handleChangeValue={handleCustomerFormChangeValue}/>
+      </NewCustomerForm>
 
       {/* <SubForm>
         <Row gutter={24}>
@@ -1452,6 +1515,12 @@ const NextStepButton = styled(Button)`
   line-height: 15px;
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
+`;
+
+const NewCustomerForm = styled(Modal)`
+  width: 600px!important;
+  height: 615px;
+
 `;
 
 const mapStateToProps = (store) => {
