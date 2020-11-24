@@ -1,8 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import { Radio, Input, Button, Col, Row } from "antd";
 
-const AddShipment = () => {
+const AddShipment = (props) => {
+  const [shippingRate, setShippingRate] = useState({name: 'free', rate: 0});
+
+  const onCustomNameChange = (name, value="") => {
+    console.log(name, value)
+    let tmp = Object.assign({}, shippingRate);
+    tmp[name] = value;
+    setShippingRate(tmp)
+  }
   return (
     <RetesPopover>
       <RatesShiping>
@@ -16,22 +24,22 @@ const AddShipment = () => {
               calculated shipping rates
             </p>
           </NextNoticeTates>
-          <Radio.Group>
-            <StyledRadio value={1}>Free shipping</StyledRadio>
-            <StyledRadio value={2}>Custom</StyledRadio>
+          <Radio.Group onChange={(e) => onCustomNameChange('name', e.target.value)} >
+            <StyledRadio value={'free'}>Free shipping</StyledRadio>
+            <StyledRadio value={'custom'}>Custom</StyledRadio>
           </Radio.Group>
           <InputRetes>
             <Col md={14} className="customer">
-              <Input size="large" type="text" placeholder="Custom rate name" />
+              <Input size="large" type="text" placeholder="Custom rate name" disabled={shippingRate.name == 'free'} onChange={e => onCustomNameChange('name', e.target.value)}/>
             </Col>
             <Col md={8}>
-              <Input size="large" type="text" placeholder="$" />
+              <Input size="large" type="text" placeholder="$" disabled={shippingRate.name == 'free'} onChange={e => onCustomNameChange('rate', e.target.value)}/>
             </Col>
           </InputRetes>
         </PopoversectionRetes>
         <div className="button-bottom">
-          <Button size="large">Close</Button>
-          <Button size="large" type="primary">Apply</Button>
+          <Button size="large" onClick={() => props.onClose()}>Close</Button>
+          <Button size="large" type="primary" onClick={() => props.onOk(shippingRate)}>Apply</Button>
         </div>
       </RatesShiping>
     </RetesPopover>
@@ -50,7 +58,6 @@ const RatesShiping = styled.div`
 const RetesPopover = styled.div`
   width: 550px;
   background-color: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 2px 7px 1px rgba(39, 44, 48, 0.16);
   border-radius: 3px;
 `;
 

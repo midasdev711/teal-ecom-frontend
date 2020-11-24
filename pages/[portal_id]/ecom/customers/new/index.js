@@ -10,7 +10,7 @@ import { NewForm } from "../../../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 import { getUserData } from "../../../../../src/utils";
-import { AddCustomers  , resetCustomerStatus } from "../../../../../src/redux/actions/customers";
+import { AddCustomers, resetCustomerStatus } from "../../../../../src/redux/actions/customers";
 
 const NewCustomer = (props) => {
   let userData = getUserData()

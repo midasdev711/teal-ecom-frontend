@@ -130,7 +130,7 @@ const NewForm = (props) => {
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_country">
-                    <CountryDropdown
+                    <FormCountDropdown
                       defaultOptionLabel="Country/Region"
                       onChange={(e) => handleChangeValue(e, 'AddressDetails', 'Country')} name='Country'
                       value={AddressDetails.Country}
@@ -153,7 +153,7 @@ const NewForm = (props) => {
                 </Col>
                 <Col md={12}>
                   <Form.Item name="address_postal_code">
-                    <TextInput placeholder="Postal code" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='PostalCode'
+                    <TextInput placeholder="Postal/Zip" onChange={(e) => handleChangeValue(e, 'AddressDetails')} name='PostalCode'
                       value={AddressDetails.PostalCode} />
                   </Form.Item>
                 </Col>
@@ -253,19 +253,23 @@ const NewForm = (props) => {
 
 const SubForm = styled.div`
   padding: 24px 0;
-  .react-tel-input input {
-    width: 100% !important;
-    padding: 18px 50px;
-  }
-  .country-region {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
 `;
 
 const ContentBox = styled.div`
+  .react-tel-input {
+    height: 45px;
+    border: none;
+    background-color: #F6F8F9;
+    input {
+      height: 45px;
+      width: 100%;
+      border: none;
+      background-color: #F6F8F9;
+    }
+    .flag-dropdown {
+      border: none;
+    }
+  }
 `;
 
 const DesCheckbox = styled.p`
@@ -300,9 +304,22 @@ const SubFormTitle = styled.p`
   color: #404950;
 `;
 
-const DescriptBox = styled.h4`
-  width: 80%;
-  font-size: 14px;
+const FormCountDropdown = styled(CountryDropdown)`
+  max-width: ${props => props.maxWidth ? props.maxWidth : 265}px;
+  width: 100%;
+  text-align: left;
+  background-color: #F6F8F9!important;
+  height: 45px!important;
+  border: none!important;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 17px;
+  color: #404950;
+`;
+
+const FormSelectOption = styled(Option)`
+  max-width: 240px;
+  height: 45px;
 `;
 
 export default NewForm;

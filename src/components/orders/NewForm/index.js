@@ -44,9 +44,10 @@ import {
   EditEmail,
   ShippingAddress,
 } from "../Modal";
-import { getCustomers } from "../../../redux/actions/customers";
+import { AddCustomers, resetCustomerStatus, getCustomers } from "../../../redux/actions/customers";
 import { getUserProductLists } from "../../../redux/actions/product";
 import NewForm from '../../customers/NewForm';
+import CustomerFilters from '../../customers/Filters';
 // import { customer } from "../fakeData";
 
 const { Search } = Input;
@@ -96,7 +97,7 @@ const newForm = (props) => {
     const customer = props.customerData === undefined ? [] : props.customerData
     const [customerdata, setCustomerData] = useState([]);
     const UpdateData = () => {
-      setCustomerData(customer.filter((res) => !res.BasicDetailsFirstName.search(data)));
+      setCustomerData(customer.filter((res) => !res.BasicDetailsFullName.search(data)));
     };
 
     useEffect(() => {
@@ -114,7 +115,7 @@ const newForm = (props) => {
             <PopoverContent key={index} onClick={() => handleChangeValue(res, 'customer')}>
               <StyledAvatar src={res.profile_url} alt="profile image" />
               <div className="customer-infor">
-                <p>{res.BasicDetailsFirstName}</p>
+                <p>{res.BasicDetailsFullName}</p>
                 <p>{res.BasicDetailsEmail}</p>
               </div>
             </PopoverContent>
@@ -330,6 +331,7 @@ const newForm = (props) => {
   const productsShow = products.map((product, index) => {
     const onChange = (e, product, variant) => {
       let tmp = Object.assign([], selectedProducts);
+      let tmpSubTotal = subTotal;
       if (e.target.checked) {
         if (variant === true) {
           if (product.variants.length > 0) {
@@ -341,6 +343,7 @@ const newForm = (props) => {
                 tmpProduct['newId'] = newId;
                 tmpProduct['count'] = 1;
                 tmp.push(tmpProduct);
+                tmpSubTotal += product.variants[i].price;
               }
             }
           } else {
@@ -348,6 +351,7 @@ const newForm = (props) => {
             tmpProduct['newId'] = product._id;
             tmpProduct['count'] = 1;
             tmp.push(tmpProduct)
+            tmpSubTotal += product.salePrice;
           }
         } else {
           let tmpProduct = Object.assign({}, product);
@@ -356,19 +360,52 @@ const newForm = (props) => {
           tmpProduct['subInfo'] = tmpVariant;
           tmpProduct['newId'] = newId;
           tmpProduct['count'] = 1;
-          tmp.push(tmpProduct);          
+          tmp.push(tmpProduct);
+          tmpSubTotal += tmpVariant.price;
         }
       } else {
-        let newId = variant == true ? product._id + variant.variant : product._id;
-        let index = 0;
-        for (let i = 0; i < selectedProducts.length; i ++) {
-          if (newId == selectedProducts[i].newId) {
-            index = i;
-            break;
+        let newId = variant == true ? product._id : product._id + variant.variant;
+        
+        if (variant == true) {
+          if (product.variants.length > 0) {
+            for (let i = 0; i < product.variants.length; i ++) {
+              let newId = product._id + product.variants[i].variant;
+              let index = 0;
+              for (let j = 0; j < tmp.length; j ++) {
+                if (newId == tmp[j].newId) {
+                  index = j;
+                  break;
+                }
+              }
+              tmpSubTotal -= tmp[index].subInfo.price * tmp[index].count;
+              tmp.splice(index, 1);
+            }
+          } else {
+            let newId = product._id;
+            let index = 0;
+            for (let j = 0; j < selectedProducts.length; j ++) {
+              if (newId == selectedProducts[j].newId) {
+                index = j;
+                break;
+              }
+            }
+            tmpSubTotal -= selectedProducts[index].salePrice * selectedProducts[index].count;
+            tmp.splice(index, 1);
           }
+        } else {
+          let newId = product._id + variant.variant;
+          let index = 0;
+          for (let j = 0; j < selectedProducts.length; j ++) {
+            if (newId == selectedProducts[j].newId) {
+              index = j;
+              break;
+            }
+          }
+          tmpSubTotal -= selectedProducts[index].subInfo.price * selectedProducts[index].count;
+          tmp.splice(index, 1);
         }
-        tmp.splice(index, 1);
       }
+      setSubTotal(tmpSubTotal);
       setSelectedProducts(tmp);
     }
     const variantsShow = product.variants.map((variant, variantIndex) => {
@@ -426,6 +463,11 @@ const newForm = (props) => {
         }
       }
       tmp[index].count = e;
+      let tmpSubTotal = 0;
+      tmp.map(item => {
+        tmpSubTotal += item.subInfo ? item.subInfo.price * item.count : item.salePrice * item.count
+      });
+      setSubTotal(tmpSubTotal);
       setSelectedProducts(tmp);
     }
 
@@ -439,6 +481,11 @@ const newForm = (props) => {
         }
       }
       tmp.splice(index, 1);
+      let tmpSubTotal = 0;
+      tmp.map(item => {
+        tmpSubTotal += item.subInfo ? item.subInfo.price * item.count : item.salePrice * item.count
+      });
+      setSubTotal(tmpSubTotal);
       setSelectedProducts(tmp);
     }
     return (
@@ -491,7 +538,6 @@ const newForm = (props) => {
   // const [Tags, setTags] = useState('');
 
   const handleCustomerFormChangeValue = (e, module, element) => {
-    console.log('dfdfdf', e.target, e, module)
     if (module === 'BasicDetails') {
       if (element === 'Mobile') {
         setBasicDetails({ ...BasicDetails, [element]: e })
@@ -508,13 +554,101 @@ const newForm = (props) => {
       }
     } else {
       let { name, value } = e.target
-      // if (name === 'TaxFlag') {
-      //   setTaxFlag(e.target.checked)
-      // } else if (name === 'Notes') {
-      //   setNotes(e.target.value)
-      // }
     }
+  }
 
+  const handleOk = () => {
+    let _variables = {
+      BasicDetailsFullName: BasicDetails.FullName,
+      BasicDetailsEmail: BasicDetails.Email,
+      BasicDetailsMobile: BasicDetails.Mobile,
+      AddressDetailsAddress: AddressDetails.Address,
+      AddressDetailsApartment: AddressDetails.Apartment,
+      AddressDetailsCity: AddressDetails.City,
+      AddressDetailsCountry: AddressDetails.Country,
+      AddressDetailsPostalCode: AddressDetails.PostalCode,
+      AddressDetailsState: AddressDetails.State,
+    };
+    props.AddCustomers(_variables)
+    setNewCustomerForm(false);
+  }
+
+  const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
+
+  const showCustomerFilter = () => {
+    setOpenMoreFilters(true);
+  }
+
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+
+  const customerDisplay = (props.customerData || []).map((customer, index) => {
+    const onChange = (e) => {
+      console.log(customer);
+      let tmp = Object.assign([], selectedCustomers);
+      if (e.target.checked) {
+        tmp.push(customer);
+      } else {
+        let index;
+        for (let i = 0; i < selectedCustomers.length; i ++) {
+          if (selectedCustomers[i]._id == customer._id) {
+            index = i;
+          }
+        }
+        tmp.splice(index, 1);
+      }
+      setSelectedCustomers(tmp);
+    }
+    let selected = selectedCustomers.filter(item => item._id == customer._id).length > 0;
+    return (
+    <div key={index}>
+      <CustomerCheckbox checked={selected} onChange={(e) => onChange(e, customer)}>
+        <div className="info">
+          <span className="fullname">{customer.BasicDetailsFullName}</span>
+          <span className="email">{customer.BasicDetailsEmail}</span>
+        </div>
+      </CustomerCheckbox>
+    </div>)
+  })
+
+  const [discountPop, showDiscountPop] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountReason, setDiscountReason] = useState("");
+  const [discountMode, setDiscountMode] = useState(true);
+
+  const applyDiscount = (discountMode, discountAmount, discountReason) => {
+    console.log("discount", discountMode, discountAmount, discountReason)
+    setDiscountAmount(discountAmount)
+    setDiscountReason(discountReason)
+    setDiscountMode(discountMode)
+    showDiscountPop(false);
+  }
+
+  const onShowDiscountPop = (show) => {
+    showDiscountPop(show);
+  }
+
+  const [taxes, setTaxes] = useState(true);
+  const [taxPop, showTaxPop] = useState(false);
+
+  const applyTax = (charge) => {
+    setTaxes(charge);
+    showTaxPop(false);
+  }
+
+  const onShowTaxPop = (show) => {
+    showTaxPop(show);
+  }
+
+  const [shippingRate, setShippingRate] = useState({name: "free", rate: 0});
+  const [shippingPop, showShippingPop] = useState(false);
+
+  const onSetShippingRate = (param) => {
+    setShippingRate(param);
+    showShippingPop(false);
+  }
+
+  const onShowShippingPop = (show) => {
+    showShippingPop(show);
   }
 
   return (
@@ -541,7 +675,10 @@ const newForm = (props) => {
         <ContentBox>
           <SubFormTitle>Select a customer or <a onClick={() => openNewCustomerForm()}>create one</a></SubFormTitle>
           <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
-          {Object.keys(ShippingAddresss).length === 0 && (
+          {/* <CustomerFilters onOpen={() => showCustomerFilter()}/> */}
+          {customerDisplay}
+
+          {/* {Object.keys(ShippingAddresss).length === 0 && (
               <ContentBox>
                 <TitleBox>Find and Create customer </TitleBox>
                 <Popover
@@ -621,7 +758,7 @@ const newForm = (props) => {
                   <p>{DeliveryAddress.AddressDetailsCountry}</p>
                 </ContentBox>
               </>
-            )}
+            )} */}
            </ContentBox>
         </TabPane>
         <TabPane tab="Summary" key="3">
@@ -638,42 +775,39 @@ const newForm = (props) => {
             <PaymentCard>
               <div>
                 <Popover
-                  content={AddDiscount}
+                  content={<AddDiscount onClose={() => onShowDiscountPop(false)} applyDiscount={(discountMode, discountAmount, discountReason) => applyDiscount(discountMode, discountAmount, discountReason)}/>}
                   placement="bottomRight"
                   trigger="click"
                   className="new-order"
-                // visible={true}
-                // onVisibleChange={handleVisibleChange}
+                  visible={discountPop}
                 >
-                  <ContentTitle>Add discount</ContentTitle>
+                  <ContentTitle color={"#0095F8"} onClick={() => onShowDiscountPop(true)}>Add discount</ContentTitle>
                 </Popover>
-                <p>SubTotal</p>
+                <ContentTitle>SubTotal</ContentTitle>
                 <Popover
-                  content={AddShipment}
+                  content={<AddShipment onClose={() => onShowShippingPop(false)} onOk={(e) => onSetShippingRate(e)} />}
                   placement="bottom"
                   trigger="click"
-                // visible={true}
-                // onVisibleChange={handleVisibleChange}
+                  visible={shippingPop}
                 >
-                  <ContentTitle>Add shipment</ContentTitle>
+                  <ContentTitle color={"#0095F8"} onClick={() => onShowShippingPop(true)}>Add shipment</ContentTitle>
                 </Popover>
                 <Popover
-                  content={Taxes}
+                  content={<Taxes onClose={() => onShowTaxPop(false)} onOk={(e) => applyTax(e)}/>}
                   placement="bottomRight"
                   trigger="click"
-                // visible={true}
-                // onVisibleChange={handleVisibleChange}
+                  visible={taxPop}
                 >
-                  <ContentTitle>Taxes</ContentTitle>
+                  <ContentTitle color={"#0095F8"} marginbottom={30} onClick={() => onShowTaxPop(true)}>Taxes</ContentTitle>
                 </Popover>
-                <Total>Total</Total>
+                <ContentTitle fontWeight={'bold'} >Total</ContentTitle>
               </div>
               <div className="price">
-                <p>-</p>
-                <p>${subTotal}</p>
-                <p>-</p>
-                <p>$0.00</p>
-                <Total>${subTotal}</Total>
+                <ContentTitle align={"right"}>{discountAmount ? '-$' + (discountMode ? discountAmount : (subTotal * discountAmount / 100).toFixed(2)) : '-'}</ContentTitle>
+                <ContentTitle align={"right"}>${subTotal}</ContentTitle>
+                <ContentTitle align={"right"}>{shippingRate.rate > 0 ? '$' + shippingRate.rate : '-'}</ContentTitle>
+                <ContentTitle align={"right"} marginbottom={30}>$0.00</ContentTitle>
+                <ContentTitle align={"right"} fontWeight={'bold'}>${subTotal}</ContentTitle>
               </div>
             </PaymentCard>
           </ContentBox>
@@ -696,6 +830,16 @@ const newForm = (props) => {
         title={null}
         visible={newCustomerForm}
         onCancel={() => closeNewCustomerForm()}
+        footer={[
+          <div>
+            <Button key="back" className="cancel-button" onClick={() => closeNewCustomerForm()}>
+              Cancel
+            </Button>
+            <Button key="submit" className="save-button" type="primary" onClick={() => handleOk()}>
+              Save
+            </Button>
+          </div>
+        ]}
       >
         <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} /* TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} */ handleChangeValue={handleCustomerFormChangeValue}/>
       </NewCustomerForm>
@@ -1212,13 +1356,15 @@ const ContentLabel = styled.span`
 `;
 
 const ContentTitle = styled.h4`
-  color: rgb(0, 122, 206);
+  font-family: Proxima Nova;
+  font-style: normal;
+  font-weight: ${(props) => (props.fontWeight ? props.fontWeight : "normal")};
   font-size: 14px;
+  line-height: 16px;
   cursor: pointer;
-  text-align: ${(props) => (props.align ? props.align : "right")};
-  font-weight: 400;
-  margin-bottom: 5px;
-  line-height: 2rem;
+  text-align: ${(props) => (props.align ? props.align : "left")};
+  margin-bottom: ${(props) => (props.marginbottom ? props.marginbottom : "20")}px;
+  color: ${props => props.color ? props.color : '#404950'};
 `;
 
 const PaymentSection = styled.div`
@@ -1431,6 +1577,43 @@ const VariantCheckbox = styled(Checkbox)`
   }
 `;
 
+const CustomerCheckbox = styled(Checkbox)`
+  width: 100%;
+  height: 60px;
+  display: flex;
+  border-bottom: 1px solid #EDEDED;
+  align-items: center;
+  .ant-checkbox {
+    margin-left: 25px;
+  }
+  .ant-checkbox + span {
+    padding: 0;
+    margin-left: 23px;
+    width: 100%;
+    .info {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      span.fullname {
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 144.89%;
+        color: #404950;
+      }
+      span.email {
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 144.89%;
+        color: #83898D;
+      }
+    }
+  }
+`;
+
 const SummaryProductLine = styled.div`
   width: 100%;
   height: 100px;
@@ -1520,7 +1703,32 @@ const NextStepButton = styled(Button)`
 const NewCustomerForm = styled(Modal)`
   width: 600px!important;
   height: 615px;
-
+  .ant-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-shadow: 0px -5px 30px rgba(64, 73, 80, 0.07);
+    button {
+      width: 85px;
+      height: 30px;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 15px;
+      line-height: 15px;
+      text-align: center;
+      &.save-button {
+        background: #80CAFB;
+        border-radius: 5px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      &.cancel-button {
+        color: #FF0000;
+        border: 1px solid #FF0000;
+        border-radius: 5px;
+      }
+    }
+  }
 `;
 
 const mapStateToProps = (store) => {
@@ -1531,7 +1739,9 @@ const mapStateToProps = (store) => {
 };
 const mapDispatchToProps = {
   getCustomers,
-  getUserProductLists
+  getUserProductLists,
+  AddCustomers,
+  resetCustomerStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);

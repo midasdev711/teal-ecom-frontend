@@ -34,8 +34,9 @@ const NewOrder = (props) => {
         productSalePrice: data.salePrice,
         productTotalQuantity: data.totalQuantity,
         productVariantObject: {
-          variantName: data.variants.variantName,
-          variantValues: data.variants.variantName
+          variant: data.variants.variant,
+          quantity: data.variants.quantity,
+          price: data.variants.price
         }
       }
       pro_data.push(dat)
@@ -49,20 +50,16 @@ const NewOrder = (props) => {
       OrderAmount: OrderAmount,
       ShippingAddress:
       {
-        BasicDetailsFirstName: ShippingAddress.BasicDetailsFirstName,
-        BasicDetailsLastName: ShippingAddress.BasicDetailsLastName,
-        AddressDetailsCompany: ShippingAddress.AddressDetailsCompany,
-        AddressDetailsMobile: ShippingAddress.AddressDetailsMobile,
+        BasicDetailsFullName: ShippingAddress.BasicDetailsFullName,
+        AddressDetailsState: ShippingAddress.AddressDetailsState,
         AddressDetailsApartment: ShippingAddress.AddressDetailsApartment,
         AddressDetailsCity: ShippingAddress.AddressDetailsCity,
         AddressDetailsCountry: ShippingAddress.AddressDetailsCountry,
         AddressDetailsPostalCode: ShippingAddress.AddressDetailsPostalCode
       },
       DeliveryAddress: {
-        BasicDetailsFirstName: DeliveryAddress.BasicDetailsFirstName,
-        BasicDetailsLastName: DeliveryAddress.BasicDetailsLastName,
-        AddressDetailsCompany: DeliveryAddress.AddressDetailsCompany,
-        AddressDetailsMobile: DeliveryAddress.AddressDetailsMobile,
+        BasicDetailsFullName: DeliveryAddress.BasicDetailsFullName,
+        AddressDetailsState: DeliveryAddress.AddressDetailsState,
         AddressDetailsApartment: DeliveryAddress.AddressDetailsApartment,
         AddressDetailsCity: DeliveryAddress.AddressDetailsCity,
         AddressDetailsCountry: DeliveryAddress.AddressDetailsCountry,
@@ -116,12 +113,11 @@ const NewOrder = (props) => {
             <Button className="cancel" size="large">
               <Link href="/[portal_id]/ecom/orders" as={`/${userData?.uniqueID}/ecom/orders`} shallow={true}>
                 <a>Discard</a>
-
               </Link>
             </Button>
             <Button size="large" type="primary" onClick={() => saveData()}>
               Save
-              </Button>
+            </Button>
           </NewOrderAction>
         </ActionContent>
       </ActionTopLayout>

@@ -1,16 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Input, Button } from "antd";
 
-const AddDiscount = () => {
+const AddDiscount = (props) => {
+  const [discountMode, setDiscountMode] = useState(true);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountReason, setDiscountReason] = useState("");
+
+  const onDiscountModeChange = (mode) => {
+    setDiscountMode(mode);
+  }
+
+  const onDiscountAmountChange = (amount) => {
+    setDiscountAmount(amount);
+  }
+
+  const onDiscountReasonChange = (reason) => {
+    setDiscountReason(reason);
+  }
   return (
     <DiscountPopover>
       <DiscountBy>
         <p className="name-discount-blog">Discount this order by</p>
         <PopoverButton className="popover-button">
-          <Button className="popover-button-1">$</Button>
-          <Button className="popover-button-2">%</Button>
-          <Input className="inpuy-div" type="text" placeholder="$ 0.00" />
+          <Button className="popover-button-1" onClick={() => onDiscountModeChange(true)}>$</Button>
+          <Button className="popover-button-2" onClick={() => onDiscountModeChange(false)}>%</Button>
+          <Input className="inpuy-div" type="text" placeholder="$ 0.00" onChange={(e) => onDiscountAmountChange(e.target.value)} />
         </PopoverButton>
         <div className="Reason">
           <p className="name-reason">Reason</p>
@@ -18,15 +33,16 @@ const AddDiscount = () => {
             className="loyalty-name"
             type="text"
             placeholder="Damaged item, loyalty discount"
+            onChange={(e) => onDiscountReasonChange(e.target.value)}
           />
         </div>
         <div className="border-set"></div>
         <ButtonDiscount>
           <div className="close-button">
-            <Button>Close</Button>
+            <Button onClick={() => props.onClose()}>Close</Button>
           </div>
           <div className="apply-button">
-            <Button type="primary">apply</Button>
+            <Button type="primary" onClick={() => props.applyDiscount(discountMode, discountAmount, discountReason)}>apply</Button>
           </div>
         </ButtonDiscount>
       </DiscountBy>
@@ -38,7 +54,6 @@ const DiscountPopover = styled.div`
   width:329px;
   padding:14px;
   background-color:  rgba(255,255,255,0.98);
-  box-shadow: 0 2px 7px 1px rgba(39,44,48,0.16);
   border-radius:3px;
 
   & .name-discount-blog{
