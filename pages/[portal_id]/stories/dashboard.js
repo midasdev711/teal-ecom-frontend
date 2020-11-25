@@ -70,17 +70,24 @@ export function StoriesDashboard(props) {
                 </BlogContainerHeader>
                 <BlogGroupContent>
 
-                    { blogsData && blogsData.map((item) => (
-                        <DashboardCard
-                            title={item.BlogTitle}
-                            subtitle="@sparqlife"
-                            count="15"
-                            view="59k"
-                            onClick={() => handleDefaultAction("stories", item._id)}
-                            chartData={[65, 45, 80, 81, 77, 90, 40]}
-                            image={<img alt="unfulied" src={item.BlogPicture.split(', ')[0]} />}
-                        ></DashboardCard>
-                    )) }  
+                    { blogsData && blogsData.map((item) => {
+                        console.log(item)
+                        return (
+                            ( localStorage.getItem('userID') !== undefined && parseInt(localStorage.getItem('userID')) ) === item.BlogUserID &&
+                            <DashboardCard
+                                title={item.BlogTitle}
+                                subtitle="@sparqlife"
+                                count="15"
+                                view="59k"
+                                onClick={() => handleDefaultAction("stories", item._id)}
+                                chartData={[65, 45, 80, 81, 77, 90, 40]}
+                                image={<img alt="unfulied" src={item.BlogPicture.split(', ')[0]} />}
+                            ></DashboardCard>
+                        )
+                    }
+                        
+                        
+                    ) }  
                     <DashboardCard
                         isNew={true}
                         onClick={goToNewBlogPage}

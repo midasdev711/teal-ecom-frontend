@@ -54,6 +54,7 @@ export function StoresDashboard(props) {
                 </BlogContainerHeader>
                 <BlogGroupContent>
                     { storesData && storesData.map((item) => (
+                        ( localStorage.getItem('userID') !== undefined && parseInt(localStorage.getItem('userID')) ) === item.StoreUserID &&
                         <DashboardCard
                             title={item.StoreTitle}
                             subtitle="@sparqlife"
