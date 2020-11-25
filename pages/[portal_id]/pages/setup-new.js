@@ -3,7 +3,7 @@ import { Form, Button, Typography, Input, Select, Upload, message } from 'antd'
 import { InboxOutlined } from '@ant-design/icons';
 import styled from "styled-components";
 import { LayoutWithoutSidebar } from "../../../src/components/views";
-import { connect  } from "react-redux";
+import { connect } from "react-redux";
 import Router from "next/router";
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -11,12 +11,14 @@ const { Dragger } = Upload;
 const { TextArea } = Input;
 import { AddPages } from '../../../src/redux/actions/pages';
 import { getUserData } from "../../../src/utils";
+import { useRouter } from "next/router"
 
 let userData = {}
-const NewPage = (props) => {    
+const NewPage = (props) => {
+    const router = useRouter()
     const [form] = Form.useForm();
     const [, forceUpdate] = useState();
-   
+
     // To disable submit button at the beginning.
     useEffect(() => {
         forceUpdate({});
@@ -41,7 +43,7 @@ const NewPage = (props) => {
     };
 
     const handleSubmit = () => {
-       
+
         userData = JSON.parse(localStorage.getItem("userData"));
 
         let params = form.getFieldValue();
@@ -52,13 +54,14 @@ const NewPage = (props) => {
             PageCategory: params['category'],
             PageUserName: userData.userName,
             PageEmail: userData.email,
-            PagePhone: userData.mobileNo, 
+            PagePhone: userData.mobileNo,
             PageWebsite: '',
             PageLocation: '',
             PageUserID: userData.ID
         }
 
         props.AddPages(setdata);
+        router.push(`/[portal_id]/pages/`, { pathname: `/${userData?.uniqueID}/pages/` }, { shallow: true });
     }
 
     return (
@@ -94,7 +97,7 @@ const NewPage = (props) => {
                                         form.getFieldsError().filter(({ errors }) => errors.length).length
                                     } onClick={() => handleSubmit()}>Finish Creation</FormSubmitButton>
                                 </SubmitButtonArea>
-                                
+
                             )
                         }
                     </Form.Item>
@@ -203,13 +206,13 @@ const SubmitButtonArea = styled.div`
 `
 
 const mapStateToProps = (store) => {
-  return {
+    return {
 
-  };
+    };
 };
 
 const mapDispatchToProps = {
-  AddPages
+    AddPages
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewPage);

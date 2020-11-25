@@ -22,7 +22,7 @@ export function StoriesDashboard(props) {
 
     const handleDefaultAction = (url, uid) => {
         // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
-        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
+        window.location.href = `/${userData?.uniqueID}/${url}?id=` + uid
     }
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export function StoriesDashboard(props) {
         props.getPages();
     };
 
-     const getDataStores = () => {
+    const getDataStores = () => {
         props.getStores();
     };
 
@@ -63,17 +63,17 @@ export function StoriesDashboard(props) {
             <BlogContainer>
                 <BlogContainerHeader>
                     <Title1>Blogs</Title1>
-                    <AddButton onClick={() => handleDefaultAction('stories/setup-new','')}>
+                    <AddButton onClick={() => handleDefaultAction('stories/setup-new', '')}>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
 
-                    { blogsData && blogsData.map((item) => {
+                    {blogsData && blogsData.map((item) => {
                         console.log(item)
                         return (
-                            ( localStorage.getItem('userID') !== undefined && parseInt(localStorage.getItem('userID')) ) === item.BlogUserID &&
+                            (localStorage.getItem('userID') !== undefined && parseInt(localStorage.getItem('userID'))) === item.BlogUserID &&
                             <DashboardCard
                                 title={item.BlogTitle}
                                 subtitle="@sparqlife"
@@ -81,13 +81,13 @@ export function StoriesDashboard(props) {
                                 view="59k"
                                 onClick={() => handleDefaultAction("stories", item._id)}
                                 chartData={[65, 45, 80, 81, 77, 90, 40]}
-                                image={<img alt="unfulied" src={item.BlogPicture.split(', ')[0]} />}
+                                image={<img alt="unfulied" src={item.BlogPicture} />}
                             ></DashboardCard>
                         )
                     }
-                        
-                        
-                    ) }  
+
+
+                    )}
                     <DashboardCard
                         isNew={true}
                         onClick={goToNewBlogPage}
@@ -164,9 +164,9 @@ const mapStateToProps = (store) => {
 };
 
 const mapDispatchToProps = {
-  getBlogs,
-  getPages,
-  getStores
+    getBlogs,
+    getPages,
+    getStores
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StoriesDashboard);
