@@ -248,6 +248,7 @@ export function getListArticles(authorId, limit, page) {
             limit: limit,
             page: page,
             authorId: authorId,
+            showInternal: true
           },
         },
         fetchPolicy: "no-cache",
