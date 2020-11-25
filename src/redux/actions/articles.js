@@ -136,6 +136,7 @@ export function getDetailArticle(slug, getDraft) {
             getDraft,
             limit: 5,
             page: 1,
+            showInternal: true
           },
         },
         fetchPolicy: "network-only",
