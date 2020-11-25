@@ -82,11 +82,8 @@ mutation createOrder(
 			DeliveryAddress: $DeliveryAddress
 			ShippingAddress: $ShippingAddress
 			Products: $Products
-			PaymentMethod: $PaymentMethod
-			Notes: $Notes
-			Tags: $Tags
 			tokenID: $tokenID
-			})                 
+		})                 
 		{
 			_id
 			Status
@@ -94,6 +91,9 @@ mutation createOrder(
 			OrderAmount
 			DeliveryAddress{
 				BasicDetailsFullName
+				BasicDetailsEmail
+				BasicDetailsMobile
+				AddressDetailsAddress
 				AddressDetailsState
 				AddressDetailsApartment
 				AddressDetailsCity
@@ -102,6 +102,9 @@ mutation createOrder(
 			}
 			ShippingAddress{
 				BasicDetailsFullName
+				BasicDetailsEmail
+				BasicDetailsMobile
+				AddressDetailsAddress
 				AddressDetailsState
 				AddressDetailsApartment
 				AddressDetailsCity
@@ -114,12 +117,11 @@ mutation createOrder(
 				productMerchantID
 				productSKU
 				productTitle
-				productSalePrice
-				productTotalQuantity
+				productThumbnailImage
+				productVariant
+				productCount
+				productPrice
 			}
-			PaymentMethod
-			Notes
-			Tags
 			tokenID
 		}
 	}
