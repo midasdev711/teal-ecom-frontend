@@ -133,55 +133,39 @@ const ViewCustomers = (props) => {
           <div>
             <Link href="/[portal_id]/ecom/customers/[customer_id]" as={`/${userData?.uniqueID}/ecom/customers/${item._id}`}>
               <FullName >
-                {item.BasicDetailsFirstName} {item.BasicDetailsLastName}
+                {item.BasicDetailsFullName}
               </FullName>
             </Link>
-        <p>{item.AddressDetailsApartment} {item.AddressDetailsCity}</p>
           </div>
         );
       },
       width: "60%",
     },
     {
-      title: "",
-      dataIndex: "status",
+      title: "Last Order",
+      dataIndex: "",
       render: (status) =>
-        status !== "" ? <Tag color="#87d068">{status}</Tag> : "",
+        status !== "" ? {status} : "",
       align: "right",
       width: "8%",
     },
     {
-      title: "",
+      title: "Orders",
       dataIndex: "order",
       render: (order) => {
         if (order > 1) {
           return `${order} orders`;
         } else {
-          return `${order} order`;
+          return `${order || '0'} order`;
         }
       },
       align: "right",
       width: "8%",
     },
     {
-      title: () => {
-        return (
-          <SortTable>
-            <LabelSort>Sort By</LabelSort>
-            <Select defaultValue={1}>
-              {sortOptions &&
-                sortOptions.length > 0 &&
-                sortOptions.map((item, i) => (
-                  <Option key={i} value={item.value}>
-                    {item.label}
-                  </Option>
-                ))}
-            </Select>
-          </SortTable>
-        );
-      },
+      title: "Spent",
       dataIndex: "spent",
-      render: (spent) => `$${spent} spent`,
+      render: (spent) => `$${spent || '0'} spent`,
       align: "right",
       width: "24%",
     },
@@ -297,18 +281,61 @@ const ViewCustomers = (props) => {
     setShowMDDeleteSelected(false);
   };
 
+  const [step, setStep] = useState("1");
+
+  const onTabClick = (e) => {
+    setStep('' + e);
+  }
+
+  const goToNewPage = () => {
+    Router.router.push(`/[portal_id]/ecom/customers/drafts/new`, { pathname: `/${userData?.uniqueID}/ecom/customers/drafts/new` }, { shallow: true });
+  }
+
   return (
     <ViewContent>
-      <Tabs defaultActiveKey={tabIndex} onChange={callback}>
-        <TabPane tab="All" key="1" />
-        <TabPane tab="New" key="2" />
-        <TabPane tab="Returning" key="3" />
-        <TabPane tab="Abandoned checkouts" key="4" />
-        <TabPane tab="Email subscribers" key="5" />
-        <TabPane tab="From United States" key="6" />
-      </Tabs>
+      <InputTabs tabPosition={'top'} activeKey={step} onTabClick={(e) => onTabClick(e)}>
+        <TabPane tab="All" key="1">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={customerData}
+              pagination={customerData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Returning" key="2">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={customerData}
+              pagination={customerData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+        <TabPane tab="Subscription" key="3">
+          <ContentBox>
+            <DataTable
+              rowSelection={{
+                type: "checkbox",
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={customerData}
+              pagination={customerData.length > 10}
+            />
+          </ContentBox>
+        </TabPane>
+      </InputTabs>
 
-      <Filters onOpen={setOpenMoreFilters} />
+      <Filters top={10} right={30} onOpen={setOpenMoreFilters} goToNewPage={() => goToNewPage()} />
 
       {tagsFilter && tagsFilter.length > 0 && (
         <TagsList>
@@ -318,77 +345,6 @@ const ViewCustomers = (props) => {
             </Tag>
           ))}
         </TagsList>
-      )}
-
-      {nodeCheckbox && (
-        <ContentTab>
-          {tabIndex === 1 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={customerData}
-              pagination={customerData.length > 10}
-            />
-          )}
-          {/* {tabIndex === 2 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
-              pagination={customerData.length > 10}
-            />
-          )} */}
-          {tabIndex === 3 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={[]}
-              pagination={customerData.length > 10}
-            />
-          )}
-          {tabIndex === 4 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={[]}
-              pagination={customerData.length > 10}
-            />
-          )}
-          {/* {tabIndex === 5 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={dataEmailSubscription}
-              pagination={customerData.length > 10}
-            />
-          )} */}
-          {/* {tabIndex === 6 && (
-            <Table
-              rowSelection={{
-                type: "checkbox",
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={dataFromUS}
-              pagination={customerData.length > 10}
-            />
-          )} */}
-        </ContentTab>
       )}
 
       <MDAddTags
@@ -711,14 +667,11 @@ const ViewCustomers = (props) => {
 };
 
 const ViewContent = styled.div`
-  border: 1px solid #ddd;
-  background: #fff;
-  box-shadow: var(
-    --p-card-shadow,
-    0 0 0 1px rgba(63, 63, 68, 0.05),
-    0 1px 3px 0 rgba(63, 63, 68, 0.15)
-  );
-  border-radius: 3px;
+  margin-top: 30px;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 8px rgba(64, 73, 80, 0.15);
+  border-radius: 5px;
+  position: relative;
 `;
 
 const ContentHeader = styled(Tabs)`
@@ -844,6 +797,72 @@ const FullName = styled.a`
   font-size: 16px;
   color: #333;
   font-weight: bold;
+`;
+
+const InputTabs = styled(Tabs)`
+  .ant-tabs-nav {
+    height: 50px;
+    margin-left: 25px!important;
+    margin-right: 93px;
+    .ant-tabs-tab {
+      padding-top: 7px!important;
+      padding-bottom: 7px!important;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 144.89%;
+      color: #404950;
+    }
+  }
+  .ant-tabs-content-holder {
+    width: 100%;
+    border-left: none;
+    .ant-tabs-tabpane {
+      padding-left: 0!important;
+    }
+  }
+
+`;
+
+const DataTable = styled(Table)`
+  thead {
+    tr {
+      height: 50px;
+      border-top: 1px solid #EDEDED;
+      th {
+        background: white!important;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 144.89%;
+        color: #404950;
+      }
+    }
+  }
+  tbody {
+    tr {
+      height: 80px;
+      td {
+        &:not(:nth-child(1)) {
+          padding-left: 0px;
+        }
+        padding: 15px;
+        font-family: Proxima Nova;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 16px;
+        color: #404950;
+      }
+    }
+  }
+`;
+
+const ContentBox = styled.div`
+  padding-right: ${props => props.paddingRight ? props.paddingRight : 0}px;
+  margin-top: ${(props) => (props.marginTop ? props.marginTop : "0px")};
 `;
 
 const mapStateToProps = (store) => {

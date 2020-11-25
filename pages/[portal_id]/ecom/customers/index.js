@@ -1,5 +1,5 @@
 import React from "react";
-import { PageLayout } from "../../../../src/components/views";
+import { NewPageLayout } from "../../../../src/components/views";
 import { TEPageFooter } from "../../../../src/components/atoms";
 import { ViewCustomers } from "../../../../src/components/customers";
 import PageHeader from "../../../../src/components/PageHeader";
@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const Customers = () => {
   return (
-    <PageLayout>
+    <NewPageLayout>
       <CustomerContent>
         {/* <EmptyCustomerContent>
           <PageHeader />
@@ -33,16 +33,17 @@ const Customers = () => {
           </TEPageFooter>
         </EmptyCustomerContent> */}
         <ViewsCustomerContent>
-          <PageHeader
+          {/* <PageHeader
             PageName="Your Customers"
             ImportButtonName="Import customers"
             CreateButtonName="Add customer"
             path="customers/new"
             isData={true}
             isImport={true}
-          />
+          /> */}
+          <TitleHeader>Customers</TitleHeader>
           <ViewCustomers />
-          <StyledSettingFooter>
+          {/* <StyledSettingFooter>
             <Message>
               Customer accounts are disabled.
               <Link href="#">
@@ -55,10 +56,10 @@ const Customers = () => {
             <Link href="#">
               <a> customers.</a>
             </Link>
-          </TEPageFooter>
+          </TEPageFooter> */}
         </ViewsCustomerContent>
       </CustomerContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -79,7 +80,9 @@ const StyledSettingFooter = styled.div`
 `;
 
 const ViewsCustomerContent = styled.div`
-  padding: 20px;
+  max-width: 950px;
+  margin: 80px auto;
+  padding: 0;
 `;
 
 const EmptyDataContent = styled(Layout.Content)`
@@ -99,6 +102,13 @@ const EmptyDataContent = styled(Layout.Content)`
 const Message = styled.p`
   color: #637381;
   font-size: 14px;
+`;
+
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
+  font-weight: bold;
+  margin-bottom: 0;
 `;
 
 export default Customers;
