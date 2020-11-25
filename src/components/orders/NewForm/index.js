@@ -882,7 +882,7 @@ const newForm = (props) => {
           </div>
         ]}
       >
-        <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} /* TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} */ handleChangeValue={handleCustomerFormChangeValue}/>
+        <NewForm Modal={true} BasicDetails={BasicDetails} AddressDetails={AddressDetails} /* TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} */ handleChangeValue={handleCustomerFormChangeValue}/>
       </NewCustomerForm>
 
       {/* <SubForm>

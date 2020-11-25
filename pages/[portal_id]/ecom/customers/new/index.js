@@ -5,8 +5,8 @@ import { Button, Layout } from "antd";
 import Router from "next/router";
 import { connect, useSelector } from "react-redux";
 // components
-import { PageLayout } from "../../../../../src/components/views";
-import { NewForm } from "../../../../../src/components/customers";
+import { NewPageLayout } from "../../../../../src/components/views";
+import { NewFormLayout } from "../../../../../src/components/customers";
 // icons
 import { LeftOutlined } from "@ant-design/icons";
 import { getUserData } from "../../../../../src/utils";
@@ -58,22 +58,15 @@ const NewCustomer = (props) => {
 
   const saveData = () => {
     let _variables = {
-      BasicDetailsFirstName: BasicDetails.FirstName,
-      BasicDetailsLastName: BasicDetails.LastName,
+      BasicDetailsFullName: BasicDetails.FullName,
       BasicDetailsEmail: BasicDetails.Email,
       BasicDetailsMobile: BasicDetails.Mobile,
-      BasicDetailsEmailFlag: BasicDetails.EmailFlag,
-      AddressDetailsFirstName: AddressDetails.FirstName,
-      AddressDetailsLastName: AddressDetails.LastName,
-      AddressDetailsCompany: AddressDetails.Company,
+      AddressDetailsAddress: AddressDetails.Address,
       AddressDetailsApartment: AddressDetails.Apartment,
       AddressDetailsCity: AddressDetails.City,
       AddressDetailsCountry: AddressDetails.Country,
       AddressDetailsPostalCode: AddressDetails.PostalCode,
-      AddressDetailsMobile: AddressDetails.Mobile,
-      Tax: Tax,
-      Notes: Notes,
-      Tags: Tags,
+      AddressDetailsState: AddressDetails.State,
     };
     props.AddCustomers(_variables)
   }
@@ -119,23 +112,22 @@ const NewCustomer = (props) => {
 
   }
   return (
-    <PageLayout>
+    <NewPageLayout>
       <NewContent>
-        {newActions()}
+        {/* {newActions()} */}
         <ContentPage>
           <ContentHeader>
-            <Link href="/[portal_id]/ecom/customers" as={`/${userData?.uniqueID}/ecom/customers`}>
-              {/* <Link href="/customers"> */}
+            {/* <Link href="/[portal_id]/ecom/customers" as={`/${userData?.uniqueID}/ecom/customers`}>
               <LinkBack>
                 <LeftOutlined /> Add customer
               </LinkBack>
-            </Link>
-            <TittleHeader>Customers</TittleHeader>
+            </Link> */}
+            <TitleHeader>Customers</TitleHeader>
           </ContentHeader>
-          <NewForm BasicDetails={BasicDetails} AddressDetails={AddressDetails} TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} />
+          <NewFormLayout BasicDetails={BasicDetails} AddressDetails={AddressDetails} TaxFlag={TaxFlag} Tax={Tax} Notes={Notes} Tags={Tags} handleChangeValue={handleChangeValue} saveData={saveData} />
         </ContentPage>
       </NewContent>
-    </PageLayout>
+    </NewPageLayout>
   );
 };
 
@@ -144,18 +136,18 @@ const NewContent = styled.div`
 `;
 
 const ContentPage = styled.div`
-  max-width: 65rem;
+  max-width: 950px;
   margin: 80px auto;
-  padding: 0 3.2rem;
+  padding: 0;
 `;
 
 const ContentHeader = styled.div`
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 `;
 
-const TittleHeader = styled.h3`
-  font-size: 28px;
-  color: #000;
+const TitleHeader = styled.h3`
+  font-size: 23px;
+  color: #404950;
   font-weight: bold;
   margin-bottom: 0;
 `;
