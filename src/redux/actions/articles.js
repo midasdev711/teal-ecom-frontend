@@ -136,6 +136,7 @@ export function getDetailArticle(slug, getDraft) {
             getDraft,
             limit: 5,
             page: 1,
+            showInternal: true
           },
         },
         fetchPolicy: "network-only",
@@ -248,6 +249,7 @@ export function getListArticles(authorId, limit, page) {
             limit: limit,
             page: page,
             authorId: authorId,
+            showInternal: true
           },
         },
         fetchPolicy: "no-cache",

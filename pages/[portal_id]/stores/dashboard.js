@@ -1,16 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Button, Typography } from 'antd'
 import styled from "styled-components";
 import { useRouter } from "next/router"
 import { getUserData } from '../../../src/utils'
 import { LayoutWithNoSidebar } from "../../../src/components/views";
 import { Banner, DashboardCard } from '../../../src/components/atoms'
+import { connect } from "react-redux";
+// actions
+import { getPages } from "../../../src/redux/actions/pages";
+import { getStores } from "../../../src/redux/actions/stores";
 
 const { Title, Text } = Typography;
 
-export default function StoresDashboard() {
+export function StoresDashboard(props) {
     const router = useRouter()
     let userData = getUserData()
+
+     const handleDefaultAction = (url, uid) => {
+        // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
+        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
+    }
+
+    useEffect(() => {
+        getDataPages();
+        getDataStores();
+    }, []);
+
+
+    const getDataPages = () => {
+        props.getPages();
+    };
+
+     const getDataStores = () => {
+        props.getStores();
+    };
+
+    const { pagesData, storesData } = props;
+
+    console.log("testtttttt", props.storesData)
 
     const goToNewPage = (url) => {
         router.push(`/[portal_id]/stores/setup-new`, { pathname: `/${userData?.uniqueID}/stores/setup-new` }, { shallow: true });
@@ -20,25 +47,31 @@ export default function StoresDashboard() {
             <BlogContainer>
                 <BlogContainerHeader>
                     <Title1>Stores</Title1>
-                    <AddButton>
+                    <AddButton onClick={() => handleDefaultAction('stores/setup-new','')}>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
-                    <DashboardCard
-                        title="Default"
-                        subtitle="@sparqlife"
-                        count="150"
-                        view="59k"
-                        chartData={[65, 59, 80, 81, 56, 55, 40]}
-                        type="store"
-                        image={<img alt="unfulied" src="/images/blog-thumbnail.png" />}
-                    ></DashboardCard>
+                    { storesData && storesData.map((item) => (
+                        ( localStorage.getItem('userID') !== undefined && parseInt(localStorage.getItem('userID')) ) === item.StoreUserID &&
+                        <DashboardCard
+                            title={item.StoreTitle}
+                            subtitle="@sparqlife"
+                            count="15"
+                            view="59k"
+                            onClick={() => handleDefaultAction("stores", item._id)}
+                            chartData={[65, 45, 80, 81, 77, 90, 40]}
+                            image={<img alt="unfulied" src={item.StoreImages.split(',')[0]} />}
+                        ></DashboardCard>
+                    )) }  
                     <DashboardCard
                         isNew={true}
                         onClick={goToNewPage}
                     ></DashboardCard>
+
+
+
                 </BlogGroupContent>
             </BlogContainer>
         </LayoutWithNoSidebar>
@@ -100,3 +133,20 @@ const AddButton = styled(Button)`
         box-shadow: 0px 0px 25px #989898;
     }
 `;
+
+
+const mapStateToProps = (store) => {
+    console.log(store);
+    return {
+        pagesData: store.pageReducer.pagesData,
+        storesData: store.storeReducer.storesData
+    };
+};
+
+
+const mapDispatchToProps = {
+  getPages,
+  getStores
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoresDashboard);

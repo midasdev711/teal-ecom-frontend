@@ -22,7 +22,7 @@ export const resetStoreStatus = () => {
 };
 
 export const AddStores = (datas) => {
-
+  console.log("heloooooo", datas)
   return dispatch => {
     dispatch({
       type: ADD_STORE_START,
@@ -34,10 +34,12 @@ export const AddStores = (datas) => {
       })
       .then((res) => {
         if (res.data) {
-          dispatch({
-            type: ADD_STORE,
-            data: res.data,
-          });
+          // dispatch({
+          //   type: ADD_STORE,
+          //   data: res.data,
+          // });
+
+          window.location.href='/'+window.location.pathname.split("/")[1]+"/stores/dashboard"
         }
       })
       .catch((err) => {

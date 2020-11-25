@@ -46,6 +46,7 @@
     "react-dom": "^16.13.1",
     "react-drop-zone": "^4.2.3",
     "react-dropzone": "^11.2.3",
+    "react-images-uploading": "^3.1.2",
     "react-moment": "^1.0.0",
     "react-phone-input-2": "^2.13.7",
     "react-redux": "^7.2.1",

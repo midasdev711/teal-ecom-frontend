@@ -2,16 +2,23 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Typography, Input, Select, Upload, message } from 'antd'
 import styled from "styled-components";
 import { LayoutWithoutSidebar } from "../../../src/components/views";
+import { getUserData } from '../../../src/utils'
+// actions
+import { getStores, AddStores } from "../../../src/redux/actions/stores";
+import { getPages } from "../../../src/redux/actions/pages";
+import { connect } from "react-redux";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { Dragger } = Upload;
 const { TextArea } = Input;
 
-export default function SetupNew() {
+export function StoresNew(props) {   
     const [form] = Form.useForm();
     const [, forceUpdate] = useState();
     const [step, setStep] = useState(0);
+    let userData = getUserData()
+
 
     // To disable submit button at the beginning.
     useEffect(() => {
@@ -37,6 +44,39 @@ export default function SetupNew() {
 
     const nextStep = (step) => {
         setStep(step);
+    }
+
+
+    const handleSubmit = () => {
+       
+        userData = JSON.parse(localStorage.getItem("userData"));
+
+        let params = form.getFieldValue();
+        
+        let urls = []
+        const images = params['coverPicture'].fileList.map((item, i)=>{   
+            if(item.response && item.response.url){
+                 urls.push(item.response.url) 
+            }
+        });  
+
+        console.log("params", userData) 
+
+        let setdata = {
+            StoreTitle: params['storename'],
+            StoreDescription: params['pageabout'],
+            StoreIndustry: params["industry"],
+            StoreAlreadySelling: params["alreadyselling"],
+            StoreCurrentSalesVolumne: params["currentSalesVolume"],
+            StoreImages: urls.join(", "),
+            StoreUserID: userData.ID,
+            StoreUserName: userData.userName,
+            StoreEmail: userData.email,
+            StorePhone: userData.mobileNo,
+            StorePageID: "1"
+        }
+
+        props.AddStores(setdata);
     }
 
     return (
@@ -108,11 +148,13 @@ export default function SetupNew() {
                                     {
                                         () => (
                                             <SubmitButtonArea>
-                                                <FormSubmitButton type="primary" onClick={() => nextStep(2)} disabled={
+                                                <FormSubmitButton type="primary" onClick={() => handleSubmit()} disabled={
                                                     !form.isFieldsTouched(true) ||
                                                     form.getFieldsError().filter(({ errors }) => errors.length).length
-                                                }>Next</FormSubmitButton>
+                                                }>Finish</FormSubmitButton>
                                             </SubmitButtonArea>
+
+
                                         )
                                     }
                                 </Form.Item>
@@ -266,3 +308,18 @@ const Text1 = styled.p`
         text-decoration: ${props => props.noUnderline ? 'none' : 'underline'};
     }
 `;
+
+
+const mapStateToProps = (store) => {
+    return {
+        storesData: store.storeReducer.storesData,
+        pagesData: store.pageReducer.pagesData
+    };
+};
+
+const mapDispatchToProps = {
+  getPages,
+  AddStores
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoresNew);
