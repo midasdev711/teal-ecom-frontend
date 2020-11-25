@@ -45,6 +45,7 @@ import {
   ShippingAddress,
 } from "../Modal";
 import { AddCustomers, resetCustomerStatus, getCustomers } from "../../../redux/actions/customers";
+import { AddOrders, resetOrderStatus } from "../../../redux/actions/orders";
 import { getUserProductLists } from "../../../redux/actions/product";
 import NewForm from '../../customers/NewForm';
 import CustomerFilters from '../../customers/Filters';
@@ -322,7 +323,58 @@ const newForm = (props) => {
     if (currentStep < 4) {
       setStep('' + (currentStep + 1));
     } else {
-      props.saveData();
+      let pro_data = []
+      selectedProducts.map(data => {
+        let dat = {
+          productID: data._id,
+          productMerchantID: data.merchantID,
+          productSKU: data.sku,
+          productTitle: data.title,
+          productThumbnailImage: data.thumbnailImage,
+          productVariant: data.subInfo,
+          productCount: data.count,
+          productPrice: data.subInfo ? data.subInfo.price : data.salePrice
+        }
+        pro_data.push(dat)
+      })
+  
+      let userId = userData?.ID
+      let total = 0;
+      if (discountMode) {
+        total = subTotal - discountAmount + shippingRate.rate;
+      } else {
+        total = subTotal - (subTotal * discountAmount / 100) + shippingRate.rate;
+      }
+      let _variables = {
+        UserId: userId,
+        Status: 1,
+        Products:pro_data,
+        OrderAmount: total,
+        ShippingAddress:
+        {
+          BasicDetailsFullName: selectedCustomer.BasicDetailsFullName,
+          BasicDetailsEmail: selectedCustomer.BasicDetailsEmail,
+          BasicDetailsMobile: selectedCustomer.BasicDetailsMobile,
+          AddressDetailsAddress: selectedCustomer.AddressDetailsAddress,
+          AddressDetailsState: selectedCustomer.AddressDetailsState,
+          AddressDetailsApartment: selectedCustomer.AddressDetailsApartment,
+          AddressDetailsCity: selectedCustomer.AddressDetailsCity,
+          AddressDetailsCountry: selectedCustomer.AddressDetailsCountry,
+          AddressDetailsPostalCode: selectedCustomer.AddressDetailsPostalCode
+        },
+        DeliveryAddress: {
+          BasicDetailsFullName: selectedCustomer.BasicDetailsFullName,
+          BasicDetailsEmail: selectedCustomer.BasicDetailsEmail,
+          BasicDetailsMobile: selectedCustomer.BasicDetailsMobile,
+          AddressDetailsAddress: selectedCustomer.AddressDetailsAddress,
+          AddressDetailsState: selectedCustomer.AddressDetailsState,
+          AddressDetailsApartment: selectedCustomer.AddressDetailsApartment,
+          AddressDetailsCity: selectedCustomer.AddressDetailsCity,
+          AddressDetailsCountry: selectedCustomer.AddressDetailsCountry,
+          AddressDetailsPostalCode: selectedCustomer.AddressDetailsPostalCode
+        },
+      };
+      props.AddOrders(_variables)
     }
   }
 
@@ -579,26 +631,15 @@ const newForm = (props) => {
     setOpenMoreFilters(true);
   }
 
-  const [selectedCustomers, setSelectedCustomers] = useState([]);
-
   const customerDisplay = (props.customerData || []).map((customer, index) => {
     const onChange = (e) => {
-      console.log(customer);
-      let tmp = Object.assign([], selectedCustomers);
       if (e.target.checked) {
-        tmp.push(customer);
+        setSelectedCustomer(customer);
       } else {
-        let index;
-        for (let i = 0; i < selectedCustomers.length; i ++) {
-          if (selectedCustomers[i]._id == customer._id) {
-            index = i;
-          }
-        }
-        tmp.splice(index, 1);
+        setSelectedCustomer(null);
       }
-      setSelectedCustomers(tmp);
     }
-    let selected = selectedCustomers.filter(item => item._id == customer._id).length > 0;
+    let selected = selectedCustomer ? selectedCustomer._id == customer._id : false;
     return (
     <div key={index}>
       <CustomerCheckbox checked={selected} onChange={(e) => onChange(e, customer)}>
@@ -807,7 +848,7 @@ const newForm = (props) => {
                 <ContentTitle align={"right"}>${subTotal}</ContentTitle>
                 <ContentTitle align={"right"}>{shippingRate.rate > 0 ? '$' + shippingRate.rate : '-'}</ContentTitle>
                 <ContentTitle align={"right"} marginbottom={30}>$0.00</ContentTitle>
-                <ContentTitle align={"right"} fontWeight={'bold'}>${subTotal}</ContentTitle>
+                <ContentTitle align={"right"} fontWeight={'bold'}>${subTotal - discountAmount + shippingRate.rate}</ContentTitle>
               </div>
             </PaymentCard>
           </ContentBox>
@@ -1741,7 +1782,8 @@ const mapDispatchToProps = {
   getCustomers,
   getUserProductLists,
   AddCustomers,
-  resetCustomerStatus
+  resetCustomerStatus,
+  AddOrders
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(newForm);
