@@ -30,11 +30,6 @@ const Routes = [
     ],
   },
   {
-    title: "Pages",
-    path: "/[portal_id]/pages/setup-new",
-    as: "/[portal_id]/pages/setup-new"
-  },
-  {
     title: "Products",
     path: "/[portal_id]/ecom/products",
     as: "/[portal_id]/ecom/products",
@@ -144,6 +139,34 @@ const StoriesInnerRoutes = [
     path: "/[portal_id]/stories/posts/new",
     as: "/[portal_id]/stories/posts/new",
   },
+];
+
+const PagesRoutes = [
+  {
+    title: "Pages",
+    path: "/[portal_id]/pages/dashboard",
+    as: "/[portal_id]/pages/dashboard",
+  },
+  {
+    title: "New Page",
+    path: "/[portal_id]/pages/setup-new",
+    as: "/[portal_id]/pages/setup-new"
+  },
+
+];
+
+const StoresRoutes = [
+  {
+    title: "Stores",
+    path: "/[portal_id]/stores/dashboard",
+    as: "/[portal_id]/stores/dashboard",
+  },
+  {
+    title: "New Store",
+    path: "/[portal_id]/stores/setup-new",
+    as: "/[portal_id]/stores/setup-new"
+  },
+
 ];
 
 const MainRoutes = {
