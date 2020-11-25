@@ -5,6 +5,8 @@ import { InboxOutlined } from '@ant-design/icons';
 import styled from "styled-components";
 import { LayoutWithoutSidebar } from "../../../src/components/views";
 import { getUserData } from '../../../src/utils'
+import ImageUploading from 'react-images-uploading';
+
 // actions
 import { getBlogs, AddBlogs } from "../../../src/redux/actions/blogs";
 import { getPages } from "../../../src/redux/actions/pages";
@@ -15,8 +17,8 @@ const { Option } = Select;
 const { Dragger } = Upload;
 
 const options = [
-    { label: 'My Personal Profile', value: 'personalProfile' },
-    { label: 'My Pages', value: 'myPages' },
+  { label: 'My Personal Profile', value: 'personalProfile' },
+  { label: 'My Pages', value: 'myPages' },
 ];
 
 // const pages = [
@@ -26,199 +28,240 @@ const options = [
 // ]
 
 export function StoriesNew(props) {
-    const router = useRouter()
-    const [form] = Form.useForm();
-    const [publishing, setPublishing] = useState(null);
-    const [step, setStep] = useState(0);
-    let userData = getUserData()
+  const router = useRouter()
+  const [form] = Form.useForm();
+  const [publishing, setPublishing] = useState(null);
+  const [step, setStep] = useState(0);
+  let userData = getUserData()
 
-    const [, forceUpdate] = useState();
+  const [, forceUpdate] = useState();
 
-    // To disable submit button at the beginning.
-    useEffect(() => {
-        forceUpdate({});
-        getDataBlogs();
-        getDataPages();
-    }, []);
+  // To disable submit button at the beginning.
+  useEffect(() => {
+    forceUpdate({});
+    getDataBlogs();
+    getDataPages();
+  }, []);
 
 
-    const getDataBlogs = () => {
-        props.getBlogs();
+  const getDataBlogs = () => {
+    props.getBlogs();
+  };
+
+  const getDataPages = () => {
+    props.getPages();
+  };
+
+
+  const { blogsData, pagesData } = props;
+
+  const pages = [
+    {
+      label: 'page1', value: 'page1'
+    }
+  ]
+
+  const uploadProps = {
+    name: 'file',
+    multiple: true,
+    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
+  const onPublishChange = e => {
+    setPublishing(e.target.value)
+  }
+
+  const goToNewPage = () => {
+    router.push(`/[portal_id]/pages/setup-new`, { pathname: `/${userData?.uniqueID}/pages/setup-new` }, { shallow: true });
+    // localStorage.setItem('channelName', url === 'ecom' ? 'Ecommerce' : 'stories')
+  }
+
+  const nextStep = () => {
+    setStep(1);
+  }
+
+
+  const handleSubmit = () => {
+    userData = JSON.parse(localStorage.getItem("userData"));
+
+    let params = form.getFieldValue();
+
+    let urls = [];
+    console.log('images', images[0].data_url)
+    // const imagess = params["coverPicture"].fileList.map((item, i) => {
+    //   if (item.response && item.response.url) {
+    //     urls.push(item.response.url);
+    //   }
+    // });
+
+    let setdata = {
+      BlogTitle: params["blogname"],
+      BlogPublishingPlace: publishing,
+      BlogCategory: params["category"],
+      //   BlogPicture: urls.join(", "),
+      BlogPicture: images[0].data_url,
+      BlogUserID: userData.ID,
+      BlogPageID: params["publishLocation"],
     };
 
-    const getDataPages = () => {
-        props.getPages();
-    };
+    props.AddBlogs(setdata);
+  };
+  const [images, setImages] = React.useState([]);
+  const maxNumber = 69;
 
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
 
-    const { blogsData, pagesData } = props;
+  return (
+    <LayoutWithoutSidebar title="New">
+      <NewBlogForm>
+        <Form
+          form={form}
+          layout="vertical"
+        >
+          {
+            step == 0 ?
+              <>
+                <ImageBox>
+                  <img src="/images/blogs/thinking.svg" />
+                </ImageBox>
+                <Title1>Create your Blog</Title1>
+                <NameInputBlock>
+                  <Form.Item name="blogname" rules={[{ required: true, message: 'Please input this field' }]}>
+                    <FormInput placeholder="Name" size="large" />
+                  </Form.Item>
+                  <Form.Item name="category" rules={[{ required: true, message: 'Please input this field' }]}>
+                    <FormSelect placeholder="Select category" size="large">
+                      <FormSelectOption value="demo">Demo</FormSelectOption>
+                    </FormSelect>
+                  </Form.Item>
+                </NameInputBlock>
 
-    const pages = [
-        {
-            label: 'page1', value: 'page1'
-        }
-    ]
+                <Label>Where are you publishing?</Label>
+                <PublishOption
+                  options={options}
+                  onChange={onPublishChange}
+                  value={publishing}
+                  optionType="button"
+                ></PublishOption>
+                <Text1>I'm publishing on my own website</Text1>
+                {
+                  publishing == 'myPages' &&
+                  (
+                    pagesData.length > 0 ?
+                      <Form.Item name="publishLocation" rules={[{ required: true, message: 'Please input this field' }]}>
+                        <PageSelect placeholder="I am publishing on ..." size="large">
+                          {pagesData.map((page) => (
+                            <PageSelectOption value={page._id}>{page.PageTitle}</PageSelectOption>
+                          ))}
 
-    const uploadProps = {
-        name: 'file',
-        multiple: true,
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        onChange(info) {
-            const { status } = info.file;
-            if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
-            if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
-            } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
-    };
+                        </PageSelect>
+                      </Form.Item>
+                      :
+                      <NoPageBox>
+                        <p>You have no pages. <span onClick={() => goToNewPage()}>Create one.</span></p>
+                      </NoPageBox>
+                  )
+                }
+                <Form.Item shouldUpdate={true}>
+                  {
+                    () => (
+                      <ButtonBlock>
+                        <FormSubmitButton type="primary" disabled={
+                          !form.isFieldsTouched(true) ||
+                          form.getFieldsError().filter(({ errors }) => errors.length).length
+                        } onClick={() => nextStep()}>Next</FormSubmitButton>
+                      </ButtonBlock>
 
-    const onPublishChange = e => {
-        setPublishing(e.target.value)
-    }
+                    )
+                  }
+                </Form.Item>
+              </>
+              :
+              <>
+                <Form.Item name="coverPicture">
+                  {/* <FormDragger {...uploadProps}>
+                  <DropBoxWrapper>
+                    <IconBox className="ant-upload-drag-icon">
+                      <img src="/images/blogs/image_upload.svg" />
+                    </IconBox>
+                  
+                  </DropBoxWrapper>
+                </FormDragger> */}
+                  <ImageUploading
+                    multiple
+                    value={images}
+                    onChange={onChange}
+                    maxNumber={maxNumber}
+                    dataURLKey="data_url"
+                  >
+                    {({
+                      imageList,
+                      onImageUpload,
+                      isDragging,
+                      dragProps,
+                    }) => (
+                        <div className="upload__image-wrapper">
+                          <button
+                            style={isDragging ? { color: 'red' } : undefined}
+                            onClick={onImageUpload}
+                            {...dragProps}
+                          >
+                            Click or Drop here
+            </button>
+            &nbsp;
 
-    const goToNewPage = () => {
-        router.push(`/[portal_id]/pages/setup-new`, { pathname: `/${userData?.uniqueID}/pages/setup-new` }, { shallow: true });
-        // localStorage.setItem('channelName', url === 'ecom' ? 'Ecommerce' : 'stories')
-    }
+                          {imageList.map((image, index) => (
+                            <div key={index} className="ant-upload-drag-icon">
+                              <img src={image['data_url']} alt="" width="200" height="200" />
 
-    const nextStep = () => {
-        setStep(1);
-    }
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </ImageUploading>
+                </Form.Item>
+                <Text1 noUnderline={true}>My new blog name</Text1>
+                <Form.Item shouldUpdate={true}>
+                  {() => (
+                    <ButtonBlock>
+                      <FormSubmitButton
+                        type="primary"
+                        htmlType="submit"
+                        disabled={
+                          !form.isFieldsTouched(true) ||
+                          form
+                            .getFieldsError()
+                            .filter(({ errors }) => errors.length).length
+                        }
+                        onClick={() => handleSubmit()}
+                      >
+                        Finish Creation
+                    </FormSubmitButton>
+                    </ButtonBlock>
+                  )}
+                </Form.Item>
+              </>
+          }
 
-    const handleSubmit = () => {
-       
-        userData = JSON.parse(localStorage.getItem("userData"));
-
-        let params = form.getFieldValue();
-        
-        let urls = []
-        const images = params['coverPicture'].fileList.map((item, i)=>{   
-            if(item.response && item.response.url){
-                 urls.push(item.response.url) 
-            }
-        });   
-
-        let setdata = {
-            BlogTitle: params['blogname'],
-            BlogPublishingPlace: publishing,
-            BlogCategory: params['category'],
-            BlogPicture: urls.join(", "),
-            // BlogPicture: '',
-            BlogUserID: userData.ID,
-            BlogPageID: params['publishLocation']
-        }
-
-        props.AddBlogs(setdata);
-    }
-
-
-    return (
-        <LayoutWithoutSidebar title="New">
-            <NewBlogForm>
-                <Form
-                    form={form}
-                    layout="vertical"
-                >
-                    {
-                        step == 0 ?
-                            <>
-                                <ImageBox>
-                                    <img src="/images/blogs/thinking.svg" />
-                                </ImageBox>
-                                <Title1>Create your Blog</Title1>
-                                <NameInputBlock>
-                                    <Form.Item name="blogname" rules={[{ required: true, message: 'Please input this field' }]}>
-                                        <FormInput placeholder="Name" size="large" />
-                                    </Form.Item>
-                                    <Form.Item name="category" rules={[{ required: true, message: 'Please input this field' }]}>
-                                        <FormSelect placeholder="Select category" size="large">
-                                            <FormSelectOption value="demo">Demo</FormSelectOption>
-                                        </FormSelect>
-                                    </Form.Item>
-                                </NameInputBlock>
-
-                                <Label>Where are you publishing?</Label>
-                                <PublishOption
-                                    options={options}
-                                    onChange={onPublishChange}
-                                    value={publishing}
-                                    optionType="button"
-                                ></PublishOption>
-                                <Text1>I'm publishing on my own website</Text1>
-                                {
-                                    publishing == 'myPages' &&
-                                    (
-                                        pagesData.length > 0 ?
-                                            <Form.Item name="publishLocation" rules={[{ required: true, message: 'Please input this field' }]}>
-                                                <PageSelect placeholder="I am publishing on ..." size="large">
-                                                    {pagesData.map((page) => (
-                                                        <PageSelectOption value={page._id}>{page.PageTitle}</PageSelectOption>
-                                                    ))}
-
-                                                </PageSelect>
-                                            </Form.Item>
-                                            :
-                                            <NoPageBox>
-                                                <p>You have no pages. <span onClick={() => goToNewPage()}>Create one.</span></p>
-                                            </NoPageBox>
-                                    )
-                                }
-                                <Form.Item shouldUpdate={true}>
-                                    {
-                                        () => (
-                                            <ButtonBlock>
-                                                <FormSubmitButton type="primary" disabled={
-                                                    !form.isFieldsTouched(true) ||
-                                                    form.getFieldsError().filter(({ errors }) => errors.length).length
-                                                } onClick={() => nextStep()}>Next</FormSubmitButton>
-                                            </ButtonBlock>
-
-                                        )
-                                    }
-                                </Form.Item>
-                            </>
-                            :
-                            <>
-                                <Form.Item name="coverPicture" >
-                                    <FormDragger {...uploadProps} >
-                                        <DropBoxWrapper>
-                                            <IconBox className="ant-upload-drag-icon">
-                                                <img src="/images/blogs/image_upload.svg" />
-                                            </IconBox>
-                                            {/* <UploadText className="ant-upload-text">Page Picture</UploadText>
-                                            <UploadHint className="ant-upload-hint">
-                                                Click or drag an image file here to update your page picture.
-                                            </UploadHint> */}
-                                        </DropBoxWrapper>
-                                    </FormDragger>
-                                </Form.Item>
-                                <Text1 noUnderline={true}>My new blog name</Text1>
-                                <Form.Item shouldUpdate={true}>
-                                    {
-                                        () => (
-                                            <ButtonBlock>
-                                                <FormSubmitButton type="primary" htmlType="submit" disabled={
-                                                    !form.isFieldsTouched(true) ||
-                                                    form.getFieldsError().filter(({ errors }) => errors.length).length
-                                                } onClick={() => handleSubmit()}>Finish Creation</FormSubmitButton>
-                                            </ButtonBlock>
-
-
-                                        )
-                                    }
-
-                                </Form.Item>
-                            </>
-                    }
-
-                </Form>
-            </NewBlogForm>
-        </LayoutWithoutSidebar>
-    );
+        </Form>
+      </NewBlogForm>
+    </LayoutWithoutSidebar>
+  );
 }
 
 const Title1 = styled(Title)`
@@ -450,18 +493,18 @@ const FormSubmitButton = styled(Button)`
     font-size: 15px;
     line-height: 15px;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
     &[disabled] {
-        background: #80CAFB;
-        color: rgba(255, 255, 255, 0.7);
+      background: #80cafb;
+      color: rgba(255, 255, 255, 0.7);
     }
 `;
 
 const mapStateToProps = (store) => {
-    return {
-        blogsData: store.blogReducer.blogsData,
-        pagesData: store.pageReducer.pagesData
-    };
+  return {
+    blogsData: store.blogReducer.blogsData,
+    pagesData: store.pageReducer.pagesData
+  };
 };
 
 const mapDispatchToProps = {
