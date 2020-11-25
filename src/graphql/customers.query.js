@@ -4,82 +4,54 @@ export const GET_CUSTOMERS = gql`
   query customers($filters: CustomerFilters) {
     customers(filters: $filters) {
       _id
-      BasicDetailsFirstName
-      BasicDetailsLastName
+      BasicDetailsFullName
       BasicDetailsEmail
       BasicDetailsMobile
-      BasicDetailsEmailFlag
-      AddressDetailsFirstName
-      AddressDetailsLastName
-      AddressDetailsCompany
+      AddressDetailsAddress
       AddressDetailsApartment
       AddressDetailsCity
       AddressDetailsCountry
       AddressDetailsPostalCode
-      AddressDetailsMobile
-      Tax
-      Notes
-      Tags
+      AddressDetailsState
     }
   }
 `;
 
 export const CREATE_CUSTOMER_MUTATION = gql`
   mutation createCustomer(
-    $BasicDetailsFirstName: String
-    $BasicDetailsLastName: String
+    $BasicDetailsFullName: String
     $BasicDetailsEmail: String
     $BasicDetailsMobile: String
-    $BasicDetailsEmailFlag: Boolean
-    $AddressDetailsFirstName: String
-    $AddressDetailsLastName: String
-    $AddressDetailsCompany: String
+    $AddressDetailsAddress: String
     $AddressDetailsApartment: String
     $AddressDetailsCity: String
     $AddressDetailsCountry: String
     $AddressDetailsPostalCode: String
-    $AddressDetailsMobile: String
-    $Tax: Int
-    $Notes: String
-    $Tags: String
+    $AddressDetailsState: String
   ) {
     upsertCustomer(
       customer: {
-        BasicDetailsFirstName: $BasicDetailsFirstName
-        BasicDetailsLastName: $BasicDetailsLastName
+        BasicDetailsFullName: $BasicDetailsFullName
         BasicDetailsEmail: $BasicDetailsEmail
         BasicDetailsMobile: $BasicDetailsMobile
-        BasicDetailsEmailFlag: $BasicDetailsEmailFlag
-        AddressDetailsFirstName: $AddressDetailsFirstName
-        AddressDetailsLastName: $AddressDetailsLastName
-        AddressDetailsCompany: $AddressDetailsCompany
+        AddressDetailsAddress: $AddressDetailsAddress
         AddressDetailsApartment: $AddressDetailsApartment
         AddressDetailsCity: $AddressDetailsCity
         AddressDetailsCountry: $AddressDetailsCountry
         AddressDetailsPostalCode: $AddressDetailsPostalCode
-        AddressDetailsMobile: $AddressDetailsMobile
-        Tax: $Tax
-        Notes: $Notes
-        Tags: $Tags
+        AddressDetailsState: $AddressDetailsState
       }
     ) {
       _id
-      BasicDetailsFirstName
-      BasicDetailsLastName
+      BasicDetailsFullName
       BasicDetailsEmail
       BasicDetailsMobile
-      BasicDetailsEmailFlag
-      AddressDetailsFirstName
-      AddressDetailsLastName
-      AddressDetailsCompany
+      AddressDetailsAddress
       AddressDetailsApartment
       AddressDetailsCity
       AddressDetailsCountry
       AddressDetailsPostalCode
-      AddressDetailsMobile
-      Tax
-      Notes
-      Tags
+      AddressDetailsState
     }
   }
 `;

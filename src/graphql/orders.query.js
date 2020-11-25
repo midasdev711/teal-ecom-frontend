@@ -8,27 +8,23 @@ export const GET_ORDERS = gql`
 		UserId
 		OrderAmount
 		createdAt
-		DeliveryAddress{
-			BasicDetailsFirstName
-			BasicDetailsLastName
-			AddressDetailsCompany
-			AddressDetailsMobile
+		DeliveryAddress {
+			BasicDetailsFullName
+			AddressDetailsState
 			AddressDetailsApartment
 			AddressDetailsCity
 			AddressDetailsCountry
 			AddressDetailsPostalCode
-			}
+		}
 		ShippingAddress{
-			BasicDetailsFirstName
-			BasicDetailsLastName
-			AddressDetailsCompany
-			AddressDetailsMobile
+			BasicDetailsFullName
+			AddressDetailsState
 			AddressDetailsApartment
 			AddressDetailsCity
 			AddressDetailsCountry
 			AddressDetailsPostalCode
-			}
-			Products {
+		}
+		Products {
 			_id
 			status
 			productID
@@ -42,23 +38,21 @@ export const GET_ORDERS = gql`
 			productVariantID
 			productVariantObject {
 				ID 
-		productID  
-		merchantID 
-		costPrice  
-		sellingPrice  
-		variantStock  
-		variantSKU 
-		variantImage 
-
-		status 
-		productVariants {
-		_id
-		name 
-		value 
-}
+				productID  
+				merchantID 
+				costPrice  
+				sellingPrice  
+				variantStock  
+				variantSKU 
+				variantImage 
+				status 
+				productVariants {
+					_id
+					name 
+					value 
+				}
 			}
-			
-	}
+		}
 		PaymentMethod
 		Notes
 		Tags
@@ -79,65 +73,56 @@ mutation createOrder(
 	$Products: [OrderProductInput]
 	$Notes: String
 	$Tags: String
-	
-  ) {
+) {
     upsertOrder(
-     order:{
-		                Status: $Status
-						UserId: $UserId 
-						OrderAmount: $OrderAmount
-						DeliveryAddress: $DeliveryAddress
-						ShippingAddress: $ShippingAddress
-						Products: $Products
-						PaymentMethod: $PaymentMethod
-						Notes: $Notes
-						Tags: $Tags
-						tokenID: $tokenID
-						
-										})                 
-				  {
-						_id
-						Status
-				   	    UserId
-						OrderAmount
-						DeliveryAddress{
-							BasicDetailsFirstName
-							BasicDetailsLastName
-							AddressDetailsCompany
-							AddressDetailsMobile
-							AddressDetailsApartment
-							AddressDetailsCity
-							AddressDetailsCountry
-							AddressDetailsPostalCode
-						  }
-						ShippingAddress{
-							BasicDetailsFirstName
-							BasicDetailsLastName
-							AddressDetailsCompany
-							AddressDetailsMobile
-							AddressDetailsApartment
-							AddressDetailsCity
-							AddressDetailsCountry
-							AddressDetailsPostalCode
-						  }
-						  Products {
-							_id
-							productID
-							productMerchantID
-							productSKU
-							productTitle
-							productSalePrice
-							productTotalQuantity
-						
-							
-						
-						}
-						PaymentMethod
-						Notes
-						Tags
-						tokenID
-				  }
-  }
+		order:{
+			Status: $Status
+			UserId: $UserId 
+			OrderAmount: $OrderAmount
+			DeliveryAddress: $DeliveryAddress
+			ShippingAddress: $ShippingAddress
+			Products: $Products
+			PaymentMethod: $PaymentMethod
+			Notes: $Notes
+			Tags: $Tags
+			tokenID: $tokenID
+			})                 
+		{
+			_id
+			Status
+			UserId
+			OrderAmount
+			DeliveryAddress{
+				BasicDetailsFullName
+				AddressDetailsState
+				AddressDetailsApartment
+				AddressDetailsCity
+				AddressDetailsCountry
+				AddressDetailsPostalCode
+			}
+			ShippingAddress{
+				BasicDetailsFullName
+				AddressDetailsState
+				AddressDetailsApartment
+				AddressDetailsCity
+				AddressDetailsCountry
+				AddressDetailsPostalCode
+			}
+			Products {
+				_id
+				productID
+				productMerchantID
+				productSKU
+				productTitle
+				productSalePrice
+				productTotalQuantity
+			}
+			PaymentMethod
+			Notes
+			Tags
+			tokenID
+		}
+	}
 `;
 
 export default {

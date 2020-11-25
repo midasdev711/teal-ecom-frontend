@@ -34,7 +34,7 @@
     "language-list": "^0.0.3",
     "less": "^3.12.2",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.31",
+    "moment-timezone": "^0.5.32",
     "next": "9.5.2",
     "next-with-apollo": "^5.1.0",
     "prosemirror-utils": "^0.9.6",

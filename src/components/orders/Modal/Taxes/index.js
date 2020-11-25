@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Button, Checkbox } from "antd";
 
-const Taxes = () => {
+const Taxes = (props) => {
+  const [tax, setTax] = useState(false);
+  const onChangeTax = (e) => {
+    setTax(e.target.checked);
+  }
   return (
     <StyledPopover>
       <ContentTitle>Tax are autometically calculated.</ContentTitle>
-      <Checkbox /> Charge taxes
+      <Checkbox onChange={(e) => onChangeTax(e)}/> Charge taxes
       <ButtonActions>
-        <Button size="large">Close</Button>
-        <Button size="large" type="primary">
+        <Button size="large" onClick={() => props.onClose()}>Close</Button>
+        <Button size="large" type="primary" onClick={() => props.onOk(tax)}>
           Apply
         </Button>
       </ButtonActions>
@@ -21,7 +25,6 @@ const StyledPopover = styled.div`
   ${'' /* width: 329px; */}
   padding: 14px;
   background-color: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 2px 7px 1px rgba(39, 44, 48, 0.16);
   border-radius: 3px;
 `;
 
