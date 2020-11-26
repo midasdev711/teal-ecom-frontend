@@ -4,125 +4,277 @@ export const GET_ORDERS = gql`
   query orders($filters: OrderFilters) {
     orders(filters: $filters) {
 		_id
-        Status
-		UserId
-		OrderAmount
+		ID
+        status
+		userId
+		orderAmount
 		createdAt
-		DeliveryAddress {
-			BasicDetailsFullName
-			AddressDetailsState
-			AddressDetailsApartment
-			AddressDetailsCity
-			AddressDetailsCountry
-			AddressDetailsPostalCode
-		}
-		ShippingAddress{
-			BasicDetailsFullName
-			AddressDetailsState
-			AddressDetailsApartment
-			AddressDetailsCity
-			AddressDetailsCountry
-			AddressDetailsPostalCode
-		}
-		Products {
+		customer {
 			_id
-			status
-			productID
-			productMerchantID
-			productSKU
-			productTitle
-			productSalePrice
-			productTotalQuantity
-			productTotalPrice
-			productImages
-			productVariantID
-			productVariantObject {
-				ID 
-				productID  
-				merchantID 
-				costPrice  
-				sellingPrice  
-				variantStock  
-				variantSKU 
-				variantImage 
-				status 
-				productVariants {
-					_id
-					name 
-					value 
-				}
-			}
+			ID
+			BasicDetailsFullName
+			BasicDetailsEmail
+			BasicDetailsMobile
+			AddressDetailsAddress
+			AddressDetailsApartment
+			AddressDetailsCity
+			AddressDetailsCountry
+			AddressDetailsPostalCode
+			AddressDetailsState
 		}
-		PaymentMethod
-		Notes
-		Tags
-		tokenID
+		line_items {
+			_id
+			ID
+			merchantID
+			merchantName
+			sku
+			title
+			slug
+			description
+			mrp
+			salePrice
+			yourShippingCost
+			shippingCost
+			thumbnailImage
+			featuredImage
+			images
+			category
+			subCategory
+			seo
+			{
+				title		
+				description
+				cronicalUrl
+			}
+			attributes
+			{
+				attributeName
+				attributeValues
+			}
+			ampSlug
+			totalQuantity
+			stock
+			termsAndConditions
+			tags
+			startDate
+			endDate
+			editStatus
+			views
+			revenue
+			searchEngineTitle
+			searchEngineDescription
+			status
+			createdBy
+			modifiedBy
+			createdDate
+			modifiedDate
+			weight
+			weightUnit
+			name
+			productCost
+		}
+		fulfillment_status
+		fulfillments {
+			_id
+			ID
+			merchantID
+			merchantName
+			sku
+			title
+			slug
+			description
+			mrp
+			salePrice
+			yourShippingCost
+			shippingCost
+			thumbnailImage
+			featuredImage
+			images
+			category
+			subCategory
+			seo
+			{
+				title		
+				description
+				cronicalUrl
+			}
+			attributes
+			{
+				attributeName
+				attributeValues
+			}
+			ampSlug
+			totalQuantity
+			stock
+			termsAndConditions
+			tags
+			startDate
+			endDate
+			editStatus
+			views
+			revenue
+			searchEngineTitle
+			searchEngineDescription
+			status
+			createdBy
+			modifiedBy
+			createdDate
+			modifiedDate
+			weight
+			weightUnit
+			name
+			productCost
+		}
+		paymentMethod
+		transactionID
+		createdAt
 	}
   }
 `;
 
 export const CREATE_ORDER_MUTATION = gql`
 mutation createOrder(
-	$Status: Int
-	$UserId: Int
-	$OrderAmount: String
-	$PaymentMethod: String
-	$tokenID:String
-	$DeliveryAddress: DeliveryAddressInput
-	$ShippingAddress: ShippingAddressInput
-	$Products: [OrderProductInput]
-	$Notes: String
-	$Tags: String
+	$status: Int
+	$userId: Int
+	$orderAmount: Float
+	$paymentMethod: String
+	$transactionID: String
+	$customer: OrderCustomerInput
+	$line_items: [OrderProductInput]
+	$fulfillments: [OrderProductInput]
+	$fulfillment_status: String
 ) {
     upsertOrder(
 		order:{
-			Status: $Status
-			UserId: $UserId 
-			OrderAmount: $OrderAmount
-			DeliveryAddress: $DeliveryAddress
-			ShippingAddress: $ShippingAddress
-			Products: $Products
-			tokenID: $tokenID
+			status: $status
+			userId: $userId 
+			orderAmount: $orderAmount
+			customer: $customer
+			line_items: $line_items
+			fulfillments: $fulfillments
+			fulfillment_status: $fulfillment_status
+			paymentMethod: $paymentMethod
+			transactionID: $transactionID
 		})                 
 		{
-			_id
-			Status
-			UserId
-			OrderAmount
-			DeliveryAddress{
+			status
+			userId
+			orderAmount
+			customer {
+				ID
 				BasicDetailsFullName
 				BasicDetailsEmail
 				BasicDetailsMobile
 				AddressDetailsAddress
-				AddressDetailsState
 				AddressDetailsApartment
 				AddressDetailsCity
 				AddressDetailsCountry
 				AddressDetailsPostalCode
-			}
-			ShippingAddress{
-				BasicDetailsFullName
-				BasicDetailsEmail
-				BasicDetailsMobile
-				AddressDetailsAddress
 				AddressDetailsState
-				AddressDetailsApartment
-				AddressDetailsCity
-				AddressDetailsCountry
-				AddressDetailsPostalCode
 			}
-			Products {
-				_id
-				productID
-				productMerchantID
-				productSKU
-				productTitle
-				productThumbnailImage
-				productVariant
-				productCount
-				productPrice
+			line_items {
+				ID
+				merchantID
+				merchantName
+				sku
+				title
+				slug
+				description
+				mrp
+				salePrice
+				yourShippingCost
+				shippingCost
+				thumbnailImage
+				featuredImage
+				images
+				category
+				subCategory
+				seo
+				{
+					title		
+					description
+					cronicalUrl
+				}
+				attributes
+				{
+					attributeName
+					attributeValues
+				}
+				ampSlug
+				totalQuantity
+				stock
+				termsAndConditions
+				tags
+				startDate
+				endDate
+				editStatus
+				views
+				revenue
+				searchEngineTitle
+				searchEngineDescription
+				status
+				createdBy
+				modifiedBy
+				createdDate
+				modifiedDate
+				weight
+				weightUnit
+				name
+				productCost
 			}
-			tokenID
+			fulfillment_status
+			fulfillments {
+				ID
+				merchantID
+				merchantName
+				sku
+				title
+				slug
+				description
+				mrp
+				salePrice
+				yourShippingCost
+				shippingCost
+				thumbnailImage
+				featuredImage
+				images
+				category
+				subCategory
+				seo
+				{
+					title		
+					description
+					cronicalUrl
+				}
+				attributes
+				{
+					attributeName
+					attributeValues
+				}
+				ampSlug
+				totalQuantity
+				stock
+				termsAndConditions
+				tags
+				startDate
+				endDate
+				editStatus
+				views
+				revenue
+				searchEngineTitle
+				searchEngineDescription
+				status
+				createdBy
+				modifiedBy
+				createdDate
+				modifiedDate
+				weight
+				weightUnit
+				name
+				productCost
+			}
+			paymentMethod
+			transactionID
 		}
 	}
 `;

@@ -561,6 +561,9 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     setErrors({});
     let payload = Object.assign({}, productDetails);
     payload['productShippingRate'] = shippingRate == 2 ? payload['productYourShippingRate'] : payload['productShippingRate'];
+    for (let i = 0; i < payload.productVariants.length; i ++) {
+      delete payload.productVariants[i].previewImages
+    }
     if (info === "save") {
       submit(payload)
     } else {
@@ -1599,7 +1602,7 @@ const AdvancedVariantEditorModal = styled(Modal)`
 `;
 
 const VariantAction = styled.div`
-  width: 100%
+  width: 100%;
   display: flex;
   justify-content: space-between;
 `;

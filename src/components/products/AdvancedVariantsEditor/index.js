@@ -318,7 +318,7 @@ const AdvancedVariantsEditor = (props) => {
                             </FormRadio>
                                 <FormRadio value={3}>
                                     Flat rate <br></br>
-                                    <FormRadioInput disabled={shippingRate != 3} min={0} name="shippingRate" onChange={(event) => { props.handleChange(event, "shippingRate") }} />
+                                    <FormRadioInput disabled={shippingRate != 3} min={0} name="shippingRate" onChange={(event) => { props.handleChange(event, selectedVariantIndex, "shippingRate") }} />
                                     <label style={{ color: "red" }} >{errors?.flatRate}</label>
                                     <FormRadioText>This product will always be charged a flat rate unless otherwise specified in your Shipping Settings.</FormRadioText>
                                 </FormRadio>

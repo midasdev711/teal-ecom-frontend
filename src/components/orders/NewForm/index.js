@@ -56,6 +56,7 @@ const { Text } = Typography;
 const { TabPane } = Tabs;
 
 const newForm = (props) => {
+  let userData = getUserData()
   const { Products, OrderAmount, ShippingAddresss, DeliveryAddress, PaymentMethod, TransactionID, Notes, Tags, handleChangeValue } = props
 
   const [visiable, setVisible] = useState(false);
@@ -325,17 +326,28 @@ const newForm = (props) => {
     } else {
       let pro_data = []
       selectedProducts.map(data => {
-        let dat = {
-          productID: data._id,
-          productMerchantID: data.merchantID,
-          productSKU: data.sku,
-          productTitle: data.title,
-          productThumbnailImage: data.thumbnailImage,
-          productVariant: data.subInfo,
-          productCount: data.count,
-          productPrice: data.subInfo ? data.subInfo.price : data.salePrice
-        }
-        pro_data.push(dat)
+        delete data.seo['__typename']
+        delete data['_id']
+        let newAttributes = data.attributes.map(item => {
+          return {
+            attributeName: item.attributeName,
+            attributeValues: item.attributeValues
+          }
+        })
+        data.attributes = Object.assign([], newAttributes)
+        data.mrp = parseFloat(data.mrp)
+        data.yourShippingCost = parseFloat(data.yourShippingCost)
+        data.salePrice = parseFloat(data.salePrice)
+        data.shippingCost = parseFloat(data.shippingCost)
+        data.productCost = parseFloat(data.productCost)
+        data.costPerItem = parseFloat(data.costPerItem)
+        delete data['variants']
+        delete data['createdAt']
+        delete data['__typename']
+        delete data['isChecked']
+        delete data['newId']
+        delete data['total_value']
+        pro_data.push(data)
       })
   
       let userId = userData?.ID
@@ -345,35 +357,19 @@ const newForm = (props) => {
       } else {
         total = subTotal - (subTotal * discountAmount / 100) + shippingRate.rate;
       }
+      let customer = Object.assign({}, selectedCustomer);
+      delete customer['__typename']
+      delete customer['_id']
       let _variables = {
-        UserId: userId,
-        Status: 1,
-        Products:pro_data,
-        OrderAmount: total,
-        ShippingAddress:
-        {
-          BasicDetailsFullName: selectedCustomer.BasicDetailsFullName,
-          BasicDetailsEmail: selectedCustomer.BasicDetailsEmail,
-          BasicDetailsMobile: selectedCustomer.BasicDetailsMobile,
-          AddressDetailsAddress: selectedCustomer.AddressDetailsAddress,
-          AddressDetailsState: selectedCustomer.AddressDetailsState,
-          AddressDetailsApartment: selectedCustomer.AddressDetailsApartment,
-          AddressDetailsCity: selectedCustomer.AddressDetailsCity,
-          AddressDetailsCountry: selectedCustomer.AddressDetailsCountry,
-          AddressDetailsPostalCode: selectedCustomer.AddressDetailsPostalCode
-        },
-        DeliveryAddress: {
-          BasicDetailsFullName: selectedCustomer.BasicDetailsFullName,
-          BasicDetailsEmail: selectedCustomer.BasicDetailsEmail,
-          BasicDetailsMobile: selectedCustomer.BasicDetailsMobile,
-          AddressDetailsAddress: selectedCustomer.AddressDetailsAddress,
-          AddressDetailsState: selectedCustomer.AddressDetailsState,
-          AddressDetailsApartment: selectedCustomer.AddressDetailsApartment,
-          AddressDetailsCity: selectedCustomer.AddressDetailsCity,
-          AddressDetailsCountry: selectedCustomer.AddressDetailsCountry,
-          AddressDetailsPostalCode: selectedCustomer.AddressDetailsPostalCode
-        },
+        userId: userId,
+        status: 1,
+        line_items:pro_data,
+        orderAmount: total,
+        customer: customer,
+        fulfillment_status: 'unfulfilled',
+        fulfillments: []
       };
+      
       props.AddOrders(_variables)
     }
   }
@@ -389,13 +385,13 @@ const newForm = (props) => {
           if (product.variants.length > 0) {
             for (let i = 0; i < product.variants.length; i ++) {
               let tmpProduct = Object.assign({}, product);
-              let newId = product._id + product.variants[i].variant;
+              let newId = product._id + product.variants[i]._id;
               if (selectedProducts.filter(item => item.newId == newId).length == 0) {
-                tmpProduct['subInfo'] = product.variants[i];
+                tmpProduct = { ...product, ...product.variants[i] };
                 tmpProduct['newId'] = newId;
                 tmpProduct['count'] = 1;
                 tmp.push(tmpProduct);
-                tmpSubTotal += product.variants[i].price;
+                tmpSubTotal += tmpProduct.salePrice;
               }
             }
           } else {
@@ -408,20 +404,20 @@ const newForm = (props) => {
         } else {
           let tmpProduct = Object.assign({}, product);
           let tmpVariant = Object.assign({}, variant);
-          let newId = tmpProduct._id + variant.variant;
-          tmpProduct['subInfo'] = tmpVariant;
+          let newId = tmpProduct._id + variant._id;
+          tmpProduct = { ...product, ...tmpVariant };
           tmpProduct['newId'] = newId;
           tmpProduct['count'] = 1;
           tmp.push(tmpProduct);
-          tmpSubTotal += tmpVariant.price;
+          tmpSubTotal += tmpVariant.salePrice;
         }
       } else {
-        let newId = variant == true ? product._id : product._id + variant.variant;
+        let newId = variant == true ? product._id : product._id + variant._id;
         
         if (variant == true) {
           if (product.variants.length > 0) {
             for (let i = 0; i < product.variants.length; i ++) {
-              let newId = product._id + product.variants[i].variant;
+              let newId = product._id + product.variants[i]._id;
               let index = 0;
               for (let j = 0; j < tmp.length; j ++) {
                 if (newId == tmp[j].newId) {
@@ -429,7 +425,7 @@ const newForm = (props) => {
                   break;
                 }
               }
-              tmpSubTotal -= tmp[index].subInfo.price * tmp[index].count;
+              tmpSubTotal -= tmp[index].salePrice * tmp[index].count;
               tmp.splice(index, 1);
             }
           } else {
@@ -445,7 +441,7 @@ const newForm = (props) => {
             tmp.splice(index, 1);
           }
         } else {
-          let newId = product._id + variant.variant;
+          let newId = product._id + variant._id;
           let index = 0;
           for (let j = 0; j < selectedProducts.length; j ++) {
             if (newId == selectedProducts[j].newId) {
@@ -453,7 +449,7 @@ const newForm = (props) => {
               break;
             }
           }
-          tmpSubTotal -= selectedProducts[index].subInfo.price * selectedProducts[index].count;
+          tmpSubTotal -= selectedProducts[index].salePrice * selectedProducts[index].count;
           tmp.splice(index, 1);
         }
       }
@@ -461,15 +457,15 @@ const newForm = (props) => {
       setSelectedProducts(tmp);
     }
     const variantsShow = product.variants.map((variant, variantIndex) => {
-      let newId = product._id + variant.variant;
+      let newId = product._id + variant._id;
       let selected = selectedProducts.filter(item => item.newId == newId).length > 0 ? true : false;
       return (
         <div key={product._id + 'variant' + variantIndex}>
           <VariantCheckbox checked={selected} onChange={(e) => onChange(e, product, variant)}>
             <div className="info">
-              <span>{variant.variant}</span>
-              <span className="quantity">{variant.quantity} available</span>
-              <span className="price">${variant.price}</span>
+              <span>{variant.name}</span>
+              <span className="quantity">{variant.totalQuantity} available</span>
+              <span className="price">${variant.salePrice}</span>
             </div>
           </VariantCheckbox>
         </div>
@@ -481,7 +477,7 @@ const newForm = (props) => {
     } else {
       let allChecked = true;
       for (let i = 0; i < product.variants.length; i ++) {
-        let newId = product._id + product.variants[i].variant;
+        let newId = product._id + product.variants[i]._id;
         if (selectedProducts.filter(item => item.newId == newId).length == 0) {
           allChecked = false;
           break;
@@ -517,7 +513,7 @@ const newForm = (props) => {
       tmp[index].count = e;
       let tmpSubTotal = 0;
       tmp.map(item => {
-        tmpSubTotal += item.subInfo ? item.subInfo.price * item.count : item.salePrice * item.count
+        tmpSubTotal += item.salePrice * item.count
       });
       setSubTotal(tmpSubTotal);
       setSelectedProducts(tmp);
@@ -535,7 +531,7 @@ const newForm = (props) => {
       tmp.splice(index, 1);
       let tmpSubTotal = 0;
       tmp.map(item => {
-        tmpSubTotal += item.subInfo ? item.subInfo.price * item.count : item.salePrice * item.count
+        tmpSubTotal += item.salePrice * item.count
       });
       setSubTotal(tmpSubTotal);
       setSelectedProducts(tmp);
@@ -547,16 +543,16 @@ const newForm = (props) => {
         </div>
         <div className="product-info">
           <span className="title price">{product.title}</span>
-          <span className="sub-info">{product.subInfo ? product.subInfo.variant : ''}</span>
+          <span className="sub-info">{product.name || ' '}</span>
         </div>
         <div className="product-price price">
-          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+          <span className="price">${product.salePrice}</span>
         </div>
         <div className="number-input price">
           <span>X</span> &nbsp; <ProductCountInput min={1} defaultValue={1} onChange={(e) => onProductCountChange(e)}></ProductCountInput>
         </div>
         <div className="product-price-sum">
-          <span className="price">${product.subInfo ? product.subInfo.price : product.salePrice}</span>
+          <span className="price">${product.salePrice}</span>
         </div>
         <CloseOutlined onClick={() => removeSelectedProduct()} />
       </SummaryProductLine>
@@ -705,10 +701,12 @@ const newForm = (props) => {
           <ContentBox>
             <SubFormTitle>Select products</SubFormTitle>
             <Filters onOpen={() => setShowSelectProduct(true)} hideAddButton={true} onSearch={() => setShowSelectProduct(true)} goToNewPage={() => goToNewPage()} top={0} right={0}/>
+            <ProductList>
             {
               products && products.length > 0 && 
                 productsShow
             }
+            </ProductList>
           </ContentBox>
 
         </TabPane>
@@ -1770,6 +1768,12 @@ const NewCustomerForm = styled(Modal)`
       }
     }
   }
+`;
+
+const ProductList = styled.div`
+  width: 100%;
+  max-height: 520px;
+  overflow-y: auto;
 `;
 
 const mapStateToProps = (store) => {

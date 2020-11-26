@@ -39,7 +39,8 @@ const NewOrder = (props) => {
           price: data.variants.price
         }
       }
-      pro_data.push(dat)
+      delete data.seo['__typename']
+      pro_data.push(data)
     })
 
     let userId = userData?.ID

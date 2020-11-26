@@ -53,11 +53,15 @@ const ViewOrders = (props) => {
   const [isShowFulfill, setShowFulfil] = useState(false);
 
 
-  const dataNew = orderData.filter((el) => {
-  return el && el.isNew === true;
-});
+  const dataNew = orderData.filter((item) => {
+    return item.fulfillment_status == 'unfulfilled'
+  });
 
-    let userData = getUserData()
+  const unpaidData = orderData.filter((item) => {
+    return item.status == 1
+  });
+
+  let userData = getUserData()
   useEffect(() => {
     getOrdersCall();
   }, [props]);
@@ -70,10 +74,10 @@ const ViewOrders = (props) => {
   const columns = [
     {
       title: "Order",
-      dataIndex: "_id",
+      dataIndex: "ID",
       render: (_id) => {
         return (
-          <Link href="/orders/123">
+          <Link href={"/orders/" + _id}>
             <FullName href="">#{_id}</FullName>
           </Link>
         );
@@ -84,61 +88,40 @@ const ViewOrders = (props) => {
       dataIndex: "created_date",
       render: (createdAt) => {
         return (
-          <Moment>{createdAt}</Moment>
+          <Moment format="MM/DD/YYYY">{createdAt}</Moment>
         )
       }
     },
     {
       title: "Customer",
-      dataIndex: "DeliveryAddress",
-      render: (DeliveryAddress) => (
-        <Dropdown
-          trigger={["click"]}
-          overlay={
-            <PopupDetailTB>
-              <h3>
-                {DeliveryAddress.BasicDetailsFirstName} {DeliveryAddress.BasicDetailsLastName}
-              </h3>
-              <p>{DeliveryAddress.AddressDetailsApartment} {DeliveryAddress.AddressDetailsCity} {DeliveryAddress.AddressDetailsCountry} {DeliveryAddress.AddressDetailsPostalCode}</p>
-              <p>
-                {DeliveryAddress.order} order{DeliveryAddress.order > 1 ? "s" : ""}
-              </p>
-              <TextPhone>{DeliveryAddress.AddressDetailsMobile}</TextPhone>
-              <div>
-                <Button block type="default" href="/customers/123">
-                  View customer
-                </Button>
-              </div>
-            </PopupDetailTB>
-          }
-          placement="bottomCenter"
-        >
-          <ButtonCustomer type="text">
-            {DeliveryAddress.BasicDetailsFirstName} {DeliveryAddress.BasicDetailsLastName} <DownOutlined />
-          </ButtonCustomer>
-        </Dropdown>
-      ),
+      dataIndex: "customer",
+      render: (item) => {
+        console.log(item)
+        return (
+          <span>{item.BasicDetailsFullName}</span>
+        )
+      },
       align: "left",
     },
     {
       title: "Amount",
-      dataIndex: "total",
-      render: (value, item) => `$${item.OrderAmount}`,
+      dataIndex: "orderAmount",
+      render: (value, item) => `$${item.orderAmount}`,
     },
     {
       title: "Payment",
-      dataIndex: "Status",
-      render: (Status) => {
-        if (Status === "paid") {
-          return <TagDark>{Status}</TagDark>;
+      dataIndex: "status",
+      render: (status) => {
+        if (status === 1) {
+          return <TagDark>Unpaid</TagDark>;
         } else {
-          return <TagOrang>{Status}</TagOrang>;
+          return <TagOrang>Paid</TagOrang>;
         }
       },
     },
     {
       title: "Fulfillment",
-      dataIndex: "fulfillment",
+      dataIndex: "fulfillment_status",
       render: (val) => {
         if (val === "Unfulfilled") {
           return <TagYellow>{val}</TagYellow>;
@@ -149,7 +132,7 @@ const ViewOrders = (props) => {
     },
     {
       title: "Items",
-      dataIndex: "Products",
+      dataIndex: "line_items",
       render: (Products) => {
         let data = [];
         for (let i = 0; i < Products.length; i++) {
@@ -162,12 +145,12 @@ const ViewOrders = (props) => {
                 <PopupDetailTB>
                   <Tag>{item.status}</Tag>
                   <div>
-                    {(item.productImages !== null) ? <img src={item.productImages[0]} alt="" /> : <img src={'/images/shoes.jpg'} width='50' /> }
+                    {(item.images !== null) ? <img src={item.images[0]} alt="" /> : <img src={'/images/shoes.jpg'} width='50' /> }
                     <Link href={`/products/[productId]`} as="/products/123456789">
-                      <a href="">{item.productTitle}</a>
+                      <a href="">{item.title}</a>
                     </Link>
-                    <p>{item.style}</p>
-                    <p>SKU {item.productSKU}</p>
+                    <p>{item.name}</p>
+                    <p>SKU {item.sku}</p>
                   </div>
                 </PopupDetailTB>
               }
@@ -289,8 +272,8 @@ const ViewOrders = (props) => {
                 ...rowSelection,
               }}
               columns={columns}
-              dataSource={orderData}
-              pagination={orderData.length > 10}
+              dataSource={[]}
+              pagination={false}
             />
           </ContentBox>
         </TabPane>
@@ -303,7 +286,7 @@ const ViewOrders = (props) => {
               }}
               columns={columns}
               dataSource={dataNew && dataNew.length > 0 ? dataNew : []}
-              pagination={orderData.length > 10}
+              pagination={dataNew.length > 10}
             />
           </ContentBox>
         </TabPane>
@@ -315,8 +298,8 @@ const ViewOrders = (props) => {
                 ...rowSelection,
               }}
               columns={columns}
-              dataSource={[]}
-              pagination={orderData.length > 10}
+              dataSource={unpaidData}
+              pagination={unpaidData.length > 10}
             />
           </ContentBox>
         </TabPane>

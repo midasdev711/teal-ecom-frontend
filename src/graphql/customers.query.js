@@ -4,6 +4,7 @@ export const GET_CUSTOMERS = gql`
   query customers($filters: CustomerFilters) {
     customers(filters: $filters) {
       _id
+      ID
       BasicDetailsFullName
       BasicDetailsEmail
       BasicDetailsMobile
