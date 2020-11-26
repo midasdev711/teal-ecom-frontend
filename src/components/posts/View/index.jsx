@@ -101,7 +101,7 @@ const ViewPosts = (props) => {
 
   const handleChangeTabs = (tabIndex) => {
     let selectedName = ListTabs.find(({key})=> key === tabIndex)
-    router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/` + selectedName?.name.toLocaleLowerCase() }, { shallow: true });
+    router.push("/[portal_id]/blogs/posts/[post_status]", { pathname: `/${userData?.uniqueID}/blogs/posts/` + selectedName?.name.toLocaleLowerCase() }, { shallow: true });
   };
   const getArticleDetail = (item) => {
     const url =

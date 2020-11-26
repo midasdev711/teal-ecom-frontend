@@ -122,7 +122,7 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("[portal_id]/stories/posts/[post_status]", { pathname: `${userData?.uniqueID}/stories/posts/live` }, { shallow: true });
+          router.push("[portal_id]/blogs/posts/[post_status]", { pathname: `${userData?.uniqueID}/blogs/posts/live` }, { shallow: true });
         }
       })
       .catch((err) => {
@@ -136,12 +136,12 @@ const NewPost = (props) => {
       <ActionTopLayout>
         <ActionContent>
           <NewPostAction>
-            <Link passHref={true} href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
+            <Link passHref={true} href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow>
               <LinkBack>
                 <LogoImage className="logo" src="/favicon.svg" />
               </LinkBack>
             </Link>
-            <Link passHref={true} href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/live`} shallow>
+            <Link passHref={true} href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow>
               <LinkBack>
                 <LogoImage className="logo" src="/images/back-icon.svg" />
               </LinkBack>

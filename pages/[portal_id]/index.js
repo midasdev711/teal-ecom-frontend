@@ -55,9 +55,9 @@ const Index = () => {
             <Title1>For you</Title1>
             <ButtonBlock>
                 <HomeLinkButton
-                    title='Stories'
+                    title='Blogs'
                     backgroundColor='#E84118'
-                    onClick={() => handleDefaultAction('stories/dashboard')}
+                    onClick={() => handleDefaultAction('blogs/dashboard')}
                     image={<img alt='unfulied' src='/images/home-stories.svg' />}
                 ></HomeLinkButton>
                 <HomeLinkButton

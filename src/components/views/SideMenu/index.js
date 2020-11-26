@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Layout, Typography, Select } from "antd";
 import { TELogo, TESelector } from "../../atoms";
-import { Routes, StoriesRoutes } from "../../../utils/Routes";
+import { Routes, BlogsRoutes } from "../../../utils/Routes";
 import Link from "next/link";
 import { buildDynamicRoute } from "../../../utils";
 
@@ -19,7 +19,7 @@ const SideMenu = () => {
   }, [])
 
   const { pathname } = useRouter();
-  const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
+  const RoutesName = channelName === "Ecommerce" ? Routes : BlogsRoutes;
 
   const getMenuList = () => {
     return RoutesName.map((route, index) => {

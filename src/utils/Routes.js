@@ -78,11 +78,11 @@ const Routes = [
   },
 ];
 
-const StoriesRoutes = [
+const BlogsRoutes = [
   {
     title: "Home",
-    path: "/[portal_id]/stories/dashboard",
-    as: "/[portal_id]/stories/dashboard",
+    path: "/[portal_id]/blogs/dashboard",
+    as: "/[portal_id]/blogs/dashboard",
   },
  
   // {
@@ -93,32 +93,32 @@ const StoriesRoutes = [
   
   {
     title: "Posts",
-    path: "/[portal_id]/stories/posts/[post_status]",
-    as: "/[portal_id]/stories/posts/drafts",
+    path: "/[portal_id]/blogs/posts/[post_status]",
+    as: "/[portal_id]/blogs/posts/drafts",
   },
   {
     title: "Categories",
-    path: "/[portal_id]/stories/categories",
-    as: "/[portal_id]/stories/categories",
+    path: "/[portal_id]/blogs/categories",
+    as: "/[portal_id]/blogs/categories",
   },
   {
     title: "Authors",
-    path: "/[portal_id]/stories/authors",
-    as: "/[portal_id]/stories/authors",
+    path: "/[portal_id]/blogs/authors",
+    as: "/[portal_id]/blogs/authors",
   },
   {
     title: "Insights",
-    path: "/[portal_id]/stories/insights",
-    as: "/[portal_id]/stories/insights",
+    path: "/[portal_id]/blogs/insights",
+    as: "/[portal_id]/blogs/insights",
   },
   {
     title: "Splitter",
-    path: "/[portal_id]/stories/campaign",
-    as: "/[portal_id]/stories/campaign",
+    path: "/[portal_id]/blogs/campaign",
+    as: "/[portal_id]/blogs/campaign",
   },
 ];
 
-const StoriesInnerRoutes = [
+const BlogsInnerRoutes = [
   {
     title: "Stories",
     path: "/[portal_id]/stories/:id",
@@ -126,8 +126,8 @@ const StoriesInnerRoutes = [
   },
   {
     title: "StoriesNew",
-    path: "/[portal_id]/stories/setup-new",
-    as: "/[portal_id]/stories/setup-new",
+    path: "/[portal_id]/blogs/setup-new",
+    as: "/[portal_id]/blogs/setup-new",
   },
   {
     title: "EditPost",
@@ -136,8 +136,8 @@ const StoriesInnerRoutes = [
   },
   {
     title: "NewPost",
-    path: "/[portal_id]/stories/posts/new",
-    as: "/[portal_id]/stories/posts/new",
+    path: "/[portal_id]/blogs/posts/new",
+    as: "/[portal_id]/blogs/posts/new",
   },
 ];
 
@@ -174,11 +174,11 @@ const MainRoutes = {
   Stories: "stories",
 };
 
-export { Routes, StoriesRoutes, MainRoutes, StoriesInnerRoutes };
+export { Routes, BlogsRoutes, MainRoutes, BlogsInnerRoutes };
 
 export default {
   Routes,
   MainRoutes,
-  StoriesRoutes,
-  StoriesInnerRoutes,
+  BlogsRoutes,
+  BlogsInnerRoutes,
 };

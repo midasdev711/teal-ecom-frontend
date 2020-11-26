@@ -48,7 +48,7 @@ export function StoriesDashboard(props) {
     console.log("testtttttt", props.blogsData)
 
     const goToNewBlogPage = (url) => {
-        router.push(`/[portal_id]/stories/setup-new`, { pathname: `/${userData?.uniqueID}/stories/setup-new` }, { shallow: true });
+        router.push(`/[portal_id]/blogs/setup-new`, { pathname: `/${userData?.uniqueID}/blogs/setup-new` }, { shallow: true });
     }
 
     return (
@@ -63,7 +63,7 @@ export function StoriesDashboard(props) {
             <BlogContainer>
                 <BlogContainerHeader>
                     <Title1>Blogs</Title1>
-                    <AddButton onClick={() => handleDefaultAction('stories/setup-new', '')}>
+                    <AddButton onClick={() => handleDefaultAction('blogs/setup-new', '')}>
                         <img src={'/images/new_small.svg'} />
                         <AddButtonText>Add</AddButtonText>
                     </AddButton>
