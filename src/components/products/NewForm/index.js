@@ -50,6 +50,9 @@ import { rejects } from "assert";
 import { connect, useSelector } from "react-redux";
 import product, { getProductCategoryLists, getProductSubCategoryLists } from "../../../redux/actions/product";
 import ImageUpload from "../ImageUpload"
+import AdvancedVariantsEditor from "../AdvancedVariantsEditor"
+
+
 const { Search } = Input;
 const { Option } = Select;
 const { Dragger } = Upload;
@@ -90,7 +93,6 @@ let productInfo = {
     attributeName: "productWeight",
     attributeValues: []
   }]
-
 }
 
 let cleanData = {
@@ -129,8 +131,26 @@ let cleanData = {
     attributeName: "productWeight",
     attributeValues: []
   }]
-
 }
+
+const variantModel = {
+  name: null,
+  totalQuantity: null,
+  salePrice: null,
+  mrp: null,
+  costPerItem: null,
+  yourShippingCost: 0,
+  images: null,
+  thumbnailImage: null,
+  featuredImage: null,
+  sku: null,
+  shippingRate: null,
+  weight: null,
+  weightUnit: null,
+  previewImages: []
+}
+
+
 const antIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const ProductSEOInfo = ["title", "description"]
 
@@ -161,7 +181,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const loading = useSelector(state => state.productReducer.status)
   const [step, setStep] = useState("1");
   const [variantsData, setVariantsData] = useState([]);
-  const [variantsOption, setVariantsOptions] = useState([]);
+  const [variantsOption, setVariantsOptions] = useState([{option: '', values: []}]);
 
 
   // useEffect(()=>{
@@ -246,7 +266,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
       keys = current[0].values;
     }
     if (current.length > 1 && current[1].values.length > 0) {
-      let tmp = Object.assign([], keys);
       keys = [];
       for (let j = 0; j < current[0].values.length; j ++) {
         for (let i = 0; i < current[1].values.length; i ++) {
@@ -265,7 +284,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     }
     let variantData = [];
     for (let i = 0; i < keys.length; i ++) {
-      variantData.push({selected: false, variant: keys[i], price: 0, quantity: 0, sku: null})
+      variantData.push({
+        selected: false, 
+        ...variantModel,
+        name: keys[i]
+      })
     }
     setVariantsData([...variantData]);
     setVariantsOptions([...current]);
@@ -605,7 +628,6 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
   const handleCheckBox = (event) => {
     const values = event.target.checked
     setVariantsFlag(values)
-    setVariantsOptions([{option: '', values: []}])
     // setDummyData([dummyData + 1])
     // handleProductInventoryTotal()
   }
@@ -691,7 +713,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
 
   const handleCancel = () => {
     setVariantsData([]);
-    setVariantsOptions([]);
+    setVariantsOptions([{option: '', values: []}]);
     setVariantsFlag(false);
   }
 
@@ -742,6 +764,15 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
     handleSubmit("saveAndPublish")
   }
 
+  const [advancedVariantsEditorModal, showAdvancedVariantsEditorModal] = useState(false);
+
+  const openAdvancedVariantsEditor = (show) => {
+    if (show) {
+      setVariantsFlag(false);
+    }
+    showAdvancedVariantsEditorModal(show);
+  }
+
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={() => saveAsDraft()}>
@@ -783,7 +814,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               <FormItem>
                 <CustomLabel>Category</CustomLabel>
                 <Form.Item>
-                  <FormSelect defaultValue="Select" maxWidth={265} onChange={(event) => handleDropDown(event, "productCategory")}>
+                  <FormSelect defaultValue="Select" maxwidth={265} onChange={(event) => handleDropDown(event, "productCategory")}>
                     <FormSelectOption value="Select" disabled>Select</FormSelectOption>
                     {
                       categoryLists && categoryLists.length > 0 && categoryLists.map((data, index) => {
@@ -797,7 +828,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               <FormItem>
                 <CustomLabel>Sub Category</CustomLabel>
                 <Form.Item>
-                  <FormSelect defaultValue="Select" maxWidth={265} onChange={(event) => handleDropDown(event, "productSubcategory")}>
+                  <FormSelect defaultValue="Select" maxwidth={265} onChange={(event) => handleDropDown(event, "productSubcategory")}>
                     <FormSelectOption value="Select" disabled>Select</FormSelectOption>
                     {
                       subCategories && subCategories.length > 0 && subCategories.map((data, index) => {
@@ -814,7 +845,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         <TabPane tab="Images" key="2">
           <ContentBox paddingRight={100}>
             <SubFormTitle>Images</SubFormTitle>
-            <ImageUpload imageData={(value) => handleImageUpload(value)} />
+            <ImageUpload imageData={(value) => handleImageUpload(value)} savePreviewData={() => {}} />
             <label style={{ color: "red" }} >{errors?.productImages}</label>
           </ContentBox>
         </TabPane>
@@ -1001,7 +1032,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                     <FormItem>
                       <CustomLabel>Variant</CustomLabel>
                       <Form.Item key={index}>
-                        <FormSelect keys={index} name="variantName" value={variantsOption[index]["option"]} onChange={(event) => variantsOptionChanged(event, index, "option")} placeholder="Select">
+                        <FormSelect keys={index} value={variantsOption[index]["option"]} onChange={(event) => variantsOptionChanged(event, index, "option")} placeholder="Select">
                           <FormSelectOption value="size">Size</FormSelectOption>
                           <FormSelectOption value="color">Color</FormSelectOption>
                           <FormSelectOption value="material">Material</FormSelectOption>
@@ -1023,15 +1054,26 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
               }
               <label style={{ color: "red" }} >{errors?.variantName}</label> <br />
               <label style={{ color: "red" }} >{errors?.variantValues}</label>
-              {
-                VariantsFlag && variantsOption.length < 3 &&
-                <Button
-                  className="add-variant"
-                  onClick={() => handleAddVariants()}
-                >
-                  <PlusOutlined /> Add another variant
-                </Button>
-              }
+              <VariantAction>
+                {
+                  VariantsFlag && variantsOption.length < 3 &&
+                    <Button
+                      className="add-variant"
+                      onClick={() => handleAddVariants()}
+                    >
+                      <PlusOutlined /> Add another variant
+                    </Button>
+                }
+                {
+                  VariantsFlag && variantsData.length > 0 &&
+                    <Button
+                      className="add-variant"
+                      onClick={() => openAdvancedVariantsEditor(true)}
+                      >
+                      Advanced Variants Editor
+                    </Button>
+                }
+              </VariantAction>
               <Divider/>
               <SubFormTitle>Your Variants</SubFormTitle>
               {VariantsFlag && variantsData.length > 0 &&
@@ -1052,10 +1094,10 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
                       return (
                         <tr key={'variant' + index}>
                           <td><Checkbox></Checkbox></td>
-                          <td><VariantTableText>{data.variant}</VariantTableText></td>
-                          <td className="price"><FormNumberInput maxWidth={135} onChange={(event) => variantsDataChanged(event, index, 'price')}></FormNumberInput></td>
-                          <td className="quantity"><FormNumberInput maxWidth={90} onChange={(event) => variantsDataChanged(event, index, 'quantity')} ></FormNumberInput></td>
-                          <td className="sku"><FormNumberInput maxWidth={80} onChange={(event) => variantsDataChanged(event, index, 'sku')} ></FormNumberInput></td>
+                          <td><VariantTableText>{data.name}</VariantTableText></td>
+                          <td className="price"><FormNumberInput maxwidth={135} value={variantsData[index].salePrice} onChange={(event) => variantsDataChanged(event, index, 'salePrice')}></FormNumberInput></td>
+                          <td className="quantity"><FormNumberInput maxwidth={90} value={variantsData[index].totalQuantity} onChange={(event) => variantsDataChanged(event, index, 'totalQuantity')} ></FormNumberInput></td>
+                          <td className="sku"><TextInput maxwidth={80} value={variantsData[index].sku} onChange={(event) => variantsDataChanged(event.target.value, index, 'sku')} ></TextInput></td>
                         </tr>
                       )
                     })}
@@ -1101,7 +1143,7 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
             )}
             <CustomLabel>Tags</CustomLabel>
             <Form.Item>
-              <FormSelect mode="tags" maxWidth={550} placeholder="Add product tags separated by commas" onChange={(event) => handleChange(event, "productTags")} tokenSeparators={[',']}>
+              <FormSelect mode="tags" maxwidth={550} placeholder="Add product tags separated by commas" onChange={(event) => handleChange(event, "productTags")} tokenSeparators={[',']}>
               </FormSelect>
             </Form.Item>
             <label style={{ color: "red" }} >{errors?.productTags}</label>
@@ -1121,6 +1163,19 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
           </NextStepButton>
         }
       </ActionBottom>
+      <AdvancedVariantEditorModal
+        visible={advancedVariantsEditorModal}
+        onCancel={() => openAdvancedVariantsEditor(false)}
+        footer={[
+          <div>
+            <Button key="submit" className="save-button" type="primary" onClick={() => handleOk()}>
+              Next
+            </Button>
+          </div>
+        ]}
+      >
+        <AdvancedVariantsEditor product={productDetails} variantsData={variantsData} handleChange={(event, index, name) => variantsDataChanged(event, index, name)} />
+      </AdvancedVariantEditorModal>
     </FormLayout>
   );
 };
@@ -1160,7 +1215,7 @@ const TextInput = styled(Input)`
 `;
 
 const FormSelect = styled(Select)`
-  max-width: ${props => props.maxWidth ? props.maxWidth : 250}px;
+  max-width: ${props => props.maxwidth ? props.maxwidth : 250}px;
   width: 100%;
   height: 45px;
   border: none;
@@ -1216,7 +1271,7 @@ const Loader = styled.div`
 `;
 
 const FormNumberInput = styled(InputNumber)`
-  max-width: ${props => props.maxWidth ? props.maxWidth : '550'}px!important;
+  max-width: ${props => props.maxwidth ? props.maxwidth : '550'}px!important;
   width: 100%;
   height: 45px;
   border: none;
@@ -1487,6 +1542,66 @@ const VariantModal = styled(Modal)`
       }
     }
   }
+`;
+
+const AdvancedVariantEditorModal = styled(Modal)`
+  width: 950px!important;
+  height: 615px;
+  .ant-modal-body {
+    overflow-y: auto;
+    height: 565px;
+    .add-variant {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 150%;
+      color: #0095F8;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+    }
+  }
+  .ant-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px -5px 30px rgba(64, 73, 80, 0.07);
+    >span {
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 14px;
+      color: #404950;
+    }
+    button {
+      width: 85px;
+      height: 30px;
+      font-family: Proxima Nova;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 15px;
+      line-height: 15px;
+      text-align: center;
+      &.save-button {
+        background: #80CAFB;
+        border-radius: 5px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+      &.cancel-button {
+        color: #FF0000;
+        border: 1px solid #FF0000;
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
+const VariantAction = styled.div`
+  width: 100%
+  display: flex;
+  justify-content: space-between;
 `;
 
 const mapStateToProps = (store) => {
