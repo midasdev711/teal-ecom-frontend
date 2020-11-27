@@ -4,31 +4,31 @@ import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { Upload, Modal, Dropdown, Menu, Button, Card } from "antd";
 
 
-const ImageUpload = ({ imageData , existImages }) => {
+const ImageUpload = ({ imageData , existImages, index, savePreviewData }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [dataFiles, setDataFiles] = useState([]);
   const [base64Data, setBase64Data] = useState([]);
  // console.log('dataFiles', dataFiles)
-console.log('dataFiles', dataFiles)
+  console.log('dataFiles', dataFiles)
   const handleCancel = () => {
     setPreviewVisible(false);
   };
-  // let cloneDataFile = dataFiles.slice()
-  // useEffect(() => {
-  //   if(existImages.length > 0){
-  //     existImages.map((data,index)=>{
-  //       cloneDataFile.push({
-  //         uid: `${index + 1}`,
-  //         name: data,
-  //         status: 'done',
-  //         url: `${data}`,
-  //       })
-  //     }) 
-  //    setDataFiles(cloneDataFile) 
-  //   }
-  // },[existImages])
+  useEffect(() => {
+    setDataFiles(existImages || [])
+    // if(existImages.length > 0){
+    //   existImages.map((data,index)=>{
+    //     cloneDataFile.push({
+    //       uid: `${index + 1}`,
+    //       name: data,
+    //       status: 'done',
+    //       url: `${data}`,
+    //     })
+    //   }) 
+    //  setDataFiles(cloneDataFile) 
+    // }
+  },[index])
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -55,6 +55,7 @@ console.log('dataFiles', dataFiles)
       cloneBase = dataFiles.map(fileObj => fileObj.originFileObj);
     }
     console.log('clone base', cloneBase)
+    savePreviewData(dataFiles)
     imageData(cloneBase);
     setBase64Data(cloneBase);
   }, [dataFiles])

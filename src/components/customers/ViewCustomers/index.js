@@ -126,48 +126,35 @@ const ViewCustomers = (props) => {
   };
   const columns = [
     {
-      title: (title) => nodeCheckbox,
-      dataIndex: "firstName",
-      render: (value, item) => {
-        return (
-          <div>
-            <Link href="/[portal_id]/ecom/customers/[customer_id]" as={`/${userData?.uniqueID}/ecom/customers/${item._id}`}>
-              <FullName >
-                {item.BasicDetailsFullName}
-              </FullName>
-            </Link>
-          </div>
-        );
-      },
-      width: "60%",
+      title: "Customer",
+      dataIndex: "BasicDetailsFullName",
+      width: "45%",
     },
     {
       title: "Last Order",
       dataIndex: "",
       render: (status) =>
         status !== "" ? {status} : "",
-      align: "right",
-      width: "8%",
+      width: "18%",
     },
     {
       title: "Orders",
       dataIndex: "order",
       render: (order) => {
         if (order > 1) {
-          return `${order} orders`;
+          return `${order} items`;
         } else {
-          return `${order || '0'} order`;
+          return `${order || '0'} item`;
         }
       },
-      align: "right",
-      width: "8%",
+      width: "13%",
     },
     {
       title: "Spent",
       dataIndex: "spent",
       render: (spent) => `$${spent || '0'} spent`,
-      align: "right",
       width: "24%",
+      align: 'right'
     },
   ];
 
@@ -288,7 +275,7 @@ const ViewCustomers = (props) => {
   }
 
   const goToNewPage = () => {
-    Router.router.push(`/[portal_id]/ecom/customers/drafts/new`, { pathname: `/${userData?.uniqueID}/ecom/customers/drafts/new` }, { shallow: true });
+    Router.router.push(`/[portal_id]/ecom/customers/new`, { pathname: `/${userData?.uniqueID}/ecom/customers/new` }, { shallow: true });
   }
 
   return (
@@ -674,17 +661,6 @@ const ViewContent = styled.div`
   position: relative;
 `;
 
-const ContentHeader = styled(Tabs)`
-  padding: 0 15px;
-  border-bottom: 1px solid #ccc;
-`;
-
-const ContentTab = styled.div``;
-
-const SortTable = styled.div`
-  text-align: right;
-`;
-
 const LabelSort = styled.span`
   display: inline-block;
   margin-right: 10px;
@@ -831,6 +807,10 @@ const DataTable = styled(Table)`
       height: 50px;
       border-top: 1px solid #EDEDED;
       th {
+        &:nth-child(2) {
+          padding-left: 0!important;
+        }
+        padding: 25px!important;
         background: white!important;
         font-family: Proxima Nova;
         font-style: normal;
@@ -843,12 +823,12 @@ const DataTable = styled(Table)`
   }
   tbody {
     tr {
-      height: 80px;
+      height: 70px;
       td {
-        &:not(:nth-child(1)) {
-          padding-left: 0px;
+        &:nth-child(2) {
+          padding-left: 0;
         }
-        padding: 15px;
+        padding: 25px;
         font-family: Proxima Nova;
         font-style: normal;
         font-weight: normal;
