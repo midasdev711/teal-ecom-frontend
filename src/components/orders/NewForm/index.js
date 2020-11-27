@@ -391,7 +391,7 @@ const newForm = (props) => {
                 tmpProduct['newId'] = newId;
                 tmpProduct['count'] = 1;
                 tmp.push(tmpProduct);
-                tmpSubTotal += tmpProduct.salePrice;
+                tmpSubTotal += typeof(tmpProduct.salePrice) == 'string' ? parseFloat(tmpProduct.salePrice) : tmpProduct.salePrice;
               }
             }
           } else {
@@ -399,7 +399,7 @@ const newForm = (props) => {
             tmpProduct['newId'] = product._id;
             tmpProduct['count'] = 1;
             tmp.push(tmpProduct)
-            tmpSubTotal += product.salePrice;
+            tmpSubTotal += typeof(tmpProduct.salePrice) == 'string' ? parseFloat(tmpProduct.salePrice) : tmpProduct.salePrice;
           }
         } else {
           let tmpProduct = Object.assign({}, product);
@@ -409,7 +409,7 @@ const newForm = (props) => {
           tmpProduct['newId'] = newId;
           tmpProduct['count'] = 1;
           tmp.push(tmpProduct);
-          tmpSubTotal += tmpVariant.salePrice;
+          tmpSubTotal +=  typeof(tmpVariant.salePrice) == 'string' ? parseFloat(tmpVariant.salePrice) : tmpVariant.salePrice;
         }
       } else {
         let newId = variant == true ? product._id : product._id + variant._id;
