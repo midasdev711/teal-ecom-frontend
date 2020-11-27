@@ -38,7 +38,7 @@ const { TabPane } = Tabs;
 const { Panel } = Collapse;
 
 const ViewOrders = (props) => {
-  const orderData =props.orderData === undefined ? [] : props.orderData
+  const orderData = (props.orderData || []).filter(item => item != undefined)
   const [tabIndex, setTabIndex] = useState(1);
   const [isOpenMoreFilter, setOpenMoreFilters] = useState(false);
   const [valuesCollapse, setShowCollapse] = useState([]);
@@ -54,11 +54,12 @@ const ViewOrders = (props) => {
 
 
   const dataNew = orderData.filter((item) => {
-    return item.fulfillment_status == 'unfulfilled'
+    console.log(item)
+    return (item && item.fulfillment_status) == 'unfulfilled'
   });
 
   const unpaidData = orderData.filter((item) => {
-    return item.status == 1
+    return (item && item.status) == 1
   });
 
   let userData = getUserData()
@@ -98,7 +99,7 @@ const ViewOrders = (props) => {
       render: (item) => {
         console.log(item)
         return (
-          <span>{item.BasicDetailsFullName}</span>
+          <span>{item && item.BasicDetailsFullName}</span>
         )
       },
       align: "left",

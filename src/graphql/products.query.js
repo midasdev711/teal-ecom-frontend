@@ -46,6 +46,7 @@ export const GET_MY_PRODUCT_LISTS_QUERY = gql`
 		ID
 		variants {
 			_id
+			ID
 			name
 			totalQuantity
 			salePrice
@@ -183,6 +184,7 @@ mutation products(
 			variants
 			{
 				_id
+				ID
 				name
 				totalQuantity
 				salePrice
