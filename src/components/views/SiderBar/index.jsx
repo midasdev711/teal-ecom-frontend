@@ -35,6 +35,9 @@ const SiderBar = () => {
   useEffect(() => {
     const pathContainer = pathname.split('/');
     const newPath = pathname.split('/', 4)[3];
+
+    console.log(newPath)
+
     // console.log('pathContainer', pathContainer);
     const isNew = (pathContainer.includes('new') || pathContainer?.includes('[pid]')) ? true : false;
     setActiveTabForCreate(newPath);
@@ -58,6 +61,7 @@ const SiderBar = () => {
     const newMatch = router.asPath.split('/').slice(2).join('/');
     const childRoute = route.as?.split('/').slice(2).join('/');
     const isActive = (activeTabForCreate === 'posts' && activeTabForCreate === route.title.toLowerCase()) ? true : (!route.components && newMatch === childRoute) || (isNewPage && mainRouteChildren?.includes(activeTabForCreate) || activeTabForCreate === route.title.toLowerCase());
+
     // console.log('newMatch', newMatch)
     // console.log('childRoute', childRoute)
     return (

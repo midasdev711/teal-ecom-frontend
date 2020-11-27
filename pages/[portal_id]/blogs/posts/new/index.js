@@ -140,7 +140,8 @@ const NewPost = (props) => {
         if (res.data) {
           message.success("Created new post successfully!");
           form.resetFields();
-          router.push("/[portal_id]/blogs/posts/[post_status]", { pathname: `/${userData?.uniqueID}/blogs/posts/live` }, { shallow: true });
+          // router.push("/[portal_id]/blogs/posts/[post_status]", { pathname: `/${userData?.uniqueID}/blogs/posts/live` }, { shallow: true });
+          router.push(`/[portal_id]/blogs/[slug]/posts/[post_status]`, { pathname: `/${userData?.uniqueID}/blogs/${localStorage.getItem('blog_id')}/posts/live` }, { shallow: true });
         }
       })
       .catch((err) => {
@@ -166,12 +167,14 @@ const NewPost = (props) => {
           <ActionTopLayout>
             <ActionContent>
               <NewPostAction>
-                <Link href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow>
+                {/* <Link href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow> */}
+                <Link href="/[portal_id]/blogs/[slug]/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/${localStorage.getItem('blog_id')}/posts/live` } shallow>
                   <LinkBack>
                     <LogoImage className="logo" src="/favicon.svg" />
                   </LinkBack>
                 </Link>
-                <Link href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow>
+                {/* <Link href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/live`} shallow>*/}
+                <Link href="/[portal_id]/blogs/[slug]/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/${localStorage.getItem('blog_id')}/posts/live` } shallow>
                   <LinkBack>
                     <LogoImage className="logo" src="/images/back-icon.svg" />
                   </LinkBack>

@@ -86,6 +86,17 @@ export const buildDynamicRoute = (route, userData) => {
   if (route && route.includes('[portal_id]')) {
     result = route.replace('[portal_id]', userData?.uniqueID);
   }
+
+
+console.log("route", result)
+  if (route && result.includes('[slug]')) {
+
+    let blog_id = localStorage.getItem('blog_id');
+
+    result = result.replace('[slug]', blog_id ? blog_id : '');
+  }
+
+  
   return result;
 }
 export const GetToken = () => {

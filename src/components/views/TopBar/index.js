@@ -15,7 +15,7 @@ const TopBar = ({title}) => {
   }, []);
 
   const handleBackButton = () => {
-    router.push(`/[portal_id]/blogs/dashboard`, { pathname: `/${userData?.uniqueID}/blogs/dashboard` }, { shallow: true });
+    router.push(`/[portal_id]/blogs/`, { pathname: `/${userData?.uniqueID}/blogs/` }, { shallow: true });
   }
 
   return (
