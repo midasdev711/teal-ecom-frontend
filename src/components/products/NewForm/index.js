@@ -1170,11 +1170,11 @@ const newForm = ({ submit, flag, getProductCategoryLists, saveSubmit, saveFlag, 
         visible={advancedVariantsEditorModal}
         onCancel={() => openAdvancedVariantsEditor(false)}
         footer={[
-          <div>
+          <AdvancedVariantEditorFooter>
             <Button key="submit" className="save-button" type="primary" onClick={() => handleOk()}>
-              Next
+              Save
             </Button>
-          </div>
+          </AdvancedVariantEditorFooter>
         ]}
       >
         <AdvancedVariantsEditor product={productDetails} variantsData={variantsData} handleChange={(event, index, name) => variantsDataChanged(event, index, name)} />
@@ -1605,6 +1605,12 @@ const VariantAction = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+`;
+
+const AdvancedVariantEditorFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 `;
 
 const mapStateToProps = (store) => {

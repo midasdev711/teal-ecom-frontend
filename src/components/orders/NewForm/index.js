@@ -353,9 +353,9 @@ const newForm = (props) => {
       let userId = userData?.ID
       let total = 0;
       if (discountMode) {
-        total = subTotal - discountAmount + shippingRate.rate;
+        total = subTotal - discountAmount + parseFloat(shippingRate.rate);
       } else {
-        total = subTotal - (subTotal * discountAmount / 100) + shippingRate.rate;
+        total = subTotal - (subTotal * discountAmount / 100) + parseFloat(shippingRate.rate);
       }
       let customer = Object.assign({}, selectedCustomer);
       delete customer['__typename']
@@ -846,7 +846,7 @@ const newForm = (props) => {
                 <ContentTitle align={"right"}>${subTotal}</ContentTitle>
                 <ContentTitle align={"right"}>{shippingRate.rate > 0 ? '$' + shippingRate.rate : '-'}</ContentTitle>
                 <ContentTitle align={"right"} marginbottom={30}>$0.00</ContentTitle>
-                <ContentTitle align={"right"} fontWeight={'bold'}>${subTotal - discountAmount + shippingRate.rate}</ContentTitle>
+                <ContentTitle align={"right"} fontWeight={'bold'}>${subTotal - discountAmount + parseFloat(shippingRate.rate)}</ContentTitle>
               </div>
             </PaymentCard>
           </ContentBox>
