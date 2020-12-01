@@ -39,7 +39,7 @@ export const AddStores = (datas) => {
           //   data: res.data,
           // });
 
-          window.location.href='/'+window.location.pathname.split("/")[1]+"/stores/dashboard"
+          window.location.href='/'+window.location.pathname.split("/")[1]+"/stores/"
         }
       })
       .catch((err) => {

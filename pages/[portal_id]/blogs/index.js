@@ -71,6 +71,7 @@ export function StoriesDashboard(props) {
                     </AddButton>
                 </BlogContainerHeader>
                 <BlogGroupContent>
+                    {console.log('ddddd', blogsData)}
 
                     {blogsData && blogsData.map((item) => {
                         console.log(item)

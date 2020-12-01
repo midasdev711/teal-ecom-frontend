@@ -85,12 +85,6 @@ const BlogsRoutes = [
     as: "/[portal_id]/blogs/",
   },
 
-  {
-    title: "Dashboard",
-    path: "/[portal_id]/blogs/[slug]/home",
-    as: "/[portal_id]/blogs/[slug]/home",
-  },
- 
   // {
   //   title: "Posts",
   //   path: "/posts",
@@ -131,6 +125,11 @@ const BlogsInnerRoutes = [
     as: "/[portal_id]/blogs/:id",
   },
   {
+    title: "Dashboard",
+    path: "/[portal_id]/blogs/[slug]/home",
+    as: "/[portal_id]/blogs/[slug]/home",
+  },
+  {
     title: "StoriesNew",
     path: "/[portal_id]/blogs/setup-new",
     as: "/[portal_id]/blogs/setup-new",
@@ -158,21 +157,29 @@ const PagesRoutes = [
     path: "/[portal_id]/pages/setup-new",
     as: "/[portal_id]/pages/setup-new"
   },
-
+  {
+    title: "Dashboard",
+    path: "/[portal_id]/pages/[slug]/home",
+    as: "/[portal_id]/pages/[slug]/home",
+  }
 ];
 
 const StoresRoutes = [
   {
     title: "Stores",
-    path: "/[portal_id]/stores/dashboard",
-    as: "/[portal_id]/stores/dashboard",
+    path: "/[portal_id]/stores/",
+    as: "/[portal_id]/stores/",
   },
   {
     title: "New Store",
     path: "/[portal_id]/stores/setup-new",
     as: "/[portal_id]/stores/setup-new"
   },
-
+  {
+    title: "Dashboard",
+    path: "/[portal_id]/stores/[slug]/home",
+    as: "/[portal_id]/stores/[slug]/home",
+  }
 ];
 
 const MainRoutes = {
