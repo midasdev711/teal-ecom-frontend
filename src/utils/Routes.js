@@ -78,13 +78,13 @@ const Routes = [
   },
 ];
 
-const StoriesRoutes = [
+const BlogsRoutes = [
   {
     title: "Home",
-    path: "/[portal_id]/stories/dashboard",
-    as: "/[portal_id]/stories/dashboard",
+    path: "/[portal_id]/blogs/",
+    as: "/[portal_id]/blogs/",
   },
- 
+
   // {
   //   title: "Posts",
   //   path: "/posts",
@@ -93,51 +93,56 @@ const StoriesRoutes = [
   
   {
     title: "Posts",
-    path: "/[portal_id]/stories/posts/[post_status]",
-    as: "/[portal_id]/stories/posts/drafts",
+    path: "/[portal_id]/blogs/[slug]/posts/[post_status]",
+    as: "/[portal_id]/blogs/[slug]/posts/drafts",
   },
   {
     title: "Categories",
-    path: "/[portal_id]/stories/categories",
-    as: "/[portal_id]/stories/categories",
+    path: "/[portal_id]/blogs/[slug]/categories",
+    as: "/[portal_id]/blogs/[slug]/categories",
   },
   {
     title: "Authors",
-    path: "/[portal_id]/stories/authors",
-    as: "/[portal_id]/stories/authors",
+    path: "/[portal_id]/blogs/[slug]/authors",
+    as: "/[portal_id]/blogs/[slug]/authors",
   },
   {
     title: "Insights",
-    path: "/[portal_id]/stories/insights",
-    as: "/[portal_id]/stories/insights",
+    path: "/[portal_id]/blogs/[slug]/insights",
+    as: "/[portal_id]/blogs/[slug]/insights",
   },
   {
     title: "Splitter",
-    path: "/[portal_id]/stories/campaign",
-    as: "/[portal_id]/stories/campaign",
+    path: "/[portal_id]/blogs/[slug]/campaign",
+    as: "/[portal_id]/blogs/[slug]/campaign",
   },
 ];
 
-const StoriesInnerRoutes = [
+const BlogsInnerRoutes = [
   {
-    title: "Stories",
-    path: "/[portal_id]/stories/:id",
-    as: "/[portal_id]/stories/:id",
+    title: "Blogs",
+    path: "/[portal_id]/blogs/:id",
+    as: "/[portal_id]/blogs/:id",
+  },
+  {
+    title: "Dashboard",
+    path: "/[portal_id]/blogs/[slug]/home",
+    as: "/[portal_id]/blogs/[slug]/home",
   },
   {
     title: "StoriesNew",
-    path: "/[portal_id]/stories/setup-new",
-    as: "/[portal_id]/stories/setup-new",
+    path: "/[portal_id]/blogs/setup-new",
+    as: "/[portal_id]/blogs/setup-new",
   },
   {
-    title: "EditPost",
-    path: "/[portal_id]/stories/",
-    as: "/[portal_id]/stories/",
+    title: "EditBlog",
+    path: "/[portal_id]/blogs/",
+    as: "/[portal_id]/blogs/",
   },
   {
-    title: "NewPost",
-    path: "/[portal_id]/stories/posts/new",
-    as: "/[portal_id]/stories/posts/new",
+    title: "NewBlog",
+    path: "/[portal_id]/blogs/posts/new",
+    as: "/[portal_id]/blogs/posts/new",
   },
 ];
 
@@ -152,21 +157,29 @@ const PagesRoutes = [
     path: "/[portal_id]/pages/setup-new",
     as: "/[portal_id]/pages/setup-new"
   },
-
+  {
+    title: "Dashboard",
+    path: "/[portal_id]/pages/[slug]/home",
+    as: "/[portal_id]/pages/[slug]/home",
+  }
 ];
 
 const StoresRoutes = [
   {
     title: "Stores",
-    path: "/[portal_id]/stores/dashboard",
-    as: "/[portal_id]/stores/dashboard",
+    path: "/[portal_id]/stores/",
+    as: "/[portal_id]/stores/",
   },
   {
     title: "New Store",
     path: "/[portal_id]/stores/setup-new",
     as: "/[portal_id]/stores/setup-new"
   },
-
+  {
+    title: "Dashboard",
+    path: "/[portal_id]/stores/[slug]/home",
+    as: "/[portal_id]/stores/[slug]/home",
+  }
 ];
 
 const MainRoutes = {
@@ -174,11 +187,11 @@ const MainRoutes = {
   Stories: "stories",
 };
 
-export { Routes, StoriesRoutes, MainRoutes, StoriesInnerRoutes };
+export { Routes, BlogsRoutes, MainRoutes, BlogsInnerRoutes };
 
 export default {
   Routes,
   MainRoutes,
-  StoriesRoutes,
-  StoriesInnerRoutes,
+  BlogsRoutes,
+  BlogsInnerRoutes,
 };

@@ -39,7 +39,7 @@ export const AddBlogs = (datas) => {
           //   data: res.data,
           // });
 
-          window.location.href='/'+window.location.pathname.split("/")[1]+"/stories/dashboard"
+          window.location.href='/'+window.location.pathname.split("/")[1]+"/blogs/"
         }
       })
       .catch((err) => {
