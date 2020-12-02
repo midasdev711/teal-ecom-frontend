@@ -640,6 +640,9 @@ const DataTable = styled(Table)`
         font-size: 14px;
         line-height: 144.89%;
         color: #404950;
+        &:nth-child(1) {
+          padding-left: 15px;
+        }
       }
     }
   }
