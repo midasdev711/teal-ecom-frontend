@@ -105,14 +105,14 @@ const Wrapper = styled.div`
 `;
 
 const SubBarStyle = styled.div`
-  width: calc(100% - 50px);
-  padding: 0 10px;
+  width: 100%;
+  padding-left: 2px;
 `;
 
 const StyledSider = styled(Layout.Sider)`
-  max-width: 250px !important;
-  min-width: 250px !important;
-  width: 250px !important;
+  max-width: 200px !important;
+  min-width: 200px !important;
+  width: 200px !important;
   padding: 0px;
   position: fixed;
   left: 0;
@@ -139,6 +139,9 @@ const LinkButton = styled.a`
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   background: ${(props) => (props.active ? "#E5F4FE" : "#f6f8f9")};
   border-radius: 5px;
+  border-left: ${(props) => (props.active ? "2px solid #0095f8" : "none")};
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   &:hover {
     color: #404950;
   }

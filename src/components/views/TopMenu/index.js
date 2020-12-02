@@ -38,14 +38,21 @@ const TopMenu = () => {
         router.push(`/[portal_id]`, { pathname: `/${userData?.uniqueID}` }, { shallow: true });
     }
 
-    const MenuList = RoutesName.map((route, index) => {
+    const topMenuList = [{
+        title: 'Store',
+        channelName: 'Ecommerce',
+        path: "/[portal_id]/ecom",
+        as: "/[portal_id]/ecom",
+    }, {
+        title: 'Dissect',
+        channelName: 'Stories',
+        path: "/[portal_id]/stories/dashboard",
+        as: "/[portal_id]/stories/dashboard",
+    }]
+
+    const MenuList = topMenuList.map((route, index) => {
         const mainDynamicRoute = buildDynamicRoute(route.as, userData);
-        const mainRouteChildren = route.as && route.as.split('/');
-        const newMatch = router.asPath.split('/').slice(2).join('/');
-        const childRoute = route.as?.split('/').slice(2).join('/');
-        const isActive = (activeTabForCreate === 'posts' && activeTabForCreate === route.title.toLowerCase()) ? true : (!route.components && newMatch === childRoute) || (isNewPage && mainRouteChildren?.includes(activeTabForCreate) || activeTabForCreate === route.title.toLowerCase());
-        // console.log('newMatch', newMatch)
-        // console.log('childRoute', childRoute)
+        const isActive = channelName === route.channelName
         return (
             <div key={`main_${index}`}>
                 <Link href={route.path} as={mainDynamicRoute}>
@@ -96,22 +103,25 @@ const MyBlog = styled.div`
 `;
 
 const LinkButton = styled.a`
-  padding: 7px 5px;
-  color: ${(props) => (props.active ? "#0095F8" : "#404950")};
-  height: 35px;
-  font-family: Proxima Nova;
+    padding: 7px 5px;
+    color: ${(props) => (props.active ? "#0095F8" : "#404950")};
+    height: 42px;
+    font-family: Proxima Nova;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
-  display: flex;
-  align-items: center;
-  background: ${(props) => (props.active ? "#E5F4FE" : "transparent")};
-  border-radius: 5px;
-  margin-left: 10px;
-  &:hover {
-    color: #404950;
-  }
+    display: flex;
+    align-items: center;
+    // background: ${(props) => (props.active ? "#E5F4FE" : "transparent")};
+    border-radius: 5px;
+    margin-left: 10px;
+    border-bottom: ${(props) => (props.active ? "2px solid #0095F8" : "none")};
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    &:hover {
+        color: #404950;
+    }
 `;
 
 const PageHeader = styled.div`
