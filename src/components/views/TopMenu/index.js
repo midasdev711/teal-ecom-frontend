@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { Button } from "antd";
 
-import { Routes, StoriesRoutes } from "../../../utils/Routes";
+import { Routes, BlogsRoutes } from "../../../utils/Routes";
 import { buildDynamicRoute } from "../../../utils";
 
 const TopMenu = () => {
@@ -15,7 +15,7 @@ const TopMenu = () => {
     const [isNewPage, setIsNewPage] = useState(false);
     const router = useRouter();
     const { pathname } = router;
-    const RoutesName = channelName === "Ecommerce" ? Routes : StoriesRoutes;
+    const RoutesName = channelName === "Ecommerce" ? Routes : BlogsRoutes;
 
     useEffect(() => {
         setChannelName(localStorage.getItem("channelName") || "Ecommerce");

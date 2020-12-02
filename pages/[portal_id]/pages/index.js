@@ -32,8 +32,10 @@ function PagesDashboard(props) {
     }
 
     const handleDefaultAction = (url, uid) => {
-        window.location.href = `/${userData?.uniqueID}/${url}?id=` + uid
+        localStorage.setItem("page_id", uid);
+        router.push(`/[portal_id]/${url}/[slug]/home`, { pathname: `/${userData?.uniqueID}/${url}/`+uid +'/home'}, { shallow: true });
     }
+
     return (
         <LayoutWithNoSidebar>
             <BlogContainer>

@@ -139,7 +139,8 @@ const EditPost = (props) => {
                 message: "Successfully!",
                 description: "Publish article successfully!",
             });
-            Router.router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/drafts` }, { shallow: true });
+            // Router.router.push("/[portal_id]/blogs/posts/[post_status]", { pathname: `/${userData?.uniqueID}/blogs/posts/drafts` }, { shallow: true });
+            Router.router.push(`/[portal_id]/blogs/[slug]/posts/[post_status]`, { pathname: `/${userData?.uniqueID}/blogs/${localStorage.getItem('blog_id')}/posts/drafts` }, { shallow: true });
         }
     }, [props.updateArticleDetail]);
 
@@ -232,7 +233,8 @@ const EditPost = (props) => {
                                         <LogoImage className="logo" src="/favicon.svg" />
                                     </LinkBack>
                                 </Link>
-                                <Link href="/[portal_id]/stories/posts/[post_status]" as={`/${userData?.uniqueID}/stories/posts/drafts`} shallow={true}>
+                                {/*<Link href="/[portal_id]/blogs/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/posts/drafts`} shallow={true}> */}
+                                 <Link href="/[portal_id]/blogs/[slug]/posts/[post_status]" as={`/${userData?.uniqueID}/blogs/${localStorage.getItem('blog_id')}/posts/live` } shallow>
                                     <LinkBack>
                                         <LogoImage className="logo" src="/images/back-icon.svg" />
                                     </LinkBack>

@@ -143,7 +143,7 @@ const ViewPosts = (props) => {
     // } else if (key === "Deleted") {
     //   props.getListArticlesDeleted(userID, userID, 100, 1);
     // }
-    router.push("/[portal_id]/stories/posts/[post_status]", { pathname: `/${userData?.uniqueID}/stories/posts/` + key }, { shallow: true });
+    router.push("/[portal_id]/blogs/posts/[post_status]", { pathname: `/${userData?.uniqueID}/blogs/posts/` + key }, { shallow: true });
   };
 
   const onChangeSubscription = (e) => {
@@ -283,7 +283,7 @@ const ViewPosts = (props) => {
       <ActionsTable>
         <AlignItem>
           <div className="actions-left">
-          <Link href="/[portal_id]/stories/posts/new" as={`/${userData?.uniqueID}/stories/posts/new`} shallow={true}>
+          <Link href="/[portal_id]/blogs/posts/new" as={`/${userData?.uniqueID}/blogs/posts/new`} shallow={true}>
 
             {/* <Link href="/posts/new"> */}
               <a>

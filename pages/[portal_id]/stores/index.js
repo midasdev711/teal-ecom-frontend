@@ -16,9 +16,10 @@ export function StoresDashboard(props) {
     const router = useRouter()
     let userData = getUserData()
 
-     const handleDefaultAction = (url, uid) => {
-        // router.push(`/[portal_id]/${url}`, { pathname: `/${userData?.uniqueID}/${url}?id=`+uid }, { shallow: true });
-        window.location.href= `/${userData?.uniqueID}/${url}?id=`+uid
+
+    const handleDefaultAction = (url, uid) => {
+        localStorage.setItem("store_id", uid);
+        router.push(`/[portal_id]/${url}/[slug]/home`, { pathname: `/${userData?.uniqueID}/${url}/`+uid +'/home'}, { shallow: true });
     }
 
     useEffect(() => {

@@ -59,7 +59,7 @@ const Posts = (props) => {
         }
     };
     useEffect(() => {
-        router.prefetch('/[portal_id]/stories/posts/new')
+        router.prefetch('/[portal_id]/blogs/posts/new')
         router.prefetch('/[portal_id]/stories/[slug]/draft')
         router.prefetch('/[portal_id]/stories/[slug]')
     }, [])

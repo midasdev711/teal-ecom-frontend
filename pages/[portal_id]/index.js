@@ -34,7 +34,7 @@ const Index = () => {
         )
         localStorage.setItem(
             'channelName',
-            url === 'ecom' ? 'Ecommerce' : 'stories'
+            url === 'ecom' ? 'Ecommerce' : 'blogs'
         )
     }
     const onShowMdDeleteSelected = value => {
@@ -55,9 +55,9 @@ const Index = () => {
             <Title1>For you</Title1>
             <ButtonBlock>
                 <HomeLinkButton
-                    title='Stories'
+                    title='Blogs'
                     backgroundColor='#E84118'
-                    onClick={() => handleDefaultAction('stories/dashboard')}
+                    onClick={() => handleDefaultAction('blogs/')}
                     image={<img alt='unfulied' src='/images/home-stories.svg' />}
                 ></HomeLinkButton>
                 <HomeLinkButton
